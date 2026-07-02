@@ -4,12 +4,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreIcon from '@mui/icons-material/Restore';
 import NoteIcon from '@mui/icons-material/Note';
 import UpdateIcon from '@mui/icons-material/Update';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
   {label:"",keyValue:"",align:"left",width:"30px"},
   {label:"Ragione Sociale",keyValue:"",align:"left",width:"200px"},
   {label:"Azioni",keyValue:"",align:"center",width:"100px",
     renderValue:(obj,fun) =>{
+      console.log("obj",obj)
       return(
         <Box sx={{ display: "flex", justifyContent: "center" }}>
         {(obj.tipologiaFattura !== "ACCONTO" && obj.tipologiaFattura !== "ANTICIPO") ? 
@@ -24,7 +26,17 @@ export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
             </IconButton>
           </span>
         </Tooltip>
-        : <Tooltip title={obj.inviata === 0 ? "Elimina" : null}>
+        : obj.inviata === 3 ?  <Tooltip title="Annulla">
+          <span>
+            <IconButton
+              size="medium"
+              onClick={() => fun && fun(obj,'annulla')}
+              disabled={false}
+            >
+              <CancelIcon  />
+            </IconButton>
+          </span>
+        </Tooltip> : <Tooltip title={obj.inviata === 0 ? "Elimina" : null}>
           <span>
             <IconButton
             disabled={(obj.inviata === 0 )? false : true}

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
 import { manageError, managePresaInCarico } from "../../api/api";
@@ -18,12 +17,9 @@ import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, Responsi
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import EnhancedTableCustom from "../../components/reusableComponents/grid/gridCustomBase/enhancedTabalToolbarCustom";
-import ModalShowInfo from "../../components/reusableComponents/modals/dialogInfo";
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
-
-
-
+import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 export interface BodyLista {
   idEnti: string[]
   tipologiaContratto: number|null
@@ -56,7 +52,6 @@ const ListaDocEmessi : React.FC = () => {
   const profilo =  mainState.profilo;
   
   const [gridData, setGridData] = useState<Whitelist[]>([]);
-  const [statusAnnulla, setStatusAnnulla] = useState('hidden');
   const [getListaLoading, setGetListaLoading] = useState(false);
   const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
   const [textValue, setTextValue] = useState('');
@@ -100,24 +95,6 @@ const ListaDocEmessi : React.FC = () => {
   useEffect(()=>{
     getAnni();
   },[]);
-  
-  
-  useEffect(()=>{
-    if(!isInitialRender.current){
-      updateFilters( {
-        selected:selected
-      });
-    } 
-  },[selected]);
-  
-  
-  useEffect(()=>{
-    if(bodyGetLista.idEnti.length !== 0 || bodyGetLista.mesi.length !== 0 || bodyGetLista.tipologiaFattura !== null || bodyGetLista.tipologiaContratto !== null  ){
-      setStatusAnnulla('show');
-    }else{
-      setStatusAnnulla('hidden');
-    }
-  },[bodyGetLista]);
   
   const getAnni = async(year = null, action = '' ) => {
     await getAnniWhite(token, profilo.nonce).then(async(res)=>{
@@ -282,7 +259,7 @@ const ListaDocEmessi : React.FC = () => {
           ragioneSociale:el.ragioneSociale,
           anno:el.anno,
           mese:month[el.mese-1],
-          tipologiaFatture:el.tipologiaFattura,
+          tipologiaFattura:el.tipologiaFattura,
           tipoContratto:el.tipoContratto,
           stato:isEliminata ? "Eliminata" : i % 2 === 0 ? "Posticipata" : "Ripristinata",
           nota:notaMock,
@@ -433,6 +410,25 @@ const ListaDocEmessi : React.FC = () => {
     deleteElements(bodyGetLista.anno);
   };
 
+  const keyValueObjModalInfo = [
+    {
+      key:"ragioneSociale",
+      label:"Ragione Sociale"
+    },
+     {
+      key:"anno",
+      label:"Anno"
+    },
+     {
+      key:"mese",
+      label:"Mese"
+    },
+    {
+      key:"tipologiaFattura",
+      label:"Tipologia Fattura"
+    }
+  ]
+
 
   const showPopUpAction = (obj, action) => {  
     if(action === "nota"){
@@ -442,17 +438,32 @@ const ListaDocEmessi : React.FC = () => {
       setNotes(sortedNotes);
       setShowPopUpNota(true);
     }else if(action === "ripristina"){
-      setOpenModalInfo({open:true, sentence: (
-    <>
-      Sei sicuro di voler <strong>Ripristinare</strong> la fattura selezionata?
-    </>
-  ),buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ripristina")});
+
+      setOpenModalInfo({
+        open:true,
+        sentence: ( <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Ripristinare</strong> la seguente fattura?</>} />),
+        buttonIsVisible:true,
+        labelButton:"Prosegui",
+        actionButton:() => console.log("ripristina")
+      });
     }else if(action === "annulla"){
-       setOpenModalInfo({open:true, sentence: (
-    <>
-      Sei sicuro di voler <strong>Annullare</strong> la posticipazione della fattura selezionata?
-    </>
-  ),buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
+
+       setOpenModalInfo({
+        open:true,
+        sentence: ( <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> la <strong>posticipazione</strong> della seguente fattura?</>} />),
+        buttonIsVisible:true,
+        labelButton:"Prosegui",
+        actionButton:() => console.log("ANNULLA")
+      });
+    }else if(action === "annulla eliminazione"){
+
+       setOpenModalInfo({
+        open:true,
+        sentence: ( <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong>  <strong>l'eliminazione</strong> della seguente fattura?</>} />),
+        buttonIsVisible:true,
+        labelButton:"Prosegui",
+        actionButton:() => console.log("ANNULLA")
+      });
     }
   }
       
@@ -462,6 +473,14 @@ const ListaDocEmessi : React.FC = () => {
       icon:<AddCircleIcon sx={{ color:selected.length === 0 ? "#1976D2" : "#A2ADB8", cursor: 'pointer' }} />,
       action:"Add"
     }];
+
+   
+  const statusAnnulla = (
+    bodyGetLista.idEnti.length !== 0 ||
+    bodyGetLista.mesi.length !== 0 ||
+    bodyGetLista.tipologiaFattura !== null ||
+    bodyGetLista.tipologiaContratto !== null
+  ) ? 'show' : 'hidden';
         
         
         
@@ -630,7 +649,7 @@ const ListaDocEmessi : React.FC = () => {
       <ModalInfo 
         setOpen={setOpenModalInfo}
         open={openModalInfo}
-        width={600}
+        width={800}
         textAreaValue={textAreaValue}
         setTextAreaValue={setTextAreaValue}
         />
@@ -640,3 +659,33 @@ const ListaDocEmessi : React.FC = () => {
 };
 export default ListaDocEmessi;
       
+
+
+export const ElementToProcessComponent = ({obj, title , keyValueObj}) => {
+
+  return (
+    <Box sx={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center', mt:2, mb:2}}>
+    <Typography > {title}</Typography>
+    <Box sx={{ backgroundColor:'#F8F8F8', padding:'10px',marginTop:'20px',width:'100%'}}>
+        <Table size="small">
+          <TableHead>
+            <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+              {keyValueObj.map((el,i) => (
+                <TableCell key={i} align="center" sx={{ marginLeft:"16px"}} >{el.label}</TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
+            <TableRow >
+              {keyValueObj.map((el,i) => (
+                 <Tooltip title={obj[el.key].length > 20 ? obj[el.key]:null} >
+                   <TableCell key={i} align="center">{obj[el.key]?.length > 20 ? obj[el.key].slice(0, 20) + '...':obj[el.key]}</TableCell>
+                 </Tooltip> 
+              ))}
+            </TableRow>
+          </TableBody>
+        </Table>
+    </Box>
+     </Box>
+  )
+}

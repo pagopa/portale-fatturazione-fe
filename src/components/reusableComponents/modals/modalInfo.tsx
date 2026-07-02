@@ -26,8 +26,6 @@ const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width,textAreaValue
     <Modal
       open={open.open}
       onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
     >
       <Box sx={ {
         position: 'absolute' as const,
@@ -40,52 +38,51 @@ const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width,textAreaValue
         p: 4,
         borderRadius:'20px'
       }}>
-        <div className="d-flex align-items-center justify-content-end">
-          <div className='icon_close'>
-            <CloseIcon onClick={handleClose} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
-          </div>
+      
+        <div className="d-flex align-items-end justify-content-end w-100">
+            <CloseIcon onClick={handleClose} sx={{color:'#17324D'}}/>
         </div>
-        <div className='d-flex justify-content-center'>
+        <div className='d-flex justify-content-center text-center align-items-center w-100'>
           {open.icon  && <div  style={{ marginRight: 8 }}>{<open.icon/>}</div>}
           <Typography id="modal-modal-title" variant="h6" component="h2">
-        Attenzione!
+            Attenzione!
           </Typography>    
-        </div>
-        <div className='d-flex justify-content-center text-center'>
+       </div>
+         {setTextAreaValue ? <> {open.sentence} </> :
+       <div className='d-flex justify-content-center text-center align-items-center w-100'>
           <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
             {open.sentence}
           </Typography>
-        </div> 
-    
-        {setTextAreaValue && (
-          <Box sx={{ mt: 2 }}>
+      </div>}
+      <div className='d-flex justify-content-center text-center align-items-center w-100'>
+          {setTextAreaValue && (
             <TextField
-              label="Inserisci una nota (opzionale)"
+              label="Inserisci una nota (obbligatoria)"
               multiline
               minRows={2}
               fullWidth
               value={textAreaValue}
               onChange={(e) => setTextAreaValue && setTextAreaValue(e.target.value)}
             />
-          </Box>
-        )}
         
+          )}
+        </div>
         {open?.buttonIsVisible &&
-                    <div className='d-flex justify-content-evenly text-center mt-5'>
-                      <Button variant="outlined" onClick={handleClose}>Annulla</Button>
-                      <Button variant="contained" onClick={() =>{
-                        window.scrollTo({
-                          top: 0,
-                          left: 0,
-                          behavior: "auto"
+            <div className='d-flex justify-content-evenly text-center mt-5'>
+                <Button variant="outlined" onClick={handleClose}>Annulla</Button>
+                <Button disabled={!textAreaValue && !!setTextAreaValue} variant="contained" onClick={() =>{
+                    window.scrollTo({
+                      top: 0,
+                      left: 0,
+                      behavior: "auto"
                         });
-                        handleClose();
-                        open?.actionButton && open?.actionButton();}}>Prosegui</Button>
-                       
-                    </div>
-        }
-               
-      </Box>
+                      handleClose();
+                      open?.actionButton && open?.actionButton();}}>
+                      Prosegui
+                </Button>    
+            </div>
+        }    
+        </Box>  
     </Modal>
   );
 };

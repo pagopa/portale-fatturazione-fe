@@ -18,7 +18,7 @@ export const headerNames: WhiteListConfig[] = [
   { label: 'Ragione Sociale', align: 'center', width: '200px', keyValue: 'ragioneSociale' },
   { label: 'Anno', align: 'center', width: '100px', keyValue: 'anno' },
   { label: 'Mese', align: 'center', width: '100px', keyValue: 'mese' },
-  { label: 'Tipologia fattura', align: 'center', width: '150px', keyValue: 'tipologiaFatture' },
+  { label: 'Tipologia fattura', align: 'center', width: '150px', keyValue: 'tipologiaFattura' },
   { label: 'Tipo contratto', align: 'center', width: '150px', keyValue: 'tipoContratto' },
   { label: 'Stato', align: 'center', width: '100px', keyValue: 'stato',
     gridAction:(fun:(obj:any,action:string) => void,color:string,disabled:boolean,obj:any) => {
@@ -88,8 +88,17 @@ export const headerNames: WhiteListConfig[] = [
           </span>
         </Tooltip>
         </>
-      :
-       undefined
+      : obj.stato === "Eliminata" ?  <Tooltip title="Annulla">
+          <span>
+            <IconButton
+              size="medium"
+              onClick={() => fun && fun(obj,'annulla eliminazione')}
+              disabled={disabled}
+            >
+              <CancelIcon sx={{ color: color }} />
+            </IconButton>
+          </span>
+        </Tooltip> : undefined
         }
       </Box>
      

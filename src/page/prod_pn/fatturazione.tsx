@@ -20,6 +20,7 @@ import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
+import { ElementToProcessComponent } from "./whiteList";
 
 
 const Fatturazione : React.FC = () =>{
@@ -291,6 +292,7 @@ const Fatturazione : React.FC = () =>{
     }).catch((error)=>{
       if(error?.response?.status === 404){
         setGridData([]);
+        setShowedData([]);
       }
       setBodyFatturazioneDownload(body);
       setShowLoadingGrid(false);
@@ -523,19 +525,28 @@ const Fatturazione : React.FC = () =>{
     };
 
     
+  const keyValueObjModalInfo = [
+    {
+      key:"ragioneSociale",
+      label:"Ragione Sociale"
+    },
+     {
+      key:"dataFattura",
+      label:"Data Fattura"
+    },
+    {
+      key:"tipologiaFattura",
+      label:"Tipologia Fattura"
+    }
+  ]
+    
     const showPopUpAction = (obj, action) => {  
     if(action === "posticipa"){
-      setOpenModalInfo({open:true, sentence: (
-    <>
-      Sei sicuro di voler <strong>Posticipare</strong> la fattura selezionata?
-    </>
-  ),buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ripristina")});
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Posticipare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ripristina")});
     }else if(action === "elimina"){
-       setOpenModalInfo({open:true, sentence: (
-    <>
-      Sei sicuro di voler <strong>Eliminare</strong> la fattura selezionata?
-    </>
-  ),buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
+       setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
+    }else if(action === "annulla"){
+       setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> l'eliminazione della seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
     }
   }
     
@@ -785,7 +796,7 @@ const Fatturazione : React.FC = () =>{
         <ModalInfo 
          setOpen={setOpenModalInfo}
          open={openModalInfo}
-         width={600}
+         width={800}
          textAreaValue={textAreaValue}
          setTextAreaValue={setTextAreaValue}
           />
