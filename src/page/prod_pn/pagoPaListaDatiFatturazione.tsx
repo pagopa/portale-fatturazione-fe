@@ -1,5 +1,5 @@
 import { getTipologiaProfilo, manageError, manageErrorDownload, } from '../../api/api';
-import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ResponseDownloadListaFatturazione } from "../../types/typeListaDatiFatturazione";
+import { BodyGetListaDatiFatturazione, GridElementListaFatturazione } from "../../types/typeListaDatiFatturazione";
 import {  useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import {BodyListaDatiFatturazione, Params} from '../../types/typesGeneral';
@@ -11,7 +11,7 @@ import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
-import { configListaFatturazione, configListaFatturazioneSever } from "../../assets/configurations/cong_GridListaDatiFatturazione";
+import {  configListaFatturazioneSever } from "../../assets/configurations/cong_GridListaDatiFatturazione";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from '../../store/context/useGlobalStore';
@@ -149,7 +149,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         setShowLoading(true);
         saveAs(response,fileName);
         setShowLoading(false);
-      }).catch(err =>{
+      }).catch(() =>{
       manageErrorDownload('404',dispatchMainState);
     } );
          

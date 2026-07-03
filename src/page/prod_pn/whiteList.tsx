@@ -230,23 +230,23 @@ const ListaDocEmessi : React.FC = () => {
 
   const notaMock = [
 
-  {
+    {
 
-    "IdNota": "B13C89FD-4C92-44BA-80C2-2435E91AD102",
+      "IdNota": "B13C89FD-4C92-44BA-80C2-2435E91AD102",
 
-    "Testo": "Creazione di una fattura posticipata",
+      "Testo": "Creazione di una fattura posticipata",
 
-    "Data": "2026-07-01T08:58:36.4713059Z"  },
+      "Data": "2026-07-01T08:58:36.4713059Z"  },
 
-  {
+    {
 
-    "IdNota": "79E02493-65EA-4BB8-BC4C-4E3CC0DA3776",
+      "IdNota": "79E02493-65EA-4BB8-BC4C-4E3CC0DA3776",
 
-    "Testo": "Ripristino di una fattura posticipata",
+      "Testo": "Ripristino di una fattura posticipata",
 
-    "Data": "2026-07-01T08:58:42.3053355Z"  }
+      "Data": "2026-07-01T08:58:42.3053355Z"  }
 
-]
+  ];
   
   const getLista = async(pg,row,body) => {
     setGetListaLoading(true);
@@ -415,11 +415,11 @@ const ListaDocEmessi : React.FC = () => {
       key:"ragioneSociale",
       label:"Ragione Sociale"
     },
-     {
+    {
       key:"anno",
       label:"Anno"
     },
-     {
+    {
       key:"mese",
       label:"Mese"
     },
@@ -427,14 +427,14 @@ const ListaDocEmessi : React.FC = () => {
       key:"tipologiaFattura",
       label:"Tipologia Fattura"
     }
-  ]
+  ];
 
 
   const showPopUpAction = (obj, action) => {  
     if(action === "nota"){
       const sortedNotes = [...obj.nota].sort(
         (a, b) => new Date(b.Data).getTime() - new Date(a.Data).getTime()
-       );
+      );
       setNotes(sortedNotes);
       setShowPopUpNota(true);
     }else if(action === "ripristina"){
@@ -448,7 +448,7 @@ const ListaDocEmessi : React.FC = () => {
       });
     }else if(action === "annulla"){
 
-       setOpenModalInfo({
+      setOpenModalInfo({
         open:true,
         sentence: ( <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> la <strong>posticipazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
@@ -457,7 +457,7 @@ const ListaDocEmessi : React.FC = () => {
       });
     }else if(action === "annulla eliminazione"){
 
-       setOpenModalInfo({
+      setOpenModalInfo({
         open:true,
         sentence: ( <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong>  <strong>l'eliminazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
@@ -465,7 +465,7 @@ const ListaDocEmessi : React.FC = () => {
         actionButton:() => console.log("ANNULLA")
       });
     }
-  }
+  };
       
   const buttonsTopHeader =  [
     {
@@ -641,7 +641,7 @@ const ListaDocEmessi : React.FC = () => {
       <DialogInfo 
         open={showPopUpNota}
         onClose={setShowPopUpNota}
-        clearAction={()=>{setNotes([])}}
+        clearAction={()=>{setNotes([]);}}
         array={notes}
         title="Storico Note"
         sentenseEmptyArray="Nessuna nota disponibile."
@@ -652,7 +652,7 @@ const ListaDocEmessi : React.FC = () => {
         width={800}
         textAreaValue={textAreaValue}
         setTextAreaValue={setTextAreaValue}
-        />
+      />
     </MainBoxStyled>
           
   );
@@ -665,8 +665,8 @@ export const ElementToProcessComponent = ({obj, title , keyValueObj}) => {
 
   return (
     <Box sx={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center', mt:2, mb:2}}>
-    <Typography > {title}</Typography>
-    <Box sx={{ backgroundColor:'#F8F8F8', padding:'10px',marginTop:'20px',width:'100%'}}>
+      <Typography > {title}</Typography>
+      <Box sx={{ backgroundColor:'#F8F8F8', padding:'10px',marginTop:'20px',width:'100%'}}>
         <Table size="small">
           <TableHead>
             <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -678,14 +678,14 @@ export const ElementToProcessComponent = ({obj, title , keyValueObj}) => {
           <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
             <TableRow >
               {keyValueObj.map((el,i) => (
-                 <Tooltip title={obj[el.key].length > 20 ? obj[el.key]:null} >
-                   <TableCell key={i} align="center">{obj[el.key]?.length > 20 ? obj[el.key].slice(0, 20) + '...':obj[el.key]}</TableCell>
-                 </Tooltip> 
+                <Tooltip title={obj[el.key].length > 20 ? obj[el.key]:null} >
+                  <TableCell key={i} align="center">{obj[el.key]?.length > 20 ? obj[el.key].slice(0, 20) + '...':obj[el.key]}</TableCell>
+                </Tooltip> 
               ))}
             </TableRow>
           </TableBody>
         </Table>
+      </Box>
     </Box>
-     </Box>
-  )
-}
+  );
+};

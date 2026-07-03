@@ -34,7 +34,7 @@ const Fatturazione : React.FC = () =>{
   const callLista = useRef(true);
   const callAnnulla = useRef(false);
   const navigate = useNavigate();
-  let profilePath = PathPf.FATTURAZIONE;
+  const profilePath = PathPf.FATTURAZIONE;
 
 
   const [firstYearMonth, setFirstYearMonth] = useState<number[]>([]);
@@ -58,8 +58,8 @@ const Fatturazione : React.FC = () =>{
   const [dateTipologie, setDateTipologie] = useState<string[]>([]);
   const [valueMulitselectDateTipologie, setValueMultiselectDateTipologie] = useState<string[]>([]);
   const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
-   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
-   const [textAreaValue, setTextAreaValue] = useState<string>('');
+  const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
+  const [textAreaValue, setTextAreaValue] = useState<string>('');
 
 
   const [page, setPage] = useState(0);
@@ -211,9 +211,9 @@ const Fatturazione : React.FC = () =>{
         setDateTipologie([]);
       }));
   };
- //TODO : la stessa funzione è utilizzata nei doc emessi lato ente , valutare se procedere con renderizzazione
- //delle row tramite file config
-   const funcToMapElements = (obj:any) => {
+  //TODO : la stessa funzione è utilizzata nei doc emessi lato ente , valutare se procedere con renderizzazione
+  //delle row tramite file config
+  const funcToMapElements = (obj:any) => {
     return obj.map((obj, index) => ({
       idFattura:obj.idfattura,
       id: obj.identificativo ?? index,
@@ -279,9 +279,9 @@ const Fatturazione : React.FC = () =>{
         data = res.data.map(el => el?.fattura).filter(obj => dataString.includes(obj.dataFattura));
       } 
     
-      const customObjData : FattureObj[] = funcToMapElements(data)
+      const customObjData : FattureObj[] = funcToMapElements(data);
     
-      setCount(customObjData?.length || 0)
+      setCount(customObjData?.length || 0);
       setGridData(customObjData);
 
       const elementsToShow = customObjData.slice(0, 10);
@@ -483,7 +483,7 @@ const Fatturazione : React.FC = () =>{
   };
 
 
-    const handleGoToDetail = async(el) => {
+  const handleGoToDetail = async(el) => {
     let idTipoContratto = 0;
     if(el.tipocontratto === "PAC - PAL senza requisiti"){
       idTipoContratto = 1;
@@ -496,33 +496,33 @@ const Fatturazione : React.FC = () =>{
   }; 
 
 
-    const handleChangePage = (
-      event: React.MouseEvent<HTMLButtonElement> | null,
-      newPage: number,
-    ) => {
-      setPage(newPage);
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => {
+    setPage(newPage);
           
-      const start = newPage * rowsPerPage;
-      const end = start + rowsPerPage;
+    const start = newPage * rowsPerPage;
+    const end = start + rowsPerPage;
        
-      const elementsToShow = gridData.slice(start, end);
-      setShowedData(elementsToShow);
+    const elementsToShow = gridData.slice(start, end);
+    setShowedData(elementsToShow);
   
-      upadateOnSelctedChange(newPage,rowsPerPage);
-    };
+    upadateOnSelctedChange(newPage,rowsPerPage);
+  };
                           
-    const handleChangeRowsPerPage = (
-      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const newRows = parseInt(event.target.value, 10);
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const newRows = parseInt(event.target.value, 10);
   
-      setRowsPerPage(newRows);
-      setPage(0);
+    setRowsPerPage(newRows);
+    setPage(0);
   
-      const elementsToShow = gridData.slice(0, newRows);
-      setShowedData(elementsToShow);
-      upadateOnSelctedChange(0,newRows);
-    };
+    const elementsToShow = gridData.slice(0, newRows);
+    setShowedData(elementsToShow);
+    upadateOnSelctedChange(0,newRows);
+  };
 
     
   const keyValueObjModalInfo = [
@@ -530,7 +530,7 @@ const Fatturazione : React.FC = () =>{
       key:"ragioneSociale",
       label:"Ragione Sociale"
     },
-     {
+    {
       key:"dataFattura",
       label:"Data Fattura"
     },
@@ -538,17 +538,17 @@ const Fatturazione : React.FC = () =>{
       key:"tipologiaFattura",
       label:"Tipologia Fattura"
     }
-  ]
+  ];
     
-    const showPopUpAction = (obj, action) => {  
+  const showPopUpAction = (obj, action) => {  
     if(action === "posticipa"){
       setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Posticipare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ripristina")});
     }else if(action === "elimina"){
-       setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
     }else if(action === "annulla"){
-       setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> l'eliminazione della seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> l'eliminazione della seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
     }
-  }
+  };
     
 
   const statusAnnulla = bodyFatturazione.idEnti.length !== 0 || 
@@ -793,13 +793,13 @@ const Fatturazione : React.FC = () =>{
         filterInfo={bodyFatturazioneDownload}
         filterNotExecuted={bodyFatturazione}
         getListaFatture={getlistaFatturazione}/>
-        <ModalInfo 
-         setOpen={setOpenModalInfo}
-         open={openModalInfo}
-         width={800}
-         textAreaValue={textAreaValue}
-         setTextAreaValue={setTextAreaValue}
-          />
+      <ModalInfo 
+        setOpen={setOpenModalInfo}
+        open={openModalInfo}
+        width={800}
+        textAreaValue={textAreaValue}
+        setTextAreaValue={setTextAreaValue}
+      />
     </MainBoxStyled>   
   );
 };
