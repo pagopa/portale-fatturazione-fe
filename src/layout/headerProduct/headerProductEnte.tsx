@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import {HeaderProduct, PartyEntity} from '@pagopa/mui-italia';
 import { arrayProducts } from '../../assets/dataLayout';
-import { Badge, IconButton } from '@mui/material';
+import { Badge, IconButton, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { PathPf } from '../../types/enum';
 import { getMessaggiCountEnte, getVerificaNotificheEnte } from '../../api/apiSelfcare/notificheSE/api';
 import DownloadIcon from '@mui/icons-material/Download';
-import {  useSnackbar } from 'notistack';
+import {  closeSnackbar, SnackbarContent, useSnackbar } from 'notistack';
 import { mesiGrid } from '../../reusableFunction/reusableArrayObj';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 import { url } from '../../api/api';
 import axios from 'axios';
+import ErrorIcon from '@mui/icons-material/Error';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 
@@ -21,6 +23,7 @@ const HeaderProductEnte : React.FC = () => {
   const statusQueryGetUri = useGlobalStore(state => state.statusQueryGetUri);
   const setStatusQueryGetUri = useGlobalStore(state => state.setStatusQueryGetUri);
   const countMessages = useGlobalStore(state => state.countMessages);
+
    
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -53,8 +56,57 @@ const HeaderProductEnte : React.FC = () => {
     
   useEffect(()=>{
     if(mainState.authenticated === true ){
+      enqueueSnackbar(
+        'Lorem Ipsum is simply dummy text of the printing and typesetting industry dummy text of the printing and typesetting industry printing... ', { 
+          variant: 'warning',
+          persist: true ,
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          content: (key, message) => (
+            <SnackbarContent style={{ marginTop: '-23px' }}>
+              <div style={{
+                backgroundColor: '#fff4e5',
+                color: '#663c00',
+                padding: '12px 16px',
+                margin: '0 40px 0 40px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                height: '50px',
+              }}>
+                <ErrorIcon style={{ color: '#ed6c02', fontSize: '20px', flexShrink: 0 }} />
+                <Tooltip
+                  title={message}
+                  arrow
+                  placement="bottom"
+                  componentsProps={{
+                    tooltip: {
+                      sx: {
+                        fontSize: '14px',
+                        padding: '8px 12px',
+                        maxWidth: 400,
+                      }
+                    }
+                  }}
+                >
+                  <span style={{
+                    flex: 1,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    cursor: 'default',
+                  }}>
+                    {message}
+                  </span>
+                </Tooltip>
+              </div>
+            </SnackbarContent>
+          )
+        });
       const interval = setInterval(() => {
         getCount();
+      
       }, 20000);
       return () => clearInterval(interval); 
     }
@@ -140,6 +192,7 @@ const HeaderProductEnte : React.FC = () => {
     }).catch(()=>{
       //const newStatusQueryUri = statusQueryGetUri.filter(el => el !== queryString && el !== null);
       // setStatusQueryGetUri(newStatusQueryUri);
+      enqueueSnackbar(`Errore nella validazione del file Notifiche.`, {variant:"warning",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
       return queryString;
     });
     return result;
