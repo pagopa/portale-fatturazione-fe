@@ -6,15 +6,21 @@ import { useNavigate } from 'react-router-dom';
 import { PathPf } from '../../types/enum';
 import { getMessaggiCountEnte, getVerificaNotificheEnte } from '../../api/apiSelfcare/notificheSE/api';
 import DownloadIcon from '@mui/icons-material/Download';
-import {  closeSnackbar, SnackbarContent, useSnackbar } from 'notistack';
+import { SnackbarContent, useSnackbar } from 'notistack';
 import { mesiGrid } from '../../reusableFunction/reusableArrayObj';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 import { url } from '../../api/api';
 import axios from 'axios';
 import ErrorIcon from '@mui/icons-material/Error';
-import CloseIcon from '@mui/icons-material/Close';
+import { getInfoBanner } from '../../api/apiSelfcare/apiBanner/api';
 
-
+interface InfoBanner {
+  id: string;
+  dataInizio: string;
+  dataFine: string;
+  testo: string;
+  visibile: boolean;
+}
 
 const HeaderProductEnte : React.FC = () => {
 
@@ -24,7 +30,7 @@ const HeaderProductEnte : React.FC = () => {
   const setStatusQueryGetUri = useGlobalStore(state => state.setStatusQueryGetUri);
   const countMessages = useGlobalStore(state => state.countMessages);
 
-   
+
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const profilo =  mainState.profilo;
@@ -56,54 +62,7 @@ const HeaderProductEnte : React.FC = () => {
     
   useEffect(()=>{
     if(mainState.authenticated === true ){
-      enqueueSnackbar(
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry dummy text of the printing and typesetting industry printing... ', { 
-          variant: 'warning',
-          persist: true ,
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
-          content: (key, message) => (
-            <SnackbarContent style={{ marginTop: '-23px' }}>
-              <div style={{
-                backgroundColor: '#fff4e5',
-                color: '#663c00',
-                padding: '12px 16px',
-                margin: '0 40px 0 40px',
-                borderRadius: '8px',
-                fontSize: '14px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                height: '50px',
-              }}>
-                <ErrorIcon style={{ color: '#ed6c02', fontSize: '20px', flexShrink: 0 }} />
-                <Tooltip
-                  title={message}
-                  arrow
-                  placement="bottom"
-                  componentsProps={{
-                    tooltip: {
-                      sx: {
-                        fontSize: '14px',
-                        padding: '8px 12px',
-                        maxWidth: 400,
-                      }
-                    }
-                  }}
-                >
-                  <span style={{
-                    flex: 1,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    cursor: 'default',
-                  }}>
-                    {message}
-                  </span>
-                </Tooltip>
-              </div>
-            </SnackbarContent>
-          )
-        });
+      getDataInfoBanner();
       const interval = setInterval(() => {
         getCount();
       
@@ -138,6 +97,76 @@ const HeaderProductEnte : React.FC = () => {
       clearInterval(interval2); 
     };
   },[mainState.authenticated,statusQueryGetUri?.length,isTabVisible]);
+
+  //:TODO  quando verrà implementato il refresh token bisogna richiamere l'api INFOBANNER
+  const getDataInfoBanner = async () => {
+    try {
+      const info = await getInfoBanner(token, profilo.nonce);
+      if(isBannerActive(info.data)){
+        enqueueSnackbar(
+          info.data.testo.length > 130 ? info.data?.testo.toString().slice(0, 130) + '...' : info.data.testo, { 
+            variant: 'warning',
+            persist: true ,
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            content: (key, message) => (
+              <SnackbarContent style={{ marginTop: '-23px' }}>
+                <div style={{
+                  backgroundColor: '#fff4e5',
+                  color: '#663c00',
+                  padding: '12px 16px',
+                  margin: '0 40px 0 40px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  height: '50px',
+                }}>
+                  <ErrorIcon style={{ color: '#ed6c02', fontSize: '20px', flexShrink: 0 }} />
+                  <Tooltip
+                    title={info.data.testo}
+                    arrow
+                    placement="bottom"
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          fontSize: '14px',
+                          padding: '8px 12px',
+                          maxWidth: 400,
+                        }
+                      }
+                    }}
+                  >
+                    <span style={{
+                      flex: 1,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      cursor: 'default',
+                    }}>
+                      {message}
+                    </span>
+                  </Tooltip>
+                </div>
+              </SnackbarContent>
+            )
+          });
+      }
+     
+    } catch (error) {
+      console.error('Failed to fetch info banner:', error);
+    }
+  };
+
+  const isBannerActive = (banner: InfoBanner | null): boolean => {
+    if (!banner || !banner.visibile) return false;
+
+    const now = new Date();
+    const start = new Date(banner.dataInizio);
+    const end = new Date(banner.dataFine);
+
+    return now >= start && now <= end;
+  };
 
   const getCount = async () => {
     try {
