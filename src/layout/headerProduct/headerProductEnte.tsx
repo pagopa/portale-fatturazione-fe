@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {HeaderProduct, PartyEntity} from '@pagopa/mui-italia';
 import { arrayProducts } from '../../assets/dataLayout';
-import { Badge, IconButton, Tooltip } from '@mui/material';
+import { Badge, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { PathPf } from '../../types/enum';
 import { getMessaggiCountEnte, getVerificaNotificheEnte } from '../../api/apiSelfcare/notificheSE/api';
@@ -13,6 +13,7 @@ import { url } from '../../api/api';
 import axios from 'axios';
 import ErrorIcon from '@mui/icons-material/Error';
 import { getInfoBanner } from '../../api/apiSelfcare/apiBanner/api';
+import DOMPurify from 'dompurify';
 
 interface InfoBanner {
   id: string;
@@ -102,9 +103,10 @@ const HeaderProductEnte : React.FC = () => {
   const getDataInfoBanner = async () => {
     try {
       const info = await getInfoBanner(token, profilo.nonce);
+    
       if(isBannerActive(info.data)){
         enqueueSnackbar(
-          info.data.testo.length > 130 ? info.data?.testo.toString().slice(0, 130) + '...' : info.data.testo, { 
+          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(info.data.testo) }} />, { 
             variant: 'warning',
             persist: true ,
             anchorOrigin: { vertical: 'top', horizontal: 'center' },
@@ -120,33 +122,10 @@ const HeaderProductEnte : React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  height: '50px',
+               
                 }}>
                   <ErrorIcon style={{ color: '#ed6c02', fontSize: '20px', flexShrink: 0 }} />
-                  <Tooltip
-                    title={info.data.testo}
-                    arrow
-                    placement="bottom"
-                    componentsProps={{
-                      tooltip: {
-                        sx: {
-                          fontSize: '14px',
-                          padding: '8px 12px',
-                          maxWidth: 400,
-                        }
-                      }
-                    }}
-                  >
-                    <span style={{
-                      flex: 1,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      cursor: 'default',
-                    }}>
-                      {message}
-                    </span>
-                  </Tooltip>
+                  {message}
                 </div>
               </SnackbarContent>
             )
