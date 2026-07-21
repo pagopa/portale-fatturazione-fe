@@ -6,22 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { PathPf } from '../../types/enum';
 import { getMessaggiCountEnte, getVerificaNotificheEnte } from '../../api/apiSelfcare/notificheSE/api';
 import DownloadIcon from '@mui/icons-material/Download';
-import { SnackbarContent, useSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import { mesiGrid } from '../../reusableFunction/reusableArrayObj';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 import { url } from '../../api/api';
 import axios from 'axios';
-import ErrorIcon from '@mui/icons-material/Error';
-import { getInfoBanner } from '../../api/apiSelfcare/apiBanner/api';
-import DOMPurify from 'dompurify';
-
-interface InfoBanner {
-  id: string;
-  dataInizio: string;
-  dataFine: string;
-  testo: string;
-  visibile: boolean;
-}
 
 const HeaderProductEnte : React.FC = () => {
 
@@ -63,7 +52,6 @@ const HeaderProductEnte : React.FC = () => {
     
   useEffect(()=>{
     if(mainState.authenticated === true ){
-      getDataInfoBanner();
       const interval = setInterval(() => {
         getCount();
       
@@ -99,53 +87,6 @@ const HeaderProductEnte : React.FC = () => {
     };
   },[mainState.authenticated,statusQueryGetUri?.length,isTabVisible]);
 
-  //:TODO  quando verrà implementato il refresh token bisogna richiamere l'api INFOBANNER
-  const getDataInfoBanner = async () => {
-    try {
-      const info = await getInfoBanner(token, profilo.nonce);
-    
-      if(isBannerActive(info.data)){
-        enqueueSnackbar(
-          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(info.data.testo) }} />, { 
-            variant: 'warning',
-            persist: true ,
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
-            content: (key, message) => (
-              <SnackbarContent style={{ marginTop: '-23px' }}>
-                <div style={{
-                  backgroundColor: '#fff4e5',
-                  color: '#663c00',
-                  padding: '12px 16px',
-                  margin: '0 40px 0 40px',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-               
-                }}>
-                  <ErrorIcon style={{ color: '#ed6c02', fontSize: '20px', flexShrink: 0 }} />
-                  {message}
-                </div>
-              </SnackbarContent>
-            )
-          });
-      }
-     
-    } catch (error) {
-      console.error('Failed to fetch info banner:', error);
-    }
-  };
-
-  const isBannerActive = (banner: InfoBanner | null): boolean => {
-    if (!banner || !banner.visibile) return false;
-
-    const now = new Date();
-    const start = new Date(banner.dataInizio);
-    const end = new Date(banner.dataFine);
-
-    return now >= start && now <= end;
-  };
 
   const getCount = async () => {
     try {
@@ -215,7 +156,7 @@ const HeaderProductEnte : React.FC = () => {
             productsList={arrayProducts}
             onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
             partyList={partyList}
-          ></HeaderProduct>
+          />
         </div>
       </div>
       {  (profilo.profilo !== 'CON' && profilo.profilo !== 'REC') &&
