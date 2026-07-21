@@ -1,24 +1,14 @@
 import * as React from 'react';
 import Alert, { AlertColor } from '@mui/material/Alert';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { MainState } from '../../../types/typesGeneral';
 import { redirect } from '../../../api/api';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from '@mui/material';
 import { useNavigate } from 'react-router';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { PathPf } from '../../../types/enum';
-import { ActionReducerType } from '../../../reducer/reducerMainState';
 import { useGlobalStore } from '../../../store/context/useGlobalStore';
-
-
-type AlertProps = {
-    setVisible:Dispatch<SetStateAction<boolean>>,
-    visible:boolean,
-    mainState:MainState,
-    dispatchMainState:Dispatch<ActionReducerType>
-}
 
 const BasicAlerts:React.FC = () => {
   const { t } = useTranslation();

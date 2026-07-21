@@ -18,7 +18,7 @@ const RowWhiteList :React.FC<RowWhite>  = ({element, setSelected,selected,checkI
       setSelected((prev)=>([...prev,...[element.idWhite]]));
     }
   };
-  console.log({headerNames});
+
   return (
     <TableRow  sx={{
       height: '80px',
