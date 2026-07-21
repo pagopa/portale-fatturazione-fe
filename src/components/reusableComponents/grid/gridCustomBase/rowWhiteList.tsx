@@ -14,19 +14,6 @@ interface RowWhite<T = any> {
 
 const RowWhiteList :React.FC<RowWhite>  = ({element,headerNames,setOpenModalAction}) => {
 
-   let bgColorRow = "#FFF0F5"
-
-   if(element.stato === 'Eliminata'){
-      bgColorRow = "#FFF0F5";
-   }else if(element.stato === 'Posticipata'){
-      bgColorRow = "#FFFAF0";
-   }else if(element.stato === 'Ripristinata'){
-       bgColorRow = "#F0FFF0";
-   }
- 
-  const test = (a) => {
-    return a;
-  };
   return (
     <TableRow  sx={{
       height: '80px',

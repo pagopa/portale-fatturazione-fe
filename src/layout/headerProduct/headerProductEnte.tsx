@@ -6,13 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { PathPf } from '../../types/enum';
 import { getMessaggiCountEnte, getVerificaNotificheEnte } from '../../api/apiSelfcare/notificheSE/api';
 import DownloadIcon from '@mui/icons-material/Download';
-import {  useSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import { mesiGrid } from '../../reusableFunction/reusableArrayObj';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 import { url } from '../../api/api';
 import axios from 'axios';
-
-
 
 const HeaderProductEnte : React.FC = () => {
 
@@ -21,7 +19,8 @@ const HeaderProductEnte : React.FC = () => {
   const statusQueryGetUri = useGlobalStore(state => state.statusQueryGetUri);
   const setStatusQueryGetUri = useGlobalStore(state => state.setStatusQueryGetUri);
   const countMessages = useGlobalStore(state => state.countMessages);
-   
+
+
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const profilo =  mainState.profilo;
@@ -55,6 +54,7 @@ const HeaderProductEnte : React.FC = () => {
     if(mainState.authenticated === true ){
       const interval = setInterval(() => {
         getCount();
+      
       }, 20000);
       return () => clearInterval(interval); 
     }
@@ -86,6 +86,7 @@ const HeaderProductEnte : React.FC = () => {
       clearInterval(interval2); 
     };
   },[mainState.authenticated,statusQueryGetUri?.length,isTabVisible]);
+
 
   const getCount = async () => {
     try {
@@ -140,6 +141,7 @@ const HeaderProductEnte : React.FC = () => {
     }).catch(()=>{
       //const newStatusQueryUri = statusQueryGetUri.filter(el => el !== queryString && el !== null);
       // setStatusQueryGetUri(newStatusQueryUri);
+      enqueueSnackbar(`Errore nella validazione del file Notifiche.`, {variant:"warning",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
       return queryString;
     });
     return result;
@@ -154,7 +156,7 @@ const HeaderProductEnte : React.FC = () => {
             productsList={arrayProducts}
             onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
             partyList={partyList}
-          ></HeaderProduct>
+          />
         </div>
       </div>
       {  (profilo.profilo !== 'CON' && profilo.profilo !== 'REC') &&

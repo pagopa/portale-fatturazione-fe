@@ -28,6 +28,7 @@ const RowContratto = ({ apiGet, element, headerNames}: { apiGet:any; element: an
           const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer',width:"350px"} : null;
           const valueEl = (i === 0 && element[value["keyValue"]]?.toString().length > 50) ? element[value["keyValue"]]?.toString().slice(0, 47) + '...' : element[value["keyValue"]];
        
+        
           if(value["keyValue"] === "tipoContratto"){
         
             return(

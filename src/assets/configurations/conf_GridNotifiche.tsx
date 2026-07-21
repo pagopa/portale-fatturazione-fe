@@ -1,7 +1,7 @@
-import { Alert, Box, Chip, IconButton, Snackbar, Tooltip } from "@mui/material";
-import { HeaderGridCustom } from "./conf_GridDocEmessiEnte";
+import { Alert, IconButton, Snackbar, Tooltip } from "@mui/material";
 import ArticleIcon from '@mui/icons-material/Article';
 import { useState } from "react";
+import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 
 export const headerNamesEnte: HeaderGridCustom[] = [
   {label:"Contestazione", align:"center", width:"100px"},

@@ -10,9 +10,9 @@ import ScrollToTop from "../components/reusableComponents/scrollToTop";
 const LayoutEnte = ({sideNav}) => {
   return (
     <>
-      <HeaderLogEnte></HeaderLogEnte>
+      <HeaderLogEnte/>
       <HeaderProductEnte/>
-      <ScrollToTop></ScrollToTop>
+      <ScrollToTop/>
       <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
         <Grid item xs={2}>
           {sideNav}
