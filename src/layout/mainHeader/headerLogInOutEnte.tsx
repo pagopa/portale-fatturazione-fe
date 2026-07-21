@@ -1,5 +1,4 @@
 import { HeaderAccount } from '@pagopa/mui-italia';
-import { useEffect, useState } from 'react';
 import { getManuale, managePresaInCarico, redirect } from '../../api/api';
 import { pagoPALinkHeder } from '../../assets/dataLayout';
 import { JwtUser } from '../../types/typesGeneral';
@@ -9,6 +8,7 @@ import { useGlobalStore } from '../../store/context/useGlobalStore';
 import { getInfoBanner } from '../../api/apiSelfcare/apiBanner/api';
 import ErrorIcon from '@mui/icons-material/Error';
 import DOMPurify from 'dompurify';
+import { useRef, useState, useEffect } from 'react';
 
 interface InfoBanner {
   id: string;
@@ -81,6 +81,23 @@ const HeaderLogEnte = () => {
 
     return now >= start && now <= end;
   };
+
+
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState(0);
+
+  const isActive = !!(contentBasserApi && isBannerActive(contentBasserApi));
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      setContentHeight(entries[0].contentRect.height);
+    });
+
+    observer.observe(contentRef.current);
+    return () => observer.disconnect();
+  }, [contentBasserApi]);
     
 
   function onEmailClick() {
@@ -102,23 +119,30 @@ const HeaderLogEnte = () => {
         }}
         onDocumentationClick={()=>onButtonClick()}
       />
-      <div style={{ overflow: 'hidden' }}>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: '#fff4e5',
-          color: '#663c00',
-          padding: '12px 20%',
-          borderRadius: '8px',
-          fontSize: '14px',
-          gap: '20px',
-          transform: (contentBasserApi && isBannerActive(contentBasserApi)) ? 'translateY(0)' : 'translateY(-100%)',
-          transition: 'transform 1s ease-in-out',
-        }}>
+      <div  style={{
+        overflow: 'hidden',
+        maxHeight: isActive ? `${contentHeight+24}px` : '0px',
+        transition: 'max-height 1s ease-in-out',
+      }}>
+        <div
+          ref={contentRef}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: '#fff4e5',
+            color: '#663c00',
+            padding: '12px 20%',
+            borderRadius: '8px',
+            fontSize: '14px',
+            gap: '20px',
+            transform: isActive ? 'translateY(0)' : 'translateY(-100%)',
+            transition: 'transform 1s ease-in-out',
+          }}
+        >
           <ErrorIcon style={{ color: '#ed6c02', flexShrink: 0 }} />
           <div
-            style={{flex: 1 }}
+            style={{ flex: 1 }}
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(contentBasserApi?.testo || "") }}
           />
         </div>
