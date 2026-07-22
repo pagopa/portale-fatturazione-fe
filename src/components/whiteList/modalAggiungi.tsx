@@ -212,9 +212,9 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               </div>
             </div>
           </div>
-             <div className="row mb-5 mt-5" >
+          <div className="row mb-5 mt-5" >
             <div  className="col-6">
-               <FormControl
+              <FormControl
                 fullWidth
                 size="medium"
               >
@@ -275,7 +275,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 }}
               />
             </div>
-            </div>
+          </div>
           <div className="row mb-5 mt-5" >
             
             <div className='col-6'>
@@ -306,7 +306,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               </FormControl>
             </div>
             <div  className="col-6">
-             <Box >
+              <Box >
                 <FormControl
                   fullWidth
                   size="medium"

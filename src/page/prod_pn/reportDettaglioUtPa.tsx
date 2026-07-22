@@ -328,93 +328,6 @@ const ReportDettaglio : React.FC = () => {
     }
   };
     
- 
-  const notificheListWithOnere = notificheList.map((notifica:NotificheList) =>{
-    let newOnere = '--';
-    if( notifica.onere === 'PA_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'PA_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'PA_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if( notifica.onere === 'GSP_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'GSP_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'GSP_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if( notifica.onere === 'SCP_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'SCP_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'SCP_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if( notifica.onere === 'PSP_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'PSP_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'PSP_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if( notifica.onere === 'AS_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'AS_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'AS_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if( notifica.onere === 'SA_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'SA_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'SA_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if(notifica.onere === 'SEND_PA'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_GSP'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_SCP'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_PSP'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_AS'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_SA'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_SEND'){
-      newOnere = 'SEND';
-    }else if(notifica.onere === 'SEND_REC'){
-      newOnere = 'RECAPITISTA';
-    }else if(notifica.onere === 'SEND_CON'){
-      newOnere = 'CONSOLIDATORE';
-    }else if(notifica.onere === 'REC'){
-      newOnere = 'RECAPITISTA';
-    }else if(notifica.onere === 'CON'){
-      newOnere = 'CONSOLIDATORE';
-    }
-        
-    const element = {
-      idNotifica:notifica.idNotifica,
-      contestazione:notifica.contestazione,
-      id:notifica.idNotifica,
-      onere:newOnere,
-      recipientId:notifica.recipientId||"--",
-      anno:notifica.anno,
-      mese:mesiGrid[Number(notifica.mese)],
-      data:notifica.data?.replace('T', ' ').split('.')[0]||"--",
-      ragioneSociale:notifica.ragioneSociale,
-      tipoNotifica:notifica.tipoNotifica||"--",
-      iun:notifica.iun||"--",
-      dataInvio:new Date(notifica.dataInvio).toISOString().split('T')[0],
-      statoEstero:notifica.statoEstero||"--",
-      cap:notifica.cap||"--",
-      costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-    };
-    if(profilo.profilo === 'REC' || profilo.profilo === 'CON' || (profilo.profilo === "PA" && profilo.auth === "SELFCARE")){
-      const {ragioneSociale, ...result} = element;
-      return result;
-    }else{
-      return element;
-    }
-  });
     
   const onAnnullaFiltri = () =>{
     // to make call equal on initial render
@@ -654,7 +567,7 @@ const ReportDettaglio : React.FC = () => {
   };
     
   const getContestazioneModal = async(el) =>{
-    const idNotifica = el.id;
+    const idNotifica = el.idNotifica;
     setShowLoadingGrid(true);
     if(enti){
       await getContestazione(token, profilo.nonce , idNotifica).then((res)=>{
@@ -1135,7 +1048,7 @@ const ReportDettaglio : React.FC = () => {
       />      
       <GridCustom
         nameParameterApi='idNotifica'
-        elements={notificheListWithOnere}
+        elements={notificheList}
         changePage={handleChangePage}
         changeRow={handleChangeRowsPerPage} 
         total={totalNotifiche}
@@ -1148,6 +1061,7 @@ const ReportDettaglio : React.FC = () => {
         widthCustomSize="2000px"
         sentenseEmpty={"Non sono presenti notifiche"}
         body={bodyGetLista}
+
       />                       
       <ModalContestazione open={open} 
         setOpen={setOpen} 

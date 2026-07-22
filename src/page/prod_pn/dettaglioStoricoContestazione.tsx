@@ -58,7 +58,7 @@ const DettaglioStoricoContestazione: React.FC = () => {
     });
   };
 
-  const [loadingDettaglio,setLoadingDettaglio] = useState(false);
+  const [loadingDettaglio,setLoadingDettaglio] = useState(true);
   const [arrayDetails,setArrayDetails] = useState<Contestazione[]>([]);
   const [lastStepContestazioneObj, setLastStepContestazioneObj] = useState<Contestazione|null>(null);
   const [showDownloading, setShowDownloading] = useState(false);

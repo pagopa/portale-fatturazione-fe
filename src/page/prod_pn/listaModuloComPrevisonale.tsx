@@ -149,35 +149,8 @@ const ListaCommessaPrevisionale:React.FC = () =>{
     await listaModuloCommessaPrevisonalePagopa(bodyFormattedDate ,token, profilo.nonce)
       .then((res)=>{
            
-        setCount(res.data.count);
-        const finalData = res.data.moduliCommessa.map(el => {
-              
-          return {
-            id:el.ragioneSociale+el.annoValidita+el.meseValidita,
-            idTipoContratto: el.idTipoContratto,
-            meseValidita:el.meseValidita,
-            prodotto:el.prodotto,
-            idEnte:el.idEnte,
-            ragioneSociale:el.ragioneSociale,
-            annoValidita:el.annoValidita,
-            mese:mesiGrid[el.meseValidita],
-            stato:el.source||"--",
-            tipologiaContratto:el.tipologiaContratto||"--",
-            dataContratto:dayjs(el.dataContratto).format("YYYY-MM-DD"),
-            dataInserimento:dayjs(el.dataInserimento).format("YYYY-MM-DD"),
-            dataChiusura:el.source === "archiviato" ? "--" : el.source === "facoltativo" ? "TBD" : dayjs(el.dataChiusura).format("YYYY-MM-DD"),
-            totaleNotificheDigitaleNaz:el.totaleNotificheDigitaleNaz !== null && el.totaleNotificheDigitaleNaz !== "" ? el.totaleNotificheDigitaleNaz :"--",
-            totaleNotificheDigitaleInternaz:el.totaleNotificheDigitaleInternaz !== null && el.totaleNotificheDigitaleInternaz !== "" ? el.totaleNotificheDigitaleInternaz:"--",
-            totaleNotificheAnalogicoARNaz:el.totaleNotificheAnalogicoARNaz !== null && el.totaleNotificheAnalogicoARNaz !== "" ? el.totaleNotificheAnalogicoARNaz:"--",
-            totaleNotificheAnalogicoARInternaz:el.totaleNotificheAnalogicoARInternaz !== null && el.totaleNotificheAnalogicoARInternaz !== "" ? el.totaleNotificheAnalogicoARInternaz:"--",
-            totaleNotificheAnalogico890Naz:(el.totaleNotificheAnalogico890Naz !== null && el.totaleNotificheAnalogico890Naz !== "") ? el.totaleNotificheAnalogico890Naz:"--",
-            totaleNotifiche:el.totaleNotifiche !== null && el.totaleNotifiche !== "" ? el.totaleNotifiche:"--",
-            action:""
-          };
-        });
-
-             
-        setGridData(finalData);
+        setCount(res.data.count);     
+        setGridData(res.data.moduliCommessa);
         isInitialRender.current = false;
         setShowLoadingLista(false);
       }).catch((err)=>{
@@ -447,10 +420,11 @@ const ListaCommessaPrevisionale:React.FC = () =>{
         total={count}
         page={bodyGetLista.page}
         rows={bodyGetLista.size}
-        headerNames={headersGridPrevisionale(handleEvent)}
+        headerNames={headersGridPrevisionale}
         disabled={showLoadingLista}
         widthCustomSize="2000px"
         body={bodyGetLista}
+        apiGet={handleEvent}
         sentenseEmpty={"Non sono presenti moduli commessa"}
       />
       <ModalLoading 

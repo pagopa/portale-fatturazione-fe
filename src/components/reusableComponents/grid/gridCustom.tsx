@@ -3,6 +3,7 @@ import React, { SetStateAction } from "react";
 import HeaderGridCustom from "./headerGrid/headerGridCustom";
 import EmptyRow from "./emptyRow";
 import GridRowsRenderer from "./rowComponent/gridRowsRenderer";
+import GridRowDesignByConfigFile from "./rowComponent/gridRowDesignByConfigFile";
 interface GridCustomProps<T = any> {
     elements:  T[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -49,6 +50,17 @@ export interface HeaderGridCustom {
     headerActionSort?:boolean,
     keyValue:string,
     renderValue?:(el,fun:(el,string) => any) => JSX.Element,
+
+    
+    typeColumn?:string,
+    hideColumn?:boolean,
+    switchValue?:{keySwitch:number, valueSwitch:string}[],
+    chip?:boolean,
+    funToManipulateValue?:(val) => any,
+    makeAction?:boolean,
+    applyCss?:boolean,
+    keyToManipulateData?:string
+
     
 }
 
@@ -152,6 +164,25 @@ const GridCustom: React.FC<GridCustomProps> = ({
                   />
                 );
               })}
+
+              {elements.length > 0 && elements.map((element,index) => {
+                return (
+                  <GridRowDesignByConfigFile
+                    element={element}
+                    sliced={[]}
+                    nameParameterApi={nameParameterApi}
+                    apiGet={apiGet}
+                    headerNames={headerNames}
+                    headerNamesCollapse={headerNamesCollapse}
+                    selected={selected}
+                    setSelected={setSelected}
+                    checkIfChecked={checkIfChecked}
+                    setOpenModalAction={setOpenModalAction}
+                  />
+                );
+              
+              })}
+
             </TableBody>
           </Table>
         </Card>

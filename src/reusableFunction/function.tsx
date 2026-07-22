@@ -3,6 +3,7 @@ import { ArrayTipologieCommesse, DatiModuloCommessaPdf, ModuliCommessa } from ".
 import { month, objMesiWithZero } from "./reusableArrayObj";
 import { ManageErrorResponse } from "../types/typesGeneral";
 import { Fattura } from "../page/ente/docConEme";
+import { NotificheList } from "../types/typeReportDettaglio";
 
 export const fixResponseForDataGrid = <T,>(arr:T[]) =>{
   const res = arr.map( (singlObj:any) =>{    
@@ -166,7 +167,7 @@ export const findStatoContestazioni = (code:number) => {
   case 11:
     return "Processo completato";
   default:
-    "Caricamento file";
+    return "Caricamento file";
             
   }
 };
@@ -392,3 +393,55 @@ export const sortByTipoFattura = <T,>(
   return copy;
 };
 
+
+export const getStatusColor = (stato: string): string => {
+  switch (stato) {
+  case "obbligatorio":
+    return "#5BB0D5";
+  case "archiviato":
+    return "#fafafa";
+  case "facoltativo":
+    return "#f7e7bc";
+  default:
+    return "#ffffff";
+  }
+};
+
+
+export const getOnereLabel = (notifica: NotificheList): string => {
+  const onere = notifica.onere;
+
+  if (!onere) {
+    return '--';
+  }
+
+  if (onere.endsWith('_SEND')) {
+    return 'SEND';
+  }
+
+  if (onere.endsWith('_REC') || onere === 'REC') {
+    return 'RECAPITISTA';
+  }
+
+  if (onere.endsWith('_CON') || onere === 'CON') {
+    return 'CONSOLIDATORE';
+  }
+
+  if (onere.startsWith('SEND_')) {
+    return 'ENTE';
+  }
+
+  return '--';
+};
+
+export const getColorChipContestazioneStorico = (stato:number) => {
+  let bgColorRow = "#F0F8FF"; 
+  if(stato === 3){
+    bgColorRow = "#F0FFF0";
+  }else if(stato === 2){
+    bgColorRow = "#FFF0F5";
+  }
+
+  return bgColorRow;
+};
+ 

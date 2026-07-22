@@ -57,7 +57,7 @@ const PageTipologiaContratto :React.FC = () =>{
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalContratti, setTotalContratti]  = useState(0);
   const [sentence , setSentence] = useState<React.ReactNode>(null);
-  const [elementSelected, setElementSelected] = useState({idEnte:'', tipologiaContratto:0});
+  const [elementSelected, setElementSelected] = useState({idEnte:'', tipoContratto:0});
   const [openModalConfermaIns, setOpenModalConfermaIns] = useState(false);
   const { 
     filters,
@@ -108,7 +108,7 @@ const PageTipologiaContratto :React.FC = () =>{
     setGetListaLoading(true);
     await getListaTipologiaFatturazionePagoPa(token, profilo.nonce, (p + 1), rows, body).then((res)=>{
       setTotalContratti(res.data.count);
-      const dataToInsert = res.data.contratti.map((el)=> {
+      /*const dataToInsert = res.data.contratti.map((el)=> {
         const result = {
           idEnte:el.idEnte,
           ragioneSociale:el.ragioneSociale,
@@ -116,8 +116,8 @@ const PageTipologiaContratto :React.FC = () =>{
           tipoContratto:el.tipoContratto
         };
         return result;
-      });
-      setGridData(dataToInsert);
+      });*/
+      setGridData(res.data.contratti);
       setGetListaLoading(false);
     }).catch(((err)=>{
       setGetListaLoading(false);
@@ -209,18 +209,19 @@ const PageTipologiaContratto :React.FC = () =>{
   };
 
   const changeContractType = (el) => {
-    const old = el.tipologiaContratto === 2 ? 'PAC' : 'PAL';
-    const newC = el.tipologiaContratto === 2 ? 'PAL' : 'PAC';
+
+    const old = el.tipoContratto === 2 ? 'PAC' : 'PAL';
+    const newC = el.tipoContratto === 2 ? 'PAL' : 'PAC';
     const tag = <Typography>Stai modificando la tipologia contratto da {old} a<Typography className="ms-2" component="span" fontWeight="bold">{newC}</Typography> di <Typography component="span" fontWeight="bold">
-      { el.name} </Typography>: confermi l'operazione?</Typography>;
+      { el.ragioneSociale} </Typography>: confermi l'operazione?</Typography>;
     setSentence(tag);
     setElementSelected(el);
     setOpenModalConfermaIns(true);
   };
 
-
+  console.log({elementSelected});
   const onButtonComfermaPopUp = async() => {
-    const typToSet = elementSelected.tipologiaContratto === 1 ? 2 : 1;
+    const typToSet = elementSelected.tipoContratto === 1 ? 2 : 1;
     await modifyContrattoPagoPa(token, profilo.nonce,{idEnte:elementSelected.idEnte, tipologiaContratto:typToSet}).then(()=> {
       managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
       setOpenModalConfermaIns(false);
