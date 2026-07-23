@@ -3,17 +3,16 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Autocomplete, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField} from '@mui/material';
 import { SetStateAction, useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { ElementMultiSelect} from '../../types/typeReportDettaglio';
+import { ElementMultiSelect } from '../../types/typeReportDettaglio';
 import { listaEntiNotifichePage } from '../../api/apiSelfcare/notificheSE/api';
 import { manageError, managePresaInCarico } from '../../api/api';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { getAnniWhiteAdd, getMesiWhiteAdd, getTipologiaFatturaWhite, whiteListAdd } from '../../api/apiPagoPa/whiteListPA/whiteList';
 import Loader from '../reusableComponents/loader';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
+import MainFilter from '../reusableComponents/mainFilter';
+import { gestioneFattureInserisci, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../api/apiPagoPa/gestioneFatturePA/api';
+import { formatDate } from '../../reusableFunction/function';
 
 const style = {
   position: 'absolute' as const,
@@ -33,89 +32,58 @@ interface ModalAggiungiProps {
   getLista:any
 }
 
-interface Bodyadd {
-  mesi: number[]
+interface BodyAction {
+  mese: number[]
   anno: number|null,
   tipologiaFattura: string|null,
-  idEnte: string|null
+  idEnte: string|null,
+  azione:string|null,
+  nota: {
+    "data": string,
+    "testo": string
+  }|null
 }
 
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
+const inputPropsObj = {
+  xs: 12,
+  sm: 12,
+  md: 6,
+  lg: 6
+};
+
 
 const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) => {
-
+  
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
-
+  
   
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
-
-  const [valueAutocomplete, setValueAutocomplete] = useState<{descrizione:string|null,idEnte:string|null}>({descrizione:null,idEnte:null});
+  const exceptionId = import.meta.env.VITE_ACTION_EXCEPTION_ENTE_ID;
+  
+  const [valueAutocomplete, setValueAutocomplete] = useState<{descrizione:string,idEnte:string}|null>(null);
   const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
   const [textValue, setTextValue] = useState('');
-  const [valueMotiselectMonths, setValueMultiMonths] = useState<{descrizione:string,mese:number}[]>([]);
+  // const [valueMotiselectMonths, setValueMultiMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
   const [arrayYears,setArrayYears] = useState<number[]>([]);
   const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [showLoader, setShowLoader] = useState(false);
-  const [noteText, setNoteText] = useState('');
-  const [azioni, setAzioni] = useState(["Posticipa","Elimina"]);
-  const [azioneSelected, setAzioneSelected] = useState<string|null>(null);
-  const [bodyAdd, setBodyAdd] = useState<Bodyadd>({
-    mesi: [],
+  //const [noteText, setNoteText] = useState('');
+  const azioni = ["Posticipa","Elimina"];
+  
+  const [bodyAction, setBodyAction] = useState<BodyAction>({
+    mese: [],
     anno: null,
     tipologiaFattura: null,
     idEnte: null,
+    azione:null,
+    nota:null
   });
-
-  useEffect(()=>{
-    getListTipologiaFattura();
-  },[]);
+  console.log({bodyAction});
   
-  useEffect(()=>{
-    if(bodyAdd.idEnte === null){
-      setBodyAdd({
-        mesi: [],
-        anno: null,
-        tipologiaFattura: null,
-        idEnte: null,
-      });
-      setValueMultiMonths([]);
-      setArrayMonths([]);
-      setArrayYears([]);
-    }
-    if(bodyAdd.idEnte){
-      setBodyAdd((prev) => ({
-        ...prev,
-        ...{
-          mesi: [],
-          anno: null,
-          tipologiaFattura: null
-        }
-      }));
-      setValueMultiMonths([]);
-    }
-  },[bodyAdd.idEnte]);
-
-  useEffect(()=>{
-    if(bodyAdd.tipologiaFattura !== null){
-      getAnni(bodyAdd.tipologiaFattura, bodyAdd.idEnte);
-      setBodyAdd((prev) => ({...prev,...{ mesi:[],anno: null,}}));
-      setValueMultiMonths([]);
-      setArrayMonths([]);
-            
-    }
-  },[bodyAdd.tipologiaFattura]);
-
-  useEffect(()=>{
-    if(bodyAdd.anno !== null){
-      getMesi(bodyAdd.tipologiaFattura, bodyAdd.idEnte, bodyAdd.anno);
-    }
-  },[bodyAdd.anno]);
-
-
+  
   useEffect(()=>{
     const timer = setTimeout(() => {
       if(textValue.length >= 3){ 
@@ -124,7 +92,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     }, 800);
     return () => clearTimeout(timer);
   },[textValue]);
-        
+  
   const listaEntiPageOnSelect = async () =>{
     await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
       .then((res)=>{
@@ -133,43 +101,37 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
         manageError(err,dispatchMainState);
       }));
   };
-
-  const getListTipologiaFattura = async() => {
-    await getTipologiaFatturaWhite(token, profilo.nonce).then((res)=>{
-      setTipologiaFatture(res.data);
-    }).catch(((err)=>{
-      setTipologiaFatture([]);
-      manageError(err,dispatchMainState);
-    }));   
-  };
-
-  const getAnni = async(tipologiaFattura,idEnte) => {
-    await getAnniWhiteAdd(token, profilo.nonce,{tipologiaFattura:tipologiaFattura,idEnte:idEnte}).then((res)=>{
+  
+  
+  const getAnni = async(tipologiaFattura,azione) => {
+    await getAnniGestioneFattureAzione(token, profilo.nonce,{tipologiaFattura:tipologiaFattura,azione:azione}).then((res)=>{
       setArrayYears(res.data);
     }).catch(((err)=>{
       manageError(err,dispatchMainState);
     }));   
-
+    
   };
-
-  const getMesi = async(tipologiaFattura,idEnte,anno) => {
-    await getMesiWhiteAdd(token, profilo.nonce,{tipologiaFattura:tipologiaFattura, idEnte:idEnte,anno:anno}).then((res)=>{
+  
+  const getMesi = async(tipologiaFattura,azione,anno) => {
+    await getMesiGestioneFattureAzione(token, profilo.nonce,{tipologiaFattura:tipologiaFattura, azione:azione,anno:anno.toString()}).then((res)=>{
       setArrayMonths(res.data);
-      setValueMultiMonths([]);
+
     }).catch(((err)=>{
       manageError(err,dispatchMainState);
     }));   
   };
   
-   
+  
   const onButtonOK = async(body) => {
     setShowLoader(true);
-    await whiteListAdd(token, profilo.nonce, body).then(async(res)=>{
+    const newBody ={...body,...{mese:body.mese[0].toString(),anno:body.anno.toString()}};
+    await gestioneFattureInserisci(token, profilo.nonce, newBody).then((res)=>{
       managePresaInCarico('INSER_DELETE_WHITE_LIST',dispatchMainState);
       setShowLoader(false);
       setOpen(false);
-      await getLista(body.anno);
+      getLista(body.anno);
       clearPopUp();
+      console.log({res});
     }).catch((err)=>{
       setShowLoader(false);
       setOpen(false);
@@ -177,23 +139,46 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
       clearPopUp();
     });
   };
-
+  
   const clearPopUp = () => {
-    setBodyAdd({
-      mesi: [],
+    setBodyAction({
+      mese: [],
       anno: null,
       tipologiaFattura: null,
-      idEnte: null,
+      idEnte:null,
+      azione:null,
+      nota:null
     });
-    setValueMultiMonths([]);
-    setValueAutocomplete({descrizione:null,idEnte:null});
+    // setValueMultiMonths([]);
+    setValueAutocomplete(null);
     setArrayMonths([]);
     setDataSelect([]);
     setTextValue('');
   };
 
-  //TODO: SISTEMARE IL MODALE CON I FILTRI CUSTOM E TOGLI TUTTA LA LOGICA DAGLI USEEFFECT
+  const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
 
+  function isValidText(str) {
+    return regex.test(str.trim());
+  }
+
+  function isValidText2(str: string): boolean {
+    const trimmed = str.trim();
+    if (!trimmed) return false;
+
+    const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
+    return words.length >= 3;
+  }
+  
+ 
+
+  const disableBotton = (bodyAction.anno === null 
+  || bodyAction.mese.length === 0 
+  || bodyAction.tipologiaFattura === null
+  ||(bodyAction.nota?.testo && bodyAction.nota.testo.length < 10)
+  || bodyAction.nota === null 
+  || !isValidText(bodyAction.nota.testo||"") )? true : false;
+  
   return (
     <div>
       <Modal
@@ -203,7 +188,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
           <div className='d-flex justify-content-between'>
             <div className='d-flex align-items-center justify-content-start'>
               <Typography  id="modal-modal-title" variant="h6" component="h2">
-                              Inserisci gli enti nella lista
+    Inserisci gli enti nella lista
               </Typography>
             </div>
             <div className="d-flex align-items-center justify-content-end">
@@ -212,192 +197,155 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               </div>
             </div>
           </div>
-             <div className="row mb-5 mt-5" >
-            <div  className="col-6">
-               <FormControl
-                fullWidth
-                size="medium"
-              >
-                <InputLabel>
-                                Azione  
-                </InputLabel>
-                <Select
-                  label='Azione'
-                  onChange={(e) => setAzioneSelected(e.target.value||null)}     
-                  value={azioneSelected||''}       
-                >
-                  {azioni.map((el,i) =>{ 
-                    return (            
-                      <MenuItem
-                        key={`${el}-${i}`}
-                        value={el}
-                      >
-                        {el}
-                      </MenuItem>              
-                    );
-                  } )}   
-                </Select>
-              </FormControl>
-            </div>
-            <div  className="col-6">
-              <Autocomplete
-                disabled={azioneSelected === null || azioneSelected === ""}
-                limitTags={1}
-                onChange={(event, value) => {
-                  setBodyAdd((prev:any) => ({...prev,...{idEnte:value?.idEnte||null}}));
-                  if(value){
-                    setValueAutocomplete(value);
-                  }else{
-                    setValueAutocomplete({descrizione:null,idEnte:null});
-                  }
-                }}
-                options={dataSelect}
-                disableCloseOnSelect
-                getOptionLabel={(option) => option.descrizione||''}
-                value={valueAutocomplete}
-                isOptionEqualToValue={(option, value) => option.idEnte === value.idEnte}
-                renderOption={(props, option) =>{
-                  const newProps = {...props,...{key:option.idEnte}};
-                  return (
-                    <li {...newProps}   >
-                      {option.descrizione}
-                    </li>
-                  );
-                } }
-                style={{height:'59px'}}
-                renderInput={(params) =>{
-                  return <TextField 
-                    sx={{backgroundColor:"#F2F2F2"}}
-                    onChange={(e)=> setTextValue(e.target.value)} 
-                    {...params}
-                    label="Rag Soc. Ente" 
-                    placeholder="Min 3 caratteri" />;
-                }}
-              />
-            </div>
-            </div>
-          <div className="row mb-5 mt-5" >
-            
-            <div className='col-6'>
-              <FormControl
-                fullWidth
-                size="medium"
-              >
-                <InputLabel>
-                                Tipologia Fattura  
-                </InputLabel>
-                <Select
-                  label='Tipologia Fattura'
-                  disabled={bodyAdd.idEnte === null}
-                  onChange={(e) => setBodyAdd((prev:any) => ({...prev,...{tipologiaFattura:e.target.value}}))}     
-                  value={bodyAdd.tipologiaFattura||''}       
-                >
-                  {tipologiaFatture.map((el) =>{ 
-                    return (            
-                      <MenuItem
-                        key={Math.random()}
-                        value={el}
-                      >
-                        {el}
-                      </MenuItem>              
-                    );
-                  } )}   
-                </Select>
-              </FormControl>
-            </div>
-            <div  className="col-6">
-             <Box >
-                <FormControl
-                  fullWidth
-                  size="medium"
-                >
-                  <InputLabel>
-                            Anno   
-                  </InputLabel>
-                  <Select
-                    label='Seleziona Anno'
-                    disabled={bodyAdd.tipologiaFattura === null}
-                    onChange={(e) => {
-                      const value = Number(e.target.value);
-                      setBodyAdd((prev)=> ({...prev, ...{anno:value}}));
-                    }}
-                    value={bodyAdd.anno||''}     
-                  >
-                    {arrayYears.map((el) => (
-                      <MenuItem
-                        key={Math.random()}
-                        value={el}
-                      >
-                        {el}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-            </div>
-          </div>
-          <div className="row mb-5 mt-5" >
-            
-            <div className="col-6">
-              <Autocomplete
-                limitTags={1}
-                multiple
-                disabled={bodyAdd.tipologiaFattura === null || bodyAdd.anno === null}
-                onChange={(event, value) => {
-                  const valueArray = value.map((el) => Number(el.mese));
-                  setValueMultiMonths(value);
-                  setBodyAdd((prev) => ({...prev,...{mesi:valueArray}}));
-                }}
-                options={arrayMonths}
-                value={valueMotiselectMonths}
-                disableCloseOnSelect
-                getOptionLabel={(option) => option.descrizione}
-                renderOption={(props, option,{ selected }) =>(
-                  <li {...props}>
-                    <Checkbox
-                      icon={icon}
-                      checkedIcon={checkedIcon}
-                      style={{ marginRight: 8 }}
-                      checked={selected}
-                    />
-                    {option.descrizione}
-                  </li>
-                )}
-                style={{height:'59px'}}
-                renderInput={(params) => {
-                  return <TextField {...params}
-                    sx={{backgroundColor:"#F2F2F2"}}
-                    label="Mesi" 
-                    placeholder="Mesi" />;
-                }}     
-              />
-            </div>
-            <div className="col-6">
-              <Box>
-                <TextField
-                  label="Nota"
-                  multiline
-                  minRows={2}
-                  fullWidth
-                  value={noteText}
-                  onChange={(e) => setNoteText(e.target.value)}
-                />
-              </Box>
-            </div>
-           
-          </div>
+          <Box sx={{display:"flex", gap:1,mt:2}}>
+            <MainFilter
+              itemProps={inputPropsObj} 
+              filterName={"select_value_string"}
+              inputLabel={"Azione"}
+              clearOnChangeFilter={()=> console.log("ciao")}
+              setBody={setBodyAction}
+              body={bodyAction}
+              keyDescription={"azione"}
+              keyValue={"azione"}
+              keyBody={"azione"}
+              arrayValues={azioni}
+              extraCodeOnChange={(e)=>{
+                setBodyAction((prev)=> ({...prev, ...{azione:e,tipologiaFattura:null,anno:null,mese:[]}}));
+                setValueAutocomplete(null);
+                setTextValue('');
+                
+              }}
+             
+            />
+            <MainFilter 
+              disabled={bodyAction.azione === null}
+              itemProps={inputPropsObj}
+              filterName={"multi_checkbox-single-selection"}
+              inputLabel={"Rag. Sociale"}
+              clearOnChangeFilter={()=> console.log("mimmo")}
+              setBody={setBodyAction}
+              valueAutocompleteSingle={valueAutocomplete}
+              setValueAutocompleteSingle={setValueAutocomplete}
+              body={bodyAction}
+              keyValue={"idEnte"}
+              keyDescription='descrizione'
+              keyOption={'idEnte'}
+              arrayValues={dataSelect}
+              keyBody={"idEnte"}
+              dataSelect={dataSelect}
+              setTextValue={setTextValue}
+              textValue={textValue}
+              extraCodeOnChangeObject={(value)=>{
+                console.log({value,xx:bodyAction?.idEnte});
+                
+                
+                if(value){
+                  setBodyAction((prev:any) => ({...prev,...{idEnte:value.idEnte,tipologiaFattura:null,anno:null,mese:[]}}));
+                  setValueAutocomplete(value);
+                }else{
+                  setBodyAction((prev:any) => ({...prev,...{idEnte:[],tipologiaFattura:null,anno:null,mese:[]}}));
+                  setValueAutocomplete(null);
+                }
+                if(bodyAction.azione === "Elimina" && (bodyAction?.idEnte !== exceptionId)){
+                  setTipologiaFatture(["ANTICIPO","ACCONTO"]);
+        
+                }else if(bodyAction.azione === "Elimina" && bodyAction.idEnte === exceptionId){
+                  setTipologiaFatture(["ANTICIPO","ACCONTO","PRIMO SALDO"]);
+                }else if(bodyAction.azione === "Posticipa"){
+                  setTipologiaFatture(["PRIMO SALDO","SECONDO SALDO","VAR. SEMESTRALE","SEM. SOSPESI"]);
+                }
+                  
+              }}
+            />
+          </Box>
+          <Box sx={{display:"flex", gap:1,mt:2}}>
+            <MainFilter 
+              disabled={bodyAction.idEnte === null}
+              itemProps={inputPropsObj}
+              filterName={"select_value_string"}
+              inputLabel={"Tipologia Fattura"}
+              clearOnChangeFilter={()=> console.log("ciao")}
+              setBody={setBodyAction}
+              body={bodyAction}
+              keyDescription={"tipologiaFattura"}
+              keyValue={"tipologiaFattura"}
+              keyBody={"tipologiaFattura"}
+              arrayValues={tipologiaFatture}
+              extraCodeOnChange={(e)=>{
+                
+                setBodyAction((prev)=> ({...prev, ...{tipologiaFattura:e,anno:null,mese:[]}}));
+                getAnni(e, bodyAction.azione);
+             
+              }} />
+            <MainFilter 
+              disabled={bodyAction.tipologiaFattura === null}
+              itemProps={inputPropsObj}
+              filterName={"select_value_string"}
+              inputLabel={"Anno"}
+              clearOnChangeFilter={()=> console.log("ciao")}
+              setBody={setBodyAction}
+              body={bodyAction}
+              keyDescription={"anno"}
+              keyValue={"anno"}
+              keyBody={"anno"}
+              arrayValues={arrayYears}
+              extraCodeOnChange={(e)=>{   
+                setBodyAction((prev)=> ({...prev, ...{anno:Number(e),mese:[]}}));
+                getMesi(bodyAction.tipologiaFattura,bodyAction.azione,e);
+              }} 
+            />
+          </Box>
+          <Box sx={{display:"flex", gap:1, mt:2}}>
+            <MainFilter 
+              itemProps={ inputPropsObj}
+              filterName={"select_key_value"}
+              inputLabel={"Mese"}
+              disabled={bodyAction.anno === null}
+              clearOnChangeFilter={()=> console.log("ciao")}
+              setBody={setBodyAction}
+              body={bodyAction}
+              keyValue={"mese"}
+              keyDescription='descrizione'
+              keyBody={"mese"}
+              arrayValues={arrayMonths}
+              extraCodeOnChange={(e)=>{
+                const value = Number(e);
+                setBodyAction((prev)=> ({...prev, ...{mese:[value]}}));             
+              }}
+            ></MainFilter>
+            <MainFilter 
+              disabled={bodyAction.mese.length === 0}
+              itemProps={inputPropsObj}
+              filterName={"text-area"}
+              inputLabel={"Nota"}
+              clearOnChangeFilter={()=>console.log("ciao")}
+              setBody={setBodyAction}
+              body={bodyAction}
+              keyValue={"nota"}
+              keyDescription={"nota"}
+              keyBody={"nota"}
+              error={!isValidText2(bodyAction.nota?.testo||"") && (bodyAction.nota?.testo?.length||0) > 5 }
+              extraCodeOnChange={(e)=>{
+                setBodyAction((prev)=> ({...prev, ...{nota:{
+                  "data": formatDate(new Date()),
+                  "testo": e
+                }}}));             
+              }}
+              helperText="Inserisci una nota (max 500 caratteri, min 10 caratteri)"
+            ></MainFilter>
+          </Box>
           {!showLoader ?
             <div className='container_buttons_modal d-flex justify-content-center mt-5'>
               <Button  
-                disabled={bodyAdd.anno === null || bodyAdd.mesi.length === 0 || bodyAdd.anno === null}
+                disabled={disableBotton}
                 variant='contained'
-                onClick={()=> onButtonOK(bodyAdd)}
-              >Aggiungi</Button>
+                onClick={()=> onButtonOK(bodyAction)}
+              >Inserisci</Button>
             </div>:
             <div id='loader_on_modal' className='container_buttons_modal d-flex justify-content-center mt-5'>
               <Loader sentence={'Attendere...'}></Loader> 
             </div>}
-                    
+      
         </Box>
       </Modal>
     </div>

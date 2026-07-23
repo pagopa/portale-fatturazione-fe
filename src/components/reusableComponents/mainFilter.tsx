@@ -1,16 +1,14 @@
 import { Autocomplete, Checkbox, Chip, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 import { DateView, DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { it } from "date-fns/locale";
 import { formatDateToValidation, isDateInvalid } from "../../reusableFunction/function";
-import { MultiSelect } from "./select/customMultiSelect";
 import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import Paper from "@mui/material/Paper";
-import GavelIcon from '@mui/icons-material/Gavel';
+
 
 
 export type MainFilterProps<T> = {
@@ -48,10 +46,14 @@ export type MainFilterProps<T> = {
 
     extraCodeOnChange?:(e:string) => void,
     extraCodeOnChangeArray?:(e:T[]) => void,
-
+    extraCodeOnChangeObject?:(e:T|null) => void
 
     groupByKey?:string,
-    iconMaterial?:React.ReactNode
+    iconMaterial?:React.ReactNode,
+    itemProps?:GridBreakpoints|null,
+    valueAutocompleteSingle?:T|null,
+    setValueAutocompleteSingle?: Dispatch<SetStateAction<T|null>>;
+    helperText?:string
 };
 
 const MainFilter = <T,>({
@@ -78,13 +80,18 @@ const MainFilter = <T,>({
   keyBody,// chiave da inserire nel body
   extraCodeOnChange,
   extraCodeOnChangeArray,
+  extraCodeOnChangeObject,
   defaultValue="",
   groupByKey="", //valore inserito quando si ha una chiave uguale a null
   fontSize,
   iconMaterial,
   format="dd/MM/yyyy",
   viewDate=['year', 'month',"day"],
-  disabled=false
+  disabled=false,
+  itemProps=null,
+  valueAutocompleteSingle,
+  setValueAutocompleteSingle,
+  helperText
 }: MainFilterProps<T>) => {
 
 
@@ -122,11 +129,13 @@ const MainFilter = <T,>({
     }
   }
 
+
+
   switch (filterName) {
         
   case "select_key_value": 
-    return ( !hidden && keyBody && <MainBoxContainer>
-      <FormControl fullWidth>
+    return ( !hidden && keyBody && <MainBoxContainer itemProps={itemProps}>
+      <FormControl disabled={disabled} fullWidth>
         <InputLabel>
           {inputLabel}
         </InputLabel>
@@ -154,7 +163,7 @@ const MainFilter = <T,>({
       </FormControl>
     </MainBoxContainer>);
   case "select_key_value_description":
-    return ( !hidden && keyBody && keyOption && <MainBoxContainer>
+    return ( !hidden && keyBody && keyOption && <MainBoxContainer itemProps={itemProps}>
       <FormControl fullWidth >
         <InputLabel>
           {inputLabel}
@@ -184,7 +193,7 @@ const MainFilter = <T,>({
     </MainBoxContainer>);
   case "select_value":
     return ( !hidden &&  keyBody && arrayValues &&
-            <MainBoxContainer >
+            <MainBoxContainer itemProps={itemProps}>
               <FormControl fullWidth disabled={disabled}>
                 <InputLabel>
                   {inputLabel}
@@ -216,7 +225,7 @@ const MainFilter = <T,>({
             </MainBoxContainer>);
   case "select_value_with_tutti":
     return ( !hidden &&  keyBody && arrayValues &&
-            <MainBoxContainer >
+            <MainBoxContainer itemProps={itemProps} >
               <FormControl fullWidth disabled={disabled}>
                 <InputLabel>{inputLabel}</InputLabel>
                 <Select
@@ -227,7 +236,7 @@ const MainFilter = <T,>({
                   }
                   onChange={(e) => {
                     clearOnChangeFilter();
-                    extraCodeOnChange && extraCodeOnChange(e.target.value);
+                    if (extraCodeOnChange)  extraCodeOnChange(e.target.value);
                   }}
                 >
                   <MenuItem value={9999}>Tutti</MenuItem>
@@ -242,7 +251,7 @@ const MainFilter = <T,>({
   case "select_mese_with_tutti":
     return (
       !hidden &&  keyBody && arrayValues &&
-            <MainBoxContainer >
+            <MainBoxContainer itemProps={itemProps}>
               <FormControl fullWidth disabled={disabled}>
                 <InputLabel>{inputLabel}</InputLabel>
 
@@ -284,7 +293,7 @@ const MainFilter = <T,>({
     );
   case "select_value_nobody":
     return ( !hidden &&  keyBody && arrayValues &&
-            <MainBoxContainer>
+            <MainBoxContainer itemProps={itemProps}>
               <FormControl fullWidth >
                 <InputLabel>
                   {inputLabel}
@@ -316,8 +325,8 @@ const MainFilter = <T,>({
             </MainBoxContainer>);
   case "select_value_string":
     return ( !hidden &&  keyBody &&
-            <MainBoxContainer>
-              <FormControl  fullWidth >
+            <MainBoxContainer itemProps={itemProps}>
+              <FormControl disabled={disabled}  fullWidth >
                 <InputLabel>
                   {inputLabel}
                 </InputLabel>
@@ -346,7 +355,7 @@ const MainFilter = <T,>({
             </MainBoxContainer>);
   case "input_text": 
     return (!hidden && 
-            <MainBoxContainer> 
+            <MainBoxContainer itemProps={itemProps}> 
               <TextField
                 fullWidth
                 label={inputLabel}
@@ -368,7 +377,7 @@ const MainFilter = <T,>({
                 }            
               /> </MainBoxContainer>);
   case "date_from_to": 
-    return ( !hidden && keyCompare && <MainBoxContainer> 
+    return ( !hidden && keyCompare && <MainBoxContainer itemProps={itemProps}> 
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
         <DesktopDatePicker
           label={inputLabel}
@@ -417,12 +426,11 @@ const MainFilter = <T,>({
   case "multi_checkbox":
     if(!hidden && dataSelect && valueAutocomplete && keyBody && keyDescription && keyValue ){
       return (
-        <MainBoxContainer>
+        <MainBoxContainer itemProps={itemProps}>
           <Autocomplete
             disabled={disabled}
             fullWidth
-            sx={{
-                             
+            sx={{           
               height:"59px",
               "& .MuiAutocomplete-inputRoot.Mui-focused": {
                 zIndex: 2,
@@ -447,7 +455,7 @@ const MainFilter = <T,>({
               if(extraCodeOnChangeArray){
                 extraCodeOnChangeArray(val);
               }else{
-                setValueAutocomplete && setValueAutocomplete(val);
+                if(setValueAutocomplete) setValueAutocomplete(val);
                 const allId = val.map(el => el[keyValue]);
                 setBody((prev) => ({...prev,...{[keyBody]:allId}}));
               }
@@ -503,8 +511,80 @@ const MainFilter = <T,>({
         </MainBoxContainer>
       );
     }else{
-      return;
+      return null;
     }
+  case "multi_checkbox-single-selection":
+    if(!hidden && dataSelect  && keyBody && keyDescription && keyValue && setTextValue){
+      return (
+        <MainBoxContainer itemProps={itemProps}>
+          <Autocomplete
+            fullWidth
+            disabled={disabled}
+            limitTags={1}
+            onChange={(event, value) => {
+           
+              if(extraCodeOnChangeObject){
+                extraCodeOnChangeObject(value);
+              }else{
+                setBody((prev) => ({...prev,...{[keyBody]:value ? value[keyValue]:null}}));
+                if(value){
+                  if(setValueAutocompleteSingle) setValueAutocompleteSingle(value);
+                }else{
+                  if(setValueAutocompleteSingle) setValueAutocompleteSingle(null);
+                }
+              }
+            }}
+            options={dataSelect}
+            disableCloseOnSelect
+            getOptionLabel={(option) => option[keyDescription]||''}
+            value={valueAutocompleteSingle}
+            isOptionEqualToValue={(o, v) => getId(o) === getId(v)}
+            onInputChange={(e, val) => setTextValue && setTextValue(val)}
+            renderOption={(props, option) =>{
+              const newProps = {...props,...{key:option[keyValue]}};
+              return (
+                <li {...newProps}   >
+                  {option[keyDescription]}
+                </li>
+              );
+            } }
+            style={{height:'59px'}}
+            renderInput={(params) =>{
+              return <TextField 
+                sx={{backgroundColor:"#F2F2F2"}}
+                value={textValue}
+                {...params}
+                label="Rag Soc. Ente" 
+                placeholder="Min 3 caratteri" />;
+            }}
+          />
+
+        </MainBoxContainer>
+      );
+    }else{
+      return null;
+    }
+  case "text-area":
+    return (
+      <MainBoxContainer itemProps={itemProps}>
+        <TextField
+          label={inputLabel}
+          onChange={(e)=>{
+            if(extraCodeOnChange){
+              extraCodeOnChange(e.target.value);
+            }else{
+              setBody(prev => ({...prev,...{[keyValue]:e}}));
+            }
+            
+          }}
+          fullWidth
+          multiline
+          rows={2}
+          error={error}
+          variant="outlined"
+          helperText={helperText}
+        />
+      </MainBoxContainer>);
   default:
     return (
       <h1>ciao</h1>
@@ -515,14 +595,37 @@ const MainFilter = <T,>({
 export default MainFilter;
 
 
-export const MainBoxContainer = ({children}) => {
+interface GridBreakpoints {
+  xs?: number | boolean | "auto";
+  sm?: number | boolean | "auto";
+  md?: number | boolean | "auto";
+  lg?: number | boolean | "auto";
+}
+
+interface MainBoxContainerProps {
+  children: ReactNode;
+  itemProps?: GridBreakpoints|null;
+}
+
+const DEFAULT_ITEM_PROPS: GridBreakpoints  = {
+  xs: 12,
+  sm: 6,
+  md: 4,
+  lg: 2.3,
+};
+
+
+export const MainBoxContainer = ({ children, itemProps }: MainBoxContainerProps) => {
+  const mergedItemProps = itemProps !== null ? itemProps : DEFAULT_ITEM_PROPS;
+
   return (
-    <Grid item xs={12} sm={6} md={4} lg={2.3}
+    <Grid item {...mergedItemProps}
       sx={{
         display: "flex",
-        justifyContent: { xs: "center", sm: "center",md: "flex-start" },
-        marginTop:"1rem"
-      }}>
+        justifyContent: { xs: "center", sm: "center", md: "flex-start" },
+        marginTop: "1rem",
+      }}
+    >
       {children}
     </Grid>
   );

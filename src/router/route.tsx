@@ -58,6 +58,7 @@ import { useEffect } from 'react';
 import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedProdPn, authVerifyIsLoggedSend, authVerifyIfEnteAllowRelSection, authVerifyPageProdotto } from '../loaderRoutes/loaderAuthVerify';
 import DocSospesiSend from '../page/prod_pn/docSospesiSend';
 import DocStoricoSend from '../page/prod_pn/docStoricoSend';
+import GestioneFatture from '../page/prod_pn/GestioneFatture';
 
 const RouteProfile = () => {
   const mainState = useGlobalStore(state => state.mainState);
@@ -146,6 +147,7 @@ const router2 = createBrowserRouter([
           { path: PathRoutePf.ORCHESTRATORE, Component: ProcessiOrchestartore },
           { path: PathRoutePf.LISTA_STORICO_DOCUMENTI_SEND, Component:  DocStoricoSend },
           { path: PathRoutePf.DOCUMENTI_SOSPESI_SEND, Component:  DocSospesiSend },
+          { path: PathRoutePf.GESTIONE_FATTURE, Component:  GestioneFatture },
         ],
       },
       {

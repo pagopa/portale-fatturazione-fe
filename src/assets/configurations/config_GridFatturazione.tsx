@@ -1,8 +1,6 @@
 import { Box, Chip, IconButton, Tooltip } from "@mui/material";
 import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 import DeleteIcon from '@mui/icons-material/Delete';
-import RestoreIcon from '@mui/icons-material/Restore';
-import NoteIcon from '@mui/icons-material/Note';
 import UpdateIcon from '@mui/icons-material/Update';
 import CancelIcon from '@mui/icons-material/Cancel';
 
@@ -11,7 +9,6 @@ export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
   {label:"Ragione Sociale",keyValue:"",align:"left",width:"200px"},
   {label:"Azioni",keyValue:"",align:"center",width:"100px",
     renderValue:(obj,fun) =>{
-      console.log("obj",obj)
       return(
         <Box sx={{ display: "flex", justifyContent: "center" }}>
         {(obj.tipologiaFattura !== "ACCONTO" && obj.tipologiaFattura !== "ANTICIPO") ? 

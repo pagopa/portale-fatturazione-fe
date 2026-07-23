@@ -10,7 +10,7 @@ export interface GestioneFatture {
     azione:null|number
 }
 
-
+//TODO : una vlta ultimato gestione fatture  possiamo eliminare il file
 export const getAnniWhite = async (token:string, nonce:string) => {
   const response =  await axios.get(`${url}/api/fatture/pagopa/whitelist/anni?nonce=${nonce}`,
     { headers: {
