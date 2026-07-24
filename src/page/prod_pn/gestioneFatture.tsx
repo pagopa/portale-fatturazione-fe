@@ -3,7 +3,6 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
 import { manageError, managePresaInCarico } from "../../api/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
-import { headerNames } from "../../assets/configurations/config_GridWhiteList";
 import ModalConfermaInserimento from "../../components/commessaInserimento/modalConfermaInserimento";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
@@ -12,7 +11,6 @@ import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
-import { getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa, deleteWhiteListPagoPa, downloadWhiteListPagopa } from "../../api/apiPagoPa/whiteListPA/whiteList";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
@@ -20,8 +18,9 @@ import EnhancedTableCustom from "../../components/reusableComponents/grid/gridCu
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
-import { downloadGestioneFatturePagopa, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
+import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
+import { formatDate } from "../../reusableFunction/function";
 
 export interface BodyLista {
   idEnti: string[]
@@ -40,10 +39,14 @@ export interface GestioneFatture {
   ragioneSociale:string;
   anno: number;
   mese: number;
-  tipologiaFatture: string;
+  tipologiaFattura: string;
   tipoContratto: string;
   cancella?:boolean;
+  ente:string;
 }
+
+
+
 
 
 
@@ -71,6 +74,8 @@ const GestioneFatture : React.FC = () => {
   const [notes, setNotes] = useState<{Testo:string,Data:Date}[]>([]);
   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
   const [textAreaValue, setTextAreaValue] = useState<string>('');
+  const [elementSelected, setElementSelected] = useState<GestioneFatture|null>(null);
+  const [actionCalled, setActionCalled] = useState<string>("");
 
   const contratti = [{id:3,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}];
   const azioni = ["Posticipata","Eliminata","Ripristinata"];
@@ -196,14 +201,16 @@ const GestioneFatture : React.FC = () => {
       const customObj = res.data.gestioneFatture.map((el ,i) => {
         return {
           idWhite:el.id,
+          meseNumber:el.mese,
           ragioneSociale:el.ragioneSociale,
           anno:el.anno,
-          mese:month[el.mese-1],
+          mese:el.mese,
           tipologiaFattura:el.tipologiaFattura,
           tipoContratto:el.tipoContratto,
           stato:el.azione,
           nota:JSON.parse(el.note),
-          cancella:el.cancella
+          cancella:el.cancella,
+          ente:el.ente
         };
       });
       setGridData(customObj);
@@ -217,7 +224,7 @@ const GestioneFatture : React.FC = () => {
       manageError(err,dispatchMainState);
     }));     
   };
-  
+  /*
   const deleteElements = async (y) => {
     setGetListaLoading(true);
     resetFilters();
@@ -230,7 +237,7 @@ const GestioneFatture : React.FC = () => {
       manageError(err,dispatchMainState);
     });
   };
-  
+  */
   const onButtonAggiungi = async() => {
     resetFilters();
     getLista(page,rowsPerPage, bodyGetLista);
@@ -351,13 +358,13 @@ const GestioneFatture : React.FC = () => {
 
       
   const onButtonComfermaPopUp = () => {
-    deleteElements(bodyGetLista.anno);
+    //deleteElements(bodyGetLista.anno);
   };
 
   const keyValueObjModalInfo = [
     {
       key:"ragioneSociale",
-      label:"Ragione Sociale"
+      label:"Ragione Sociale",
     },
     {
       key:"anno",
@@ -375,6 +382,8 @@ const GestioneFatture : React.FC = () => {
 
 
   const showPopUpAction = (obj, action) => {  
+    setElementSelected(obj);
+    setActionCalled(action);
     if(action === "nota"){
       const sortedNotes = [...obj.nota].sort(
         (a, b) => new Date(b.Data).getTime() - new Date(a.Data).getTime()
@@ -388,7 +397,7 @@ const GestioneFatture : React.FC = () => {
         sentence: ( <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Ripristinare</strong> la seguente fattura?</>} />),
         buttonIsVisible:true,
         labelButton:"Prosegui",
-        actionButton:() => console.log("ripristina")
+        //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
       });
     }else if(action === "annulla"){
 
@@ -397,7 +406,7 @@ const GestioneFatture : React.FC = () => {
         sentence: ( <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> la <strong>posticipazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
         labelButton:"Prosegui",
-        actionButton:() => console.log("ANNULLA")
+        //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
       });
     }else if(action === "annulla eliminazione"){
 
@@ -406,10 +415,44 @@ const GestioneFatture : React.FC = () => {
         sentence: ( <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong>  <strong>l'eliminazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
         labelButton:"Prosegui",
-        actionButton:() => console.log("ANNULLA")
+        //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
       });
     }
   };
+
+  const azioneApi = async() => {
+    setGetListaLoading(true);
+    console.log({ elementSelected,actionCalled});
+    let actionToApi = "";
+    if(actionCalled === "ripristinata" ){
+      actionToApi = "ripristina";
+    }else if(actionCalled === "annulla eliminazione" ||  actionCalled === "annulla"){
+      actionToApi = "cancella";
+    }
+     
+    if (!elementSelected) return;
+    const bodyApi = {
+      mese:elementSelected.mese.toString(),
+      anno:elementSelected.anno.toString(),
+      tipologiaFattura:elementSelected.tipologiaFattura,
+      azione:actionToApi,
+      idFattura:null,
+      idEnte:elementSelected.ente,
+      nota:{
+        "data": formatDate(new Date()),
+        "testo": textAreaValue
+      }};
+    console.log({ bodyApi});
+    await gestioneFattureInserisci(token, profilo.nonce, bodyApi).then(()=>{
+      getLista(page,rowsPerPage,bodyGetLista);
+      managePresaInCarico('INSER_DELETE_WHITE_LIST',dispatchMainState);
+      setGetListaLoading(false);
+    }).catch((err)=>{
+      manageError(err,dispatchMainState);
+      setGetListaLoading(false);
+    });
+  };
+  
       
   const buttonsTopHeader =  [
     {
@@ -417,6 +460,20 @@ const GestioneFatture : React.FC = () => {
       icon:<AddCircleIcon sx={{ color:selected.length === 0 ? "#1976D2" : "#A2ADB8", cursor: 'pointer' }} />,
       action:"Add"
     }];
+
+  const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
+
+  function isValidText(str) {
+    return regex.test(str.trim());
+  }
+
+  function isValidText2(str: string): boolean {
+    const trimmed = str.trim();
+    if (!trimmed) return false;
+
+    const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
+    return words.length >= 3;
+  }
 
    
   const statusAnnulla = (
@@ -592,6 +649,7 @@ const GestioneFatture : React.FC = () => {
         open={showLoading} 
         setOpen={setShowLoading}
         sentence={'Downloading...'} />
+      {/*TOD pop up da elimnare */}
       <ModalConfermaInserimento
         setOpen={setOpenModalAction}
         open={openModalAction}
@@ -613,6 +671,8 @@ const GestioneFatture : React.FC = () => {
         width={800}
         textAreaValue={textAreaValue}
         setTextAreaValue={setTextAreaValue}
+        externalActionButton={azioneApi}
+        errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
       />
     </MainBoxStyled>
           
@@ -623,7 +683,7 @@ export default GestioneFatture;
 
 
 export const ElementToProcessComponent = ({obj, title , keyValueObj}) => {
-
+  console.log({obj});
   return (
     <Box sx={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center', mt:2, mb:2}}>
       <Typography > {title}</Typography>
@@ -639,8 +699,8 @@ export const ElementToProcessComponent = ({obj, title , keyValueObj}) => {
           <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
             <TableRow >
               {keyValueObj.map((el,i) => (
-                <Tooltip title={obj[el.key].length > 20 ? obj[el.key]:null} >
-                  <TableCell key={i} align="center">{obj[el.key]?.length > 20 ? obj[el.key].slice(0, 20) + '...':obj[el.key]}</TableCell>
+                <Tooltip key={i} title={obj[el.key]?.length > 20 ? obj[el.key]:null} >
+                  <TableCell  align="center">{obj[el.key]?.length > 20 ? obj[el.key].slice(0, 20) + '...':obj[el.key]}</TableCell>
                 </Tooltip> 
               ))}
             </TableRow>

@@ -98,6 +98,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
       .then((res)=>{
         setDataSelect(res.data);
       }).catch(((err)=>{
+        setDataSelect([]);
         manageError(err,dispatchMainState);
       }));
   };
@@ -107,6 +108,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     await getAnniGestioneFattureAzione(token, profilo.nonce,{tipologiaFattura:tipologiaFattura,azione:azione}).then((res)=>{
       setArrayYears(res.data);
     }).catch(((err)=>{
+      setArrayYears([]);
       manageError(err,dispatchMainState);
     }));   
     
@@ -117,6 +119,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
       setArrayMonths(res.data);
 
     }).catch(((err)=>{
+      setArrayMonths([]);
       manageError(err,dispatchMainState);
     }));   
   };
@@ -124,7 +127,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
   
   const onButtonOK = async(body) => {
     setShowLoader(true);
-    const newBody ={...body,...{mese:body.mese[0].toString(),anno:body.anno.toString()}};
+    const newBody ={...body,...{mese:body.mese[0].toString(),anno:body.anno.toString(),idFattura:null}};
     await gestioneFattureInserisci(token, profilo.nonce, newBody).then((res)=>{
       managePresaInCarico('INSER_DELETE_WHITE_LIST',dispatchMainState);
       setShowLoader(false);
@@ -235,26 +238,39 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               dataSelect={dataSelect}
               setTextValue={setTextValue}
               textValue={textValue}
-              extraCodeOnChangeObject={(value)=>{
-                console.log({value,xx:bodyAction?.idEnte});
-                
-                
-                if(value){
-                  setBodyAction((prev:any) => ({...prev,...{idEnte:value.idEnte,tipologiaFattura:null,anno:null,mese:[]}}));
-                  setValueAutocomplete(value);
-                }else{
-                  setBodyAction((prev:any) => ({...prev,...{idEnte:[],tipologiaFattura:null,anno:null,mese:[]}}));
-                  setValueAutocomplete(null);
+              extraCodeOnChangeObject={(value) => {
+                console.log({ value, bodyAction, exceptionId });
+
+                const newIdEnte = value ? value.idEnte : [];
+
+                setBodyAction((prev: any) => ({
+                  ...prev,
+                  idEnte: newIdEnte,
+                  tipologiaFattura: null,
+                  anno: null,
+                  mese: []
+                }));
+
+                setValueAutocomplete(value || null);
+
+                if (bodyAction.azione === "Elimina" && newIdEnte !== exceptionId) {
+                  setTipologiaFatture(["ANTICIPO", "ACCONTO"]);
+                } else if (
+                  bodyAction.azione === "Elimina" && newIdEnte === exceptionId
+                ) {
+                  setTipologiaFatture([
+                    "ANTICIPO",
+                    "ACCONTO",
+                    "PRIMO SALDO"
+                  ]);
+                } else if (bodyAction.azione === "Posticipa") {
+                  setTipologiaFatture([
+                    "PRIMO SALDO",
+                    "SECONDO SALDO",
+                    "VAR. SEMESTRALE",
+                    "SEM. SOSPESI"
+                  ]);
                 }
-                if(bodyAction.azione === "Elimina" && (bodyAction?.idEnte !== exceptionId)){
-                  setTipologiaFatture(["ANTICIPO","ACCONTO"]);
-        
-                }else if(bodyAction.azione === "Elimina" && bodyAction.idEnte === exceptionId){
-                  setTipologiaFatture(["ANTICIPO","ACCONTO","PRIMO SALDO"]);
-                }else if(bodyAction.azione === "Posticipa"){
-                  setTipologiaFatture(["PRIMO SALDO","SECONDO SALDO","VAR. SEMESTRALE","SEM. SOSPESI"]);
-                }
-                  
               }}
             />
           </Box>

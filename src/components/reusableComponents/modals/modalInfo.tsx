@@ -5,16 +5,24 @@ import Modal from '@mui/material/Modal';
 import CloseIcon from '@mui/icons-material/Close';
 import { Button, TextField } from '@mui/material';
 
-export interface ModalInfoProps {
+export interface ModalInfoProps <T>{
     setOpen:(v: { open: boolean; sentence: React.ReactNode|string }) => void,
-    open:{open:boolean,sentence:React.ReactNode|string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType},
+    open:{
+      open:boolean,
+      sentence:React.ReactNode|string,
+      buttonIsVisible?:boolean|null,
+      labelButton?:string,
+      actionButton?:()=>void,icon?:React.ElementType
+    },
     width?:number,
     textAreaValue?:string,
-    setTextAreaValue?:(v:string)=>void
+    setTextAreaValue?:(v:string)=>void,
+    externalActionButton?:(obj?:T )=>void,
+    errorTextInput?:boolean
     
 }
 
-const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width,textAreaValue,setTextAreaValue}) => {
+const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,externalActionButton,errorTextInput}: ModalInfoProps<T>) => {
    
   const handleClose = () =>{
     setOpen({open:false, sentence:''});
@@ -40,21 +48,21 @@ const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width,textAreaValue
       }}>
       
         <div className="d-flex align-items-end justify-content-end w-100">
-            <CloseIcon onClick={handleClose} sx={{color:'#17324D'}}/>
+          <CloseIcon onClick={handleClose} sx={{color:'#17324D'}}/>
         </div>
         <div className='d-flex justify-content-center text-center align-items-center w-100'>
           {open.icon  && <div  style={{ marginRight: 8 }}>{<open.icon/>}</div>}
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Attenzione!
           </Typography>    
-       </div>
-         {setTextAreaValue ? <> {open.sentence} </> :
-       <div className='d-flex justify-content-center text-center align-items-center w-100'>
-          <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
-            {open.sentence}
-          </Typography>
-      </div>}
-      <div className='d-flex justify-content-center text-center align-items-center w-100'>
+        </div>
+        {setTextAreaValue ? <> {open.sentence} </> :
+          <div className='d-flex justify-content-center text-center align-items-center w-100'>
+            <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
+              {open.sentence}
+            </Typography>
+          </div>}
+        <div className='d-flex justify-content-center text-center align-items-center w-100'>
           {setTextAreaValue && (
             <TextField
               label="Inserisci una nota (obbligatoria)"
@@ -63,26 +71,33 @@ const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width,textAreaValue
               fullWidth
               value={textAreaValue}
               onChange={(e) => setTextAreaValue && setTextAreaValue(e.target.value)}
+              error={errorTextInput}
             />
         
           )}
         </div>
         {open?.buttonIsVisible &&
             <div className='d-flex justify-content-evenly text-center mt-5'>
-                <Button variant="outlined" onClick={handleClose}>Annulla</Button>
-                <Button disabled={!textAreaValue && !!setTextAreaValue} variant="contained" onClick={() =>{
-                    window.scrollTo({
-                      top: 0,
-                      left: 0,
-                      behavior: "auto"
-                        });
-                      handleClose();
-                      open?.actionButton && open?.actionButton();}}>
+              <Button variant="outlined" onClick={handleClose}>Annulla</Button>
+              <Button disabled={setTextAreaValue && ((textAreaValue?.length||0) < 10)} variant="contained" 
+                onClick={() =>{
+                  window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: "auto"
+                  });
+                  handleClose();
+                  if(open?.actionButton) open?.actionButton();
+                  if(externalActionButton && setTextAreaValue ){
+                    externalActionButton(); 
+                    setTextAreaValue("");
+                  } 
+                }}>
                       Prosegui
-                </Button>    
+              </Button>    
             </div>
         }    
-        </Box>  
+      </Box>  
     </Modal>
   );
 };

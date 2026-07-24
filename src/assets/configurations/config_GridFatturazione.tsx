@@ -11,58 +11,48 @@ export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
     renderValue:(obj,fun) =>{
       return(
         <Box sx={{ display: "flex", justifyContent: "center" }}>
-        {(obj.tipologiaFattura !== "ACCONTO" && obj.tipologiaFattura !== "ANTICIPO") ? 
-        <Tooltip title={obj.inviata === 0 ? "Posticipa" : null}>
-          <span>
-            <IconButton
-            disabled={(obj.inviata === 0 )? false : true}
-              size="medium"
-              onClick={() => fun(obj,"posticipa")}
-            >
-              <UpdateIcon  />
-            </IconButton>
-          </span>
-        </Tooltip>
-        : obj.inviata === 3 ?  <Tooltip title="Annulla">
-          <span>
-            <IconButton
-              size="medium"
-              onClick={() => fun && fun(obj,'annulla')}
-              disabled={false}
-            >
-              <CancelIcon  />
-            </IconButton>
-          </span>
-        </Tooltip> : <Tooltip title={obj.inviata === 0 ? "Elimina" : null}>
-          <span>
-            <IconButton
-            disabled={(obj.inviata === 0 )? false : true}
-              size="medium"
-              onClick={() => fun(obj,"elimina")}
-            >
-              <DeleteIcon  />
-            </IconButton>
-          </span>
-        </Tooltip>
-        }
-      </Box>
-      )
+          {(obj.tipologiaFattura !== "ACCONTO" && obj.tipologiaFattura !== "ANTICIPO") ? 
+            <Tooltip title={obj.inviata === 0 ? "Posticipa" : null}>
+              <span>
+                <IconButton
+                  disabled={(obj.inviata === 0 )? false : true}
+                  size="medium"
+                  onClick={() => fun(obj,"posticipa")}
+                >
+                  <UpdateIcon  />
+                </IconButton>
+              </span>
+            </Tooltip>
+            : <Tooltip title={obj.inviata === 0 ? "Elimina" : null}>
+              <span>
+                <IconButton
+                  disabled={(obj.inviata === 0 )? false : true}
+                  size="medium"
+                  onClick={() => fun(obj,"annulla eliminazione")}
+                >
+                  <DeleteIcon  />
+                </IconButton>
+              </span>
+            </Tooltip>
+          }
+        </Box>
+      );
     }  },
   {label:"Data Fattura",keyValue:"",align:"center",width:"160px"},
   {label:"Elaborazione",keyValue:"",align:"center",width:"120px",
     renderValue:(row) =>{
 
-         let tooltipObj:any= {label:'Non Inviata',title:'La fattura non è stata inviata'};
-  if(row.inviata === 1){
-    tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'#B5E2B4'};
-  }else if(row.inviata === 2){
-    tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'#FFE5A3'};
-  }else if(row.inviata === 3){
-    tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'#86E1FD'};
-  }
+      let tooltipObj:any= {label:'Non Inviata',title:'La fattura non è stata inviata'};
+      if(row.inviata === 1){
+        tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'#B5E2B4'};
+      }else if(row.inviata === 2){
+        tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'#FFE5A3'};
+      }else if(row.inviata === 3){
+        tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'#86E1FD'};
+      }
       return(
         <Chip variant="outlined" label={tooltipObj.label} sx={{backgroundColor:tooltipObj.color}} />
-      )
+      );
     }  },
   {label:"T. Fattura",keyValue:"",align:"center",width:"100px"},
   {label:"Ident.",keyValue:"",align:"center",width:"100px"},
@@ -83,7 +73,7 @@ export const headersObjGridDocemessiSendCollapse : HeaderGridCustom[] = [
   {label:"Periodo di riferimento",keyValue:"",align:"center",width:"100px"},
   {label:"Periodo di fatturazione",keyValue:"",align:"center",width:"100px"},
 
-]
+];
 
 /* TODO da eliminare se non vogliono la nota visibile nella griglia
 {label: 'Nota', align: 'center', width: '100px', keyValue: 'nota', renderValue:(obj,fun) => {

@@ -91,7 +91,7 @@ export const getAnniGestioneFattureAzione = async (token:string, nonce:string, b
   return response;
 };
 
-export const gestioneFattureInserisci = async (token:string, nonce:string,body:{mese: number,anno:number,tipologiaFattura:string,idEnte:string,nota:{data:string,testo:string}}) => {
+export const gestioneFattureInserisci = async (token:string, nonce:string,body:{mese: string,anno:string,tipologiaFattura:string,idEnte:string,nota:{data:string,testo:string}}) => {
   const response =  await axios.post(`${url}/api/fatture/pagopa/gestione-fatture/azione?nonce=${nonce}`,
     body,
     { headers: {
