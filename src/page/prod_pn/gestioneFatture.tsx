@@ -21,6 +21,7 @@ import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typogra
 import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate } from "../../reusableFunction/function";
+import { ManageErrorResponse } from "../../types/typesGeneral";
 
 export interface BodyLista {
   idEnti: string[]
@@ -112,14 +113,15 @@ const GestioneFatture : React.FC = () => {
       
       if(isInitialRender.current && Object.keys(filters).length > 0){
         //se ci sono gli anni ed è il primorender e ci sono i filtri nella local storage
-        /* setBodyGetLista(filters.body);
+        setBodyGetLista(filters.body);
         await getMesi(filters.body.anno);
+        await getAnni();
         await getLista(filters.page+1, filters.rows,filters.body);
         setPage(filters.page);
         setRowsPerPage(filters.rows);
         setTextValue(filters.textValue);
         setValueAutocomplete(filters.valueAutocomplete);
-        setSelected(filters.selected);*/
+        setSelected(filters.selected);
       }else{
         await getListTipologiaFattura({anno:null,mesi:[]});
         /*await getMesi(res.data[0]);*/
@@ -384,6 +386,7 @@ const GestioneFatture : React.FC = () => {
   const showPopUpAction = (obj, action) => {  
     setElementSelected(obj);
     setActionCalled(action);
+    const newObj = {...obj,mese:month[obj.mese-1]};
     if(action === "nota"){
       const sortedNotes = [...obj.nota].sort(
         (a, b) => new Date(b.Data).getTime() - new Date(a.Data).getTime()
@@ -394,7 +397,7 @@ const GestioneFatture : React.FC = () => {
 
       setOpenModalInfo({
         open:true,
-        sentence: ( <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Ripristinare</strong> la seguente fattura?</>} />),
+        sentence: ( <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Ripristinare</strong> la seguente fattura?</>} />),
         buttonIsVisible:true,
         labelButton:"Prosegui",
         //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
@@ -403,7 +406,7 @@ const GestioneFatture : React.FC = () => {
 
       setOpenModalInfo({
         open:true,
-        sentence: ( <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> la <strong>posticipazione</strong> della seguente fattura?</>} />),
+        sentence: ( <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> la <strong>posticipazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
         labelButton:"Prosegui",
         //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
@@ -412,45 +415,57 @@ const GestioneFatture : React.FC = () => {
 
       setOpenModalInfo({
         open:true,
-        sentence: ( <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong>  <strong>l'eliminazione</strong> della seguente fattura?</>} />),
+        sentence: ( <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong>  <strong>l'eliminazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
         labelButton:"Prosegui",
         //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
       });
     }
   };
+  console.log({actionCalled});
 
-  const azioneApi = async() => {
+  const azioneApi = async () => {
     setGetListaLoading(true);
-    console.log({ elementSelected,actionCalled});
-    let actionToApi = "";
-    if(actionCalled === "ripristinata" ){
-      actionToApi = "ripristina";
-    }else if(actionCalled === "annulla eliminazione" ||  actionCalled === "annulla"){
-      actionToApi = "cancella";
+    try {
+      let actionToApi = "";
+
+      if (actionCalled === "ripristina") {
+        actionToApi = "ripristina";
+      }else if(actionCalled === "annulla eliminazione" ||actionCalled === "annulla") {
+        actionToApi = "cancella";
+      }
+
+      if (!elementSelected) return;
+
+      const bodyApi = {
+        mese: elementSelected.mese.toString(),
+        anno: elementSelected.anno.toString(),
+        tipologiaFattura: elementSelected.tipologiaFattura,
+        azione: actionToApi,
+        idFattura: null,
+        idEnte: elementSelected.ente,
+        nota: {
+          data: formatDate(new Date()),
+          testo: textAreaValue
+        }
+      };
+      await gestioneFattureInserisci(
+        token,
+        profilo.nonce,
+        bodyApi
+      );
+      await getLista(page+1, rowsPerPage, bodyGetLista);
+
+      managePresaInCarico(
+        "INSER_DELETE_WHITE_LIST",
+        dispatchMainState
+      );
+
+    } catch (err) {
+      manageError(err as ManageErrorResponse, dispatchMainState);
+    } finally {
+      setGetListaLoading(false);
     }
-     
-    if (!elementSelected) return;
-    const bodyApi = {
-      mese:elementSelected.mese.toString(),
-      anno:elementSelected.anno.toString(),
-      tipologiaFattura:elementSelected.tipologiaFattura,
-      azione:actionToApi,
-      idFattura:null,
-      idEnte:elementSelected.ente,
-      nota:{
-        "data": formatDate(new Date()),
-        "testo": textAreaValue
-      }};
-    console.log({ bodyApi});
-    await gestioneFattureInserisci(token, profilo.nonce, bodyApi).then(()=>{
-      getLista(page,rowsPerPage,bodyGetLista);
-      managePresaInCarico('INSER_DELETE_WHITE_LIST',dispatchMainState);
-      setGetListaLoading(false);
-    }).catch((err)=>{
-      manageError(err,dispatchMainState);
-      setGetListaLoading(false);
-    });
   };
   
       

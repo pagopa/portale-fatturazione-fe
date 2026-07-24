@@ -53,7 +53,8 @@ export type MainFilterProps<T> = {
     itemProps?:GridBreakpoints|null,
     valueAutocompleteSingle?:T|null,
     setValueAutocompleteSingle?: Dispatch<SetStateAction<T|null>>;
-    helperText?:string
+    helperText?:string,
+    placeHolder?:string
 };
 
 const MainFilter = <T,>({
@@ -91,7 +92,8 @@ const MainFilter = <T,>({
   itemProps=null,
   valueAutocompleteSingle,
   setValueAutocompleteSingle,
-  helperText
+  helperText,
+  placeHolder
 }: MainFilterProps<T>) => {
 
 
@@ -568,6 +570,7 @@ const MainFilter = <T,>({
     return (
       <MainBoxContainer itemProps={itemProps}>
         <TextField
+          disabled={disabled}
           label={inputLabel}
           onChange={(e)=>{
             if(extraCodeOnChange){
@@ -583,6 +586,7 @@ const MainFilter = <T,>({
           error={error}
           variant="outlined"
           helperText={helperText}
+          placeholder={placeHolder}
         />
       </MainBoxContainer>);
   default:

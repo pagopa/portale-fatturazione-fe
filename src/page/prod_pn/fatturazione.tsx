@@ -24,6 +24,7 @@ import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { gestioneFattureInserisci } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { formatDate } from "../../reusableFunction/function";
 import { ElementToProcessComponent } from "./gestioneFatture";
+import { ManageErrorResponse } from "../../types/typesGeneral";
 
 
 
@@ -561,38 +562,53 @@ const Fatturazione : React.FC = () =>{
   
 
 
-  const azioneApi = async() => {
+  const azioneApi = async () => {
     setShowLoadingGrid(true);
-    console.log({ elementSelected,actionCalled});
-    let actionToApi = "";
-    if(actionCalled === "posticipa" ){
-      actionToApi = "posticipa";
-    }else if(actionCalled === "annulla eliminazione" ||  actionCalled === "annulla"){
-      actionToApi = "cancella";
+
+    try {
+   
+      let actionToApi = "";
+      if (actionCalled === "posticipa") {
+        actionToApi = "posticipa";
+      }else if (actionCalled === "annulla eliminazione" ||actionCalled === "annulla") {
+        actionToApi = "cancella";
+      }
+
+      if (!elementSelected) return;
+      const [day, month, year] = elementSelected.dataFattura.split("/");
+
+      const bodyApi = {
+        mese: parseInt(month, 10).toString(),
+        anno: year.toString(),
+        tipologiaFattura: elementSelected.tipologiaFattura,
+        azione: actionToApi,
+        idFattura: elementSelected.idFattura,
+        idEnte: elementSelected.istitutioID,
+        nota: {
+          data: formatDate(new Date()),
+          testo: textAreaValue
+        }
+      };
+
+      await gestioneFattureInserisci(
+        token,
+        profilo.nonce,
+        bodyApi
+      );
+
+      await getlistaFatturazione(bodyFatturazione);
+
+      managePresaInCarico(
+        "INSER_DELETE_WHITE_LIST",
+        dispatchMainState
+      );
+
+    } catch (err) {
+      manageError(err as ManageErrorResponse, dispatchMainState);
+
+    } finally {
+      setShowLoadingGrid(false);
     }
-     
-    if (!elementSelected) return;
-    const [day, month, year] = elementSelected.dataFattura.split('/');
-    const bodyApi = {
-      mese:parseInt(month, 10).toString(),
-      anno:year.toString(),
-      tipologiaFattura:elementSelected.tipologiaFattura,
-      azione:actionToApi,
-      idFattura:elementSelected.idFattura, //TODO potrebbe essere necessario solo idFattura
-      idEnte:elementSelected.istitutioID,
-      nota:{
-        "data": formatDate(new Date()),
-        "testo": textAreaValue
-      }};
-    
-    await gestioneFattureInserisci(token, profilo.nonce, bodyApi).then(()=>{
-      getlistaFatturazione(bodyApi);
-      managePresaInCarico('INSER_DELETE_WHITE_LIST',dispatchMainState);
-      setShowLoadingGrid(false);
-    }).catch((err)=>{
-      manageError(err,dispatchMainState);
-      setShowLoadingGrid(false);
-    });
   };
 
   const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;

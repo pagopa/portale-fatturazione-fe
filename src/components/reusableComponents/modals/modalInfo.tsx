@@ -72,6 +72,10 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
               value={textAreaValue}
               onChange={(e) => setTextAreaValue && setTextAreaValue(e.target.value)}
               error={errorTextInput}
+              placeholder={"Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici."}
+              helperText={(textAreaValue?.length||0) > 500 ?
+                "Inserisci una nota (max 500 caratteri)":
+                "Inserisci una nota ( min 10 caratteri)"}
             />
         
           )}

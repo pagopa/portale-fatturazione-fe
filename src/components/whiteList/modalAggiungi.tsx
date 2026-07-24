@@ -239,8 +239,6 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               setTextValue={setTextValue}
               textValue={textValue}
               extraCodeOnChangeObject={(value) => {
-                console.log({ value, bodyAction, exceptionId });
-
                 const newIdEnte = value ? value.idEnte : [];
 
                 setBodyAction((prev: any) => ({
@@ -340,14 +338,17 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               keyValue={"nota"}
               keyDescription={"nota"}
               keyBody={"nota"}
-              error={!isValidText2(bodyAction.nota?.testo||"") && (bodyAction.nota?.testo?.length||0) > 5 }
+              error={(!isValidText2(bodyAction.nota?.testo||"") || !isValidText(bodyAction.nota?.testo||""))&& bodyAction.mese.length !== 0}
               extraCodeOnChange={(e)=>{
                 setBodyAction((prev)=> ({...prev, ...{nota:{
                   "data": formatDate(new Date()),
                   "testo": e
                 }}}));             
               }}
-              helperText="Inserisci una nota (max 500 caratteri, min 10 caratteri)"
+              helperText={(bodyAction.nota?.testo?.length||0) > 500 ?
+                "Inserisci una nota (max 500 caratteri)":
+                "Inserisci una nota ( min 10 caratteri)"}
+              placeHolder={"Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici."}
             ></MainFilter>
           </Box>
           {!showLoader ?
