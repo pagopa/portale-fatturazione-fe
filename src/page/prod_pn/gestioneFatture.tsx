@@ -114,7 +114,10 @@ const GestioneFatture : React.FC = () => {
       if(isInitialRender.current && Object.keys(filters).length > 0){
         //se ci sono gli anni ed è il primorender e ci sono i filtri nella local storage
         setBodyGetLista(filters.body);
-        await getMesi(filters.body.anno);
+        if(filters.body.anno !== null){
+          await getMesi(filters.body.anno);
+        }
+        
         await getAnni();
         await getLista(filters.page+1, filters.rows,filters.body);
         setPage(filters.page);
