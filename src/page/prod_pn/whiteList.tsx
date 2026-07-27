@@ -43,7 +43,7 @@ export interface Whitelist {
 
 
 
-const ListaDocEmessi : React.FC = () => {
+const WhiteList : React.FC = () => {
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
   
@@ -657,7 +657,7 @@ const ListaDocEmessi : React.FC = () => {
           
   );
 };
-export default ListaDocEmessi;
+export default WhiteList;
       
 
 

@@ -10,7 +10,7 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
   const isOpenOnStart = element.moduli.filter(el => el.source === "obbligatorio").length > 0;
 
   useEffect(()=>{
-    isOpenOnStart && setOpen(true);
+    if(isOpenOnStart) setOpen(true);
   },[isOpenOnStart]);
 
 

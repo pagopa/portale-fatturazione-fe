@@ -262,7 +262,7 @@ const ReportDettaglio : React.FC = () => {
         setRowsPerPage(filters.rows);
       }
 
-    } catch (err) {
+    } catch ( err ) {
       console.log("Error NOTIFICHE");
     } finally {
       setGetNotificheWorking(false);

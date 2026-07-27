@@ -81,8 +81,6 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     azione:null,
     nota:null
   });
-  console.log({bodyAction});
-  
   
   useEffect(()=>{
     const timer = setTimeout(() => {
@@ -134,7 +132,6 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
       setOpen(false);
       getLista(body.anno);
       clearPopUp();
-      console.log({res});
     }).catch((err)=>{
       setShowLoader(false);
       setOpen(false);
@@ -181,6 +178,8 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
   ||(bodyAction.nota?.testo && bodyAction.nota.testo.length < 10)
   || bodyAction.nota === null 
   || !isValidText(bodyAction.nota.testo||"") )? true : false;
+
+  console.log({bodyAction});
   
   return (
     <div>
@@ -213,7 +212,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               keyBody={"azione"}
               arrayValues={azioni}
               extraCodeOnChange={(e)=>{
-                setBodyAction((prev)=> ({...prev, ...{azione:e,tipologiaFattura:null,anno:null,mese:[]}}));
+                setBodyAction((prev)=> ({...prev, ...{azione:e,tipologiaFattura:null,anno:null,mese:[],nota:null}}));
                 setValueAutocomplete(null);
                 setTextValue('');
                 
@@ -246,7 +245,8 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                   idEnte: newIdEnte,
                   tipologiaFattura: null,
                   anno: null,
-                  mese: []
+                  mese: [],
+                  nota:null
                 }));
 
                 setValueAutocomplete(value || null);
@@ -287,7 +287,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               arrayValues={tipologiaFatture}
               extraCodeOnChange={(e)=>{
                 
-                setBodyAction((prev)=> ({...prev, ...{tipologiaFattura:e,anno:null,mese:[]}}));
+                setBodyAction((prev)=> ({...prev, ...{tipologiaFattura:e,anno:null,mese:[],nota:null}}));
                 getAnni(e, bodyAction.azione);
              
               }} />
@@ -304,7 +304,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               keyBody={"anno"}
               arrayValues={arrayYears}
               extraCodeOnChange={(e)=>{   
-                setBodyAction((prev)=> ({...prev, ...{anno:Number(e),mese:[]}}));
+                setBodyAction((prev)=> ({...prev, ...{anno:Number(e),mese:[],nota:null}}));
                 getMesi(bodyAction.tipologiaFattura,bodyAction.azione,e);
               }} 
             />
@@ -324,7 +324,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               arrayValues={arrayMonths}
               extraCodeOnChange={(e)=>{
                 const value = Number(e);
-                setBodyAction((prev)=> ({...prev, ...{mese:[value]}}));             
+                setBodyAction((prev)=> ({...prev, ...{mese:[value],nota:null}}));             
               }}
             ></MainFilter>
             <MainFilter 
