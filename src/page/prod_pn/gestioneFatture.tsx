@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
 import { manageError, managePresaInCarico } from "../../api/api";
@@ -131,7 +131,7 @@ const GestioneFatture : React.FC = () => {
           idEnti: [],
           tipologiaContratto: null,
           tipologiaFattura:null,
-          anno: res.data[0],
+          anno: null,
           mesi: []
         });
       }  
