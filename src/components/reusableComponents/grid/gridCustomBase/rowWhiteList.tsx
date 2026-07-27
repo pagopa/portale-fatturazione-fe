@@ -1,4 +1,5 @@
 import { TableCell, TableCellProps, TableRow, Tooltip } from "@mui/material";
+import { month } from "../../../../reusableFunction/reusableArrayObj";
 interface RowWhite<T = any> {
     element:any,
     headerNames:{
@@ -36,6 +37,14 @@ const RowWhiteList :React.FC<RowWhite>  = ({element,headerNames,setOpenModalActi
                 key={i}
                 align={headerNames[i]?.align}>
                 {headerNames[i]?.gridAction((obj, action) => setOpenModalAction?.(obj, action), "primary", false, element)}
+              </TableCell>
+            );
+          }if(header.keyValue === "mese"){
+            return (
+              <TableCell
+                key={i}
+                align={headerNames[i]?.align}>
+                {month[element.mese-1]}
               </TableCell>
             );
           }else{

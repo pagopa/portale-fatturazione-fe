@@ -33,6 +33,7 @@ export enum PathPf {
     ACCERTAMENTI = "/send/accertamenti",
     LISTA_STORICO_DOCUMENTI_SEND = "/send/storicodoc",
     DOCUMENTI_SOSPESI_SEND = "/send/docsospesi",
+    GESTIONE_FATTURE = "/send/gestionefatture",
 
     //psp
     ANAGRAFICAPSP = "/pn/anagraficapsp",
@@ -64,8 +65,6 @@ export enum PathPf {
 }
 
 export enum PathRoutePf {
-    
-
     
     //NEW logic
     DATI_FATTURAZIONE = "datidifatturazione", 
@@ -108,6 +107,8 @@ export enum PathRoutePf {
     LISTA_STORICO_DOCUMENTI = "storicodoc",
     DOCUMENTI_EMESSI = "docemessi",
     DOCUMENTI_SOSPESI = "docsospesi",
+
+    GESTIONE_FATTURE = "gestionefatture",
 
     
 }

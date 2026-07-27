@@ -20,7 +20,12 @@ import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
-import { ElementToProcessComponent } from "./whiteList";
+
+import { gestioneFattureInserisci } from "../../api/apiPagoPa/gestioneFatturePA/api";
+import { formatDate } from "../../reusableFunction/function";
+import { ElementToProcessComponent } from "./gestioneFatture";
+import { ManageErrorResponse } from "../../types/typesGeneral";
+
 
 
 const Fatturazione : React.FC = () =>{
@@ -61,6 +66,9 @@ const Fatturazione : React.FC = () =>{
   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
   const [textAreaValue, setTextAreaValue] = useState<string>('');
 
+
+  const [elementSelected, setElementSelected] = useState<any>(null);
+  const [actionCalled, setActionCalled] = useState<string>("");
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -541,14 +549,81 @@ const Fatturazione : React.FC = () =>{
   ];
     
   const showPopUpAction = (obj, action) => {  
+    console.log({obj});
+    setElementSelected(obj);
+    setActionCalled(action);
     if(action === "posticipa"){
       setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Posticipare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ripristina")});
-    }else if(action === "elimina"){
-      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
-    }else if(action === "annulla"){
+    }else if(action === "annulla eliminazione"){
       setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> l'eliminazione della seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
     }
   };
+
+  
+
+
+  const azioneApi = async () => {
+    setShowLoadingGrid(true);
+
+    try {
+   
+      let actionToApi = "";
+      if (actionCalled === "posticipa") {
+        actionToApi = "posticipa";
+      }else if (actionCalled === "annulla eliminazione" ||actionCalled === "annulla") {
+        actionToApi = "cancella";
+      }
+
+      if (!elementSelected) return;
+      const [day, month, year] = elementSelected.dataFattura.split("/");
+
+      const bodyApi = {
+        mese: parseInt(month, 10).toString(),
+        anno: year.toString(),
+        tipologiaFattura: elementSelected.tipologiaFattura,
+        azione: actionToApi,
+        idFattura: elementSelected.idFattura,
+        idEnte: elementSelected.istitutioID,
+        nota: {
+          data: formatDate(new Date()),
+          testo: textAreaValue
+        }
+      };
+
+      await gestioneFattureInserisci(
+        token,
+        profilo.nonce,
+        bodyApi
+      );
+
+      await getlistaFatturazione(bodyFatturazione);
+
+      managePresaInCarico(
+        "INSER_DELETE_WHITE_LIST",
+        dispatchMainState
+      );
+
+    } catch (err) {
+      manageError(err as ManageErrorResponse, dispatchMainState);
+
+    } finally {
+      setShowLoadingGrid(false);
+    }
+  };
+
+  const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
+
+  function isValidText(str) {
+    return regex.test(str.trim());
+  }
+
+  function isValidText2(str: string): boolean {
+    const trimmed = str.trim();
+    if (!trimmed) return false;
+
+    const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
+    return words.length >= 3;
+  }
     
 
   const statusAnnulla = bodyFatturazione.idEnti.length !== 0 || 
@@ -799,6 +874,8 @@ const Fatturazione : React.FC = () =>{
         width={800}
         textAreaValue={textAreaValue}
         setTextAreaValue={setTextAreaValue}
+        externalActionButton={azioneApi}
+        errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
       />
     </MainBoxStyled>   
   );

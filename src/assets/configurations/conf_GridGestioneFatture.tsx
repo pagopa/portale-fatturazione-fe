@@ -5,7 +5,7 @@ import NoteIcon from '@mui/icons-material/Note';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 
-export interface WhiteListConfig {
+export interface GestioneFattureConfig {
   label: string;
   align: TableCellProps['align'];
   width: string | number;
@@ -13,7 +13,7 @@ export interface WhiteListConfig {
   gridAction?:(fun:(obj:any,action:string)=>void,color:string,disabled:boolean,obj:any) => JSX.Element,
 }
 
-export const headerNames: WhiteListConfig[] = [
+export const headerNamesGestioneFatture: GestioneFattureConfig[] = [
   //{ label: '', align: 'center', width: '60px', keyValue: 'checkbox' },
   { label: 'Ragione Sociale', align: 'center', width: '200px', keyValue: 'ragioneSociale' },
   { label: 'Anno', align: 'center', width: '100px', keyValue: 'anno' },
@@ -24,12 +24,12 @@ export const headerNames: WhiteListConfig[] = [
     gridAction:(fun:(obj:any,action:string) => void,color:string,disabled:boolean,obj:any) => {
 
       let colorChip:string|undefined = undefined;
-
-      if(obj.stato === "Ripristinata"){
+    
+      if(obj.stato === "RIPRISTINATA"){
         colorChip = '#B5E2B4';
-      }else if(obj.stato === "Posticipata"){
+      }else if(obj.stato === "POSTICIPATA"){
         colorChip = '#FFE5A3';
-      }else if(obj.stato === "Eliminata"){
+      }else if(obj.stato === "ELIMINATA"){
         colorChip = '#FFF0F5';
       }
       return (
@@ -61,7 +61,7 @@ export const headerNames: WhiteListConfig[] = [
   { label: 'Azioni', align: 'center', width: '100px', keyValue: 'azioni',gridAction:(fun:(el:any,action:string) => void,color:string,disabled:boolean,obj:any) => {
     return (
       <Box sx={{ display: "flex", justifyContent: "center" }}>
-        {obj.stato === "Posticipata" ? 
+        {obj.stato === "POSTICIPATA" ? 
           <>
             <Tooltip title="Ripristina">
               <span>
@@ -88,7 +88,7 @@ export const headerNames: WhiteListConfig[] = [
               </span>
             </Tooltip>
           </>
-          : obj.stato === "Eliminata" ?  <Tooltip title="Annulla">
+          : obj.stato === "ELIMINATA" ?  <Tooltip title="Annulla">
             <span>
               <IconButton
                 size="medium"

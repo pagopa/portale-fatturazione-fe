@@ -27,12 +27,12 @@ const DialogInfo : React.FC<DialogInfoProps> = ({ open, onClose, array = [], tit
     if (clearAction) {
       clearAction();
     }
-  }
+  };
   return (
-     <Dialog 
+    <Dialog 
       PaperProps={{
-       sx: {
-        borderRadius: "20px", 
+        sx: {
+          borderRadius: "20px", 
         },
       }}
       open={open} 
@@ -41,17 +41,17 @@ const DialogInfo : React.FC<DialogInfoProps> = ({ open, onClose, array = [], tit
       fullWidth>
       <DialogTitle>
         <div className='d-flex justify-content-between'>
-            <div className='d-flex align-items-center justify-content-start'>
-              <Typography  id="modal-modal-title" variant="h6" component="h2">
-                              {title}
-              </Typography>
+          <div className='d-flex align-items-center justify-content-start'>
+            <Typography  id="modal-modal-title" variant="h6" component="h2">
+              {title}
+            </Typography>
+          </div>
+          <div className="d-flex align-items-center justify-content-end">
+            <div className='icon_close'>
+              <CloseIcon onClick={closeDialog} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
             </div>
-            <div className="d-flex align-items-center justify-content-end">
-              <div className='icon_close'>
-                <CloseIcon onClick={closeDialog} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
-              </div>
-            </div>
-       </div>
+          </div>
+        </div>
       </DialogTitle>
       <DilogContentList array={array} sentenseEmptyArray={sentenseEmptyArray} />
     </Dialog>
@@ -64,34 +64,34 @@ const DilogContentList : React.FC<DialogContentProps> = ({ array = [], sentenseE
 
   return (
     <DialogContent dividers>
-        {array.length === 0 ? (
-          <Typography color="text.secondary">
-            {sentenseEmptyArray }
-          </Typography>
-        ) : (
-          <List disablePadding>
-            {array.map((note, index) => (
-              <Box key={note.IdNota} sx={{ backgroundColor: "grey.100",marginBottom: 1, borderRadius: 1, padding: 1 }}>
-                <ListItem alignItems="flex-start">
-                  <ListItemText
-                    primary={note.Testo}
-                    secondary={
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        color="text.secondary"
-                      >
-                        {new Date(note.Data).toLocaleString("it-IT")}
-                      </Typography>
-                    }
-                  />
-                </ListItem>
+      {array.length === 0 ? (
+        <Typography color="text.secondary">
+          {sentenseEmptyArray }
+        </Typography>
+      ) : (
+        <List disablePadding>
+          {array.map((note, index) => (
+            <Box key={note.IdNota} sx={{ backgroundColor: "grey.100",marginBottom: 1, borderRadius: 1, padding: 1 }}>
+              <ListItem alignItems="flex-start">
+                <ListItemText
+                  primary={note.Testo}
+                  secondary={
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="text.secondary"
+                    >
+                      {new Date(note.Data).toLocaleString("it-IT")}
+                    </Typography>
+                  }
+                />
+              </ListItem>
 
-                {index < array.length - 1 && <Divider />}
-              </Box>
-            ))}
-          </List>
-        )}
-      </DialogContent>
-  )
-}
+              {index < array.length - 1 && <Divider />}
+            </Box>
+          ))}
+        </List>
+      )}
+    </DialogContent>
+  );
+};

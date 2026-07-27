@@ -101,6 +101,8 @@ const SideNavSend : React.FC = () => {
       setSelectedIndex(13);
     }else if(currentLocation === PathPf.DOCUMENTI_SOSPESI_SEND || currentLocation.includes("send/fatturapdf/documentisospesi")){
       setSelectedIndex(14);
+    }else if(currentLocation === PathPf.GESTIONE_FATTURE){
+      setSelectedIndex(15);
     }
 
 
@@ -266,7 +268,7 @@ const SideNavSend : React.FC = () => {
             </Box>
           </ListItemButton>
           <List component="div" disablePadding>
-            <ListItemButton selected={selectedIndex === 9} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.LISTA_DOC_EMESSI)}>
+            <ListItemButton selected={selectedIndex === 15} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.GESTIONE_FATTURE)}>
               <ListItemIcon>
                 <FormatListBulletedIcon fontSize="inherit" />
               </ListItemIcon>
