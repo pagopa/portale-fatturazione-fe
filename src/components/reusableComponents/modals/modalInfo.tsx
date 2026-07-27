@@ -27,6 +27,7 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
   const handleClose = () =>{
     setOpen({open:false, sentence:''});
     setTimeout(() => window.scrollTo(0, 0), 50);
+    if(setTextAreaValue) setTextAreaValue("");
 
   }; 
  
@@ -46,9 +47,11 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
         p: 4,
         borderRadius:'20px'
       }}>
+        <div className="d-flex align-items-center justify-content-end">
+          <div className='icon_close'>
+            <CloseIcon onClick={handleClose} sx={{color:'#17324D'}}/>
+          </div>
       
-        <div className="d-flex align-items-end justify-content-end w-100">
-          <CloseIcon onClick={handleClose} sx={{color:'#17324D'}}/>
         </div>
         <div className='d-flex justify-content-center text-center align-items-center w-100'>
           {open.icon  && <div  style={{ marginRight: 8 }}>{<open.icon/>}</div>}
