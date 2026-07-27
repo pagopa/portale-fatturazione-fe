@@ -119,7 +119,7 @@ const Fatturazione : React.FC = () =>{
     return () => clearTimeout(timer);
   },[textValue]);
 
-
+//:TODO useEffect da elkiminare
   useEffect(()=>{
     if(bodyFatturazione.anno && bodyFatturazione.mese && !isInitialRender.current){
       getDateTipologieFatturazione(bodyFatturazione);
@@ -274,10 +274,17 @@ const Fatturazione : React.FC = () =>{
 
       let dataString = valueMulitselectDateTipologie.map(el =>  el.split("-").slice(1).join("-"));
             
-      if(isInitialRender.current && Object.keys(filters).length > 0 ){
+      if(isInitialRender.current && Object.keys(filters).length > 0){
         dataString = filters?.valueMulitselectDateTipologie.map(el =>  el.split("-").slice(1).join("-"));
-      }else if( callAnnulla.current){
+        setPage(filters.page||0);
+        setRowsPerPage(filters.rows||10);
+      }else if( callAnnulla.current || callLista.current){
         dataString = [];
+        setPage(0);
+        setRowsPerPage(10);
+      }else{
+        setPage(0);
+        setRowsPerPage(10);
       }
        
       let data: FattureObj[] = [];
@@ -292,7 +299,16 @@ const Fatturazione : React.FC = () =>{
       setCount(customObjData?.length || 0);
       setGridData(customObjData);
 
-      const elementsToShow = customObjData.slice(0, 10);
+      let elementsToShow:FattureObj[] = [];
+      if(isInitialRender.current && Object.keys(filters).length > 0){
+        elementsToShow = customObjData.slice(filters?.page||0, filters.rows||10);
+      }else if(callLista.current || callAnnulla.current){
+        elementsToShow = customObjData.slice(0, 10);
+      }else{
+        elementsToShow = customObjData.slice(page, rowsPerPage);
+      }
+
+      
       setShowedData(elementsToShow);
       setShowLoadingGrid(false);
       setBodyFatturazioneDownload(body);
@@ -301,6 +317,8 @@ const Fatturazione : React.FC = () =>{
       if(error?.response?.status === 404){
         setGridData([]);
         setShowedData([]);
+        setPage(0);
+        setRowsPerPage(10);
       }
       setBodyFatturazioneDownload(body);
       setShowLoadingGrid(false);
@@ -355,7 +373,7 @@ const Fatturazione : React.FC = () =>{
     await downloadFatturePagopa(token,profilo.nonce, body).then(response => response.blob()).then((response)=>{
       let title = `Lista fatturazione/${month[(body.mese||0) - 1]}/${body.anno}.xlsx`;
       if(body.idEnti.length === 1 && gridData[0]){
-        title = `Lista fatturazione/ ${gridData[0]?.ragionesociale}/${month[(body.mese||0)  - 1]}/${body.anno}.xlsx`;
+        title = `Lista fatturazione/ ${gridData[0]?.ragioneSociale}/${month[(body.mese||0)  - 1]}/${body.anno}.xlsx`;
       }
       saveAs(response,title);
       setShowDownloading(false);
@@ -381,7 +399,7 @@ const Fatturazione : React.FC = () =>{
     }).then((response)=>{
       let title = `Lista report/${month[(body.mese||0)  - 1]}/${body.anno}.zip`;
       if(body.idEnti.length === 1 && gridData[0]){
-        title = `Lista report/ ${gridData[0]?.ragionesociale}/${month[(body.mese||0)  - 1]}/${body.anno}.zip`;
+        title = `Lista report/ ${gridData[0]?.ragioneSociale}/${month[(body.mese||0)  - 1]}/${body.anno}.zip`;
       }
       saveAs(response,title);
       setShowDownloading(false);

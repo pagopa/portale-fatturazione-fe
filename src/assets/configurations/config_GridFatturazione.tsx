@@ -48,7 +48,7 @@ export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
       }else if(row.inviata === 2){
         tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'#FFE5A3'};
       }else if(row.inviata === 3){
-        tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'#86E1FD'};
+        tooltipObj = {label:'Eliminata',title:'La fattura è stata cancellata',color:'#86E1FD'};
       }
       return(
         <Chip variant="outlined" label={tooltipObj.label} sx={{backgroundColor:tooltipObj.color}} />

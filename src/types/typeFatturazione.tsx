@@ -44,7 +44,7 @@ export interface FattureObj {
     tipologiaFattura: string,
     istitutioID: string,
     onboardingTokenID: string,
-    ragionesociale: string,
+    ragioneSociale: string,
     tipocontratto: string,
     idcontratto: string,
     tipoDocumento: string,
