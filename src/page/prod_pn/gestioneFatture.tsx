@@ -199,6 +199,7 @@ const GestioneFatture : React.FC = () => {
 
   
   const getLista = async(pg,row,body) => {
+    console.log("dentro call");
     setGetListaLoading(true);
     await getListaGestioneFatturePagoPa(token, profilo.nonce,pg,row,body).then((res)=>{
     
@@ -456,7 +457,7 @@ const GestioneFatture : React.FC = () => {
         profilo.nonce,
         bodyApi
       );
-      await getLista((page+1), rowsPerPage, bodyGetLista);
+     
 
       managePresaInCarico(
         "INSER_DELETE_WHITE_LIST",
@@ -464,9 +465,11 @@ const GestioneFatture : React.FC = () => {
       );
 
     } catch (err) {
-      manageError(err as ManageErrorResponse, dispatchMainState);
+      managePresaInCarico('GENERICO_KO',dispatchMainState);
+     
     } finally {
       setGetListaLoading(false);
+      getLista((page+1), rowsPerPage, bodyGetLista);
     }
   };
   
