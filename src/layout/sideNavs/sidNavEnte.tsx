@@ -38,8 +38,7 @@ const SideNavEnte: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
  
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
-  const [openContestazioni, setOpenContestazioni] = useState(false);
+  //const [openContestazioni, setOpenContestazioni] = useState(false);
   const [openDocContabili, setOpenDocContabili] = useState(false);
     
   const handleListItemClick = async(pathToGo) => {
@@ -55,77 +54,21 @@ const SideNavEnte: React.FC = () => {
     } 
   };
 
-  // Lato self care
-  // chiamata per capire se i dati fatturazione sono stati inseriti
-  // SI.... riesco ad inserire modulo commessa
-  //No.... redirect dati fatturazione
-  // tutto gestito sul button 'continua' in base al parametro datiFatturazione del main state
-
-  // nella page moduloCommessInserimento questa function viene applicata sia lato selfcare che pago pa poichè se si è loggati come Pago pa
-  // viene mostrata la grid lista commesse , solo nel momento in cui l'utente va a selezionare un comune potrà essere eseguita la
-  // chiamata con i parametri necessari (id ente)
-  /*
-    TODO: da eliminare
-    const getDatiFat = async () =>{
-        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
-            handleModifyMainState({datiFatturazione:true});
-        }).catch(err =>{
-            if(err?.response?.status === 404){
-                handleModifyMainState({datiFatturazione:false});
-            }
-        });
-
-    };
-
-    useEffect(()=>{
-        getDatiFat();
-    },[]);
-*/
 
   const currentLocation = location.pathname;
 
+  
   useEffect(()=>{
-    if(currentLocation === PathPf.DATI_FATTURAZIONE_EN){
-      setSelectedIndex(0);
-    }else if(currentLocation === PathPf.LISTA_COMMESSE){
-      setSelectedIndex(1);
-    }else if(currentLocation === PathPf.MODULOCOMMESSA_EN){
-      setSelectedIndex(1);
-    }else if(currentLocation === PathPf.PDF_COMMESSA_EN){
-      setSelectedIndex(1);
-    }else if(currentLocation === PathPf.LISTA_NOTIFICHE_EN){
-      setSelectedIndex(2);
-    }else if(currentLocation === PathPf.LISTA_REL_EN){
-      setSelectedIndex(3);
-    }else if(currentLocation === PathPf.PDF_REL_EN){
-      setSelectedIndex(3);
-    }else if(currentLocation ===  PathPf.API_KEY_ENTE){
-      setSelectedIndex(5);
-    }else if(currentLocation === PathPf.ASYNC_DOCUMENTI_ENTE){
-      setSelectedIndex(8);
-    }else if(currentLocation === PathPf.STORICO_CONTEST_ENTE || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI_ENTE){
-      setSelectedIndex(6);
-      setOpenContestazioni(true);
-    }else if(currentLocation === PathPf.LISTA_STORICO_DOCUMENTI){
-      setSelectedIndex(9);
-    }else if(currentLocation === PathPf.DOCUMENTI_SOSPESI || currentLocation.includes("documentisospesi") ){
-      setSelectedIndex(10);
-    }else if(currentLocation === PathPf.DOCUMENTI_EMESSI || currentLocation.includes("documentiemessi")){
-      setSelectedIndex(11);
-    } 
-        
-        
-    if(currentLocation === PathPf.DOCUMENTI_EMESSI || currentLocation === PathPf.DOCUMENTI_SOSPESI ||  currentLocation.includes("documentiemessi") || currentLocation.includes("documentisospesi")  ){
+    if(
+      currentLocation === PathPf.DOCUMENTI_SOSPESI ||
+         currentLocation === PathPf.DOCUMENTI_EMESSI ||
+         currentLocation.includes("ente/fatturapdf/documentisospesi")||
+         currentLocation.includes("ente/fatturapdf/documentiemessi")||
+         currentLocation.includes("ente/fatturapdf/rel")){
       setOpenDocContabili(true);
     }
+  },[]);
 
-    if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE && currentLocation !== PathPf.LISTA_NOTIFICHE_EN && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI_ENTE )){
-      setOpenContestazioni(false);
-    }
-    if(openDocContabili && (currentLocation !== PathPf.DOCUMENTI_EMESSI && currentLocation !== PathPf.DOCUMENTI_SOSPESI &&  !currentLocation.includes("documentiemessi") && !currentLocation.includes("documentisospesi") )){
-      setOpenDocContabili(false);
-    }
-  },[currentLocation]);
 
   return (
     <Box sx={{
@@ -135,36 +78,36 @@ const SideNavEnte: React.FC = () => {
     }}
     >
       <List component="nav">
-        <><ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.DATI_FATTURAZIONE_EN)}>
+        <><ListItemButton selected={currentLocation === PathPf.DATI_FATTURAZIONE_EN } onClick={() => handleListItemClick(PathPf.DATI_FATTURAZIONE_EN)}>
           <ListItemIcon>
             <DnsIcon fontSize="inherit"></DnsIcon>
           </ListItemIcon>
           <ListItemText primary="Dati di fatturazione" />
         </ListItemButton>
-        <ListItemButton selected={selectedIndex === 1} onClick={() =>handleListItemClick(PathPf.LISTA_COMMESSE)}>
+        <ListItemButton selected={currentLocation === PathPf.LISTA_COMMESSE || currentLocation === PathPf.MODULOCOMMESSA_EN || currentLocation.includes(PathPf.PDF_COMMESSA_EN)} onClick={() =>handleListItemClick(PathPf.LISTA_COMMESSE)}>
           <ListItemIcon>
             <ViewModuleIcon fontSize="inherit" />
           </ListItemIcon>
           <ListItemText primary="Modulo commessa" />
         </ListItemButton></>
-        <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(PathPf.LISTA_NOTIFICHE_EN)}>
+        <ListItemButton selected={currentLocation === PathPf.LISTA_NOTIFICHE_EN} onClick={() => handleListItemClick(PathPf.LISTA_NOTIFICHE_EN)}>
           <ListItemIcon>
             <MarkUnreadChatAltIcon fontSize="inherit" />
           </ListItemIcon>
           <ListItemText primary="Notifiche" />
         </ListItemButton>
         {relIsVisible && 
-                <ListItemButton selected={selectedIndex === 3} onClick={()=>handleListItemClick(PathPf.LISTA_REL_EN)}>
-                  <ListItemIcon>
-                    <ManageAccountsIcon fontSize="inherit" />
-                  </ListItemIcon>
-                  <Box className="ms-3" display="flex" flexDirection="column">
-                    <ListItemText primary="Regolare esecuzione /" />
-                    <ListItemText primary="Documenti di cortesia" />
-                  </Box>
-                </ListItemButton>
+          <ListItemButton selected={currentLocation === PathPf.LISTA_REL_EN || currentLocation.includes("ente/fatturapdf/rel")} onClick={()=>handleListItemClick(PathPf.LISTA_REL_EN)}>
+            <ListItemIcon>
+              <ManageAccountsIcon fontSize="inherit" />
+            </ListItemIcon>
+            <Box className="ms-3" display="flex" flexDirection="column">
+              <ListItemText primary="Regolare esecuzione /" />
+              <ListItemText primary="Documenti di cortesia" />
+            </Box>
+          </ListItemButton>
         }
-        <ListItemButton selected={selectedIndex === 9} onClick={()=>{
+        <ListItemButton selected={false} onClick={()=>{
           setOpenDocContabili(true);
           handleListItemClick(PathPf.DOCUMENTI_SOSPESI);}}>
           <ListItemIcon>
@@ -186,7 +129,7 @@ const SideNavEnte: React.FC = () => {
             </IconButton>}
         </ListItemButton>
         <Collapse in={openDocContabili} timeout="auto" unmountOnExit>
-          <ListItemButton sx={{ pl: 4 }} selected={selectedIndex === 10} onClick={()=>handleListItemClick(PathPf.DOCUMENTI_SOSPESI)}>
+          <ListItemButton sx={{ pl: 4 }} selected={currentLocation === PathPf.DOCUMENTI_SOSPESI || currentLocation.includes("ente/fatturapdf/documentisospesi")} onClick={()=>handleListItemClick(PathPf.DOCUMENTI_SOSPESI)}>
             <ListItemIcon>
               <FileCopyIcon fontSize="inherit" />
             </ListItemIcon>
@@ -194,7 +137,7 @@ const SideNavEnte: React.FC = () => {
               <ListItemText primary="Documenti contabili sospesi" />
             </Box>
           </ListItemButton>
-          <ListItemButton sx={{ pl: 4 }} selected={selectedIndex === 11} onClick={()=>handleListItemClick(PathPf.DOCUMENTI_EMESSI)}>
+          <ListItemButton sx={{ pl: 4 }} selected={currentLocation === PathPf.DOCUMENTI_EMESSI || currentLocation.includes("ente/fatturapdf/documentiemessi")} onClick={()=>handleListItemClick(PathPf.DOCUMENTI_EMESSI)}>
             <ListItemIcon>
               <DescriptionIcon fontSize="inherit" />
             </ListItemIcon>
@@ -203,19 +146,19 @@ const SideNavEnte: React.FC = () => {
             </Box>
           </ListItemButton>
         </Collapse>
-        <ListItemButton selected={selectedIndex === 8} onClick={() => handleListItemClick(PathPf.ASYNC_DOCUMENTI_ENTE)}>
+        <ListItemButton selected={currentLocation === PathPf.ASYNC_DOCUMENTI_ENTE} onClick={() => handleListItemClick(PathPf.ASYNC_DOCUMENTI_ENTE)}>
           <ListItemIcon>
             <DownloadIcon fontSize="inherit"/>
           </ListItemIcon>
           <ListItemText primary="Download documenti"/>
         </ListItemButton>
         {mainData.apiKeyPage.visible &&
-                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClick(PathPf.API_KEY_ENTE)}>
-                  <ListItemIcon>
-                    <VpnKeyIcon fontSize="inherit" />
-                  </ListItemIcon>
-                  <ListItemText primary="API key"/>
-                </ListItemButton>}
+          <ListItemButton selected={currentLocation === PathPf.API_KEY_ENTE} onClick={() => handleListItemClick(PathPf.API_KEY_ENTE)}>
+            <ListItemIcon>
+              <VpnKeyIcon fontSize="inherit" />
+            </ListItemIcon>
+            <ListItemText primary="API key"/>
+          </ListItemButton>}
       </List>
       <Divider />
     </Box>

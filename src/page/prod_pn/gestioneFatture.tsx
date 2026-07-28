@@ -205,7 +205,7 @@ const GestioneFatture : React.FC = () => {
     
       const customObj = res.data.gestioneFatture.map((el ,i) => {
         return {
-          idWhite:el.id,
+          idFattura:el.idFattura,
           meseNumber:el.mese,
           ragioneSociale:el.ragioneSociale,
           anno:el.anno,

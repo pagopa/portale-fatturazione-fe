@@ -68,7 +68,7 @@ export const headerNamesGestioneFatture: GestioneFattureConfig[] = [
                 <IconButton
                   size="medium"
                   onClick={() =>{
-                    fun && fun(obj,'ripristina');
+                    if(fun) fun(obj,'ripristina');
                   } }
                   disabled={disabled}
                 >
@@ -88,12 +88,12 @@ export const headerNamesGestioneFatture: GestioneFattureConfig[] = [
               </span>
             </Tooltip>
           </>
-          : obj.stato === "ELIMINATA" ?  <Tooltip title="Annulla">
+          : (obj.stato === "ELIMINATA") ?  <Tooltip title="Annulla">
             <span>
               <IconButton
                 size="medium"
                 onClick={() => fun && fun(obj,'annulla eliminazione')}
-                disabled={disabled}
+                disabled={disabled || obj.idFattura === null}
               >
                 <CancelIcon sx={{ color: color }} />
               </IconButton>

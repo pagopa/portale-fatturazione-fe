@@ -86,7 +86,7 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
         {open?.buttonIsVisible &&
             <div className='d-flex justify-content-evenly text-center mt-5'>
               <Button variant="outlined" onClick={handleClose}>Annulla</Button>
-              <Button disabled={setTextAreaValue && ((textAreaValue?.length||0) < 10)} variant="contained" 
+              <Button disabled={setTextAreaValue && (((textAreaValue?.length||0) < 10) || errorTextInput)} variant="contained" 
                 onClick={() =>{
                   window.scrollTo({
                     top: 0,

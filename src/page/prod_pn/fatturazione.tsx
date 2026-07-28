@@ -119,7 +119,7 @@ const Fatturazione : React.FC = () =>{
     return () => clearTimeout(timer);
   },[textValue]);
 
-//:TODO useEffect da elkiminare
+  //:TODO useEffect da elkiminare
   useEffect(()=>{
     if(bodyFatturazione.anno && bodyFatturazione.mese && !isInitialRender.current){
       getDateTipologieFatturazione(bodyFatturazione);
@@ -183,7 +183,7 @@ const Fatturazione : React.FC = () =>{
         setValueMultiselectTipologie([]);
         if(callLista.current){
           getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:mesiCamelCase[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null}});
-        }
+        } 
                
       }
     }).catch((err)=>{
@@ -324,6 +324,8 @@ const Fatturazione : React.FC = () =>{
       setShowLoadingGrid(false);
       manageError(error, dispatchMainState);
       callAnnulla.current = false;
+
+    
     });  
     getTipologieFattureInvioSap(body.anno,body.mese);
     if(isInitialRender.current){
@@ -589,7 +591,7 @@ const Fatturazione : React.FC = () =>{
       if (actionCalled === "posticipa") {
         actionToApi = "posticipa";
       }else if (actionCalled === "annulla eliminazione" ||actionCalled === "annulla") {
-        actionToApi = "cancella";
+        actionToApi = "elimina";
       }
 
       if (!elementSelected) return;
@@ -757,7 +759,6 @@ const Fatturazione : React.FC = () =>{
           keyValue={"tipologiaFattura"}
           keyBody={"dataFattura"}
           extraCodeOnChangeArray={(e)=>{
-                      
             setValueMultiselectDateTipologie(e);
           }}
           iconMaterial={RenderIcon("date",true)}
