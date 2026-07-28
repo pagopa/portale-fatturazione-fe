@@ -652,10 +652,10 @@ const GestioneFatture : React.FC = () => {
         rows={rowsPerPage}
         headerNames={headerNamesGestioneFatture}
         disabled={false}
-        widthCustomSize="auto"
         setOpenModalAction={showPopUpAction}
         buttons={buttonsTopHeader}
         sentenseEmpty={"Non sono presenti documenti"}
+        widthCustomSize="1000px"
       />
       <ModalAggiungi 
         getLista={onButtonAggiungi}

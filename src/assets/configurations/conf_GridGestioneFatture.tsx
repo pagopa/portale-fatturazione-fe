@@ -93,7 +93,7 @@ export const headerNamesGestioneFatture: GestioneFattureConfig[] = [
               <IconButton
                 size="medium"
                 onClick={() => fun && fun(obj,'annulla eliminazione')}
-                disabled={disabled || obj.idFattura === null}
+                disabled={disabled || obj.idFattura !== null}
               >
                 <CancelIcon sx={{ color: color }} />
               </IconButton>
