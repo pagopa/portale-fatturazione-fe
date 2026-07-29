@@ -278,8 +278,12 @@ const Fatturazione : React.FC = () =>{
         dataString = filters?.valueMulitselectDateTipologie.map(el =>  el.split("-").slice(1).join("-"));
         setPage(filters.page||0);
         setRowsPerPage(filters.rows||10);
-      }else if( callAnnulla.current || callLista.current){
+      }else if( callAnnulla.current ){
         dataString = [];
+        setPage(0);
+        setRowsPerPage(10);
+      }else if( callLista.current){
+        dataString = valueMulitselectDateTipologie.map(el =>  el.split("-").slice(1).join("-"));
         setPage(0);
         setRowsPerPage(10);
       }else{

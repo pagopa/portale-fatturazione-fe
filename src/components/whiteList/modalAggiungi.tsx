@@ -353,7 +353,10 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 setBodyAction((prev)=> ({...prev, ...{anno:Number(e),mese:[],nota:null}}));
                 if(bodyAction.idEnte === exceptionId &&  bodyAction.tipologiaFattura === "PRIMO SALDO"){
                   const exeptionAnniMesi = generaRangeAnnoMese();
-                  const newArrayMonth = exeptionAnniMesi.filter(el => Number(el.anno) === Number(e)).map(el => el.mese).reverse();
+                  const newArrayMonth = exeptionAnniMesi.filter(el => Number(el.anno) === Number(e)).map(el => {
+                    el.mese  = {mese:el.mese.mese,descrizione:el.mese.descrizione.toUpperCase()};
+                    return el.mese;
+                  }).reverse();
                   setArrayMonths(newArrayMonth);
                 }else{
                   getMesi(bodyAction.tipologiaFattura,bodyAction.azione,e);

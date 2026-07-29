@@ -29,7 +29,7 @@ const RowWhiteList :React.FC<RowWhite>  = ({element,headerNames,setOpenModalActi
       {
         Object.values(headerNames).map((header:any, i:number)=>{
           // stato per loa switch utilizzato nella page tipologia contratto
-          const cssFirstColum = header.keyValue === "ragioneSociale" ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
+          const cssFirstColum = header.keyValue === "ragioneSociale" ? {color:'#0D6EFD', fontWeight: 'bold'} : null;
           const valueEl = (header.keyValue === "ragioneSociale" && element[header.keyValue]?.toString().length > 20) ? element[header.keyValue]?.toString().slice(0, 20) + '...' : element[header.keyValue];
           if(headerNames[i]?.gridAction){
             return (
