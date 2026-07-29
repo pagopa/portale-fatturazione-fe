@@ -569,7 +569,7 @@ const Fatturazione : React.FC = () =>{
   ];
     
   const showPopUpAction = (obj, action) => {  
-    console.log({obj});
+   
     setElementSelected(obj);
     setActionCalled(action);
     if(action === "posticipa"){

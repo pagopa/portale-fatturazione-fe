@@ -199,7 +199,7 @@ const GestioneFatture : React.FC = () => {
 
   
   const getLista = async(pg,row,body) => {
-    console.log("dentro call");
+  
     setGetListaLoading(true);
     await getListaGestioneFatturePagoPa(token, profilo.nonce,pg,row,body).then((res)=>{
     
