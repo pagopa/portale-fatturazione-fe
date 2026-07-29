@@ -21,7 +21,7 @@ import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typogra
 import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate } from "../../reusableFunction/function";
-import { ManageErrorResponse } from "../../types/typesGeneral";
+
 
 export interface BodyLista {
   idEnti: string[]
