@@ -95,6 +95,12 @@ const GridRowDesignByConfigFile =  ({
               {element[rowObject.keyValue] === null ? "--" : element[rowObject.keyValue]}
             </TableCell>
           );
+        case 'boolean':
+          return   (
+            <TableCell align="center" >
+              {element[rowObject.keyValue] === null ? "--" : element[rowObject.keyValue] === true ?"Si" : "No"}
+            </TableCell>
+          );
         case 'mese-number':
           return   (
             <TableCell align="center" >
@@ -103,9 +109,9 @@ const GridRowDesignByConfigFile =  ({
           );
         case 'ragionesociale':
           return  (
-            <Tooltip key={`${i}-${element[rowObject.keyValue]}`} title={(element[rowObject.keyValue]?.toString().length > 50) ? element[rowObject.keyValue]:null}>
+            <Tooltip key={`${i}-${element[rowObject.keyValue]}`} title={(element[rowObject.keyValue]?.toString().length > 40) ? element[rowObject.keyValue]:null}>
               <TableCell onClick={() => {if(apiGet && headerNames[i]?.makeAction ) apiGet(element);}}  align={i === 0 ? "left" : "center"} sx={headerNames[i]?.applyCss ? cssFirstColumRagioneSociale:null}>
-                {( element[rowObject.keyValue]?.toString().length > 50) ? element[rowObject.keyValue]?.toString().slice(0, 47) + '...' : element[rowObject.keyValue]}
+                {( element[rowObject.keyValue]?.toString().length > 40) ? element[rowObject.keyValue]?.toString().slice(0, 37) + '...' : element[rowObject.keyValue]}
               </TableCell>
             </Tooltip>);
         case 'data':{
@@ -118,6 +124,12 @@ const GridRowDesignByConfigFile =  ({
           return (  
             <TableCell key={`${i}-${element[rowObject.keyValue]}`}  align="center">
               { valueData||'--'}
+            </TableCell>);
+        }
+        case 'number-tipocontratto':{
+          return (  
+            <TableCell key={`${i}-${element[rowObject.keyValue]}`}  align="center">
+              { element[rowObject.keyValue] === null ? '--' : Number(element[rowObject.keyValue]) === 1 ? "PAL":"PAC"}
             </TableCell>);
         }
         case 'data-ora':{
@@ -133,6 +145,12 @@ const GridRowDesignByConfigFile =  ({
           return(
             <TableCell key={`${i}-${element[rowObject.keyValue]}`}  align="center">
               { (Number(element[rowObject.keyValue]) / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" })||'--'}
+            </TableCell>
+          );
+        case 'euro':
+          return(
+            <TableCell key={`${i}-${element[rowObject.keyValue]}`}  align="center">
+              { (Number(element[rowObject.keyValue])).toLocaleString("de-DE", { style: "currency", currency: "EUR" })||'--'}
             </TableCell>
           );
         case 'switch':

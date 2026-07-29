@@ -234,24 +234,7 @@ const RelPage : React.FC = () =>{
       await  getListaRel(token,profilo.nonce,nPage, nRows, newBody)
         .then((res)=>{
           // ordino i dati in base all'header della grid
-          const orderDataCustom = res.data.relTestate.map((obj)=>{
-            // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
-            // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
-            return {
-              idTestata:obj.idTestata,
-              ragioneSociale:obj.ragioneSociale,
-              tipologiaFattura:obj.tipologiaFattura,
-              firmata:obj.firmata,
-              idContratto:obj.idContratto,
-              anno:obj.anno,
-              mese:mesiGrid[obj.mese],
-              totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-              totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-              totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
-              totaleNotificheDigitali:obj.totaleNotificheDigitali,
-              totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-            };
-          });
+          const orderDataCustom = res.data.relTestate;
           setData(orderDataCustom);
           setTotalNotifiche(res.data.count);
           setGetListaRelRunning(false);
@@ -270,25 +253,7 @@ const RelPage : React.FC = () =>{
         const checkIfAllCaricata = res.data.relTestate.every(v => v.caricata === 1);
         setDisableListaPdf(checkIfAllCaricata);
         // ordino i dati in base all'header della grid
-        const orderDataCustom = res.data.relTestate.map((obj)=>{
-          // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
-          // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
-          return {
-            idTestata:obj.idTestata,
-            ragioneSociale:obj.ragioneSociale,
-            tipologiaFattura:obj.tipologiaFattura,
-            tipologiaContratto:obj?.tipologiaContratto,
-            firmata:obj.firmata,
-            idContratto:obj.idContratto,
-            anno:obj.anno,
-            mese:mesiGrid[obj.mese],
-            totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-            totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-            totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
-            totaleNotificheDigitali:obj.totaleNotificheDigitali,
-            totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-          };
-        });
+        const orderDataCustom = res.data.relTestate;
         setData(orderDataCustom);
         setTotalNotifiche(res.data.count);
         setGetListaRelRunning(false);
@@ -433,9 +398,9 @@ const RelPage : React.FC = () =>{
       idTipoContratto = 2;
     }
     if(profilo.auth === 'PAGOPA'){
-      navigate(`${profilePath}/rel/${el.id}/_/${idTipoContratto}`);
+      navigate(`${profilePath}/rel/${el.idTestata}/_/${idTipoContratto}`);
     }else{
-      navigate(`${profilePath}/rel/${el.id}`);
+      navigate(`${profilePath}/rel/${el.idTestata}`);
     }
         
   };  

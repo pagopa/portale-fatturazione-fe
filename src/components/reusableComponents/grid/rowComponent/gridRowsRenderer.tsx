@@ -45,6 +45,8 @@ const GridRowsRenderer = ({
   case 'idPrevisonale':
   case 'idNotifica':
   case 'contestazionePage':
+  case 'idTestata':
+  case 'storico_documenti_contabili':
     return null;
   // return <RowContratto key={Math.random()} apiGet={apiGet} element={element} headerNames={headerNames} />;
   case 'idWhite':
