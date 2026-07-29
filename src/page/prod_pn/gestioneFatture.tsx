@@ -25,7 +25,7 @@ import { formatDate } from "../../reusableFunction/function";
 
 export interface BodyLista {
   idEnti: string[]
-  tipologiaContratto: number|null
+  idTipoContratto: number|null
   tipologiaFattura: string
   anno: number
   mese: number,
@@ -88,7 +88,7 @@ const GestioneFatture : React.FC = () => {
   const [selected, setSelected] = useState<number[]>([]);
   const [bodyGetLista, setBodyGetLista] = useState<GestioneFattureInterface>({
     idEnti: [],
-    tipologiaContratto:null,
+    idTipoContratto:null,
     tipologiaFattura:null,
     anno: null,
     mesi: [],
@@ -118,6 +118,7 @@ const GestioneFatture : React.FC = () => {
           await getMesi(filters.body.anno);
         }
 
+        await getListTipologiaFattura({anno:filters.body.anno,mesi:filters.body.mesi});
         await getLista(filters.page+1, filters.rows,filters.body);
         setPage(filters.page);
         setRowsPerPage(filters.rows);
@@ -129,7 +130,7 @@ const GestioneFatture : React.FC = () => {
         /*await getMesi(res.data[0]);*/
         await getLista(1,10,{
           idEnti: [],
-          tipologiaContratto: null,
+          idTipoContratto: null,
           tipologiaFattura:null,
           anno: null,
           mesi: []
@@ -275,17 +276,17 @@ const GestioneFatture : React.FC = () => {
   const onButtonAnnulla = () => {
     getLista(1,10,{
       idEnti: [],
-      tipologiaContratto: null,
+      idTipoContratto: null,
       tipologiaFattura:null,
-      anno: arrayYears[0],
+      anno: null,
       mesi: [],
       azione:null
     });
     setBodyGetLista({
       idEnti: [],
-      tipologiaContratto: null,
+      idTipoContratto: null,
       tipologiaFattura:null,
-      anno: arrayYears[0],
+      anno: null,
       mesi: [],
       azione:null
     });
@@ -497,10 +498,11 @@ const GestioneFatture : React.FC = () => {
 
    
   const statusAnnulla = (
+    bodyGetLista.anno !== null ||
     bodyGetLista.idEnti.length !== 0 ||
     bodyGetLista.mesi.length !== 0 ||
     bodyGetLista.tipologiaFattura !== null ||
-    bodyGetLista.tipologiaContratto !== null ||
+    bodyGetLista.idTipoContratto !== null ||
     bodyGetLista.azione !== null
   ) ? 'show' : 'hidden';
 

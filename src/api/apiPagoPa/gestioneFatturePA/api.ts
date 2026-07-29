@@ -3,7 +3,7 @@ import { url } from "../../api";
 
 export interface GestioneFattureInterface {
     idEnti: string[]
-    tipologiaContratto: number|null
+    idTipoContratto: number|null
     tipologiaFattura: string|null
     anno: number|null
     mesi: number[],
