@@ -328,9 +328,9 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               extraCodeOnChange={(e)=>{
                 
                 setBodyAction((prev)=> ({...prev, ...{tipologiaFattura:e,anno:null,mese:[],nota:null}}));
-                if(bodyAction.idEnte === exceptionId){
+                if(bodyAction.idEnte === exceptionId && e === "PRIMO SALDO"){
                   const exeptionAnniMesi = generaRangeAnnoMese();
-                  const newArray:number[] = Array.from(new Set(exeptionAnniMesi.map(el => el.anno)));
+                  const newArray:number[] = Array.from(new Set(exeptionAnniMesi.map(el => el.anno))).reverse();
                   
                   setArrayYears(newArray);
                 }else{
@@ -351,9 +351,9 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               arrayValues={arrayYears}
               extraCodeOnChange={(e)=>{   
                 setBodyAction((prev)=> ({...prev, ...{anno:Number(e),mese:[],nota:null}}));
-                if(bodyAction.idEnte === exceptionId){
+                if(bodyAction.idEnte === exceptionId &&  bodyAction.tipologiaFattura === "PRIMO SALDO"){
                   const exeptionAnniMesi = generaRangeAnnoMese();
-                  const newArrayMonth = exeptionAnniMesi.filter(el => Number(el.anno) === Number(e)).map(el => el.mese);
+                  const newArrayMonth = exeptionAnniMesi.filter(el => Number(el.anno) === Number(e)).map(el => el.mese).reverse();
                   setArrayMonths(newArrayMonth);
                 }else{
                   getMesi(bodyAction.tipologiaFattura,bodyAction.azione,e);
