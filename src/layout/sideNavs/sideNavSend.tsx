@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useState } from 'react';
 import {
   List,
   ListItemButton,
@@ -37,12 +37,33 @@ const SideNavSend : React.FC = () => {
    
   const navigate = useNavigate();
   const location = useLocation();
+  const currentLocation = location.pathname;
 
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
-  const [open, setOpen] = useState(false);
-  const [open2, setOpen2] = useState(false);
+  const [openSezioneDatiFatturazione, setOpenSezioneDatiFatturazione] = useState(false);
+  const [openSezioneFatturazione, setOpenSezioneFatturazione] = useState(false);
   const [openContestazioni, setOpenContestazioni] = useState(false);
   const [openModPrevisonale, setOpenModPrevisonale] = useState(false);
+
+
+  useEffect(()=>{
+    if(currentLocation === PathPf.TIPOLOGIA_CONTRATTO || currentLocation === PathPf.DATI_FATTURAZIONE){
+      setOpenSezioneDatiFatturazione(true);
+    }else if(
+      currentLocation === PathPf.DOCUMENTI_SOSPESI_SEND ||
+       currentLocation === PathPf.FATTURAZIONE ||
+       currentLocation === PathPf.GESTIONE_FATTURE ||
+       currentLocation === PathPf.JSON_TO_SAP ||
+       currentLocation === PathPf.JSON_TO_SAP_DETAILS ||
+       currentLocation.includes("send/fatturapdf/documentisospesi")||
+       currentLocation.includes("send/fatturapdf/documentiemessi")||
+       currentLocation.includes("send/fatturapdf/rel")){
+      setOpenSezioneFatturazione(true);
+    }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST || currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI){
+      setOpenContestazioni(true);
+    }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA || currentLocation === PathPf.MODULOCOMMESSA || currentLocation === PathPf.PDF_COMMESSA){
+      setOpenModPrevisonale(true);
+    }
+  },[]);
     
     
   const handleListItemClick = async(pathToGo) => {
@@ -53,74 +74,6 @@ const SideNavSend : React.FC = () => {
     } 
   };
     
-  const currentLocation = location.pathname;
-
-  useEffect(()=>{
-    if(currentLocation === PathPf.DATI_FATTURAZIONE){
-      setSelectedIndex(0);
-    }else if(currentLocation === PathPf.MODULOCOMMESSA){
-      setSelectedIndex(1);
-    }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA){
-      setSelectedIndex(1);  
-    }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA_PREVISONALE){
-      setSelectedIndex(12); 
-    }else if(currentLocation === PathPf.LISTA_DATI_FATTURAZIONE){
-      setSelectedIndex(0);
-    }else if(currentLocation === PathPf.PDF_COMMESSA){
-      setSelectedIndex(1);
-    }else if(currentLocation === PathPf.LISTA_NOTIFICHE){
-      setSelectedIndex(2);
-    }else if(currentLocation === PathPf.LISTA_REL || currentLocation.includes("send/fatturapdf/rel")){
-      setSelectedIndex(3);
-    }else if(currentLocation === PathPf.PDF_REL){
-      setSelectedIndex(3);
-    }else if(currentLocation === PathPf.ADESIONE_BANDO){
-      setSelectedIndex(4);
-    }else if(currentLocation === PathPf.FATTURAZIONE || currentLocation.includes("send/fatturapdf/documentiemessi")){
-      setSelectedIndex(5);
-    }else if(currentLocation === "messaggi"){
-      setSelectedIndex(null);
-    }else if(currentLocation === PathPf.ACCERTAMENTI){
-      setSelectedIndex(7);
-    }else if(currentLocation === PathPf.TIPOLOGIA_CONTRATTO){
-      setSelectedIndex(8);
-      setOpen(true);
-    }else if(currentLocation === PathPf.LISTA_DOC_EMESSI){
-      setSelectedIndex(9);
-      setOpen2(true);
-    }else if(currentLocation === PathPf.JSON_TO_SAP){
-      setSelectedIndex(5);
-    }else if(currentLocation.toLowerCase().includes("/inviofatturedettaglio/")){
-      setSelectedIndex(5);
-    }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI){
-      setOpenContestazioni(true);
-      setSelectedIndex(10);
-    }else if(currentLocation === PathPf.ORCHESTRATORE){
-      setSelectedIndex(11);
-    }else if(currentLocation === PathPf.LISTA_STORICO_DOCUMENTI_SEND){
-      setSelectedIndex(13);
-    }else if(currentLocation === PathPf.DOCUMENTI_SOSPESI_SEND || currentLocation.includes("send/fatturapdf/documentisospesi")){
-      setSelectedIndex(14);
-    }else if(currentLocation === PathPf.GESTIONE_FATTURE){
-      setSelectedIndex(15);
-    }
-
-
-    if(open2 && (currentLocation !== PathPf.LISTA_DOC_EMESSI && currentLocation !== PathPf.FATTURAZIONE && currentLocation !== PathPf.DOCUMENTI_SOSPESI_SEND &&  !currentLocation.includes("/send/fatturapdf/"))){
-      setOpen2(false);
-    }
-    if(open && (currentLocation !== PathPf.TIPOLOGIA_CONTRATTO && currentLocation !== PathPf.LISTA_DATI_FATTURAZIONE)){
-      setOpen(false);
-    }
-    if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST && currentLocation !== PathPf.LISTA_NOTIFICHE && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI )){
-      setOpenContestazioni(false);
-    }
-    if(openModPrevisonale && (currentLocation !== PathPf.LISTA_MODULICOMMESSA_PREVISONALE && currentLocation !== PathPf.LISTA_MODULICOMMESSA && currentLocation !== PathPf.MODULOCOMMESSA )){
-      setOpenModPrevisonale(false);
-    }
-
-  },[currentLocation]);
-
   return (
     <Box sx={{
       height: '100%',
@@ -129,28 +82,33 @@ const SideNavSend : React.FC = () => {
     }}
     >
       <List component="nav" aria-label="main piattaforma-notifiche sender">
-        <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.LISTA_DATI_FATTURAZIONE)}>
+        <ListItemButton selected={currentLocation === PathPf.LISTA_DATI_FATTURAZIONE || currentLocation === PathPf.DATI_FATTURAZIONE} onClick={() => handleListItemClick(PathPf.LISTA_DATI_FATTURAZIONE)}>
           <ListItemIcon>
             <DnsIcon fontSize="inherit"></DnsIcon>
           </ListItemIcon>
           <ListItemText primary="Dati di fatturazione" />
-          {open ? 
+          {openSezioneDatiFatturazione  ? 
             <IconButton onClick={(e)=>{
               e.stopPropagation();
-              setOpen(false);
+              setOpenSezioneDatiFatturazione(false);
+             
             } }  size="small">
               <ExpandLess fontSize="inherit" />
             </IconButton>  :
             <IconButton  onClick={(e)=>{
               e.stopPropagation();
-              setOpen(true);
+              setOpenSezioneDatiFatturazione(true);
+             
+              setOpenSezioneFatturazione(false);
+              setOpenContestazioni(false);
+              setOpenModPrevisonale(false);
             } }  size="small">
               <ExpandMore fontSize="inherit"/>
             </IconButton> }
         </ListItemButton>
-        <Collapse in={open} timeout="auto" unmountOnExit>
+        <Collapse in={openSezioneDatiFatturazione} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton selected={selectedIndex === 8} sx={{ pl: 4 }} onClick={() =>handleListItemClick(PathPf.TIPOLOGIA_CONTRATTO)}>
+            <ListItemButton selected={currentLocation === PathPf.TIPOLOGIA_CONTRATTO} sx={{ pl: 4 }} onClick={() =>handleListItemClick(PathPf.TIPOLOGIA_CONTRATTO)}>
               <ListItemIcon>
                 <FormatAlignCenterIcon fontSize="inherit" />
               </ListItemIcon>
@@ -158,13 +116,18 @@ const SideNavSend : React.FC = () => {
             </ListItemButton>
           </List>
         </Collapse>
-        <ListItemButton selected={selectedIndex === 12} onClick={() => handleListItemClick(PathPf.LISTA_MODULICOMMESSA_PREVISONALE)}>
+        <ListItemButton 
+          selected={
+            currentLocation === PathPf.LISTA_MODULICOMMESSA_PREVISONALE ||
+            ((currentLocation === PathPf.MODULOCOMMESSA || currentLocation === PathPf.PDF_COMMESSA) && mainState.infoTrimestreComSelected.from === "/send/listacommessaprevisionale")} 
+          onClick={() => handleListItemClick(PathPf.LISTA_MODULICOMMESSA_PREVISONALE)}>
           <ListItemIcon>
             <BatchPredictionIcon fontSize="inherit" />
           </ListItemIcon>
           <ListItemText primary="Modulo commessa previsionale" />
           {openModPrevisonale ? 
             <IconButton onClick={(e)=> {
+
               e.stopPropagation();
               setOpenModPrevisonale(false);
             }}  size="small">
@@ -173,13 +136,19 @@ const SideNavSend : React.FC = () => {
             <IconButton onClick={(e)=>{
               e.stopPropagation();
               setOpenModPrevisonale(true);
+              setOpenSezioneDatiFatturazione(false);
+              setOpenSezioneFatturazione(false);
+              setOpenContestazioni(false);
             } }  size="small">
               <ExpandMore fontSize="inherit"  />
             </IconButton>}
         </ListItemButton>
         <Collapse in={openModPrevisonale} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton selected={selectedIndex === 1} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.LISTA_MODULICOMMESSA)}>
+            <ListItemButton 
+              selected={
+                currentLocation === PathPf.LISTA_MODULICOMMESSA ||
+              ((currentLocation === PathPf.MODULOCOMMESSA || currentLocation === PathPf.PDF_COMMESSA) && mainState.infoTrimestreComSelected.from === "/send/listamodulicommessa")} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.LISTA_MODULICOMMESSA)}>
               <ListItemIcon>
                 <ViewModuleIcon fontSize="inherit" />
               </ListItemIcon>
@@ -187,7 +156,8 @@ const SideNavSend : React.FC = () => {
             </ListItemButton>
           </List>
         </Collapse>
-        <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(PathPf.LISTA_NOTIFICHE)}>
+        <ListItemButton 
+          selected={currentLocation === PathPf.LISTA_NOTIFICHE} onClick={() => handleListItemClick(PathPf.LISTA_NOTIFICHE)}>
           <ListItemIcon>
             <MarkUnreadChatAltIcon fontSize="inherit" />
           </ListItemIcon>
@@ -202,13 +172,21 @@ const SideNavSend : React.FC = () => {
             <IconButton onClick={(e)=>{
               e.stopPropagation();
               setOpenContestazioni(true);
+              setOpenSezioneDatiFatturazione(false);
+              setOpenSezioneFatturazione(false);
+              setOpenModPrevisonale(false);
             } }  size="small">
               <ExpandMore fontSize="inherit"  />
             </IconButton>}
         </ListItemButton>
         <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton selected={selectedIndex === 10} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.STORICO_CONTEST)}>
+            <ListItemButton 
+              selected={
+                currentLocation === PathPf.STORICO_CONTEST ||
+               currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST ||
+                currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI
+              } sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.STORICO_CONTEST)}>
               <ListItemIcon>
                 <GavelIcon />
               </ListItemIcon>
@@ -216,7 +194,11 @@ const SideNavSend : React.FC = () => {
             </ListItemButton>
           </List>
         </Collapse>
-        <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClick(PathPf.LISTA_REL)}>
+        <ListItemButton
+          selected={
+            currentLocation === PathPf.LISTA_REL || currentLocation.includes("send/fatturapdf/rel")
+          } 
+          onClick={() => handleListItemClick(PathPf.LISTA_REL)}>
           <ListItemIcon>
             <ManageAccountsIcon fontSize="inherit" />
           </ListItemIcon>
@@ -225,33 +207,40 @@ const SideNavSend : React.FC = () => {
             <ListItemText primary="Documenti di cortesia" />
           </Box>
         </ListItemButton>
-        <ListItemButton selected={selectedIndex === 4} onClick={() => handleListItemClick(PathPf.ADESIONE_BANDO)}>
+        <ListItemButton selected={currentLocation === PathPf.ADESIONE_BANDO} onClick={() => handleListItemClick(PathPf.ADESIONE_BANDO)}>
           <ListItemIcon>
             <AnnouncementIcon fontSize="inherit" />
           </ListItemIcon>
           <ListItemText primary="Adesione al bando" />
         </ListItemButton>
-        <ListItemButton selected={selectedIndex === 13} onClick={() => handleListItemClick(PathPf.LISTA_STORICO_DOCUMENTI_SEND)}>
+        <ListItemButton selected={currentLocation === PathPf.LISTA_STORICO_DOCUMENTI_SEND} onClick={() => handleListItemClick(PathPf.LISTA_STORICO_DOCUMENTI_SEND)}>
           <ListItemIcon>
             <ReceiptIcon fontSize="inherit" />
           </ListItemIcon>
           <ListItemText primary="Report Documenti contabili" />
-          {open2 ? 
+          {openSezioneFatturazione ? 
             <IconButton onClick={(e)=>{
               e.stopPropagation();
-              setOpen2(false);
+              setOpenSezioneFatturazione(false);
             } }  size="small">
               <ExpandLess fontSize="inherit" />
             </IconButton>  :
             <IconButton  onClick={(e)=>{
               e.stopPropagation();
-              setOpen2(true);
+              setOpenSezioneFatturazione(true);
+              setOpenSezioneDatiFatturazione(false);
+              setOpenContestazioni(false);
+              setOpenModPrevisonale(false);
             } }  size="small">
               <ExpandMore fontSize="inherit"/>
             </IconButton>}
         </ListItemButton> 
-        <Collapse in={open2} timeout="auto" unmountOnExit>
-          <ListItemButton sx={{ pl: 4 }} selected={selectedIndex === 14} onClick={()=>handleListItemClick(PathPf.DOCUMENTI_SOSPESI_SEND)}>
+        <Collapse in={openSezioneFatturazione} timeout="auto" unmountOnExit>
+          <ListItemButton sx={{ pl: 4 }} 
+            selected={
+              currentLocation === PathPf.DOCUMENTI_SOSPESI_SEND || currentLocation.includes("send/fatturapdf/documentisospesi")
+            } 
+            onClick={()=> handleListItemClick(PathPf.DOCUMENTI_SOSPESI_SEND)}>
             <ListItemIcon>
               <FileCopyIcon fontSize="inherit" />
             </ListItemIcon>
@@ -259,7 +248,13 @@ const SideNavSend : React.FC = () => {
               <ListItemText primary="Documenti contabili sospesi" />
             </Box>
           </ListItemButton>
-          <ListItemButton sx={{ pl: 4 }} selected={selectedIndex === 5} onClick={()=>handleListItemClick(PathPf.FATTURAZIONE)}>
+          <ListItemButton sx={{ pl: 4 }} 
+            selected={
+              currentLocation === PathPf.FATTURAZIONE || 
+              currentLocation.includes("send/fatturapdf/documentiemessi") ||
+              currentLocation.includes(PathPf.JSON_TO_SAP)
+            } 
+            onClick={()=> handleListItemClick(PathPf.FATTURAZIONE)}>
             <ListItemIcon>
               <DescriptionIcon fontSize="inherit" />
             </ListItemIcon>
@@ -268,7 +263,7 @@ const SideNavSend : React.FC = () => {
             </Box>
           </ListItemButton>
           <List component="div" disablePadding>
-            <ListItemButton selected={selectedIndex === 15} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.GESTIONE_FATTURE)}>
+            <ListItemButton selected={currentLocation === PathPf.GESTIONE_FATTURE} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.GESTIONE_FATTURE)}>
               <ListItemIcon>
                 <FormatListBulletedIcon fontSize="inherit" />
               </ListItemIcon>
@@ -276,13 +271,13 @@ const SideNavSend : React.FC = () => {
             </ListItemButton>
           </List>
         </Collapse> 
-        <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClick("accertamenti")}>
+        <ListItemButton selected={currentLocation === "accertamenti"} onClick={() => handleListItemClick("accertamenti")}>
           <ListItemIcon>
             <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
           </ListItemIcon>
           <ListItemText primary="Documenti contabili" />
         </ListItemButton>
-        <ListItemButton selected={selectedIndex === 11} onClick={() => handleListItemClick(PathPf.ORCHESTRATORE)}>
+        <ListItemButton selected={currentLocation === PathPf.ORCHESTRATORE} onClick={() => handleListItemClick(PathPf.ORCHESTRATORE)}>
           <ListItemIcon>
             <DvrIcon fontSize="inherit" />
           </ListItemIcon>

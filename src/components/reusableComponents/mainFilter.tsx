@@ -570,6 +570,7 @@ const MainFilter = <T,>({
     return (
       <MainBoxContainer itemProps={itemProps}>
         <TextField
+          value={body[keyDescription]?.testo ?? ""}
           disabled={disabled}
           label={inputLabel}
           onChange={(e)=>{

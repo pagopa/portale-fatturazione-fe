@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
 import { manageError, managePresaInCarico } from "../../api/api";
@@ -21,7 +21,7 @@ import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typogra
 import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate } from "../../reusableFunction/function";
-import { ManageErrorResponse } from "../../types/typesGeneral";
+
 
 export interface BodyLista {
   idEnti: string[]
@@ -117,8 +117,7 @@ const GestioneFatture : React.FC = () => {
         if(filters.body.anno !== null){
           await getMesi(filters.body.anno);
         }
-        
-        await getAnni();
+
         await getLista(filters.page+1, filters.rows,filters.body);
         setPage(filters.page);
         setRowsPerPage(filters.rows);
@@ -132,7 +131,7 @@ const GestioneFatture : React.FC = () => {
           idEnti: [],
           tipologiaContratto: null,
           tipologiaFattura:null,
-          anno: res.data[0],
+          anno: null,
           mesi: []
         });
       }  
@@ -200,12 +199,13 @@ const GestioneFatture : React.FC = () => {
 
   
   const getLista = async(pg,row,body) => {
+  
     setGetListaLoading(true);
     await getListaGestioneFatturePagoPa(token, profilo.nonce,pg,row,body).then((res)=>{
     
       const customObj = res.data.gestioneFatture.map((el ,i) => {
         return {
-          idWhite:el.id,
+          idFattura:el.idFattura,
           meseNumber:el.mese,
           ragioneSociale:el.ragioneSociale,
           anno:el.anno,
@@ -245,7 +245,7 @@ const GestioneFatture : React.FC = () => {
   */
   const onButtonAggiungi = async() => {
     resetFilters();
-    getLista(page,rowsPerPage, bodyGetLista);
+    getLista(page+1,rowsPerPage, bodyGetLista);
   };
   
   const clearOnChangeFilter = () => {
@@ -402,7 +402,7 @@ const GestioneFatture : React.FC = () => {
         open:true,
         sentence: ( <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Ripristinare</strong> la seguente fattura?</>} />),
         buttonIsVisible:true,
-        labelButton:"Prosegui",
+        labelButton:"Prosegui"
         //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
       });
     }else if(action === "annulla"){
@@ -411,7 +411,7 @@ const GestioneFatture : React.FC = () => {
         open:true,
         sentence: ( <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> la <strong>posticipazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
-        labelButton:"Prosegui",
+        labelButton:"Prosegui"
         //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
       });
     }else if(action === "annulla eliminazione"){
@@ -420,12 +420,12 @@ const GestioneFatture : React.FC = () => {
         open:true,
         sentence: ( <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong>  <strong>l'eliminazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
-        labelButton:"Prosegui",
+        labelButton:"Prosegui"
         //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
       });
     }
   };
-  console.log({actionCalled});
+ 
 
   const azioneApi = async () => {
     setGetListaLoading(true);
@@ -437,7 +437,7 @@ const GestioneFatture : React.FC = () => {
       }else if(actionCalled === "annulla eliminazione" ||actionCalled === "annulla") {
         actionToApi = "cancella";
       }
-
+     
       if (!elementSelected) return;
 
       const bodyApi = {
@@ -457,7 +457,7 @@ const GestioneFatture : React.FC = () => {
         profilo.nonce,
         bodyApi
       );
-      await getLista(page+1, rowsPerPage, bodyGetLista);
+     
 
       managePresaInCarico(
         "INSER_DELETE_WHITE_LIST",
@@ -465,9 +465,11 @@ const GestioneFatture : React.FC = () => {
       );
 
     } catch (err) {
-      manageError(err as ManageErrorResponse, dispatchMainState);
+      managePresaInCarico('GENERICO_KO',dispatchMainState);
+     
     } finally {
       setGetListaLoading(false);
+      getLista((page+1), rowsPerPage, bodyGetLista);
     }
   };
   
@@ -501,7 +503,7 @@ const GestioneFatture : React.FC = () => {
     bodyGetLista.tipologiaContratto !== null ||
     bodyGetLista.azione !== null
   ) ? 'show' : 'hidden';
-  console.log({bodyGetLista});
+
         
         
   return (
@@ -650,10 +652,10 @@ const GestioneFatture : React.FC = () => {
         rows={rowsPerPage}
         headerNames={headerNamesGestioneFatture}
         disabled={false}
-        widthCustomSize="auto"
         setOpenModalAction={showPopUpAction}
         buttons={buttonsTopHeader}
         sentenseEmpty={"Non sono presenti documenti"}
+        widthCustomSize="1000px"
       />
       <ModalAggiungi 
         getLista={onButtonAggiungi}
@@ -701,7 +703,7 @@ export default GestioneFatture;
 
 
 export const ElementToProcessComponent = ({obj, title , keyValueObj}) => {
-  console.log({obj});
+  
   return (
     <Box sx={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center', mt:2, mb:2}}>
       <Typography > {title}</Typography>

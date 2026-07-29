@@ -95,6 +95,7 @@ export enum PathRoutePf {
     DOCUMENTICONTABILI = "documenticontabilipagopa",
     DETTAGLIO_DOC_CONTABILE = "dettagliodoccontabile",
     KPI = 'kpipagamenti',
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     MESSAGGIPN = "messaggi",
     EMAIL_PSP = "emailpsp",
 
@@ -104,8 +105,10 @@ export enum PathRoutePf {
     STORICO_CONTEST_ENTE = "storicoente",
     INSERIMENTO_CONTESTAZIONI_ENTE = "contestazioniente",
   
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     LISTA_STORICO_DOCUMENTI = "storicodoc",
     DOCUMENTI_EMESSI = "docemessi",
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     DOCUMENTI_SOSPESI = "docsospesi",
 
     GESTIONE_FATTURE = "gestionefatture",
