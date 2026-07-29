@@ -579,7 +579,7 @@ const Fatturazione : React.FC = () =>{
     if(action === "posticipa"){
       setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Posticipare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ripristina")});
     }else if(action === "annulla eliminazione"){
-      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> l'eliminazione della seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
     }
   };
 
