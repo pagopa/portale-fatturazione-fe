@@ -72,7 +72,7 @@ const GestioneFatture : React.FC = () => {
   const [arrayYears,setArrayYears] = useState<number[]>([]);
   const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [showPopUpNota, setShowPopUpNota] = useState(false);
-  const [notes, setNotes] = useState<{Testo:string,Data:Date}[]>([]);
+  const [notes, setNotes] = useState<{Testo:string,Data:Date,Azione:string}[]>([]);
   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
   const [textAreaValue, setTextAreaValue] = useState<string>('');
   const [elementSelected, setElementSelected] = useState<GestioneFatture|null>(null);
@@ -306,13 +306,24 @@ const GestioneFatture : React.FC = () => {
       throw '404';
     }).then(
       (response)=>{
-        let fileName = `Gestione fatture/${bodyGetLista.anno}.xlsx`;
-        if(bodyGetLista.idEnti.length === 1){
-          fileName = `Gestione fatture/${dataSelect[0].descrizione}/${bodyGetLista.anno}.xlsx`;
+        const parts: string[] = ["Gestione fatture"];
+
+        if (bodyGetLista.anno) {
+          parts.push(String(bodyGetLista.anno));
         }
-        if(bodyGetLista.idEnti.length === 1 && bodyGetLista.mesi.length === 1){
-          fileName = `Gestione fatture/${dataSelect[0].descrizione}/${month[bodyGetLista?.mesi[0] -1]}/${bodyGetLista.anno}.xlsx`;
+
+        if (bodyGetLista.idEnti.length === 1 && dataSelect[0]?.descrizione) {
+          parts.push(dataSelect[0].descrizione);
         }
+
+        if (bodyGetLista.idEnti.length === 1 && bodyGetLista.mesi.length === 1) {
+          const meseIndex = bodyGetLista.mesi[0] - 1;
+          if (month[meseIndex]) {
+            parts.push(month[meseIndex]);
+          }
+        }
+
+        const fileName = `${parts.join("/")}.xlsx`;
           
         setShowLoading(true);
         saveAs(response,fileName);

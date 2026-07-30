@@ -30,7 +30,7 @@ export const headerNamesGestioneFatture: GestioneFattureConfig[] = [
       }else if(obj.stato === "POSTICIPATA"){
         colorChip = '#FFE5A3';
       }else if(obj.stato === "ELIMINATA"){
-        colorChip = '#FFF0F5';
+        colorChip = '#ef9a9a';
       }
       return (
         <Box sx={{ display: "flex", justifyContent: "center" }}>

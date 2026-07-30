@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
-import { Dialog, DialogContent, DialogTitle, Divider, List, ListItem, ListItemText } from '@mui/material';
+import { Chip, Dialog, DialogContent, DialogTitle, Divider, List, ListItem, ListItemText, Stack } from '@mui/material';
 import { Dispatch } from 'react';
 
 
@@ -61,7 +61,7 @@ export default  DialogInfo;
 
 
 const DilogContentList : React.FC<DialogContentProps> = ({ array = [], sentenseEmptyArray }) => { 
-
+  console.log({array});
   return (
     <DialogContent dividers>
       {array.length === 0 ? (
@@ -69,27 +69,67 @@ const DilogContentList : React.FC<DialogContentProps> = ({ array = [], sentenseE
           {sentenseEmptyArray }
         </Typography>
       ) : (
-        <List disablePadding>
-          {array.map((note, index) => (
-            <Box key={note.IdNota} sx={{ backgroundColor: "grey.100",marginBottom: 1, borderRadius: 1, padding: 1 }}>
-              <ListItem alignItems="flex-start">
-                <ListItemText
-                  primary={note.Testo}
-                  secondary={
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="text.secondary"
-                    >
-                      {new Date(note.Data).toLocaleString("it-IT")}
-                    </Typography>
-                  }
-                />
-              </ListItem>
+        <List  
+          disablePadding 
+          sx={{ 
+            maxHeight: 400, 
+            overflowY: 'auto' 
+          }}>
+          {array.map((nota, index) => {
 
-              {index < array.length - 1 && <Divider />}
-            </Box>
-          ))}
+            let colorChip:string|undefined = undefined;
+            console.log({8:nota?.Azione});
+            if(nota?.Azione === "RIPRISTINA"){
+              colorChip = '#B5E2B4';
+            }else if(nota?.Azione === "POSTICIPA"){
+              colorChip = '#FFE5A3';
+            }else if(nota?.Azione === "ELIMINA"){
+              colorChip = '#ef9a9a';
+            }else if(nota?.Azione === "CANCELLA"){
+              colorChip = '#FFF0F5';
+            }
+            console.log({colorChip});
+            return (
+              <Box key={nota.IdNota} sx={{ backgroundColor: "grey.100",marginBottom: 1, borderRadius: 1, padding: 1 }}>
+                <ListItem alignItems="flex-start">
+                  <ListItemText
+                    primary={nota.Testo}
+                    secondary={
+                      <Stack direction="row" spacing={1} alignItems="center" component="span">
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.secondary"
+                        >
+                          {new Date(nota.Data).toLocaleString("it-IT")}
+                        </Typography>
+                        {nota.Azione &&
+                      <>
+                        <Typography 
+                          component="span"
+                          variant="body2"
+                          color="text.secondary">
+                            - Azione :
+                        </Typography>
+                        <Chip variant="outlined" size="small" label={nota?.Azione} 
+                          sx={{
+                            backgroundColor: colorChip,
+                            height: 18,
+                            fontSize: '0.65rem',
+                            '& .MuiChip-label': {
+                              padding: '0 6px',
+                            }
+                          }}   />
+                      </>
+                        }
+                      </Stack>
+                    }
+                  />
+                </ListItem>
+
+                {index < array.length - 1 && <Divider />}
+              </Box>
+            );})}
         </List>
       )}
     </DialogContent>
