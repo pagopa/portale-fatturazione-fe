@@ -518,11 +518,12 @@ const GestioneFatture : React.FC = () => {
   ) ? 'show' : 'hidden';
 
         
-        
+  const noData = arrayYears.length === 0;
   return (
     <MainBoxStyled title={"Gestione Fatture"}>
       <ResponsiveGridContainer >
         <MainFilter 
+          disabled={noData}
           filterName={"select_value_with_tutti"}
           inputLabel={"Anno"}
           clearOnChangeFilter={clearOnChangeFilter}
@@ -564,7 +565,7 @@ const GestioneFatture : React.FC = () => {
           keyDescription={"descrizione"}
           keyBody={"mesi"}
           keyValue={"mese"}
-          disabled={bodyGetLista.anno === null}
+          disabled={bodyGetLista.anno === null|| noData}
           extraCodeOnChangeArray={(value)=>{
             const valueArray = value.map((el) => Number(el.mese));
             setValueSelectMonths(value);
@@ -574,6 +575,7 @@ const GestioneFatture : React.FC = () => {
           iconMaterial={RenderIcon("date",true)}
         ></MainFilter>
         <MainFilter 
+          disabled={noData}
           filterName={"select_value_string"}
           inputLabel={"Tipologia Fattura"}
           clearOnChangeFilter={clearOnChangeFilter}
@@ -594,7 +596,7 @@ const GestioneFatture : React.FC = () => {
           }}
           defaultValue={(tipologiaFatture && tipologiaFatture?.length > 0) ? "Tutte": ""}
         ></MainFilter>
-        <MainFilter 
+        <MainFilter
           filterName={"select_key_value"}
           inputLabel={"Tipologia contratto"}
           clearOnChangeFilter={clearOnChangeFilter}
@@ -643,6 +645,7 @@ const GestioneFatture : React.FC = () => {
         ></MainFilter>
       </ResponsiveGridContainer>
       <FilterActionButtons 
+        disabled={noData}
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onButtonAnnulla} 
         statusAnnulla={statusAnnulla}/>
