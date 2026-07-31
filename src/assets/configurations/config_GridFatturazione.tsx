@@ -28,7 +28,7 @@ export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
                 <IconButton
                   disabled={(obj.inviata === 0 )? false : true}
                   size="medium"
-                  onClick={() => fun(obj,"annulla eliminazione")}
+                  onClick={() => fun(obj,"eliminazione")}
                 >
                   <DeleteIcon  />
                 </IconButton>

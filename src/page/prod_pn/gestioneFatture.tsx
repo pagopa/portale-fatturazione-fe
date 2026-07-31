@@ -424,7 +424,6 @@ const GestioneFatture : React.FC = () => {
         sentence: ( <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> la <strong>posticipazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
         labelButton:"Prosegui"
-        //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
       });
     }else if(action === "annulla eliminazione"){
 
@@ -433,7 +432,6 @@ const GestioneFatture : React.FC = () => {
         sentence: ( <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong>  <strong>l'eliminazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
         labelButton:"Prosegui"
-        //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
       });
     }
   };
