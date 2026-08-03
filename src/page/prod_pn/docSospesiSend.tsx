@@ -671,6 +671,7 @@ const DocSospesiSend : React.FC = () =>{
         rows={rowsPerPage}
         headerNames={headersDocumentiSospesiiSend}
         headerNamesCollapse={headersDocumentiSospesiSendCollapse}
+        titleRowCollapse={"Posizioni"}
         disabled={showLoadingGrid}
         widthCustomSize="2000px"
         setGridData={setGridData}
@@ -678,6 +679,7 @@ const DocSospesiSend : React.FC = () =>{
         listaResponse={listaResponse}
         sentenseEmpty={"Non sono presenti fatture sospese"}
         apiGet={setIdDoc}
+        keyCollapse={"posizioni"}
       /> 
       <ModalLoading 
         open={showDownloading} 

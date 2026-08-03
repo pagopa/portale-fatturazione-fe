@@ -5,7 +5,6 @@ import IconButton from '@mui/material/IconButton';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
@@ -71,13 +70,13 @@ const RowCollapsible = ({sliced,element, headerNamesCollapse, apiGet, headerName
                 </TableCell>
               );
             }else if(headerNames[i]?.renderValue){
-               return (
-                  <TableCell
-                    key={i}
-                    align={headerNames[i]?.align}>
-                    {headerNames[i]?.renderValue(element, (obj, action) => setOpenModalAction?.(obj, action))}              
-                  </TableCell>
-                    );
+              return (
+                <TableCell
+                  key={i}
+                  align={headerNames[i]?.align}>
+                  {headerNames[i]?.renderValue(element, (obj, action) => setOpenModalAction?.(obj, action))}              
+                </TableCell>
+              );
             }else if(value === "arrowDetails"){
               return (
                 <TableCell key={`expand-${element.id}-${i}`} align="center" onClick={()=>{apiGet && apiGet(element);}}>

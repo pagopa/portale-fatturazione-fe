@@ -12,7 +12,7 @@ interface GridCustomProps<T = any> {
     total:number,
     rows:number,
     headerNames:HeaderGridCustom[],
-    headerNamesCollapse?:string[]|{label:string,align: TableCellProps['align'],width:number|string}[],
+    headerNamesCollapse?:HeaderGridCustom[],
     nameParameterApi:string 
     apiGet?:(el: any)=>void 
     disabled:boolean
@@ -35,7 +35,9 @@ interface GridCustomProps<T = any> {
     gridType?:boolean,
     setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
     listaResponse?: Record<string, unknown>[],
-    headerActionSortServerSide?:(label:string) => void
+    headerActionSortServerSide?:(label:string) => void,
+    titleRowCollapse?:string,
+    keyCollapse?:string
 }
 
 export interface HeaderGridCustom {
@@ -59,7 +61,8 @@ export interface HeaderGridCustom {
     funToManipulateValue?:(val) => any,
     makeAction?:boolean,
     applyCss?:boolean,
-    keyToManipulateData?:string
+    keyToManipulateData?:string,
+    
 
     
 }
@@ -91,7 +94,9 @@ const GridCustom: React.FC<GridCustomProps> = ({
   headerActionSort,
   setObjectSort,
   listaResponse=[],
-  headerActionSortServerSide
+  headerActionSortServerSide,
+  titleRowCollapse,
+  keyCollapse
 }) =>{
 
   const checkIfChecked = (id: number) => {
@@ -178,6 +183,8 @@ const GridCustom: React.FC<GridCustomProps> = ({
                     setSelected={setSelected}
                     checkIfChecked={checkIfChecked}
                     setOpenModalAction={setOpenModalAction}
+                    titleRowCollapse={titleRowCollapse}
+                    keyCollapse={keyCollapse}
                   />
                 );
               
