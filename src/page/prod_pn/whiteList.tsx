@@ -485,7 +485,7 @@ const WhiteList : React.FC = () => {
         
         
   return (
-    <MainBoxStyled title={"Gestione Fatture"}>
+    <MainBoxStyled title={"White list"}>
       <ResponsiveGridContainer >
         <MainFilter 
           filterName={"select_value_string"}
