@@ -48,6 +48,7 @@ const GridRowsRenderer = ({
   case 'idTestata':
   case 'storico_documenti_contabili':
   case 'docSospesiSend':
+  case 'docEmessiSend':
     return null;
   // return <RowContratto key={Math.random()} apiGet={apiGet} element={element} headerNames={headerNames} />;
   case 'idWhite':
@@ -81,7 +82,7 @@ const GridRowsRenderer = ({
     //return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames} />;
 
   case 'docEmessiEnte':
-  case 'docEmessiSend':
+  
     return (
       <RowCollapsible
         key={`${element.idFattura}-${element.id}`}

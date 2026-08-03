@@ -14,7 +14,7 @@ interface GridCustomProps<T = any> {
     headerNames:HeaderGridCustom[],
     headerNamesCollapse?:HeaderGridCustom[],
     nameParameterApi:string 
-    apiGet?:(el: any)=>void 
+    apiGet?:(el: any)=> void 
     disabled:boolean
     widthCustomSize:string
     setOpenModalAction?:(obj:any,action:string) => void
@@ -58,7 +58,7 @@ export interface HeaderGridCustom {
     hideColumn?:boolean,
     switchValue?:{keySwitch:number, valueSwitch:string}[],
     chip?:boolean,
-    funToManipulateValue?:(val) => any,
+    funToManipulateValue?: (val: any, fun?: any) => any;
     makeAction?:boolean,
     applyCss?:boolean,
     keyToManipulateData?:string,
@@ -105,7 +105,6 @@ const GridCustom: React.FC<GridCustomProps> = ({
     
   return (
     <div>
-     
       <div style={{ overflowX: 'auto', width: '100%' }}>
         <Card sx={{ width: widthCustomSize, minWidth: '100%', backgroundColor: 'transparent' }}>
           <Table sx={{ backgroundColor: 'white' }}>
@@ -174,14 +173,9 @@ const GridCustom: React.FC<GridCustomProps> = ({
                 return (
                   <GridRowDesignByConfigFile
                     element={element}
-                    sliced={[]}
-                    nameParameterApi={nameParameterApi}
                     apiGet={apiGet}
                     headerNames={headerNames}
                     headerNamesCollapse={headerNamesCollapse}
-                    selected={selected}
-                    setSelected={setSelected}
-                    checkIfChecked={checkIfChecked}
                     setOpenModalAction={setOpenModalAction}
                     titleRowCollapse={titleRowCollapse}
                     keyCollapse={keyCollapse}

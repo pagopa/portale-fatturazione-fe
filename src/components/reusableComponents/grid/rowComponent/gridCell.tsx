@@ -36,6 +36,7 @@ type GridCellProps = {
   flexCenterStyle?: any;
   isRowOpen?: boolean; // stato di espansione, per il case "collaps"
   onToggleRow?: () => void; // handler per il case "collaps"
+  setOpenModalAction?: (obj:T, action:string) => void;
 };
 
 const flexCenterStyle: SxProps<Theme> = {
@@ -66,6 +67,7 @@ const GridCell = ({
   apiGet,
   isRowOpen,
   onToggleRow,
+  setOpenModalAction
 }: GridCellProps) => {
   const value = element[rowObject.keyValue];
 
@@ -90,7 +92,12 @@ const GridCell = ({
       </Tooltip>
     );
   }
-
+  case "data-exepttion": {
+  
+    return (  
+      <TableCell key={`${i}-${value}`} align="center">{rowObject.funToManipulateValue ? rowObject.funToManipulateValue(element):"--"}</TableCell>
+    );
+  }
   case "number":
     return (
       <TableCell align="center">{value === null ? "--" : value}</TableCell>
@@ -139,14 +146,12 @@ const GridCell = ({
       </TableCell>
     );
   }
-
-  case "number-tipocontratto":
+  case "string-tipocontratto":
     return (
       <TableCell key={`${i}-${value}`} align="center">
-        {value === null ? "--" : Number(value) === 1 ? "PAL" : "PAC"}
+        {value === null ? "--" : value === 'PAL' ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}
       </TableCell>
     );
-
   case "data-ora": {
     const valueData = value ? value.replace("T", " ").substring(0, 19) : "";
     return (
@@ -239,7 +244,27 @@ const GridCell = ({
       </TableCell>
     );
   }
-
+  case "chip-tooltip": {
+    const objTooltip = rowObject.funToManipulateValue ? rowObject.funToManipulateValue(element) : undefined;
+    return (
+      <Tooltip key={`${i}-${value}`} title={objTooltip?.title}>
+        <TableCell key={`${i}-${value}`} width={rowObject.width} align="center">
+          <Chip
+            variant="outlined"
+            label={objTooltip?.label }
+            sx={{ backgroundColor: objTooltip?.color }}
+          />
+        </TableCell>
+      </Tooltip>
+    );
+  }
+  case "action": {
+    return (
+      <TableCell key={`${i}-${value}`} width={rowObject.width} align="center">
+        {rowObject.funToManipulateValue && rowObject.funToManipulateValue(element,setOpenModalAction)}
+      </TableCell>
+    );
+  }
   case "snackbar":
     return (
       <CopyToClipboardCell
@@ -248,7 +273,6 @@ const GridCell = ({
         align={headerNames[i]?.align}
       />
     );
-
   case "collaps":
     return (
       <TableCell key={`expand-${element.id}-${i}`} align="center">
@@ -262,7 +286,6 @@ const GridCell = ({
         </IconButton>
       </TableCell>
     );
-
   case "arrow":
     return (
       <TableCell key={`${i}-arrow`} align="center">
@@ -276,7 +299,6 @@ const GridCell = ({
         </IconButton>
       </TableCell>
     );
-
   default:
     return null;
   }

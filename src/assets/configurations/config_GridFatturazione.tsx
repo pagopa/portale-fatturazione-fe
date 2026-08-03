@@ -1,100 +1,83 @@
-import { Box, Chip, IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton, Tooltip } from "@mui/material";
 import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import UpdateIcon from '@mui/icons-material/Update';
-import CancelIcon from '@mui/icons-material/Cancel';
 
-export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
-  {label:"",keyValue:"",align:"left",width:"30px"},
-  {label:"Ragione Sociale",keyValue:"",align:"left",width:"200px"},
-  {label:"Azioni",keyValue:"",align:"center",width:"100px",
-    renderValue:(obj,fun) =>{
-      return(
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          {(obj.tipologiaFattura !== "ACCONTO" && obj.tipologiaFattura !== "ANTICIPO") ? 
-            <Tooltip title={obj.inviata === 0 ? "Posticipa" : null}>
-              <span>
-                <IconButton
-                  disabled={(obj.inviata === 0 )? false : true}
-                  size="medium"
-                  onClick={() => fun(obj,"posticipa")}
-                >
-                  <UpdateIcon  />
-                </IconButton>
-              </span>
-            </Tooltip>
-            : <Tooltip title={obj.inviata === 0 ? "Elimina" : null}>
-              <span>
-                <IconButton
-                  disabled={(obj.inviata === 0 )? false : true}
-                  size="medium"
-                  onClick={() => fun(obj,"annulla eliminazione")}
-                >
-                  <DeleteIcon  />
-                </IconButton>
-              </span>
-            </Tooltip>
-          }
-        </Box>
-      );
-    }  },
-  {label:"Data Fattura",keyValue:"",align:"center",width:"160px"},
-  {label:"Elaborazione",keyValue:"",align:"center",width:"120px",
-    renderValue:(row) =>{
 
-      let tooltipObj:any= {label:'Non Inviata',title:'La fattura non è stata inviata'};
-      if(row.inviata === 1){
-        tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'#B5E2B4'};
-      }else if(row.inviata === 2){
-        tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'#86E1FD'};
-      }else if(row.inviata === 3){
-        tooltipObj = {label:'Eliminata',title:'La fattura è stata cancellata',color:'#FFF0F5'};
-      }else if(row.inviata === 4){
-        tooltipObj = {label:'Posticipata',title:'La fattura è stata posticipata',color:'#FFE5A3'};
-      }
-
-      return(
-        <Chip variant="outlined" label={tooltipObj.label} sx={{backgroundColor:tooltipObj.color}} />
-      );
-    }  },
-  {label:"T. Fattura",keyValue:"",align:"center",width:"100px"},
-  {label:"Ident.",keyValue:"",align:"center",width:"100px"},
-  {label:"Tipo Contratto",keyValue:"",align:"center",width:"140px"},
-  {label:"Tot.",keyValue:"",align:"center",width:"100px"},
-  {label:"N. Fattura",keyValue:"",align:"center",width:"150px"},
-  {label:"Tipo Documento",keyValue:"",align:"center",width:"180px"},
-  {label:"Divisa",keyValue:"",align:"center",width:"100px"},
-  {label:"M. Pagamento",keyValue:"",align:"center",width:"140px"},
-  {label:"Split",keyValue:"",align:"center",width:"100px"},
-  {label:"",keyValue:"",align:"center",width:"80px"},
-];
-
-export const headersObjGridDocemessiSendCollapse : HeaderGridCustom[] = [
-  {label:"Numero Linea",keyValue:"",align:"center",width:"100px"},
-  {label:"Codice Materiale",keyValue:"",align:"center",width:"100px"},
-  {label:"Imponibile",keyValue:"",align:"center",width:"100px"},
-  {label:"Periodo di riferimento",keyValue:"",align:"center",width:"100px"},
-  {label:"Periodo di fatturazione",keyValue:"",align:"center",width:"100px"},
-
-];
-
-/* TODO da eliminare se non vogliono la nota visibile nella griglia
-{label: 'Nota', align: 'center', width: '100px', keyValue: 'nota', renderValue:(obj,fun) => {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <Tooltip title={obj.nota}>
+const getActionDocumentiEmessiSend = (obj,fun) => {
+  return (
+    <Box sx={{ display: "flex", justifyContent: "center" }}>
+      {(obj.tipologiaFattura !== "ACCONTO" && obj.tipologiaFattura !== "ANTICIPO") ? 
+        <Tooltip title={obj.inviata === 0 ? "Posticipa" : null}>
           <span>
             <IconButton
+              disabled={(obj.inviata === 0 )? false : true}
               size="medium"
-              onClick={() => fun(obj)}
+              onClick={() => fun(obj,"posticipa")}
             >
-              <NoteIcon  />
+              <UpdateIcon />
             </IconButton>
           </span>
         </Tooltip>
-      </Box>
-     
-    );
-  } },
+        : <Tooltip title={obj.inviata === 0 ? "Elimina" : null}>
+          <span>
+            <IconButton
+              disabled={(obj.inviata === 0 )? false : true}
+              size="medium"
+              onClick={() => fun(obj,"annulla eliminazione")}
+            >
+              <DeleteIcon  />
+            </IconButton>
+          </span>
+        </Tooltip>
+      }
+    </Box>
+  );};
 
-*/
+const getChipElaborazione = (row) =>{
+  let tooltipObj:any= {label:'Non Inviata',title:'La fattura non è stata inviata'};
+  if(row.inviata === 1){
+    tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'#B5E2B4'};
+  }else if(row.inviata === 2){
+    tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'#86E1FD'};
+  }else if(row.inviata === 3){
+    tooltipObj = {label:'Eliminata',title:'La fattura è stata cancellata',color:'#FFF0F5'};
+  }else if(row.inviata === 4){
+    tooltipObj = {label:'Posticipata',title:'La fattura è stata posticipata',color:'#FFE5A3'};
+  }
+
+  return tooltipObj;
+};
+
+const getStatoFattura = (obj) =>{
+  return "Emessa";
+};
+
+
+export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
+  { label: "", align: "center", width: "30px", keyValue: "collaps", typeColumn: "collaps" },
+  { label: "Ragione sociale", align: "center", width: "200px", keyValue: "ragionesociale", typeColumn: "ragionesociale", makeAction: true, applyCss: true },
+  { label:"Azioni",align:"center",width:"100px",keyValue: "azione", typeColumn: "action",funToManipulateValue:getActionDocumentiEmessiSend, keyToManipulateData:"azione"},
+  { label: "Data Fattura", align: "center", width: "160px", keyValue: "dataFattura", typeColumn: "string" },
+  { label: "Elaborazione", align: "center", width: "160px", keyValue: "eleborazione", typeColumn: "chip-tooltip" ,funToManipulateValue:getChipElaborazione, keyToManipulateData:"inviata"},
+  { label: "Stato", align: "center", width: "100px", keyValue: "stato", typeColumn: "data-exepttion" , funToManipulateValue:getStatoFattura, keyToManipulateData:"stato"},
+  { label: "T. Fattura", align: "center", width: "130px", keyValue: "tipologiaFattura", typeColumn: "string" },
+  { label: "Ident.", align: "center", width: "100px", keyValue: "identificativo", typeColumn: "string" },
+  { label: "Tipo Contratto", align: "center", width: "150px", keyValue: "tipoContratto", typeColumn: "string-tipocontratto" },
+  { label: "Tot.", align: "center", width: "100px", keyValue: "totale", typeColumn: "euro-number" },
+  { label: "N. Fattura", align: "center", width: "150px", keyValue: "numero", typeColumn: "number" },
+  { label: "Tipo Documento", align: "center", width: "150px", keyValue: "tipoDocumento", typeColumn: "string" },
+  { label: "Divisa", align: "center", width: "100px", keyValue: "divisa", typeColumn: "string" },
+  { label: "M. Pagamento", align: "center", width: "100px", keyValue: "metodoPagamento", typeColumn: "string" },
+  { label: "Split", align: "center", width: "100px", keyValue: "split", typeColumn: "boolean" },
+  {label:"", align:"center", width:"80px", keyValue:"arrow", typeColumn:"arrow"}
+];
+
+export const headersObjGridDocemessiSendCollapse: HeaderGridCustom[] = [
+  { label: "Numero Linea", align: "center", width: "100px", keyValue: "numerolinea", typeColumn: "number" },
+  { label: "Codice Materiale", align: "center", width: "100px", keyValue: "codiceMateriale", typeColumn: "string" },
+  { label: "Imponibile", align: "center", width: "100px", keyValue: "imponibile", typeColumn: "euro-number" },
+  { label: "Periodo di riferimento", align: "center", width: "100px", keyValue: "periodoRiferimento", typeColumn: "string" },
+  { label: "Periodo di fatturazione", align: "center", width: "100px", keyValue: "periodoFatturazione", typeColumn: "string" },
+];
+

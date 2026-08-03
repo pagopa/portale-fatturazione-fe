@@ -277,55 +277,22 @@ const DocSospesiSend : React.FC = () =>{
         data = res.data.map(el => el?.fattura).filter(obj => dataString.includes(obj.dataFattura));
       }  
             
-      const orderDataCustom = data.map((obj, index) => ({
-        idFattura:obj.idfattura,
-        id: obj.identificativo ?? index,
-        arrow: '',
-        ragioneSociale: obj.ragionesociale || '--',
-        dataFattura: obj.dataFattura
-          ?  new Date(obj.dataFattura).toLocaleDateString('it-IT')
-          : '--',
-        stato: 'Sospesa',
-        tipologiaFattura: obj.tipologiaFattura || "--",
-        identificativo: obj.identificativo,
-        tipoContratto: obj.tipocontratto === 'PAL'
-          ? 'PAC - PAL senza requisiti'
-          : 'PAC - PAL con requisiti',
-        totale: obj.totale.toLocaleString('de-DE', {
-          style: 'currency',
-          currency: 'EUR',
-        }),
-        numero: obj.numero,
-        tipoDocumento: obj.tipoDocumento,
-        divisa: obj.divisa,
-        metodoPagamento: obj.metodoPagamento,
-        split: obj.split ? 'Si' : 'No',
-        arrowDetails: 'arrowDetails',
-        tipocontratto:obj.tipocontratto,
-        istitutioID:obj.istitutioID,
-        posizioni: obj.posizioni.map(el => ({
-          numerolinea: el.numerolinea,
-          codiceMateriale: el.codiceMateriale,
-          imponibile:el.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })  || '--',
-          periodoRiferimento: el.periodoRiferimento || '--', 
-          periodoFatturazione:el.periodoFatturazione || '--',//new Date(obj.dataFattura).toLocaleDateString('it-IT')
-        }))?.sort((a, b) => (a.numerolinea ?? 0) - (b.numerolinea ?? 0)),
-      }));
+    
       let dataToShow = [];
       if(isInitialRender.current && Object.keys(filters).length > 0 ){
         getDateTipologieFatturazione(filters.body);
         const start = filters.page * filters.rows;
         const end = start + filters.rows;
-        dataToShow = orderDataCustom.slice(start, end);
+        dataToShow = data.slice(start, end);
       }else{
         isInitialRender.current = false;
-        dataToShow = orderDataCustom.slice(0, 10);
+        dataToShow = data.slice(0, 10);
         setShowLoadingGrid(false);
       }
           
        
       setGridData(dataToShow);
-      setListaResponse(orderDataCustom);
+      setListaResponse(data);
       setTotalDocumenti(res.data.length);
       //setBodyFatturazione(body);
       setBodyFatturazioneDownload(body);

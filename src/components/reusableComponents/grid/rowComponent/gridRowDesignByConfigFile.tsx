@@ -3,8 +3,6 @@ import { HeaderGridCustom } from "../gridCustom";
 import { useState } from "react";
 import GridCell from "./gridCell";
 
-
-
 interface GridRowsRendererProps<T = any>{
   element: any;
   apiGet?: (el: any) => void;
@@ -15,19 +13,14 @@ interface GridRowsRendererProps<T = any>{
   keyCollapse?:string
 }
 
-
-
-
-
-
-
 const GridRowDesignByConfigFile =  ({
   element,
   apiGet,
   headerNames,
   headerNamesCollapse,
   titleRowCollapse,
-  keyCollapse=""
+  keyCollapse="",
+  setOpenModalAction
 }: GridRowsRendererProps) => {
   console.log({element});
 
@@ -53,6 +46,7 @@ const GridRowDesignByConfigFile =  ({
             apiGet={apiGet}
             isRowOpen={open}          // stato di espansione gestito dal componente padre (riga)
             onToggleRow={() => setOpen(!open)}
+            setOpenModalAction={setOpenModalAction}
           />
         ))}
       </TableRow>

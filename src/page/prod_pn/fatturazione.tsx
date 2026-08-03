@@ -219,47 +219,6 @@ const Fatturazione : React.FC = () =>{
         setDateTipologie([]);
       }));
   };
-  //TODO : la stessa funzione è utilizzata nei doc emessi lato ente , valutare se procedere con renderizzazione
-  //delle row tramite file config
-  const funcToMapElements = (obj:any) => {
-    return obj.map((obj, index) => ({
-      idFattura:obj.idfattura,
-      id: obj.identificativo ?? index,
-      istitutioID:obj.istitutioID,
-      inviata:obj.inviata,
-      arrow: '',
-      ragioneSociale: obj.ragionesociale || '--',
-      action:'action',
-      dataFattura: obj.dataFattura
-        ?  new Date(obj.dataFattura).toLocaleDateString('it-IT')
-        : '--',
-      stato: 'Emessa',
-      tipologiaFattura: obj.tipologiaFattura || "--",
-      identificativo: obj.identificativo,
-      tipocontratto: obj.tipocontratto === 'PAL'
-        ? 'PAC - PAL senza requisiti'
-        : 'PAC - PAL con requisiti',
-      totale: obj.totale.toLocaleString('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-      }),
-      numero: obj.numero,
-      tipoDocumento: obj.tipoDocumento,
-      divisa: obj.divisa,
-      metodoPagamento: obj.metodoPagamento,
-      split: obj.split ? 'Si' : 'No',
-      //nota:"qui ci sarà la nota",
-      arrowDetails: 'arrowDetails',
-      posizioni:obj?.posizioni ? obj?.posizioni.map(el => ({
-        numerolinea: el.numerolinea,
-        codiceMateriale: el.codiceMateriale,
-        imponibile:el.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })  || '--',
-        periodoRiferimento: el.periodoRiferimento
-          ? el.periodoRiferimento : '--', 
-        periodoFatturazione:el?.periodoFatturazione || '--',
-      }))?.sort((a, b) => (a.numerolinea ?? 0) - (b.numerolinea ?? 0)):[],
-    }));
-  };
 
   const getlistaFatturazione = async (bodyToModify) => {
     let body = bodyToModify;
@@ -298,7 +257,7 @@ const Fatturazione : React.FC = () =>{
         data = res.data.map(el => el?.fattura).filter(obj => dataString.includes(obj.dataFattura));
       } 
     
-      const customObjData : FattureObj[] = funcToMapElements(data);
+      const customObjData : FattureObj[] = data;
     
       setCount(customObjData?.length || 0);
       setGridData(customObjData);
@@ -517,13 +476,13 @@ const Fatturazione : React.FC = () =>{
 
   const handleGoToDetail = async(el) => {
     let idTipoContratto = 0;
-    if(el.tipocontratto === "PAC - PAL senza requisiti"){
+    if(el.tipocontratto === "PAL"){
       idTipoContratto = 1;
-    }else if(el.tipocontratto === "PAC - PAL con requisiti"){
+    }else if(el.tipocontratto === "PAC"){
       idTipoContratto = 2;
     }
     if(idTipoContratto !== 0){
-      navigate(`${PathPf.PDF_REL}/documentiemessi/${el.idFattura}/${el.istitutioID}/${idTipoContratto}`);
+      navigate(`${PathPf.PDF_REL}/documentiemessi/${el.idfattura}/${el.istitutioID}/${idTipoContratto}`);
     }
   }; 
 
@@ -853,6 +812,8 @@ const Fatturazione : React.FC = () =>{
         widthCustomSize="2000px"
         setOpenModalAction={showPopUpAction}
         sentenseEmpty={"Non sono presenti Regolari esecuzioni/Documenti di cortesia"}
+        keyCollapse={"posizioni"}
+        titleRowCollapse={"Posizioni"}
       />  
       <ModalLoading 
         open={showLoadingGrid} 
