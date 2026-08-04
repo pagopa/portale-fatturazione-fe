@@ -30,7 +30,7 @@ export const headerNames: WhiteListConfig[] = [
       }else if(obj.stato === "Posticipata"){
         colorChip = '#FFE5A3';
       }else if(obj.stato === "Eliminata"){
-        colorChip = '#FFF0F5';
+        colorChip = '#ef9a9a';
       }
       return (
         <Box sx={{ display: "flex", justifyContent: "center" }}>

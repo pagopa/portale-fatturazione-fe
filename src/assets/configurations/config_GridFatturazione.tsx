@@ -41,7 +41,7 @@ const getChipElaborazione = (row) =>{
   }else if(row.inviata === 2){
     tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'#86E1FD'};
   }else if(row.inviata === 3){
-    tooltipObj = {label:'Eliminata',title:'La fattura è stata cancellata',color:'#FFF0F5'};
+    tooltipObj = {label:'Eliminata',title:'La fattura è stata cancellata',color:'#ef9a9a'};
   }else if(row.inviata === 4){
     tooltipObj = {label:'Posticipata',title:'La fattura è stata posticipata',color:'#FFE5A3'};
   }
