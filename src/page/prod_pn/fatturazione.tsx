@@ -536,9 +536,9 @@ const Fatturazione : React.FC = () =>{
     setElementSelected(obj);
     setActionCalled(action);
     if(action === "posticipa"){
-      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Posticipare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ripristina")});
-    }else if(action === "annulla eliminazione"){
-      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Posticipare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
+    }else if(action === "eliminazione"){
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
     }
   };
 
@@ -553,13 +553,14 @@ const Fatturazione : React.FC = () =>{
       let actionToApi = "";
       if (actionCalled === "posticipa") {
         actionToApi = "posticipa";
-      }else if (actionCalled === "annulla eliminazione" ||actionCalled === "annulla") {
+      }else if (actionCalled === "eliminazione") {
         actionToApi = "elimina";
       }
 
       if (!elementSelected) return;
-      const [day, month, year] = elementSelected.dataFattura.split("/");
-
+      const [month, year] = elementSelected.identificativo.split("/");
+      
+      
       const bodyApi = {
         mese: parseInt(month, 10).toString(),
         anno: year.toString(),
@@ -572,7 +573,7 @@ const Fatturazione : React.FC = () =>{
           testo: textAreaValue
         }
       };
-
+      
       await gestioneFattureInserisci(
         token,
         profilo.nonce,
@@ -587,8 +588,7 @@ const Fatturazione : React.FC = () =>{
       );
 
     } catch (err) {
-      manageError(err as ManageErrorResponse, dispatchMainState);
-
+      managePresaInCarico('GENERICO_KO',dispatchMainState);
     } finally {
       setShowLoadingGrid(false);
     }

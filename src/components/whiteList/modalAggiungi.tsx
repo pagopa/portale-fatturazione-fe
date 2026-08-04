@@ -244,7 +244,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               itemProps={inputPropsObj} 
               filterName={"select_value_string"}
               inputLabel={"Azione"}
-              clearOnChangeFilter={()=> console.log("ciao")}
+              clearOnChangeFilter={()=> null}
               setBody={setBodyAction}
               body={bodyAction}
               keyDescription={"azione"}
@@ -264,7 +264,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               itemProps={inputPropsObj}
               filterName={"multi_checkbox-single-selection"}
               inputLabel={"Rag. Sociale"}
-              clearOnChangeFilter={()=> console.log("mimmo")}
+              clearOnChangeFilter={()=> null}
               setBody={setBodyAction}
               valueAutocompleteSingle={valueAutocomplete}
               setValueAutocompleteSingle={setValueAutocomplete}
@@ -318,7 +318,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               itemProps={inputPropsObj}
               filterName={"select_value_string"}
               inputLabel={"Tipologia Fattura"}
-              clearOnChangeFilter={()=> console.log("ciao")}
+              clearOnChangeFilter={()=> null}
               setBody={setBodyAction}
               body={bodyAction}
               keyDescription={"tipologiaFattura"}
@@ -342,7 +342,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               itemProps={inputPropsObj}
               filterName={"select_value_string"}
               inputLabel={"Anno"}
-              clearOnChangeFilter={()=> console.log("ciao")}
+              clearOnChangeFilter={()=> null}
               setBody={setBodyAction}
               body={bodyAction}
               keyDescription={"anno"}
@@ -370,7 +370,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               filterName={"select_key_value"}
               inputLabel={"Mese"}
               disabled={bodyAction.anno === null}
-              clearOnChangeFilter={()=> console.log("ciao")}
+              clearOnChangeFilter={()=> null}
               setBody={setBodyAction}
               body={bodyAction}
               keyValue={"mese"}
@@ -387,7 +387,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               itemProps={inputPropsObj}
               filterName={"text-area"}
               inputLabel={"Nota"}
-              clearOnChangeFilter={()=>console.log("ciao")}
+              clearOnChangeFilter={()=> null}
               setBody={setBodyAction}
               body={bodyAction}
               keyValue={"nota"}

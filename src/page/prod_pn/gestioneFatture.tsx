@@ -72,7 +72,7 @@ const GestioneFatture : React.FC = () => {
   const [arrayYears,setArrayYears] = useState<number[]>([]);
   const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [showPopUpNota, setShowPopUpNota] = useState(false);
-  const [notes, setNotes] = useState<{Testo:string,Data:Date}[]>([]);
+  const [notes, setNotes] = useState<{Testo:string,Data:Date,Azione:string}[]>([]);
   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
   const [textAreaValue, setTextAreaValue] = useState<string>('');
   const [elementSelected, setElementSelected] = useState<GestioneFatture|null>(null);
@@ -306,13 +306,24 @@ const GestioneFatture : React.FC = () => {
       throw '404';
     }).then(
       (response)=>{
-        let fileName = `Gestione fatture/${bodyGetLista.anno}.xlsx`;
-        if(bodyGetLista.idEnti.length === 1){
-          fileName = `Gestione fatture/${dataSelect[0].descrizione}/${bodyGetLista.anno}.xlsx`;
+        const parts: string[] = ["Gestione fatture"];
+
+        if (bodyGetLista.anno) {
+          parts.push(String(bodyGetLista.anno));
         }
-        if(bodyGetLista.idEnti.length === 1 && bodyGetLista.mesi.length === 1){
-          fileName = `Gestione fatture/${dataSelect[0].descrizione}/${month[bodyGetLista?.mesi[0] -1]}/${bodyGetLista.anno}.xlsx`;
+
+        if (bodyGetLista.idEnti.length === 1 && dataSelect[0]?.descrizione) {
+          parts.push(dataSelect[0].descrizione);
         }
+
+        if (bodyGetLista.idEnti.length === 1 && bodyGetLista.mesi.length === 1) {
+          const meseIndex = bodyGetLista.mesi[0] - 1;
+          if (month[meseIndex]) {
+            parts.push(month[meseIndex]);
+          }
+        }
+
+        const fileName = `${parts.join("/")}.xlsx`;
           
         setShowLoading(true);
         saveAs(response,fileName);
@@ -413,7 +424,6 @@ const GestioneFatture : React.FC = () => {
         sentence: ( <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong> la <strong>posticipazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
         labelButton:"Prosegui"
-        //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
       });
     }else if(action === "annulla eliminazione"){
 
@@ -422,7 +432,6 @@ const GestioneFatture : React.FC = () => {
         sentence: ( <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Annullare</strong>  <strong>l'eliminazione</strong> della seguente fattura?</>} />),
         buttonIsVisible:true,
         labelButton:"Prosegui"
-        //actionButton:() => azioneApi({...bodyApi,...{nota:{testo:textAreaValue,data: formatDate(new Date())}}})
       });
     }
   };
@@ -507,11 +516,12 @@ const GestioneFatture : React.FC = () => {
   ) ? 'show' : 'hidden';
 
         
-        
+  const noData = arrayYears.length === 0;
   return (
     <MainBoxStyled title={"Gestione Fatture"}>
       <ResponsiveGridContainer >
         <MainFilter 
+          disabled={noData}
           filterName={"select_value_with_tutti"}
           inputLabel={"Anno"}
           clearOnChangeFilter={clearOnChangeFilter}
@@ -553,7 +563,7 @@ const GestioneFatture : React.FC = () => {
           keyDescription={"descrizione"}
           keyBody={"mesi"}
           keyValue={"mese"}
-          disabled={bodyGetLista.anno === null}
+          disabled={bodyGetLista.anno === null|| noData}
           extraCodeOnChangeArray={(value)=>{
             const valueArray = value.map((el) => Number(el.mese));
             setValueSelectMonths(value);
@@ -563,6 +573,7 @@ const GestioneFatture : React.FC = () => {
           iconMaterial={RenderIcon("date",true)}
         ></MainFilter>
         <MainFilter 
+          disabled={noData}
           filterName={"select_value_string"}
           inputLabel={"Tipologia Fattura"}
           clearOnChangeFilter={clearOnChangeFilter}
@@ -583,7 +594,7 @@ const GestioneFatture : React.FC = () => {
           }}
           defaultValue={(tipologiaFatture && tipologiaFatture?.length > 0) ? "Tutte": ""}
         ></MainFilter>
-        <MainFilter 
+        <MainFilter
           filterName={"select_key_value"}
           inputLabel={"Tipologia contratto"}
           clearOnChangeFilter={clearOnChangeFilter}
@@ -632,6 +643,7 @@ const GestioneFatture : React.FC = () => {
         ></MainFilter>
       </ResponsiveGridContainer>
       <FilterActionButtons 
+        disabled={noData}
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onButtonAnnulla} 
         statusAnnulla={statusAnnulla}/>
