@@ -10,7 +10,8 @@ interface GridRowsRendererProps<T = any>{
   headerNamesCollapse?: HeaderGridCustom[];
   setOpenModalAction?: (obj:T, action:string) => void;
   titleRowCollapse?:string,
-  keyCollapse?:string
+  keyCollapse?:string,
+  bgColorRowFunction?: (element:any) => string;
 }
 
 const GridRowDesignByConfigFile =  ({
@@ -20,9 +21,9 @@ const GridRowDesignByConfigFile =  ({
   headerNamesCollapse,
   titleRowCollapse,
   keyCollapse="",
-  setOpenModalAction
+  setOpenModalAction,
+  bgColorRowFunction
 }: GridRowsRendererProps) => {
-  console.log({element});
 
   const [open, setOpen] = useState(false);
 
@@ -32,6 +33,7 @@ const GridRowDesignByConfigFile =  ({
         height: '80px',
         borderTop: '4px solid #F2F2F2',
         borderBottom: '2px solid #F2F2F2',
+        backgroundColor: bgColorRowFunction ? bgColorRowFunction(element) : undefined,
         '&:hover': {
           backgroundColor: '#EDEFF1',
         },

@@ -60,7 +60,7 @@ export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
   { label:"Azioni",align:"center",width:"100px",keyValue: "azione", typeColumn: "action",funToManipulateValue:getActionDocumentiEmessiSend, keyToManipulateData:"azione"},
   { label: "Data Fattura", align: "center", width: "160px", keyValue: "dataFattura", typeColumn: "string" },
   { label: "Elaborazione", align: "center", width: "160px", keyValue: "eleborazione", typeColumn: "chip-tooltip" ,funToManipulateValue:getChipElaborazione, keyToManipulateData:"inviata"},
-  { label: "Stato", align: "center", width: "100px", keyValue: "stato", typeColumn: "data-exepttion" , funToManipulateValue:getStatoFattura, keyToManipulateData:"stato"},
+  { label: "Stato", align: "center", width: "100px", keyValue: "stato", typeColumn: "data-exeption" , funToManipulateValue:getStatoFattura, keyToManipulateData:"stato"},
   { label: "T. Fattura", align: "center", width: "130px", keyValue: "tipologiaFattura", typeColumn: "string" },
   { label: "Ident.", align: "center", width: "100px", keyValue: "identificativo", typeColumn: "string" },
   { label: "Tipo Contratto", align: "center", width: "150px", keyValue: "tipoContratto", typeColumn: "string-tipocontratto" },

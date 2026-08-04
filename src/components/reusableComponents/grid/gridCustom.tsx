@@ -37,7 +37,8 @@ interface GridCustomProps<T = any> {
     listaResponse?: Record<string, unknown>[],
     headerActionSortServerSide?:(label:string) => void,
     titleRowCollapse?:string,
-    keyCollapse?:string
+    keyCollapse?:string,
+     bgColorRowFunction?:(element:any) => string
 }
 
 export interface HeaderGridCustom {
@@ -62,9 +63,7 @@ export interface HeaderGridCustom {
     makeAction?:boolean,
     applyCss?:boolean,
     keyToManipulateData?:string,
-    
-
-    
+    variant?: "caption-semibold" | "caption" | "body1" | "body2" | "subtitle1" | "subtitle2" | "h6" | "h5" | "h4" | "h3" | "h2" | "h1"; 
 }
 
 
@@ -96,7 +95,8 @@ const GridCustom: React.FC<GridCustomProps> = ({
   listaResponse=[],
   headerActionSortServerSide,
   titleRowCollapse,
-  keyCollapse
+  keyCollapse,
+  bgColorRowFunction
 }) =>{
 
   const checkIfChecked = (id: number) => {
@@ -179,6 +179,7 @@ const GridCustom: React.FC<GridCustomProps> = ({
                     setOpenModalAction={setOpenModalAction}
                     titleRowCollapse={titleRowCollapse}
                     keyCollapse={keyCollapse}
+                    bgColorRowFunction={bgColorRowFunction}
                   />
                 );
               

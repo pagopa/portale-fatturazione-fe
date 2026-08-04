@@ -192,7 +192,7 @@ export  function transformDateTimeWithNameMonth(input: string): string {
   if(input){
     const [datePart, timePart] = input.split("T"); // Split the input into date and time
     const [year, month, day] = datePart.split("-"); // Split the date into components
-    return `${day}-${objMesiWithZero[month]}-${year} ${timePart}`; // Rearrange and return the formatted string
+    return `${day}-${objMesiWithZero[month]}-${year}`; // Rearrange and return the formatted string
   }else{
     return "";
   }

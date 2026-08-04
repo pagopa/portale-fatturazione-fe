@@ -8,7 +8,7 @@ export const headersDocumentiSospesiiSend : HeaderGridCustom[] = [
   { label: "", align: "center", width: "30px", keyValue: "collaps", typeColumn: "collaps" },
   { label: "Ragione sociale", align: "center", width: "200px", keyValue: "ragioneSociale", typeColumn: "ragionesociale", makeAction: true, applyCss: true },
   { label: "Data Fattura", align: "center", width: "160px", keyValue: "dataFattura", typeColumn: "string" },
-  { label: "Stato", align: "center", width: "100px", keyValue: "stato", typeColumn: "data-exepttion" , funToManipulateValue:getStatoFattura, keyToManipulateData:"stato"},
+  { label: "Stato", align: "center", width: "100px", keyValue: "stato", typeColumn: "data-exeption" , funToManipulateValue:getStatoFattura, keyToManipulateData:"stato"},
   { label: "T. Fattura", align: "center", width: "130px", keyValue: "tipologiaFattura", typeColumn: "string" },
   { label: "Ident.", align: "center", width: "100px", keyValue: "identificativo", typeColumn: "string" },
   { label: "Tipo Contratto", align: "center", width: "150px", keyValue: "tipoContratto", typeColumn: "string" },

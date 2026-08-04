@@ -19,6 +19,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import dayjs from "dayjs";
 import { HeaderGridCustom } from "../gridCustom";
 import { mesiGrid } from "../../../../reusableFunction/reusableArrayObj";
+import { transformDateTime, transformDateTimeWithNameMonth } from "../../../../reusableFunction/function";
 
 type CopyCellProps = {
   value: string;
@@ -77,42 +78,51 @@ const GridCell = ({
     return (
       <Tooltip key={`${i}-${value}`} title={isLong ? value : null}>
         <TableCell
-          onClick={() => {
-            if (apiGet && headerNames[i]?.makeAction) apiGet(element);
-          }}
+          onClick={() => {if (apiGet && headerNames[i]?.makeAction) apiGet(element) }}
           align="center"
-          sx={headerNames[i]?.makeAction ? cssFirstColum : null}
         >
-          {value
-            ? isLong
-              ? value.toString().slice(0, 10) + "..."
-              : value
-            : "--"}
+          <Typography sx={headerNames[i]?.makeAction ? cssFirstColum : null} variant={rowObject.variant||"body1"}>
+            {value
+              ? isLong
+                ? value.toString().slice(0, 10) + "..."
+                : value
+              : "--"}
+          </Typography>
         </TableCell>
       </Tooltip>
     );
   }
-  case "data-exepttion": {
-  
+  case "data-exeption": {
     return (  
-      <TableCell key={`${i}-${value}`} align="center">{rowObject.funToManipulateValue ? rowObject.funToManipulateValue(element):"--"}</TableCell>
+      <TableCell  key={`${i}-${value}`} align="center">
+        <Typography variant={rowObject.variant||"body1"}>
+          {rowObject.funToManipulateValue ? rowObject.funToManipulateValue(element):"--"}
+        </Typography>
+      </TableCell>
     );
   }
   case "number":
     return (
-      <TableCell align="center">{value === null ? "--" : value}</TableCell>
+      <TableCell align="center">
+        <Typography variant={rowObject.variant||"body1"}>
+          {value === null ? "--" : value}
+        </Typography>
+      </TableCell>
     );
-
   case "boolean":
     return (
       <TableCell align="center">
-        {value === null ? "--" : value === true ? "Si" : "No"}
+        <Typography variant={rowObject.variant||"body1"}>
+          {value === null ? "--" : value === true ? "Si" : "No"}
+        </Typography>
       </TableCell>
     );
-
   case "mese-number":
-    return <TableCell align="center">{mesiGrid[value] || "--"}</TableCell>;
-
+    return <TableCell align="center">
+      <Typography variant={rowObject.variant||"body1"}>
+        {mesiGrid[value] || "--"}
+      </Typography>
+    </TableCell>;
   case "ragionesociale": {
     const isLong = value?.toString().length > 40;
     return (
@@ -122,16 +132,18 @@ const GridCell = ({
             if (apiGet && headerNames[i]?.makeAction) apiGet(element);
           }}
           align={i === 0 ? "left" : "center"}
-          sx={headerNames[i]?.applyCss ? cssFirstColumRagioneSociale : null}
+          
         >
-          {isLong ? value?.toString().slice(0, 37) + "..." : value}
+          <Typography sx={headerNames[i]?.applyCss ? cssFirstColumRagioneSociale : null} variant={rowObject.variant||"body1"}>
+            {isLong ? value?.toString().slice(0, 37) + "..." : value}
+          </Typography>
         </TableCell>
       </Tooltip>
     );
   }
 
   case "data": {
-    let valueData = dayjs(value).format("YYYY-MM-DD");
+    let valueData = value !== null ? transformDateTimeWithNameMonth(value) : "--";
     if (rowObject.keyValue === "dataChiusura") {
       valueData =
           element.source === "archiviato"
@@ -142,61 +154,81 @@ const GridCell = ({
     }
     return (
       <TableCell key={`${i}-${value}`} align="center">
-        {valueData || "--"}
+        <Typography variant={rowObject.variant||"body1"}>
+          {valueData || "--"}
+        </Typography>
       </TableCell>
     );
   }
   case "string-tipocontratto":
     return (
-      <TableCell key={`${i}-${value}`} align="center">
-        {value === null ? "--" : value === 'PAL' ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}
-      </TableCell>
+      <Tooltip key={`${i}-${value}`} title={ value === null ? null : value === 'PAL' ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}>
+        <TableCell key={`${i}-${value}`} align="center">
+          <Typography variant={rowObject.variant||"body1"}>
+            { value === null ? "--" : value === 'PAL' ? ('PAC - PAL senza requisiti').slice(0, 10) + "..." : ('PAC - PAL con requisiti').slice(0, 10) + "..."}
+          </Typography>
+        </TableCell>
+      </Tooltip>
+    );
+  case "number-tipocontratto":
+    return (
+      <Tooltip key={`${i}-${value}`} title={ Number(value) === null ? null : Number(value) === 1 ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}>
+        <TableCell key={`${i}-${value}`} align="center">
+          <Typography variant={rowObject.variant||"body1"}>
+            { Number(value)  === null ? "--" : Number(value)  === 1 ? ('PAC - PAL senza requisiti').slice(0, 10) + "..." : ('PAC - PAL con requisiti').slice(0, 10) + "..."}
+          </Typography>
+        </TableCell>
+      </Tooltip>
     );
   case "data-ora": {
-    const valueData = value ? value.replace("T", " ").substring(0, 19) : "";
+    const valueData = value ? transformDateTime(value) : "";
     return (
       <TableCell key={`${i}-${value}`} align="center">
-        {valueData || "--"}
+        <Typography variant={rowObject.variant||"body1"}>
+          {valueData || "--"}
+        </Typography>
       </TableCell>
     );
   }
-
   case "euro-centesimi":
     return (
       <TableCell key={`${i}-${value}`} align="center">
-        {value != null
-          ? (Number(value) / 100).toLocaleString("de-DE", {
-            style: "currency",
-            currency: "EUR",
-          })
-          : "--"}
+        <Typography variant={rowObject.variant||"body1"}>
+          {value != null
+            ? (Number(value) / 100).toLocaleString("de-DE", {
+              style: "currency",
+              currency: "EUR",
+            })
+            : "--"}
+        </Typography>
       </TableCell>
     );
-
   case "euro":
     return (
       <TableCell key={`${i}-${value}`} align="center">
-        {value != null
-          ? Number(value).toLocaleString("de-DE", {
-            style: "currency",
-            currency: "EUR",
-          })
-          : "--"}
+        <Typography variant={rowObject.variant||"body1"}>
+          {value != null
+            ? Number(value).toLocaleString("de-DE", {
+              style: "currency",
+              currency: "EUR",
+            })
+            : "--"}
+        </Typography>
       </TableCell>
     );
-
   case "euro-number":
     return (
       <TableCell key={`${i}-${value}`} align="center">
-        {value != null
-          ? value.toLocaleString("de-DE", {
-            style: "currency",
-            currency: "EUR",
-          })
-          : "--"}
+        <Typography variant={rowObject.variant||"body1"}>
+          {value != null
+            ? value.toLocaleString("de-DE", {
+              style: "currency",
+              currency: "EUR",
+            })
+            : "--"}
+        </Typography>
       </TableCell>
     );
-
   case "switch":
     return (
       <TableCell key={`${i}-${value}`} align="center">
@@ -216,7 +248,6 @@ const GridCell = ({
         </Box>
       </TableCell>
     );
-
   case "checkbox":
     // TODO: implementare rendering reale, per ora placeholder
     return (
@@ -224,16 +255,14 @@ const GridCell = ({
           checkbox
       </TableCell>
     );
-
   case "chip": {
     const formattedLabel = value
       ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
       : "--";
     const bgColor =
         rowObject.funToManipulateValue && rowObject.keyToManipulateData
-          ? rowObject.funToManipulateValue(element[rowObject.keyToManipulateData])
+          ? rowObject.funToManipulateValue(element)
           : undefined;
-
     return (
       <TableCell key={`${i}-${value}`} width={rowObject.width} align="center">
         <Chip

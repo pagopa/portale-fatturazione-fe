@@ -204,21 +204,7 @@ const GestioneFatture : React.FC = () => {
     setGetListaLoading(true);
     await getListaGestioneFatturePagoPa(token, profilo.nonce,pg,row,body).then((res)=>{
     
-      const customObj = res.data.gestioneFatture.map((el ,i) => {
-        return {
-          idFattura:el.idFattura,
-          meseNumber:el.mese,
-          ragioneSociale:el.ragioneSociale,
-          anno:el.anno,
-          mese:el.mese,
-          tipologiaFattura:el.tipologiaFattura,
-          tipoContratto:el.tipoContratto,
-          stato:el.azione,
-          nota:JSON.parse(el.note),
-          cancella:el.cancella,
-          ente:el.ente
-        };
-      });
+      const customObj = res.data.gestioneFatture;
       setGridData(customObj);
       setTotalElements(res.data.count);
       
@@ -230,20 +216,7 @@ const GestioneFatture : React.FC = () => {
       manageError(err,dispatchMainState);
     }));     
   };
-  /*
-  const deleteElements = async (y) => {
-    setGetListaLoading(true);
-    resetFilters();
-    await deleteWhiteListPagoPa(token, profilo.nonce,selected).then(async()=> {
-      // await getAnni(y, 'Delete'); 
-      managePresaInCarico('INSER_DELETE_WHITE_LIST',dispatchMainState);
-      setSelected([]);
-    }).catch((err)=>{
-      setGetListaLoading(false);
-      manageError(err,dispatchMainState);
-    });
-  };
-  */
+
   const onButtonAggiungi = async() => {
     resetFilters();
     getLista(page+1,rowsPerPage, bodyGetLista);
@@ -402,8 +375,8 @@ const GestioneFatture : React.FC = () => {
     setElementSelected(obj);
     setActionCalled(action);
     const newObj = {...obj,mese:month[obj.mese-1]};
-    if(action === "nota"){
-      const sortedNotes = [...obj.nota].sort(
+    if(action === "note"){
+      const sortedNotes = [...JSON.parse(obj.note)].sort(
         (a, b) => new Date(b.Data).getTime() - new Date(a.Data).getTime()
       );
       setNotes(sortedNotes);

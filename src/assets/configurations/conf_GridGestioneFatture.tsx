@@ -1,109 +1,93 @@
-import { Box, Chip, IconButton, TableCellProps, Tooltip } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, IconButton, Tooltip } from "@mui/material";
 import RestoreIcon from '@mui/icons-material/Restore';
 import NoteIcon from '@mui/icons-material/Note';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 
 
-export interface GestioneFattureConfig {
-  label: string;
-  align: TableCellProps['align'];
-  width: string | number;
-  keyValue: string;
-  gridAction?:(fun:(obj:any,action:string)=>void,color:string,disabled:boolean,obj:any) => JSX.Element,
-}
+const getStatusColor = (obj: any): string => {
+  let colorChip:string|undefined = "";
 
-export const headerNamesGestioneFatture: GestioneFattureConfig[] = [
-  //{ label: '', align: 'center', width: '60px', keyValue: 'checkbox' },
-  { label: 'Ragione Sociale', align: 'center', width: '200px', keyValue: 'ragioneSociale' },
-  { label: 'Anno', align: 'center', width: '100px', keyValue: 'anno' },
-  { label: 'Mese', align: 'center', width: '100px', keyValue: 'mese' },
-  { label: 'Tipologia fattura', align: 'center', width: '150px', keyValue: 'tipologiaFattura' },
-  { label: 'Tipo contratto', align: 'center', width: '150px', keyValue: 'tipoContratto' },
-  { label: 'Stato', align: 'center', width: '100px', keyValue: 'stato',
-    gridAction:(fun:(obj:any,action:string) => void,color:string,disabled:boolean,obj:any) => {
+  if(obj.azione === "RIPRISTINATA"){
+    colorChip = '#B5E2B4';
+  }else if(obj.azione === "POSTICIPATA"){
+    colorChip = '#FFE5A3';
+  }else if(obj.azione === "ELIMINATA"){
+    colorChip = '#ef9a9a';
+  }
+  return colorChip;
+};
 
-      let colorChip:string|undefined = undefined;
-    
-      if(obj.stato === "RIPRISTINATA"){
-        colorChip = '#B5E2B4';
-      }else if(obj.stato === "POSTICIPATA"){
-        colorChip = '#FFE5A3';
-      }else if(obj.stato === "ELIMINATA"){
-        colorChip = '#ef9a9a';
-      }
-      return (
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Chip variant="outlined" label={obj.stato} sx={{backgroundColor:colorChip}}  />
-        </Box>
-     
-      );
-    }
-  },
-  { label: 'Nota', align: 'center', width: '70px', keyValue: 'nota', gridAction:(fun:(el:any,action:string) => void,color:string,disabled:boolean,obj:any) => {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <Tooltip title={"Vedi le note"}>
-          <span>
-            <IconButton
-              size="medium"
-              onClick={() => fun && fun(obj,'nota')}
-              disabled={disabled}
-            >
-              <NoteIcon sx={{ color: color }} />
-            </IconButton>
-          </span>
-        </Tooltip>
-      </Box>
-     
-    );
-  } },
-  { label: 'Azioni', align: 'center', width: '100px', keyValue: 'azioni',gridAction:(fun:(el:any,action:string) => void,color:string,disabled:boolean,obj:any) => {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        {obj.stato === "POSTICIPATA" ? 
-          <>
-            <Tooltip title="Ripristina">
-              <span>
-                <IconButton
-                  size="medium"
-                  onClick={() =>{
-                    if(fun) fun(obj,'ripristina');
-                  } }
-                  disabled={disabled}
-                >
-                  <RestoreIcon sx={{ color: color }} />
-                </IconButton>
-              </span>
-            </Tooltip> 
-            <Tooltip title="Annulla">
-              <span>
-                <IconButton
-                  size="medium"
-                  onClick={() => fun && fun(obj,'annulla')}
-                  disabled={disabled}
-                >
-                  <CancelIcon sx={{ color: color }} />
-                </IconButton>
-              </span>
-            </Tooltip>
-          </>
-          : (obj.stato === "ELIMINATA") ?  <Tooltip title="Annulla">
+const getActionGestioneFatture = (obj,fun) => {
+  return (
+    <Box sx={{ display: "flex", justifyContent: "center" }}>
+      {obj.azione === "POSTICIPATA" ? 
+        <>
+          <Tooltip title="Ripristina">
             <span>
               <IconButton
                 size="medium"
-                onClick={() => fun && fun(obj,'annulla eliminazione')}
-                disabled={disabled || obj.idFattura !== null}
+                onClick={() =>{
+                  if(fun) fun(obj,'ripristina');
+                } }
               >
-                <CancelIcon sx={{ color: color }} />
+                <RestoreIcon  />
               </IconButton>
             </span>
-          </Tooltip> : undefined
-        }
-      </Box>
+          </Tooltip> 
+          <Tooltip title="Annulla">
+            <span>
+              <IconButton
+                size="medium"
+                onClick={() => fun && fun(obj,'annulla')}
+              >
+                <CancelIcon  />
+              </IconButton>
+            </span>
+          </Tooltip>
+        </>
+        : (obj.azione === "ELIMINATA") ?  <Tooltip title="Annulla">
+          <span>
+            <IconButton
+              size="medium"
+              onClick={() => fun && fun(obj,'annulla eliminazione')}
+              disabled={ obj.idFattura !== null}
+            >
+              <CancelIcon />
+            </IconButton>
+          </span>
+        </Tooltip> : undefined
+      }
+    </Box>
      
-    );
-  } }
+  );};
+
+const showNoteGestioneFatture = (obj,fun) => {
+  return (
+    <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <Tooltip title={"Vedi le note"}>
+        <span>
+          <IconButton
+            size="medium"
+            onClick={() => fun && fun(obj,'note')}
+          >
+            <NoteIcon/>
+          </IconButton>
+        </span>
+      </Tooltip>
+    </Box> 
+  );
+};
+
+export const headerNamesGestioneFatture: HeaderGridCustom[] = [
+  { label: 'Ragione Sociale', align: 'center', width: '200px', keyValue: 'ragioneSociale',typeColumn: "ragionesociale", makeAction: false, applyCss: true  },
+  { label: 'Anno', align: 'center', width: '100px', keyValue: 'anno',typeColumn: "string" },
+  { label: 'Mese', align: 'center', width: '100px', keyValue: 'mese',typeColumn: "mese-number" },
+  { label: 'Tipologia fattura', align: 'center', width: '150px', keyValue: 'tipologiaFattura', typeColumn: "string" },
+  { label: 'Tipo contratto', align: 'center', width: '150px', keyValue: 'idTipoContratto', typeColumn: "number-tipocontratto" },
+  { label: 'Stato', align: 'center', width: '100px', keyValue: 'azione',typeColumn: "chip" ,funToManipulateValue:getStatusColor,keyToManipulateData:"azione" },
+  { label: 'Nota', align: 'center', width: '70px', keyValue: 'note', typeColumn: "action",funToManipulateValue:showNoteGestioneFatture },
+  { label: 'Azioni', align: 'center', width: '100px', keyValue: "azione", typeColumn: "action" ,funToManipulateValue:getActionGestioneFatture}
 ];
 
 

@@ -94,7 +94,7 @@ const ProcessiOrchestartore:React.FC = () =>{
     getFasi();
        
   },[]);
-    
+
   const getListaDati = async(bodyData:BodyOrchestratore,page,rows, reset = false) =>{
     setGetListaLoading(true);
     let  bodyWitoutTime:BodyOrchestratore = {
@@ -122,21 +122,7 @@ const ProcessiOrchestartore:React.FC = () =>{
       setTotalData(res.data.count);
       setGetListaLoading(false);
             
-      const dataWithID = res.data.items.map((el:DataGridOrchestratore) => {
-        el.idOrchestratore = el.tipologia+el.dataEsecuzione;
-        return {
-          idOrchestratore:el.idOrchestratore,
-          dataEsecuzione:transformDateTimeWithNameMonth(el.dataEsecuzione)||"--",
-          anno:el.anno,
-          mese:mesiGrid[el.mese],
-          tipologia:el.tipologia,
-          fase:el.fase,
-          dataFineContestazioni:transformDateTime(el.dataFineContestazioni)||"--",
-          dataFatturazione:transformDateTime(el.dataFatturazione)||"--",
-          counter:el.count||'--',
-          esecuzione:el.esecuzione
-        };
-      });
+      const dataWithID = res.data.items;
       setGridData(dataWithID);
       if(reset){
         updateFilters({
@@ -307,6 +293,18 @@ const ProcessiOrchestartore:React.FC = () =>{
       body:{ ...bodyGetLista,...{ordinamento:newParam}}
     });
   };
+
+  const bgColorRowFunction = (element:DataGridOrchestratore) => {
+    let bgColorRow = "#F0F8FF";
+    if(Number(element.esecuzione) === 1){
+      bgColorRow = "#F0FFF0";
+    }else if(Number(element.esecuzione) === 2){
+      bgColorRow ="#FFFAF0";
+    }else if(Number(element.esecuzione) === 3){
+      bgColorRow = "#FFF0F5";
+    }
+    return bgColorRow;
+  };
  
   return(
     <MainBoxStyled title={"Monitoring"}>
@@ -427,6 +425,7 @@ const ProcessiOrchestartore:React.FC = () =>{
         body={bodyGetLista}
         headerAction={headerAction}
         sentenseEmpty={"Nessun processo disponibile"}
+        bgColorRowFunction={bgColorRowFunction}
       />
       <ModalLoading 
         open={getListaLoading} 

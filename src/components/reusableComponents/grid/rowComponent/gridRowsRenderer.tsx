@@ -31,9 +31,6 @@ const GridRowsRenderer = ({
   apiGet,
   headerNames,
   headerNamesCollapse,
-  selected,
-  setSelected,
-  checkIfChecked,
   setOpenModalAction
 }: GridRowsRendererProps) => {
 
@@ -49,18 +46,13 @@ const GridRowsRenderer = ({
   case 'storico_documenti_contabili':
   case 'docSospesiSend':
   case 'docEmessiSend':
-    return null;
-  // return <RowContratto key={Math.random()} apiGet={apiGet} element={element} headerNames={headerNames} />;
   case 'idWhite':
-    return (
-      <RowWhiteList
-        element={element}
-        headerNames={headerNames}
-        setOpenModalAction={setOpenModalAction}
-      />
-    );
   case 'idOrchestratore':
-    return <RowOrchestratore key={Math.random()} sliced={sliced} element={element} headerNames={headerNames} />;
+    return null;
+    // return <RowContratto key={Math.random()} apiGet={apiGet} element={element} headerNames={headerNames} />;
+
+  //case 'idOrchestratore':
+    //return <RowOrchestratore key={Math.random()} sliced={sliced} element={element} headerNames={headerNames} />;
   case 'asyncDocEnte':
     return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} element={element} apiGet={apiGet} />;
   //case 'contestazionePage':
