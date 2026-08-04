@@ -6,14 +6,14 @@ import { AutocompleteMultiselect, OptionMultiselectCheckboxQarter, OptionMultise
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import { DocContabili, RequestBodyListaDocContabiliPagopa } from "../../types/typeDocumentiContabili";
 import { downloadDocContabili, downloadFinancialReportDocContabili, getListaDocumentiContabiliPa, getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
-import CollapsibleTablePa from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
-import { HeaderCollapsible } from "../../types/typeFatturazione";
-import RowBase from "../../components/reusableComponents/grid/gridCollapsible/rowBase";
 import { PathPf } from "../../types/enum";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import { headersDocContabiliPagopa, headersDocContabiliPagopaCollapse } from "../../assets/configurations/conf_GridDocContabili_pagopa";
+import { useNavigate } from "react-router-dom";
 
 
 const DocumentiContabili:React.FC = () =>{
@@ -23,9 +23,10 @@ const DocumentiContabili:React.FC = () =>{
  
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
+  const navigate = useNavigate();
 
   const [gridData, setGridData] = useState<DocContabili[]>([]);
-  const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+
   const [filtersDownload, setFiltersDownload] = useState<RequestBodyListaDocContabiliPagopa>({
     contractIds:[],
     membershipId: '',
@@ -67,24 +68,6 @@ const DocumentiContabili:React.FC = () =>{
     getYears();
   }, []);
    
-  useEffect(()=>{
-    let from = 0;
-    if(page === 0){
-      from = 0;
-    }else{
-      from = page * rowsPerPage;
-    }
-    setDataPaginated(gridData.slice(from, rowsPerPage + from));
-  }, [page,rowsPerPage,gridData]);
-
-   
-  useEffect(()=>{
-    if(bodyGetLista.contractIds.length  !== 0 || bodyGetLista.membershipId !== '' || bodyGetLista.recipientId !== ''|| bodyGetLista.abi !== '' || bodyGetLista.quarters.length > 0){
-      setStatusAnnulla('show');
-    }else{
-      setStatusAnnulla('hidden');
-    }
-  },[bodyGetLista]);
    
   const clearOnChangeFilter = () => {
     setGridData([]);
@@ -102,25 +85,15 @@ const DocumentiContabili:React.FC = () =>{
     return () => clearTimeout(timer);
   },[textValue]);
 
-  useEffect(()=>{
-    if(bodyGetLista.year !== '' && !isInitialRender.current){
-      setValueQuarters([]);
-      setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
-      getQuarters(bodyGetLista.year);
-    }
-  },[bodyGetLista.year]);
-
   const getListaDocGrid = async(body:RequestBodyListaDocContabiliPagopa) =>{
     setGetListaLoading(true);
     await getListaDocumentiContabiliPa(token, profilo.nonce, body)
       .then((res)=>{
-        const dataWithNewId = res.data.financialReports.map(el => {
-          el.id = el.id.toString()+el.yearQuarter;
-          return el;
-        });
-        setGridData(dataWithNewId);
-        setCount(dataWithNewId.length);
-        setGetListaLoading(false);  
+        const data = res.data.financialReports;
+        setGridData(data);
+        setCount(data.length);
+        setDataPaginated(data.slice(0, 10));
+        setGetListaLoading(false); 
       }).catch(((err)=>{
         setGridData([]);
         setCount(0);
@@ -279,15 +252,55 @@ const DocumentiContabili:React.FC = () =>{
     setRowsPerPage(10);
     resetFilters();
   };
+
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+          
+    const start = newPage * rowsPerPage;
+    const end = start + rowsPerPage;
+       
+    const elementsToShow = gridData.slice(start, end);
+    setDataPaginated(elementsToShow);
+  
+    onUpdateFiltersGrid(newPage,rowsPerPage);
+  };
+                          
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const newRows = parseInt(event.target.value, 10);
+  
+    setRowsPerPage(newRows);
+    setPage(0);
+  
+    const elementsToShow = gridData.slice(0, newRows);
+    setDataPaginated(elementsToShow);
+    onUpdateFiltersGrid(0, newRows);
+  };
+
+
+  const handleGoToDetail = (row) => {  
+    dispatchMainState({
+      type:'MODIFY_MAIN_STATE',
+      value:{docContabileSelected:{key:`${row.contractId}|${row.yearQuarter}|${row.numero}`}}
+    });
+    navigate(PathPf.DETTAGLIO_DOC_CONTABILE);
+  };
    
-  const headersObjGrid : HeaderCollapsible[] = [
-    {name:"",align:"left",id:1},
-    {name:"Nome PSP",align:"left",id:2},
-    {name:"ID Contratto",align:"center",id:3},
-    {name:"Numero",align:"center",id:5},
-    {name:"Trimestre",align:"center",id:4},
-    {name:"Data",align:"center",id:6},
-    {name:"Arrow",align:"center",id:7}];
+
+
+  const statusAnnulla =
+  bodyGetLista.contractIds.length !== 0 ||
+  bodyGetLista.membershipId !== '' ||
+  bodyGetLista.recipientId !== '' ||
+  bodyGetLista.abi !== '' ||
+  bodyGetLista.quarters.length > 0
+    ? 'show'
+    : 'hidden';
       
   return(
     <MainBoxStyled title={"Documenti contabili"}>
@@ -302,6 +315,11 @@ const DocumentiContabili:React.FC = () =>{
           keyValue={"year"}
           keyBody={"year"}
           arrayValues={yearOnSelect}
+          extraCodeOnChange={()=>{
+            setValueQuarters([]);
+            setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
+            getQuarters(bodyGetLista.year);
+          }}
         ></MainFilter>
         <MainFilter 
           filterName={"multi_checkbox"}
@@ -390,30 +408,32 @@ const DocumentiContabili:React.FC = () =>{
           icon:{name:"download" },
           disabled:( gridData.length === 0 || getListaLoading )
         }]}
-      />      
-      <CollapsibleTablePa 
-        headerNames={headersObjGrid}
-        setPage={setPage}
+      />       
+      <GridCustom
+        nameParameterApi='xxxx'
+        elements={dataPaginated}
+        changePage={handleChangePage}
+        changeRow={handleChangeRowsPerPage}
+        apiGet={handleGoToDetail}
+        total={count}
         page={page}
-        rowsPerPage={rowsPerPage}
-        setRowsPerPage={setRowsPerPage}
-        count={count}
-        dataPaginated={dataPaginated}
-        RowComponent={RowBase}
-        updateFilters={onUpdateFiltersGrid}
-        body={filtersDownload}
-      ></CollapsibleTablePa>
-              
+        rows={rowsPerPage}
+        headerNames={headersDocContabiliPagopa}
+        headerNamesCollapse={headersDocContabiliPagopaCollapse}
+        disabled={getListaLoading}
+        widthCustomSize="1200px"
+        sentenseEmpty={"Nessun dato disponibile"}
+        keyCollapse={"posizioni"}
+        titleRowCollapse={"Posizioni"}
+      /> 
       <ModalLoading 
         open={showLoading} 
         setOpen={setShowLoading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
+        sentence={'Downloading...'} />
       <ModalLoading 
         open={getListaLoading} 
         setOpen={setGetListaLoading}
-        sentence={'Loading...'} >
-      </ModalLoading>
+        sentence={'Loading...'} />
     </MainBoxStyled>
   );
 }; 

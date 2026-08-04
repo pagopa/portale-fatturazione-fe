@@ -810,7 +810,7 @@ const Fatturazione : React.FC = () =>{
         apiGet={handleGoToDetail}
         disabled={showLoadingGrid}
         widthCustomSize="2000px"
-        setOpenModalAction={showPopUpAction}
+        setAction={showPopUpAction}
         sentenseEmpty={"Non sono presenti Regolari esecuzioni/Documenti di cortesia"}
         keyCollapse={"posizioni"}
         titleRowCollapse={"Posizioni"}

@@ -615,7 +615,7 @@ const WhiteList : React.FC = () => {
         headerNames={headerNames}
         disabled={false}
         widthCustomSize="auto"
-        setOpenModalAction={showPopUpAction}
+        setAction={showPopUpAction}
         buttons={buttonsTopHeader}
         sentenseEmpty={"Non sono presenti documenti"}
       />

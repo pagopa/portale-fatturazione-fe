@@ -1,15 +1,10 @@
 import { TableCell, TableCellProps, TableRow, Tooltip } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import RowContratto from "../gridCustomBase/rowTipologiaContratto";
-import RowWhiteList from "../gridCustomBase/rowWhiteList";
-import RowOrchestratore from "../gridCustomBase/rowOrchestratore";
 import RowAsyncDoc from "../gridCustomBase/rowAsyncDoc";
-import RowContestazioni from "../gridCustomBase/rowContestazioni";
 import DefaultRow from "../gridCustomBase/rowDefault";
-import RowModCommessaPrevisionale from "../gridCustomBase/rowModCommessaPrevisonale";
 import RowCollapsible from "../gridCustomBase/rowCollapsible";
 import { HeaderGridCustom } from "../gridCustom";
-import { useEffect, useState } from "react";
+
 
 interface GridRowsRendererProps<T = any>{
   element: any;
@@ -48,6 +43,8 @@ const GridRowsRenderer = ({
   case 'docEmessiSend':
   case 'idWhite':
   case 'idOrchestratore':
+  case 'contractId':
+  case 'xxxx':
     return null;
     // return <RowContratto key={Math.random()} apiGet={apiGet} element={element} headerNames={headerNames} />;
 

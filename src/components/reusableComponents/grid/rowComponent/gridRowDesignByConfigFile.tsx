@@ -8,7 +8,7 @@ interface GridRowsRendererProps<T = any>{
   apiGet?: (el: any) => void;
   headerNames:HeaderGridCustom[];
   headerNamesCollapse?: HeaderGridCustom[];
-  setOpenModalAction?: (obj:T, action:string) => void;
+  setAction?: (obj:T, action:string) => void;
   titleRowCollapse?:string,
   keyCollapse?:string,
   bgColorRowFunction?: (element:any) => string;
@@ -21,7 +21,7 @@ const GridRowDesignByConfigFile =  ({
   headerNamesCollapse,
   titleRowCollapse,
   keyCollapse="",
-  setOpenModalAction,
+  setAction,
   bgColorRowFunction
 }: GridRowsRendererProps) => {
 
@@ -48,7 +48,7 @@ const GridRowDesignByConfigFile =  ({
             apiGet={apiGet}
             isRowOpen={open}          // stato di espansione gestito dal componente padre (riga)
             onToggleRow={() => setOpen(!open)}
-            setOpenModalAction={setOpenModalAction}
+            setAction={setAction}
           />
         ))}
       </TableRow>

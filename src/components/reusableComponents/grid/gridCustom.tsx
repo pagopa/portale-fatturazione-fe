@@ -17,7 +17,7 @@ interface GridCustomProps<T = any> {
     apiGet?:(el: any)=> void 
     disabled:boolean
     widthCustomSize:string
-    setOpenModalAction?:(obj:any,action:string) => void
+    setAction?:(obj:any,action:string) => void
     selected?:number[]
     setSelected?:React.Dispatch<SetStateAction<number[]>>
     buttons?:{
@@ -78,7 +78,7 @@ const GridCustom: React.FC<GridCustomProps> = ({
   nameParameterApi,
   apiGet,
   widthCustomSize,
-  setOpenModalAction,
+  setAction,
   buttons,
   selected,
   setSelected,
@@ -164,7 +164,6 @@ const GridCustom: React.FC<GridCustomProps> = ({
                     selected={selected}
                     setSelected={setSelected}
                     checkIfChecked={checkIfChecked}
-                    setOpenModalAction={setOpenModalAction}
                   />
                 );
               })}
@@ -176,7 +175,7 @@ const GridCustom: React.FC<GridCustomProps> = ({
                     apiGet={apiGet}
                     headerNames={headerNames}
                     headerNamesCollapse={headerNamesCollapse}
-                    setOpenModalAction={setOpenModalAction}
+                    setAction={setAction}
                     titleRowCollapse={titleRowCollapse}
                     keyCollapse={keyCollapse}
                     bgColorRowFunction={bgColorRowFunction}

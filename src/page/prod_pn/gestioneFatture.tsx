@@ -639,7 +639,7 @@ const GestioneFatture : React.FC = () => {
         rows={rowsPerPage}
         headerNames={headerNamesGestioneFatture}
         disabled={false}
-        setOpenModalAction={showPopUpAction}
+        setAction={showPopUpAction}
         buttons={buttonsTopHeader}
         sentenseEmpty={"Non sono presenti documenti"}
         widthCustomSize="1000px"

@@ -23,7 +23,7 @@ const AnagraficaPsp:React.FC = () =>{
 
    
   const [gridData, setGridData] = useState<GridElementListaPsp[]>([]);
-  const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+
   const [filtersDownload, setFiltersDownload] = useState<RequestBodyListaAnagraficaPsp>({
     contractIds:[],
     membershipId: '',
@@ -70,19 +70,6 @@ const AnagraficaPsp:React.FC = () =>{
     }
   },[year]);
 
-  useEffect(()=>{
-    if( bodyGetLista.contractIds.length  !== 0 ||
-            bodyGetLista.membershipId !== '' ||
-            bodyGetLista.recipientId !== ''||
-            bodyGetLista.abi !== ''||
-            bodyGetLista.quarters.length !== 0
-    ){ setStatusAnnulla('show');
-    }else{
-      setStatusAnnulla('hidden');
-    }
-
-        
-  },[bodyGetLista]);
 
   useEffect(()=>{
     const timer = setTimeout(() => {
@@ -147,22 +134,7 @@ const AnagraficaPsp:React.FC = () =>{
     await getListaAnagraficaPsp(token, profilo.nonce, body,page,rowsPerPage)
       .then(async(res)=>{
         // ordino i dati in base all'header della grid
-        const orderDataCustom = res.data.psPs.map((obj)=>{
-          // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
-          // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
-          return {
-            contractId:obj.contractId,
-            documentName:obj.name,
-            contractId2:obj.contractId,
-            yearQuarter:obj.yearQuarter,
-            providerNames:obj.providerNames||"--",
-            pecMail:obj.pecMail||"--",
-            sdiCode:obj.sdiCode||"--",
-            abi:obj.abi||"--",
-            referenteFatturaMail:obj.referenteFatturaMail||"--",
-            signedDate:new Date(obj.signedDate).toISOString().split('T')[0],
-          };
-        });
+        const orderDataCustom = res.data.psPs;
         await setGridData(orderDataCustom);
         await setTotalPsp(res.data.count);
         setGetListaLoading(false);
@@ -290,6 +262,16 @@ const AnagraficaPsp:React.FC = () =>{
       rows:parseInt(event.target.value, 10)
     });
   };
+
+  const statusAnnulla =
+  bodyGetLista.contractIds.length !== 0 ||
+  bodyGetLista.membershipId !== '' ||
+  bodyGetLista.recipientId !== '' ||
+  bodyGetLista.abi !== '' ||
+  bodyGetLista.quarters.length !== 0
+    ? 'show'
+    : 'hidden';
+
   return(
   
     <MainBoxStyled title={"Anagrafica PSP"}>
@@ -400,7 +382,7 @@ const AnagraficaPsp:React.FC = () =>{
         rows={rowsPerPage}
         headerNames={headerAnagraficaPsp}
         disabled={getListaLoading}
-        widthCustomSize="2000px"
+        widthCustomSize="1800px"
         sentenseEmpty={"Nessun dato disponibile"}
       />        
       <ModalLoading 

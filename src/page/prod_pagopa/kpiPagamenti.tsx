@@ -4,18 +4,18 @@ import { manageError, manageErrorDownload } from "../../api/api";
 import { AutocompleteMultiselect, OptionMultiselectCheckboxQarter, OptionMultiselectCheckboxPsp, } from "../../types/typeAngraficaPsp";
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import {getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
-import CollapsibleTablePa from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
-import { HeaderCollapsible } from "../../types/typeFatturazione";
 import ModalMatriceKpi from "../../components/kpi/modalMatriceKpi";
 import { kpiObj, RequestBodyKpi } from "../../types/typeKpi";
 import { downloadKpiList, getListaKpi } from "../../api/apiPagoPa/kpi/api";
-import RowBaseKpi from "../../components/reusableComponents/grid/gridCollapsible/rowBaseKpi";
 import { saveAs } from "file-saver";
 import { PathPf } from "../../types/enum";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import { headersKpiCollapse } from "../../assets/configurations/conf_GridKpi";
+import { headersKpi } from "../../assets/configurations/conf_GridKpi";
 
 const KpiPagamenti:React.FC = () =>{
   const mainState = useGlobalStore(state => state.mainState);
@@ -32,7 +32,6 @@ const KpiPagamenti:React.FC = () =>{
   } = useSavedFilters(PathPf.KPI,{});
 
   const [gridData, setGridData] = useState<kpiObj[]>([]);
-  const [statusAnnulla, setStatusAnnulla] = useState('hidden');
   const [filtersDownload, setFiltersDownload] = useState<RequestBodyKpi>({
     contractIds: [],
     membershipId: '',
@@ -69,27 +68,6 @@ const KpiPagamenti:React.FC = () =>{
     getYears();
   }, []);
 
-
-  useEffect(()=>{
-    let from = 0;
-    if(page === 0){
-      from = 0;
-    }else{
-      from = page * rowsPerPage;
-    }
-    setDataPaginated(gridData.slice(from, rowsPerPage + from));
-  }, [page,rowsPerPage,gridData]);
-
-
-  useEffect(()=>{
-    if(bodyGetLista.contractIds.length  !== 0 || bodyGetLista.membershipId !== '' || bodyGetLista.recipientId !== ''|| bodyGetLista.providerName !== '' || bodyGetLista.quarters.length > 0){
-      setStatusAnnulla('show');
-    }else{
-      setStatusAnnulla('hidden');
-    }
-
-  },[bodyGetLista]);
-
   useEffect(()=>{
     const timer = setTimeout(() => {
       if(textValue.length >= 3){ 
@@ -99,13 +77,6 @@ const KpiPagamenti:React.FC = () =>{
     return () => clearTimeout(timer);
   },[textValue]);
 
-  useEffect(()=>{
-    if(bodyGetLista.year !== '' && !isInitialRender.current){
-      setValueQuarters([]);
-      setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
-      getQuarters(bodyGetLista.year);
-    }
-  },[bodyGetLista.year]);
 
   const getListaKpiGrid = async(body:RequestBodyKpi) =>{
     setGetListaLoading(true);
@@ -113,6 +84,7 @@ const KpiPagamenti:React.FC = () =>{
       .then((res)=>{
         const data = res.data.kpiPagamentiScontoReports;
         setGridData(data);
+        setDataPaginated(data.slice(0, rowsPerPage));
         setCount(res.data.count);
         setGetListaLoading(false);
       }).catch(((err)=>{
@@ -253,16 +225,57 @@ const KpiPagamenti:React.FC = () =>{
       valueQuarters:valueQuarters,
     });
   };
-   
-  const headersObjGrid : HeaderCollapsible[] = [
-    {name:"",align:"left",id:1},
-    {name:"Nome KPI",align:"left",id:2},
-    {name:"Trimestre",align:"center",id:3},
-    {name:"Recipient ID",align:"center",id:5},
-    {name:"Totale",align:"center",id:4},
-    {name:"Totale sconto",align:"center",id:6},
-    {name:"Lista KPI",align:"center",id:7},
-    {name:"Arrow",align:"center",id:8}];
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+          
+    const start = newPage * rowsPerPage;
+    const end = start + rowsPerPage;
+       
+    const elementsToShow = gridData.slice(start, end);
+    setDataPaginated(elementsToShow);
+  
+    onUpdateFiltersGrid(newPage,rowsPerPage);
+  };
+                          
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const newRows = parseInt(event.target.value, 10);
+  
+    setRowsPerPage(newRows);
+    setPage(0);
+  
+    const elementsToShow = gridData.slice(0, newRows);
+    setDataPaginated(elementsToShow);
+    onUpdateFiltersGrid(0, newRows);
+  };
+
+
+  const handleOnDownloadLink = (url,name) => {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    //saveAs(url,name);     
+  };
+
+  const statusAnnulla =
+  bodyGetLista.contractIds.length !== 0 ||
+  bodyGetLista.membershipId !== '' ||
+  bodyGetLista.recipientId !== '' ||
+  bodyGetLista.providerName !== '' ||
+  bodyGetLista.quarters.length > 0
+    ? 'show'
+    : 'hidden';
    
   return(
     <MainBoxStyled title={"KPI Pagamenti"} actionButton={[{
@@ -282,6 +295,11 @@ const KpiPagamenti:React.FC = () =>{
           keyValue={"year"}
           keyBody={"year"}
           arrayValues={yearOnSelect}
+          extraCodeOnChange={()=>{
+            setValueQuarters([]);
+            setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
+            getQuarters(bodyGetLista.year);
+          }}
         ></MainFilter>
         <MainFilter 
           filterName={"multi_checkbox"}
@@ -366,35 +384,36 @@ const KpiPagamenti:React.FC = () =>{
         }]}
       />      
              
-      <CollapsibleTablePa 
-        headerNames={headersObjGrid}
-        setPage={setPage}
+      <GridCustom
+        nameParameterApi='xxxx'
+        elements={dataPaginated}
+        changePage={handleChangePage}
+        changeRow={handleChangeRowsPerPage}
+        setAction={handleOnDownloadLink}
+        total={count}
         page={page}
-        rowsPerPage={rowsPerPage}
-        setRowsPerPage={setRowsPerPage}
-        count={count}
-        dataPaginated={dataPaginated}
-        RowComponent={RowBaseKpi}
-        updateFilters={onUpdateFiltersGrid}
-        body={filtersDownload}
-      ></CollapsibleTablePa>
-          
+        rows={rowsPerPage}
+        headerNames={headersKpi}
+        headerNamesCollapse={headersKpiCollapse}
+        disabled={getListaLoading}
+        widthCustomSize="1200px"
+        sentenseEmpty={"Nessun dato disponibile"}
+        keyCollapse={"posizioni"}
+        titleRowCollapse={"Posizioni"}
+      /> 
       <ModalLoading 
         open={showLoading} 
         setOpen={setShowLoading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
+        sentence={'Downloading...'} />
       <ModalLoading 
         open={getListaLoading} 
         setOpen={setGetListaLoading}
-        sentence={'Loading...'} >
-      </ModalLoading>
+        sentence={'Loading...'} />
       <ModalMatriceKpi 
         open={showPopUpMatrice} 
         setOpen={setShowPopUpMatrice}
         anni={yearOnSelect}
-        setShowLoading={setShowLoading}
-      ></ModalMatriceKpi>
+        setShowLoading={setShowLoading}/>
     </MainBoxStyled>
        
   );

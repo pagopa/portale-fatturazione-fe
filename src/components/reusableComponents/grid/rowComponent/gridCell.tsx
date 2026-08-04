@@ -37,7 +37,7 @@ type GridCellProps = {
   flexCenterStyle?: any;
   isRowOpen?: boolean; // stato di espansione, per il case "collaps"
   onToggleRow?: () => void; // handler per il case "collaps"
-  setOpenModalAction?: (obj:T, action:string) => void;
+  setAction?: (obj:T, action:string) => void;
 };
 
 const flexCenterStyle: SxProps<Theme> = {
@@ -68,7 +68,7 @@ const GridCell = ({
   apiGet,
   isRowOpen,
   onToggleRow,
-  setOpenModalAction
+  setAction
 }: GridCellProps) => {
   const value = element[rowObject.keyValue];
 
@@ -290,7 +290,7 @@ const GridCell = ({
   case "action": {
     return (
       <TableCell key={`${i}-${value}`} width={rowObject.width} align="center">
-        {rowObject.funToManipulateValue && rowObject.funToManipulateValue(element,setOpenModalAction)}
+        {rowObject.funToManipulateValue && rowObject.funToManipulateValue(element,setAction)}
       </TableCell>
     );
   }
