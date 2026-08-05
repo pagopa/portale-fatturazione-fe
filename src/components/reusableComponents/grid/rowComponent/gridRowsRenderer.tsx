@@ -45,6 +45,7 @@ const GridRowsRenderer = ({
   case 'idOrchestratore':
   case 'contractId':
   case 'xxxx':
+  case 'modComTrimestrale':
     return null;
     // return <RowContratto key={Math.random()} apiGet={apiGet} element={element} headerNames={headerNames} />;
 
@@ -52,9 +53,9 @@ const GridRowsRenderer = ({
     //return <RowOrchestratore key={Math.random()} sliced={sliced} element={element} headerNames={headerNames} />;
   case 'asyncDocEnte':
     return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} element={element} apiGet={apiGet} />;
-  //case 'contestazionePage':
+    //case 'contestazionePage':
     //return <RowContestazioni key={Math.random()} sliced={sliced} apiGet={apiGet} element={element} headerNames={headerNames} />;
-  case 'modComTrimestrale':
+    /*case 'modComTrimestrale':
  
     return (
       <DefaultRow
@@ -65,7 +66,7 @@ const GridRowsRenderer = ({
         headerNames={headerNames}
         nameParameterApi={nameParameterApi}
       />
-    );
+    );*/
 
     //case 'idPrevisonale':
     //return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames} />;

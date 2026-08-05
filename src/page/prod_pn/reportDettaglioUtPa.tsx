@@ -1,4 +1,4 @@
-import React , { useState, useEffect, useContext} from 'react';
+import React , { useState, useEffect} from 'react';
 import { getTipologiaProfilo, manageError, managePresaInCarico} from "../../api/api";
 import {NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox, OptionMultiselectChackboxTipoNot  } from "../../types/typeReportDettaglio";
 import { BodyListaNotifiche, BodyListaNotificheSelfcare } from "../../types/typesGeneral";
@@ -13,7 +13,7 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
-import { mesiGrid, mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
+import { mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
@@ -802,18 +802,18 @@ const ReportDettaglio : React.FC = () => {
   };
   const statusAnnulla =  (
     bodyGetLista.profilo !== '' ||
-            bodyGetLista.prodotto !== '' ||
-            (bodyGetLista.tipoNotifica !== null && bodyGetLista.tipoNotifica?.length !== 0) ||
-            bodyGetLista.statoContestazione.length !== 0 ||
-            bodyGetLista.cap !== null ||
-            bodyGetLista.idEnti?.length !== 0 ||
-            bodyGetLista.mese !== Number(arrayMesi[0]?.mese) ||
-            bodyGetLista.anno !== arrayAnni[0]||
-            bodyGetLista.recipientId !== null ||
-            bodyGetLista.consolidatori?.length !== 0 ||
-            bodyGetLista.recapitisti?.length !== 0 ||
-            bodyGetLista.sort.columnName !== null ||
-            bodyGetLista.sort.order !== null) ? "show" : "hidden"; 
+    bodyGetLista.prodotto !== '' ||
+    (bodyGetLista.tipoNotifica !== null && bodyGetLista.tipoNotifica?.length !== 0) ||
+    bodyGetLista.statoContestazione.length !== 0 ||
+    bodyGetLista.cap !== null ||
+    bodyGetLista.idEnti?.length !== 0 ||
+    bodyGetLista.mese !== Number(arrayMesi[0]?.mese) ||
+    bodyGetLista.anno !== arrayAnni[0]||
+    bodyGetLista.recipientId !== null ||
+    bodyGetLista.consolidatori?.length !== 0 ||
+    bodyGetLista.recapitisti?.length !== 0 ||
+    bodyGetLista.sort.columnName !== null ||
+    bodyGetLista.sort.order !== null) ? "show" : "hidden"; 
     
 
   return (

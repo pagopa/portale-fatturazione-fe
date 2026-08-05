@@ -1,5 +1,5 @@
 import { manageError } from '../../api/api';
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { getContrattoModuliCommessaPA } from "../../api/apiPagoPa/moduloComessaPA/api";
 import { saveAs } from "file-saver";
@@ -14,7 +14,6 @@ import { downloadDocumentoListaPrevisionaleaPagoPa, listaModuloCommessaPrevisona
 import dayjs from "dayjs";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersGridPrevisionale } from "../../assets/configurations/conf_GridModComPrevisionale";
-import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
@@ -64,8 +63,6 @@ const ListaCommessaPrevisionale:React.FC = () =>{
   const future = new Date(now.getFullYear(), now.getMonth() + 4, 1);
   const defaultDataFineModulo = new Date(future.getFullYear(), future.getMonth() + 1, 0);
   
- 
-
   const [gridData, setGridData] = useState<ItemGridPrevisonale[]>([]);
   const [count, setCount] = useState(0);
   const [bodyGetLista, setBodyGetLista] = useState<BodyPrevisionale>({
@@ -85,11 +82,9 @@ const ListaCommessaPrevisionale:React.FC = () =>{
   const [showLoading,setShowLoading] = useState(false);
   const [showLoadingLista,setShowLoadingLista] = useState(false);
   const [arrayContratto,setArrayContratto]= useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
-
   const [errorData, setErrorData] = useState(false);
   const [errorContratto, setErrorContratto] = useState(false);
 
-   
   const { 
     filters,
     updateFilters,
@@ -110,9 +105,6 @@ const ListaCommessaPrevisionale:React.FC = () =>{
     return () => clearTimeout(timer);
   },[textValue]);
 
-
-
-  
   const getContratti = async() => {
   
     await getContrattoModuliCommessaPA(token, profilo.nonce).then((res)=>{

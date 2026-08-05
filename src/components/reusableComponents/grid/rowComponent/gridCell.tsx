@@ -47,12 +47,12 @@ const flexCenterStyle: SxProps<Theme> = {
   gap: 1,
 };
 
-const cssFirstColumRagioneSociale : SxProps<Theme> = {
-  color:'#0D6EFD',
+const getCssFirstColumRagioneSociale = (isClickable: boolean): SxProps<Theme> => ({
+  color: '#0D6EFD',
   fontWeight: 'bold',
-  cursor: 'pointer',
-  width:"350px"
-};
+  cursor: isClickable ? 'pointer' : 'default',
+  width: "350px"
+});
 
 const cssFirstColum : SxProps<Theme> = {
   color:'#0D6EFD',
@@ -78,7 +78,7 @@ const GridCell = ({
     return (
       <Tooltip key={`${i}-${value}`} title={isLong ? value : null}>
         <TableCell
-          onClick={() => {if (apiGet && headerNames[i]?.makeAction) apiGet(element) }}
+          onClick={() => {if (apiGet && headerNames[i]?.makeAction) apiGet(element); }}
           align="center"
         >
           <Typography sx={headerNames[i]?.makeAction ? cssFirstColum : null} variant={rowObject.variant||"body1"}>
@@ -134,7 +134,7 @@ const GridCell = ({
           align={i === 0 ? "left" : "center"}
           
         >
-          <Typography sx={headerNames[i]?.applyCss ? cssFirstColumRagioneSociale : null} variant={rowObject.variant||"body1"}>
+          <Typography sx={headerNames[i]?.applyCss ? getCssFirstColumRagioneSociale(headerNames[i]?.makeAction||false) : null} variant={rowObject.variant||"body1"}>
             {isLong ? value?.toString().slice(0, 37) + "..." : value}
           </Typography>
         </TableCell>
@@ -291,6 +291,20 @@ const GridCell = ({
     return (
       <TableCell key={`${i}-${value}`} width={rowObject.width} align="center">
         {rowObject.funToManipulateValue && rowObject.funToManipulateValue(element,setAction)}
+      </TableCell>
+    );
+  }
+  case "custom-value": {
+    return (
+      <TableCell
+        key={`${i}-${value}`}
+        onClick={() => {
+          if (apiGet && headerNames[i]?.makeAction) apiGet(element);
+        }}
+        sx={headerNames[i]?.applyCss ? getCssFirstColumRagioneSociale(headerNames[i]?.makeAction||false) : null}
+        width={rowObject.width}
+        align="center">
+        {rowObject.funToManipulateValue && rowObject.funToManipulateValue(element,apiGet)}
       </TableCell>
     );
   }

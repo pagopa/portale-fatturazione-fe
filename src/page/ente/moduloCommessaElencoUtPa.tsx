@@ -6,7 +6,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { DataGridCommessa, GetAnniResponse, ResponseGetListaCommesse } from '../../types/typeModuloCommessaElenco';
 import { getAnni, getListaCommessaFilteredV2, getCommessaObbligatoriVerificaV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
-import {  fixResponseForDataGridRollBack } from '../../reusableFunction/function';
+import { manipulateObjModuloCommessa } from '../../reusableFunction/function';
 import { PathPf } from '../../types/enum';
 import { ManageErrorResponse } from '../../types/typesGeneral';
 import GridCustom from '../../components/reusableComponents/grid/gridCustom';
@@ -27,13 +27,8 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
   const profilo =  mainState.profilo;
   const navigate = useNavigate();
 
-  let profilePathModuloCommessa; 
+  const profilePathModuloCommessa = PathPf.MODULOCOMMESSA_EN;
         
-  if(profilo.auth === 'PAGOPA'){
-    profilePathModuloCommessa = PathPf.MODULOCOMMESSA;
-  }else{
-    profilePathModuloCommessa = PathPf.MODULOCOMMESSA_EN;
-  }
   
   const [valueSelect, setValueSelect] = useState('');
     
@@ -52,7 +47,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loadingMandatory, setLoadingMandatory] = useState(true);
   const [showButtonInsertModulo,setShowButtonInsertModulo] = useState(false);
-  const [openModalModObbligatori,setOpenModalModObbligatori] = useState({open:false,sentence:''});
+  const [openModalModObbligatori,setOpenModalModObbligatori] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string}>({open:false,sentence:''});
   const [isMandatory, setIsMandatory] = useState(null);
   const [showLoadingLista,setShowLoadingLista] = useState(false);
 
@@ -86,10 +81,8 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         getAnniSelect();
         if(isInitialRender.current && Object.keys(filters).length > 0){
           getListaCommessaGrid(filters.valueSelect);
-          setValueSelect(filters.valueSelect);
-                  
+          setValueSelect(filters.valueSelect);    
         }else{
-                 
           getListaCommessaGrid('');
         }
         handleModifyMainState({infoTrimestreComSelected:{}});
@@ -115,7 +108,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     setShowLoadingLista(true);
     await getListaCommessaFilteredV2(token , profilo.nonce,valueAnno).then((res:ResponseGetListaCommesse)=>{
       //const finalData = fixResponseForDataGrid(res.data);
-      const finalData = fixResponseForDataGridRollBack(res.data);
+      const finalData = res.data;//fixResponseForDataGridRollBack(res.data);
       setGridData(finalData);
       setShowLoadingLista(false);
       if(sentenseRef.current === null){
@@ -128,18 +121,14 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
       setShowLoadingLista(false);
       if(sentenseRef.current === null){
         sentenseRef.current = false;
-      }
-            
+      }      
     });
   };
    
-
   const handleListItemClickModuloCommessa = async () => {
     //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
     navigate(profilePathModuloCommessa);
   };
-
-  //_________________________________NUOVA LOGICA
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -161,56 +150,17 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     console.log("action");
   };
 
-  const handleClickOnDetail = (el) => {
-        
-    /*const isMandatory = gridData?.map(el => el?.moduli?.map(el => (el.source === "obbligatorio" && el.stato === "Obbligatorio" && el.inserimento.inserimento === "Non inserito") ? true:false)).flat().includes(true);
-        const isMandatory = gridData?.map((el => {
-            if(el.source === "obbligatorio" && el.stato === "Obbligatorio"){
-                return true;
-            }else{
-                return false;
-            }
-        })).includes(true);
-        const quarterSelected = gridData.find(dataEl => dataEl.id === el.quarter); 
-        const quarterSelectedIndex = gridData.findIndex(dataEl => dataEl.id === el.quarter);
-        const moduloSelectedIndex =  quarterSelected?.moduli?.findIndex(elMod => elMod.id === el.id);
-        const result:any[] = [];
-        try{
-            for (const item of quarterSelected?.moduli||[]) {
-                if (isMandatory){
-                 
-                    if(item.source === "archiviato"){
-                        console.log("dentro");
-                        result.push(item);
-                    }else{
-                        result;
-                    }
-                }else{
-                    result.push(item);
-                }
-            }
-        }catch(err){
-            console.log(err);
-        }
-       */
-     
+  const handleClickOnDetail = (el) => { 
+    const idModuloCommessa = el.meseValidita+"/"+el.annoValidita;
+    const moduloToInsertInsideState = manipulateObjModuloCommessa(el);
     if( isMandatory && el.source === "facoltativo" ){
       setOpenModalModObbligatori({open:true,sentence:'Per inserire i moduli commessa futuri bisogna prima inserire i moduli commessa OBBLIGATORI'});
     }else if(isMandatory && el.source === "archiviato"){
-      /*  handleModifyMainState({infoTrimestreComSelected:{
-                meseCommessaSelected:el.id.length === 6 ? el.id.slice(0,1):el.id.slice(0,2),
-                annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
-                moduli:result,
-                quarterSelectedIndex,
-                moduloSelectedIndex,
-                idTipoContratto: profilo.idTipoContratto,
-                prodotto:profilo.prodotto,
-                idEnte:profilo.idEnte,
-            }});*/
+   
       handleModifyMainState({infoTrimestreComSelected:{
-        meseCommessaSelected:el.id.length === 6 ? el.id.slice(0,1):el.id.slice(0,2),
-        annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
-        moduli:[el],
+        meseCommessaSelected:idModuloCommessa.length === 6 ? idModuloCommessa.slice(0,1):idModuloCommessa.slice(0,2),
+        annoCommessaSelectd:idModuloCommessa.length === 6 ?idModuloCommessa.slice(2,6):idModuloCommessa.slice(3,7),
+        moduli:[moduloToInsertInsideState],
         quarterSelectedIndex:0,
         moduloSelectedIndex:0,
         idTipoContratto: profilo.idTipoContratto,
@@ -219,20 +169,11 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
       }});
       navigate(profilePathModuloCommessa);
     }else if(!isMandatory){
-      /*handleModifyMainState({infoTrimestreComSelected:{
-                meseCommessaSelected:el.id.length === 6 ? el.id.slice(0,1):el.id.slice(0,2),
-                annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
-                moduli:result,
-                quarterSelectedIndex,
-                moduloSelectedIndex,
-                idTipoContratto: profilo.idTipoContratto,
-                prodotto:profilo.prodotto,
-                idEnte:profilo.idEnte,
-            }});*/
+     
       handleModifyMainState({infoTrimestreComSelected:{
-        meseCommessaSelected:el.id.length === 6 ? el.id.slice(0,1):el.id.slice(0,2),
-        annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
-        moduli:[el],
+        meseCommessaSelected:idModuloCommessa.length === 6 ? idModuloCommessa.slice(0,1):idModuloCommessa.slice(0,2),
+        annoCommessaSelectd:idModuloCommessa.length === 6 ?idModuloCommessa.slice(2,6):idModuloCommessa.slice(3,7),
+        moduli:[moduloToInsertInsideState],
         quarterSelectedIndex:0,
         moduloSelectedIndex:0,
         idTipoContratto: profilo.idTipoContratto,
@@ -242,11 +183,9 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
       navigate(profilePathModuloCommessa);
     }else if(isMandatory && el.source === "obbligatorio"){
       navigate(profilePathModuloCommessa);
-    }
-      
-        
+    }  
   };
-    //_________________________________________________________
+   
   return (
     <>
       {loadingMandatory ?
@@ -346,15 +285,14 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
           <ModalRedirect 
             setOpen={setOpenModalRedirect}
             open={openModalRedirect}
-            sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}></ModalRedirect>
+            sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}/>
           <ModalInfo 
             setOpen={setOpenModalModObbligatori}
-            open={openModalModObbligatori}></ModalInfo>
+            open={openModalModObbligatori}/>
           <ModalLoading 
             open={showLoadingLista} 
             setOpen={setShowLoadingLista}
-            sentence={'Loading...'} >
-          </ModalLoading>
+            sentence={'Loading...'} />
         </div>
       }
     </>

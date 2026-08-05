@@ -458,3 +458,33 @@ export function formatDate(date) {
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
 
+
+export const manipulateObjModuloCommessa = ( el ) =>{
+  
+  let inserimentoInfo = {inserimento:"--",color:"#ffffff"};
+
+  if(el.totaleNotifiche === null ){
+    inserimentoInfo = {inserimento:"Non inserito",color:"#FB9EAC"};
+  }else{
+    inserimentoInfo = {inserimento:"Inserito",color:"#B5E2B4"};
+  }
+
+  return {
+    id:el.meseValidita+"/"+el.annoValidita,
+    meseAnno:month[el.meseValidita-1]+"/"+el.annoValidita,
+    stato:el.source.charAt(0).toUpperCase() + el.source.slice(1)||"--",
+    inserimento:inserimentoInfo,
+    dataInserimento:el.dataInserimento?.split('T')[0]|| "--",
+    dataChiusura:el.source === "archiviato" ? "--" : el.source === "facoltativo" ? "TBD" : (el.dataChiusura?.split('T')[0]|| "--"),
+    totaleDig:el.totaleNotificheDigitaleNaz !== null ?el.totaleNotificheDigitaleNaz:"--",
+    totaleNotificheDigitaleInternaz:el.totaleNotificheDigitaleInternaz !== null ? el.totaleNotificheDigitaleInternaz: "--",
+    totaleAR:el.totaleNotificheAnalogicoARNaz!== null ?el.totaleNotificheAnalogicoARNaz :"--",
+    totaleARInt:el.totaleNotificheAnalogicoARInternaz !== null ? el.totaleNotificheAnalogicoARInternaz: "--",    
+    totaleAnalogico890Naz:el.totaleNotificheAnalogico890Naz !== null ? el.totaleNotificheAnalogico890Naz: "--",
+    totale:el.totaleNotifiche !== null ? el.totaleNotifiche : "--",
+    source:el.source,
+    modifica:el.modifica,
+    quarter:el.quarter,
+    arrow:""
+  };
+};
