@@ -309,8 +309,8 @@ export const sortDates = (array: Fattura[], ascending = true) => {
   };
 
   return [...array].sort((a, b) => {
-    const dateA = normalize(a.dataFattura);
-    const dateB = normalize(b.dataFattura);
+    const dateA = normalize(new Date(a.dataFattura).toLocaleDateString('it-IT'));
+    const dateB = normalize(new Date(b.dataFattura).toLocaleDateString('it-IT'));
 
     return ascending
       ? dateA.localeCompare(dateB)

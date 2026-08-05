@@ -44,7 +44,7 @@ interface GridCustomProps<T = any> {
 export interface HeaderGridCustom {
     label:string,
     align:TableCellProps['align'],
-    width:number|string,
+    width:string|undefined,
     headerAction?:boolean,
     headerTooltip?: (title: string, label: string, color: string) => JSX.Element,
     headerChip?: (title: string, label: string, color: string) => JSX.Element,
@@ -171,6 +171,7 @@ const GridCustom: React.FC<GridCustomProps> = ({
               {elements.length > 0 && elements.map((element,index) => {
                 return (
                   <GridRowDesignByConfigFile
+                    key={index + nameParameterApi}
                     element={element}
                     apiGet={apiGet}
                     headerNames={headerNames}

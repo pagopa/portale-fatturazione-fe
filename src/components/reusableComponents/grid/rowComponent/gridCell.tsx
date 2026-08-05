@@ -51,7 +51,15 @@ const getCssFirstColumRagioneSociale = (isClickable: boolean): SxProps<Theme> =>
   color: '#0D6EFD',
   fontWeight: 'bold',
   cursor: isClickable ? 'pointer' : 'default',
-  width: "350px"
+  width:"350px"
+});
+
+const getCssFirstColumCustom = (isClickable: boolean,width?:string|undefined): SxProps<Theme> => ({
+  color: '#0D6EFD',
+  fontWeight: 'bold',
+  cursor: isClickable ? 'pointer' : 'default',
+  width:width ? width : undefined
+
 });
 
 const cssFirstColum : SxProps<Theme> = {
@@ -74,12 +82,13 @@ const GridCell = ({
 
   switch (rowObject.typeColumn) {
   case "string": {
-    const isLong = value?.toString().length > 20;
+    const isLong = value?.toString().length > 24;
     return (
       <Tooltip key={`${i}-${value}`} title={isLong ? value : null}>
         <TableCell
           onClick={() => {if (apiGet && headerNames[i]?.makeAction) apiGet(element); }}
           align="center"
+          width={headerNames[i]?.width}
         >
           <Typography sx={headerNames[i]?.makeAction ? cssFirstColum : null} variant={rowObject.variant||"body1"}>
             {value
@@ -94,7 +103,7 @@ const GridCell = ({
   }
   case "data-exeption": {
     return (  
-      <TableCell  key={`${i}-${value}`} align="center">
+      <TableCell  width={headerNames[i]?.width} key={`${i}-${value}`} align="center">
         <Typography variant={rowObject.variant||"body1"}>
           {rowObject.funToManipulateValue ? rowObject.funToManipulateValue(element):"--"}
         </Typography>
@@ -103,7 +112,7 @@ const GridCell = ({
   }
   case "number":
     return (
-      <TableCell align="center">
+      <TableCell  width={headerNames[i]?.width} align="center">
         <Typography variant={rowObject.variant||"body1"}>
           {value === null ? "--" : value}
         </Typography>
@@ -111,14 +120,14 @@ const GridCell = ({
     );
   case "boolean":
     return (
-      <TableCell align="center">
+      <TableCell width={headerNames[i]?.width} align="center">
         <Typography variant={rowObject.variant||"body1"}>
           {value === null ? "--" : value === true ? "Si" : "No"}
         </Typography>
       </TableCell>
     );
   case "mese-number":
-    return <TableCell align="center">
+    return <TableCell width={headerNames[i]?.width} align="center">
       <Typography variant={rowObject.variant||"body1"}>
         {mesiGrid[value] || "--"}
       </Typography>
@@ -131,6 +140,7 @@ const GridCell = ({
           onClick={() => {
             if (apiGet && headerNames[i]?.makeAction) apiGet(element);
           }}
+          width={headerNames[i]?.width}
           align={i === 0 ? "left" : "center"}
           
         >
@@ -153,7 +163,7 @@ const GridCell = ({
               : dayjs(element.dataChiusura).format("YYYY-MM-DD");
     }
     return (
-      <TableCell key={`${i}-${value}`} align="center">
+      <TableCell key={`${i}-${value}`}  width={headerNames[i]?.width} align="center">
         <Typography variant={rowObject.variant||"body1"}>
           {valueData || "--"}
         </Typography>
@@ -163,7 +173,7 @@ const GridCell = ({
   case "string-tipocontratto":
     return (
       <Tooltip key={`${i}-${value}`} title={ value === null ? null : value === 'PAL' ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}>
-        <TableCell key={`${i}-${value}`} align="center">
+        <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
           <Typography variant={rowObject.variant||"body1"}>
             { value === null ? "--" : value === 'PAL' ? ('PAC - PAL senza requisiti').slice(0, 10) + "..." : ('PAC - PAL con requisiti').slice(0, 10) + "..."}
           </Typography>
@@ -173,7 +183,7 @@ const GridCell = ({
   case "number-tipocontratto":
     return (
       <Tooltip key={`${i}-${value}`} title={ Number(value) === null ? null : Number(value) === 1 ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}>
-        <TableCell key={`${i}-${value}`} align="center">
+        <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
           <Typography variant={rowObject.variant||"body1"}>
             { Number(value)  === null ? "--" : Number(value)  === 1 ? ('PAC - PAL senza requisiti').slice(0, 10) + "..." : ('PAC - PAL con requisiti').slice(0, 10) + "..."}
           </Typography>
@@ -183,7 +193,7 @@ const GridCell = ({
   case "data-ora": {
     const valueData = value ? transformDateTime(value) : "";
     return (
-      <TableCell key={`${i}-${value}`} align="center">
+      <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
         <Typography variant={rowObject.variant||"body1"}>
           {valueData || "--"}
         </Typography>
@@ -192,7 +202,7 @@ const GridCell = ({
   }
   case "euro-centesimi":
     return (
-      <TableCell key={`${i}-${value}`} align="center">
+      <TableCell key={`${i}-${value}`}  width={headerNames[i]?.width} align="center">
         <Typography variant={rowObject.variant||"body1"}>
           {value != null
             ? (Number(value) / 100).toLocaleString("de-DE", {
@@ -205,7 +215,7 @@ const GridCell = ({
     );
   case "euro":
     return (
-      <TableCell key={`${i}-${value}`} align="center">
+      <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
         <Typography variant={rowObject.variant||"body1"}>
           {value != null
             ? Number(value).toLocaleString("de-DE", {
@@ -218,7 +228,7 @@ const GridCell = ({
     );
   case "euro-number":
     return (
-      <TableCell key={`${i}-${value}`} align="center">
+      <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
         <Typography variant={rowObject.variant||"body1"}>
           {value != null
             ? value.toLocaleString("de-DE", {
@@ -264,7 +274,7 @@ const GridCell = ({
           ? rowObject.funToManipulateValue(element)
           : undefined;
     return (
-      <TableCell key={`${i}-${value}`} width={rowObject.width} align="center">
+      <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
         <Chip
           variant="outlined"
           label={formattedLabel}
@@ -277,7 +287,7 @@ const GridCell = ({
     const objTooltip = rowObject.funToManipulateValue ? rowObject.funToManipulateValue(element) : undefined;
     return (
       <Tooltip key={`${i}-${value}`} title={objTooltip?.title}>
-        <TableCell key={`${i}-${value}`} width={rowObject.width} align="center">
+        <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
           <Chip
             variant="outlined"
             label={objTooltip?.label }
@@ -289,7 +299,7 @@ const GridCell = ({
   }
   case "action": {
     return (
-      <TableCell key={`${i}-${value}`} width={rowObject.width} align="center">
+      <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
         {rowObject.funToManipulateValue && rowObject.funToManipulateValue(element,setAction)}
       </TableCell>
     );
@@ -301,8 +311,8 @@ const GridCell = ({
         onClick={() => {
           if (apiGet && headerNames[i]?.makeAction) apiGet(element);
         }}
-        sx={headerNames[i]?.applyCss ? getCssFirstColumRagioneSociale(headerNames[i]?.makeAction||false) : null}
-        width={rowObject.width}
+        sx={headerNames[i]?.applyCss ? getCssFirstColumCustom(headerNames[i]?.makeAction||false,headerNames[i]?.width) : null}
+      
         align="center">
         {rowObject.funToManipulateValue && rowObject.funToManipulateValue(element,apiGet)}
       </TableCell>

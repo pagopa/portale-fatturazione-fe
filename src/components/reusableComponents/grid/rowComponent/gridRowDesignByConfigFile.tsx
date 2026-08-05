@@ -27,6 +27,11 @@ const GridRowDesignByConfigFile =  ({
 
   const [open, setOpen] = useState(false);
 
+  let dataInsideCollapse = element[keyCollapse];
+  if (typeof dataInsideCollapse === 'string') {
+    dataInsideCollapse = [JSON.parse(dataInsideCollapse)];
+  } 
+
   return (
     <>
       <TableRow sx={{
@@ -74,7 +79,7 @@ const GridRowDesignByConfigFile =  ({
                     </TableRow>
                   </TableHead>
                   <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
-                    {element[keyCollapse]?.map((el: any, rowIndex: number) => (
+                    {dataInsideCollapse?.map((el: any, rowIndex: number) => (
                       <TableRow key={`row-${rowIndex}`}>
                         {Object.values(headerNamesCollapse).map(
                           (rowObjectCollapsed: HeaderGridCustom, colIndex: number) => (

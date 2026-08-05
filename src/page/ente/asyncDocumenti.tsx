@@ -6,7 +6,7 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import {  transformDateTime, transformDateTimeWithNameMonth } from "../../reusableFunction/function";
 import { getListaAsyncDoc } from "../../api/apiSelfcare/asyncDoc/api";
-import { headerNameAsyncDoc } from "../../assets/configurations/conf_GridAsyncDocEnte";
+import { headerNameAsyncDoc, headerNameAsyncDocCollapse } from "../../assets/configurations/conf_GridAsyncDocEnte";
 import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import dayjs from "dayjs";
 import { getMessaggiCountEnte, getNotificheDownloadFromAsync } from "../../api/apiSelfcare/notificheSE/api";
@@ -101,22 +101,7 @@ const AsyncDocumenti : React.FC = () => {
       end:body.end ? dayjs(body.end).format("YYYY-MM-DD") :null,
     };
     await getListaAsyncDoc(token, profilo.nonce, bodyWitoutTime,pag+1,row ).then((res)=>{
-      const result = res.data.items.map((el)=>{
-        const element = {
-          reportId:el.reportId,
-          actionOpen:'',
-          dataInserimento:transformDateTimeWithNameMonth(el.dataInserimento)?.split(".")[0]||"--",
-          anno:el.anno,
-          mese:mesiGrid[el.mese],
-          count:el.count|| "--",
-          dataFine:transformDateTime(el.dataFine)?.split(".")[0]||"--",
-          stato:el.descrizioneStato,
-          letto:el.letto,
-          action:'',
-          DETTAGLIO:el.json
-        };
-        return element;
-      });
+      const result = res.data.items;
       setTotDoc(res.data.count);
       setDataGrid(result);
       setShowLoading(false);
@@ -174,7 +159,7 @@ const AsyncDocumenti : React.FC = () => {
 
   const handleClickOnDetail = async(obj) =>{
     setShowDownloading(true);
-    await getNotificheDownloadFromAsync(token, profilo.nonce,obj?.idReport).then(async(res)=>{
+    await getNotificheDownloadFromAsync(token, profilo.nonce,obj?.reportId).then(async(res)=>{
       const link = document.createElement("a");
       link.href = res.data;
       link.download = `Notifiche.csv`;
@@ -198,13 +183,21 @@ const AsyncDocumenti : React.FC = () => {
   };
 
   const headerAction = (newParam) => {
-     
     listaDoc({ ...bodyGetLista,...{ordinamento:newParam}},page, rowsPerPage);
     setBodyGetLista({ ...bodyGetLista,...{ordinamento:newParam}});
     updateFilters({
       body:{ ...bodyGetLista,...{ordinamento:newParam}}
     });
   };
+
+  const bgColorRowFunction = (element) => {
+    let bgColorRow = "";
+    if(element.letto){
+      bgColorRow = "#F0FFF0";
+    }
+    return bgColorRow;
+  };
+
   
   return (
     <MainBoxStyled title={"Download documenti"}>
@@ -250,12 +243,16 @@ const AsyncDocumenti : React.FC = () => {
         page={page}
         rows={rowsPerPage}
         headerNames={headerNameAsyncDoc}
+        headerNamesCollapse={headerNameAsyncDocCollapse}
         apiGet={handleClickOnDetail}
         disabled={false}
         headerAction={headerAction}
         body={bodyGetLista}
         widthCustomSize="auto"
         sentenseEmpty={"Non sono presenti documenti"}
+        bgColorRowFunction={bgColorRowFunction}
+        keyCollapse={"json"}
+        titleRowCollapse={"Filtri Applicati"}
       />
       <ModalLoading 
         open={showLoading} 

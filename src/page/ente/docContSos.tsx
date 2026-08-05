@@ -13,9 +13,9 @@ import { useGlobalStore } from "../../store/context/useGlobalStore";
 import { Paper, Typography } from "@mui/material";
 import { ManageErrorResponse } from "../../types/typesGeneral";
 import { month } from "../../reusableFunction/reusableArrayObj";
-import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse } from "../../assets/configurations/conf_GridDocEmessiEnte";
 import {  downloadFattureSospeseEnte, getListaDocumentiSospesi, getPeriodoSospeso } from "../../api/apiSelfcare/documentiSospesiSE/api";
 import { sortByNumeroFattura, sortByTipoFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
+import { headersDocumentiSospesiEnte, headersDocumentiSospesiEnteCollapse } from "../../assets/configurations/conf_GridDocSospesiEnte";
 
 export type BodyDocumentiEmessiEnte = {
     anno:number
@@ -233,52 +233,20 @@ const DocSos : React.FC = () =>{
       const totaleSum = res.data.importoSospeso;
     
       const getObjectFattura = res.data.dettagli.map(el => el.fattura);
-      const orderDataCustom = getObjectFattura.map((obj, index) => ({
-        ragioneSociale: obj.ragioneSociale || '--',
-        idFattura:obj.idfattura,
-        id: obj.identificativo ?? index,
-        arrow: '',
-        dataFattura: obj.dataFattura
-          ?  new Date(obj.dataFattura).toLocaleDateString('it-IT')
-          : '--',
-        stato: 'Sospesa',
-        tipologiaFattura: obj.datiGeneraliDocumento[0].tipologia || "--",
-        identificativo: obj.identificativo,
-        tipocontratto: obj.tipocontratto === 'PAL'
-          ? 'PAC - PAL senza requisiti'
-          : 'PAC - PAL con requisiti',
-        totale: obj.totale.toLocaleString('de-DE', {
-          style: 'currency',
-          currency: 'EUR',
-        }),
-        numero: obj.numero,
-        tipoDocumento: obj.tipoDocumento,
-        divisa: obj.divisa,
-        metodoPagamento: obj.metodoPagamento,
-        split: obj.split ? 'Si' : 'No',
-        arrowDetails: 'arrowDetails',
-        posizioni: obj.posizioni.map(el => ({
-          numerolinea: el.numeroLinea,
-          codiceMateriale: el.codiceMateriale,
-          imponibile:el.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })  || '--',
-          periodoRiferimento: el.periodoRiferimento|| '--', 
-          periodoFatturazione:el?.periodoFatturazione || '--',
-        }))?.sort((a, b) => (a.numerolinea ?? 0) - (b.numerolinea ?? 0)),
-      }));
-          
+        
           
       if(isInitialRender.current && Object.keys(filters)?.length > 0 ){
         if(Object.values(filters.objectSort).some(value => value !== 1)){
           const obj = filters.objectSort;
           const label = Object.keys(obj).filter(key => obj[key] !== 1);
                              
-          headerAction(label[0],setGridData,true,setObjectSort,filters.page,filters.rows,orderDataCustom);
+          headerAction(label[0],setGridData,true,setObjectSort,filters.page,filters.rows,getObjectFattura);
           //setObjectSort(filters.objectSort);
         }else{
           const start = filters.page * filters.rows;
           const end = start + filters.rows;
                  
-          const elementsToShow = orderDataCustom.slice(start, end);
+          const elementsToShow = getObjectFattura.slice(start, end);
           setGridData(elementsToShow);
         }
         if(filters.page !== 0){
@@ -288,11 +256,11 @@ const DocSos : React.FC = () =>{
           setRowsPerPage(filters.rows);
         }
       }else{
-        const dataToShow = orderDataCustom.slice(0, 10);
+        const dataToShow = getObjectFattura.slice(0, 10);
         setGridData(dataToShow);
       }
-      setListaResponse(orderDataCustom);
-      setListaResponseSorted(orderDataCustom);
+      setListaResponse(getObjectFattura);
+      setListaResponseSorted(getObjectFattura);
       setTotalDocumenti(res.data.dettagli.length);
       setTotaleHeader(totaleSum);
                      
@@ -728,8 +696,8 @@ const DocSos : React.FC = () =>{
         total={totalDocumenti}
         page={page}
         rows={rowsPerPage}
-        headerNames={headersDocumentiEmessiEnte}
-        headerNamesCollapse={headersDocumentiEmessiEnteCollapse}
+        headerNames={headersDocumentiSospesiEnte}
+        headerNamesCollapse={headersDocumentiSospesiEnteCollapse}
         disabled={showLoadingGrid}
         widthCustomSize="2000px"
         apiGet={setIdDoc}
@@ -740,9 +708,8 @@ const DocSos : React.FC = () =>{
         setObjectSort={setObjectSort}
         listaResponse={listaResponse}
         sentenseEmpty={"Non sono presenti fatture sospese"}
-      ></GridCustom>
-           
-          
+        keyCollapse={"posizioni"}
+        titleRowCollapse={"Posizioni"}/>
       <ModalLoading 
         open={showDownloading} 
         setOpen={setShowDownloading} 
