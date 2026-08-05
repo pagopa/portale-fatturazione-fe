@@ -6,13 +6,12 @@ import Modal from '@mui/material/Modal';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { useEffect,  useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { getQuartersDocContabiliPa } from '../../api/apiPagoPa/documentiContabiliPA/api';
-
-import { OptionMultiselectCheckboxQarter } from '../../types/typeAngraficaPsp';
-import { manageError, manageErrorDownload } from '../../api/api';
-import { getMatriceKpi } from '../../api/apiPagoPa/kpi/api';
+import { getQuartersDocContabiliPa } from '../../../api/apiPagoPa/documentiContabiliPA/api';
+import { OptionMultiselectCheckboxQarter } from '../../../types/typeAngraficaPsp';
+import { manageError, manageErrorDownload } from '../../../api/api';
+import { getMatriceKpi } from '../../../api/apiPagoPa/kpi/api';
 import { saveAs } from "file-saver";
-import { useGlobalStore } from '../../store/context/useGlobalStore';
+import { useGlobalStore } from '../../../store/context/useGlobalStore';
 const style = {
   position: 'absolute' as const,
   top: '50%',
@@ -39,7 +38,6 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
   const [quarterSelected, setQuarterSelected] = React.useState('');
   const [dataSelectQuarter, setDataSelectQuarter] = useState<OptionMultiselectCheckboxQarter[]>([]);
 
-
   const handleClose = () =>{
     setOpen(false);
     setAnnoSelected('');
@@ -48,7 +46,6 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
   }; 
 
   const getQuarters = async () =>{
-       
     await getQuartersDocContabiliPa(token, profilo.nonce,{year:annoSelected})
       .then((res)=>{
         setDataSelectQuarter(res.data);
@@ -60,7 +57,6 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
   };
 
   useEffect(()=>{
-      
     if(annoSelected !== '' && open){
       getQuarters();
     }
@@ -84,10 +80,7 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
       }).catch(()=>{
         manageErrorDownload('404',dispatchMainState);
         setShowLoading(false);
-      });
-        
-      
-        
+      });    
   };
 
 
@@ -123,13 +116,8 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
                   id="select_matrice"
                   value={annoSelected||''}
                   label="Anno"
-                  onChange={(e)=>{ 
-                                        
+                  onChange={(e)=>{               
                     setAnnoSelected(e.target.value);
-                    /*
-                                            const objSelected = data.find(el => el.dataInizioValidita === e.target.value);
-                                            dataFine.current = new Date(objSelected.dataFineValidita).toLocaleString().split(",")[0];
-                                            */
                   }}
                 >
                   {anni.map((el)=>{
@@ -139,7 +127,6 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
               </FormControl>
             </div>
             <div className='d-flex justify-content-center mt-5'>
-              {/*dataFine.current !== '' && <TextField sx={{width:'70%'}} label="Quarter" color="error" focused value={dataFine.current} />*/}
               <FormControl color="primary" focused  sx={{width:'70%'}}>
                 <InputLabel id="demo-simple-select-label">Quarter</InputLabel>
                 <Select
@@ -148,13 +135,8 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
                   disabled={dataSelectQuarter.length < 1}
                   value={quarterSelected||''}
                   label="Quarter"
-                  onChange={(e)=>{ 
-                                        
+                  onChange={(e)=>{              
                     setQuarterSelected(e.target.value);
-                    /*
-                                            const objSelected = data.find(el => el.dataInizioValidita === e.target.value);
-                                            dataFine.current = new Date(objSelected.dataFineValidita).toLocaleString().split(",")[0];
-                                            */
                   }}
                 >
                   {dataSelectQuarter.map((el,i)=>{
@@ -173,10 +155,8 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
                 onButtonScarica();
               }}
             >Scarica</Button>
-          </div>
-                    
-        </Box>
-                
+          </div>       
+        </Box>    
       </Modal>
     </div>
   );

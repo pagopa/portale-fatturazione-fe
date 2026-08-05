@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { manageError } from "../../api/api";
-import SkeletonRelPdf from "../../components/rel/skeletonRelPdf";
+import SkeletonRelPdf from "../../components/reusableComponents/skeletonRelPdf";
 import { getDetailsDocContabilePa } from "../../api/apiPagoPa/documentiContabiliPA/api";
 import { PathPf } from "../../types/enum";
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";

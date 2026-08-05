@@ -6,7 +6,7 @@ import { Params } from "../../types/typesGeneral";
 import { getAnniAccertamenti, getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa, getMatriceAccertamenti, getMatriceAccertamentiPagoPa, getMesiAccertamenti } from "../../api/apiPagoPa/accertamentiPA/api";
 import { manageError, managePresaInCarico } from "../../api/api";
 import { Accertamento, BodyAccertamenti } from "../../types/typeAccertamenti";
-import ModalMatriceAccertamenti from "../../components/accertamenti/modalMatrice";
+import ModalMatriceAccertamenti from "../../components/reusableComponents/modals/modalMatrice";
 import { saveAs } from "file-saver";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { getMessaggiCount } from "../../api/apiPagoPa/centroMessaggi/api";

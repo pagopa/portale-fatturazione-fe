@@ -10,7 +10,7 @@ import { headerNameAsyncDoc, headerNameAsyncDocCollapse } from "../../assets/con
 import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import dayjs from "dayjs";
 import { getMessaggiCountEnte, getNotificheDownloadFromAsync } from "../../api/apiSelfcare/notificheSE/api";
-import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
+import ModalRedirect from "../../components/reusableComponents/modals/modalRedirect";
 import { FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";

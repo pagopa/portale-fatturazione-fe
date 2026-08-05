@@ -5,7 +5,7 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeR
 import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
 import { getListaTipologiaFatturazionePagoPa, downloadTipologiePagopa, modifyContrattoPagoPa } from "../../api/apiPagoPa/tipologiaContratto/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
-import ModalConfermaInserimento from "../../components/commessaInserimento/modalConfermaInserimento";
+import ModalConfermaInserimento from "../../components/reusableComponents/modals/modalConfermaInserimento";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
@@ -219,7 +219,6 @@ const PageTipologiaContratto :React.FC = () =>{
     setOpenModalConfermaIns(true);
   };
 
-  console.log({elementSelected});
   const onButtonComfermaPopUp = async() => {
     const typToSet = elementSelected.tipoContratto === 1 ? 2 : 1;
     await modifyContrattoPagoPa(token, profilo.nonce,{idEnte:elementSelected.idEnte, tipologiaContratto:typToSet}).then(()=> {

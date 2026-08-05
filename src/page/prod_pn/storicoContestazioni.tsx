@@ -1,6 +1,4 @@
-import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
-import { month } from "../../reusableFunction/reusableArrayObj";
-import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
+import {  Button, Tooltip,} from "@mui/material";
 import { useEffect, useState } from "react";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { manageError } from "../../api/api";
@@ -8,16 +6,15 @@ import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { getListaStorico, getTipoReportCon } from "../../api/apiPagoPa/storicoContestazioni/api";
 import { getAnniContestazioni,  getMesiContestazioni} from "../../api/apiPagoPa/notifichePA/api";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
 import { useNavigate } from "react-router";
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { headersName } from "../../assets/configurations/config_GridStoricoContestazioni";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import { FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
 
 export interface BodyStoricoContestazioni{
     anno:string,
@@ -134,13 +131,13 @@ const Storico: React.FC = () => {
     setGetListaContestazioniRunning(true);
     await getAnniContestazioni(token,profilo.nonce)
       .then((res)=>{
-        setValueYears(["Tutti",...res.data]);
+        setValueYears(res.data);
                 
         if(isInitialRender.current && Object.keys(filters).length > 0){
                   
           setBodyGetLista(filters.body);
           getListaContestazioni(filters.body,filters.page+1,filters.rows);
-          if(filters.body.anno !== null && filters.body.anno !== "Tutti"){
+          if(filters.body.anno !== null && filters.body.anno !== "9999"){
             getMesi(filters.body.anno);
           }
                    
@@ -149,9 +146,9 @@ const Storico: React.FC = () => {
           setPage(filters.page);
           setRowsPerPage(filters.rows);
         }else{
-          setBodyGetLista((prev)=> ({...prev, ...{anno:"Tutti"}}));
+          setBodyGetLista((prev)=> ({...prev, ...{anno:"9999"}}));
           getListaContestazioni({...bodyGetLista,...{anno:null}},page+1,rowsPerPage);
-          //getMesi("Tutti");
+          //getMesi("9999");
         }
       }).catch((err)=>{
         setGetListaContestazioniRunning(false);
@@ -196,7 +193,7 @@ const Storico: React.FC = () => {
   const getListaContestazioni = async(body,pag, rowpag) => {
     setGetListaContestazioniRunning(true);
     let newBody = body;
-    if(body.anno === "Tutti" || body.anno === ""|| body.anno === null){
+    if(body.anno === "9999" || body.anno === ""|| body.anno === null){
       newBody = {...body,anno:null};
     }
     await getListaStorico(token,profilo.nonce,newBody,pag,rowpag).then((res)=>{
@@ -295,179 +292,113 @@ const Storico: React.FC = () => {
     }else{
       //:TODO   mostrare un messaggio di errore
     }
-    
   };  
 
 
   return (
-    <div className="mx-5" style={{minHeight:'600px'}}>
-      <div className="marginTop24">
-        <div className="row ">
-          <div className="col-9">
-            <Typography variant="h4">Contestazioni</Typography>
-          </div>
-        </div>
-        <div className="mb-5 mt-5 marginTop24" >
-          <div className="row">
-            <div className="col-3">
-              <Box sx={{ width:'80%'}}>
-                <FormControl
-                  fullWidth
-                  size="medium"
-                >
-                  <InputLabel>
-                                Anno
-                  </InputLabel>
-                  <Select
-                    label='Anno'
-                    onChange={(e) =>{
-                      setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value,mese:''}}));
-                      if(e.target.value !== "Tutti"){
-                        setGetListaContestazioniRunning(true);
-                        getMesi(e.target.value);
-                      }else{
-                        setArrayMesi([]);
-                      }
-                                           
-                      clearOnChangeFilter();
-                    }  }
-                    value={bodyGetLista.anno||''}
-                  >
-                    {valueYears.map((el:string) => (
-                      <MenuItem
-                        key={el}
-                        value={el||''}
-                      >
-                        {el}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-            </div>
-            <div className="col-3">
-              <Box sx={{width:'80%'}}  >
-                <FormControl
-                  fullWidth
-                  size="medium"
-                  disabled={bodyGetLista.anno === "Tutti" ||bodyGetLista.anno === null}
-                >
-                  <InputLabel> Mese</InputLabel>
-                  <Select
-                    label='Seleziona Mese'
-                    onChange={(e) =>{
-                      setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
-                      clearOnChangeFilter();
-                    }}
-                    value={bodyGetLista.mese||''}
-                  >
-                    {arrayMesi.map((el) =>{
-                      return(
-                        <MenuItem key={el.mese} value={el.mese}>
-                          {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-              </Box>
-            </div>
-            <div className="col-3 "> 
-              <Autocomplete
-                sx={{width:'80%',height:'59px'}}
-                multiple
-                onChange={(event, value) => {
-                  setTipologiaSelected(value);
-                  const allId = value.map(el => el.idTipologiaReport);
-                  setBodyGetLista((prev) => ({...prev,...{idTipologiaReports:allId}}));
-                  clearOnChangeFilter();
-                }}
-                limitTags={1}
-                value={tipologiaSelcted}
-                options={tipologieDoc}
-                isOptionEqualToValue={(option, value) => option.idTipologiaReport === value.idTipologiaReport}
-                disableCloseOnSelect
-                getOptionLabel={(option:TipologieDoc) => option.categoriaDocumento}
-                renderOption={(props, option,{ selected }) =>(
-                  <li {...props}>
-                    <Checkbox
-                      icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                      checkedIcon={<CheckBoxIcon fontSize="small" />}
-                      style={{ marginRight: 8 }}
-                      checked={selected}
-                    />
-                    { option.categoriaDocumento}
-                  </li>
-                )}
-                renderInput={(params) => {
-                  return <TextField {...params}
-                    inputProps={{
-                      ...params.inputProps,
-                      readOnly: true,
-                    }}
-                    label="Categoria Doc." 
-                    placeholder="Categoria Doc." />;
-                }}
-              />
-            </div>
-            <div  className="col-3">
-              <MultiselectCheckbox 
-                setBodyGetLista={setBodyGetLista}
-                dataSelect={dataSelect}
-                setTextValue={setTextValue}
-                valueAutocomplete={valueAutocomplete}
-                setValueAutocomplete={setValueAutocomplete}
-                clearOnChangeFilter={clearOnChangeFilter}
-              ></MultiselectCheckbox>
-            </div>
-          </div>
-          <div className="row mt-5">
-            <div className="col-9">
-              <div className=" d-flex justify-content-start ">
-                <Button onClick={handleFiltra} sx={{ marginTop: 'auto', marginBottom: 'auto'}}variant="contained">
-                                     Filtra
-                </Button>
-                {statusAnnulla === 'hidden' ? null :
-                  <Button onClick={handleAnnullaButton} sx={{marginLeft:'24px'}} >
-                                        Annulla filtri
-                  </Button>
-                }
-              </div>
-            </div>
-            <div className="col-3">
-              <div className="d-flex justify-content-end me-5" style={{width:'80%'}}>
-                <Tooltip  title="Contestazioni multiple">
-                  <span>
-                    <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} ><NoteAddIcon></NoteAddIcon></Button>
-                  </span>
-                </Tooltip>
-              </div>
-            </div>
-          </div>
-          <div className="mt-5">
-            <div className="mt-1 mb-5" style={{ width: '100%'}}>
-              <GridCustom
-                nameParameterApi='contestazionePage'
-                elements={dataGrid}
-                changePage={handleChangePage}
-                changeRow={handleChangeRowsPerPage} 
-                total={totalContestazioni}
-                page={page}
-                rows={rowsPerPage}
-                headerNames={headersName}
-                apiGet={handleClickOnDetail}
-                disabled={getListaContestazioniRunning}
-                widthCustomSize="auto"></GridCustom>
-            </div>
-          </div>
-        </div>
+    <MainBoxStyled title={"Contestazioni"}>
+      <ResponsiveGridContainer >
+        <MainFilter 
+          filterName={"select_value_with_tutti"}
+          inputLabel={"Anno"}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyGetLista}
+          body={bodyGetLista}
+          keyDescription={"anno"}
+          keyValue={"anno"}
+          keyBody={"anno"}
+          arrayValues={valueYears.map(el => el.toString())}
+          extraCodeOnChange={(e)=>{
+            setBodyGetLista((prev)=> ({...prev, ...{anno:e,mese:''}}));
+            if(e !== "9999"){
+              setGetListaContestazioniRunning(true);
+              getMesi(e);
+            }else{
+              setArrayMesi([]);
+            }
+          }}
+        ></MainFilter>
+        <MainFilter 
+          disabled={bodyGetLista.anno === "9999" ||bodyGetLista.anno === null}
+          filterName={"select_key_value"}
+          inputLabel={"Mese"}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyGetLista}
+          body={bodyGetLista}
+          keyValue={"mese"}
+          keyDescription='descrizione'
+          keyBody={"mese"}
+          arrayValues={arrayMesi}
+          extraCodeOnChange={(e)=>{
+            setBodyGetLista((prev)=> ({...prev, ...{mese:e}}));  
+          }}
+        ></MainFilter>
+        <MainFilter 
+          filterName={"multi_checkbox"}
+          inputLabel={"Categoria Doc."}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyGetLista}
+          body={bodyGetLista}
+          keyCompare={""}
+          dataSelect={tipologieDoc}
+          valueAutocomplete={tipologiaSelcted}
+          setValueAutocomplete={setTipologiaSelected}
+          keyDescription={"categoriaDocumento"}
+          keyValue={"idTipologiaReport"}
+          keyOption='categoriaDocumento'
+          keyBody={"idTipologiaReports"}
+          hidden={profilo.auth !== 'PAGOPA'}
+        />
+        <MainFilter 
+          filterName={"multi_checkbox"}
+          inputLabel={"Rag. Soc. Ente"}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyGetLista}
+          body={bodyGetLista}
+          keyCompare={""}
+          dataSelect={dataSelect}
+          setTextValue={setTextValue}
+          textValue={textValue}
+          valueAutocomplete={valueAutocomplete}
+          setValueAutocomplete={setValueAutocomplete}
+          keyDescription={"descrizione"}
+          keyValue={"idEnte"}
+          keyOption='descrizione'
+          keyBody={"idEnti"}
+        ></MainFilter>
+      </ResponsiveGridContainer>
+      <FilterActionButtons 
+        onButtonFiltra={handleFiltra} 
+        onButtonAnnulla={handleAnnullaButton} 
+        statusAnnulla={statusAnnulla}
+        actionButton={[{
+          onButtonClick:()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI),
+          variant: "outlined",
+          icon:{name:"add-action"},
+          tooltipMessage:"Contestazioni multiple",
+          withText:false
+        }]}/>
+      <div className="mt-3">
+        <GridCustom
+          nameParameterApi='contestazionePage'
+          elements={dataGrid}
+          changePage={handleChangePage}
+          changeRow={handleChangeRowsPerPage} 
+          total={totalContestazioni}
+          page={page}
+          rows={rowsPerPage}
+          headerNames={headersName}
+          apiGet={handleClickOnDetail}
+          disabled={getListaContestazioniRunning}
+          widthCustomSize="auto"/>
       </div>
+      
       <ModalLoading 
         open={getListaContestazioniRunning} 
         setOpen={setGetListaContestazioniRunning} 
         sentence={'Loading...'}>
       </ModalLoading>
-    </div>
+    </MainBoxStyled>
   );
 };
 

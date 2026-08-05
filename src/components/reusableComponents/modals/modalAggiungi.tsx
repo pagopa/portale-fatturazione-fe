@@ -5,15 +5,15 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { SetStateAction, useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { ElementMultiSelect } from '../../types/typeReportDettaglio';
-import { listaEntiNotifichePage } from '../../api/apiSelfcare/notificheSE/api';
-import { manageError, managePresaInCarico } from '../../api/api';
-import Loader from '../reusableComponents/loader';
-import { useGlobalStore } from '../../store/context/useGlobalStore';
-import MainFilter from '../reusableComponents/mainFilter';
-import { gestioneFattureInserisci, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../api/apiPagoPa/gestioneFatturePA/api';
-import { formatDate } from '../../reusableFunction/function';
-import { month as NOMI_MESI} from '../../reusableFunction/reusableArrayObj';
+import { ElementMultiSelect } from '../../../types/typeReportDettaglio';
+import { listaEntiNotifichePage } from '../../../api/apiSelfcare/notificheSE/api';
+import { manageError, managePresaInCarico } from '../../../api/api';
+import Loader from '../loader';
+import { useGlobalStore } from '../../../store/context/useGlobalStore';
+import MainFilter from '../mainFilter';
+import { gestioneFattureInserisci, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../../api/apiPagoPa/gestioneFatturePA/api';
+import { formatDate } from '../../../reusableFunction/function';
+import { month as NOMI_MESI} from '../../../reusableFunction/reusableArrayObj';
 
 const style = {
   position: 'absolute' as const,

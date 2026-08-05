@@ -6,7 +6,7 @@ import { Dispatch, useEffect, useState} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
-import SkeletonRelPdf from '../components/rel/skeletonRelPdf';
+import SkeletonRelPdf from '../components/reusableComponents/skeletonRelPdf';
 import { MainState, Messaggi } from '../types/typesGeneral';
 import { useNavigate, useParams } from 'react-router';
 import { readMessaggioPagoPa } from '../api/apiPagoPa/centroMessaggi/api';

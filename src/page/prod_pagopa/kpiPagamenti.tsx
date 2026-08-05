@@ -4,7 +4,7 @@ import { manageError, manageErrorDownload } from "../../api/api";
 import { AutocompleteMultiselect, OptionMultiselectCheckboxQarter, OptionMultiselectCheckboxPsp, } from "../../types/typeAngraficaPsp";
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import {getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
-import ModalMatriceKpi from "../../components/kpi/modalMatriceKpi";
+import ModalMatriceKpi from "../../components/reusableComponents/modals/modalMatriceKpi";
 import { kpiObj, RequestBodyKpi } from "../../types/typeKpi";
 import { downloadKpiList, getListaKpi } from "../../api/apiPagoPa/kpi/api";
 import { saveAs } from "file-saver";

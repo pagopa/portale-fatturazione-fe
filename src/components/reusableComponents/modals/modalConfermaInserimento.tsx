@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ModalConfermaInsProps } from '../../types/typeModuloCommessaInserimento';
+import { ModalConfermaInsProps } from '../../../types/typeModuloCommessaInserimento';
 
 const style = {
   position: 'absolute' as const,

@@ -61,20 +61,13 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
               <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
                 {`${filterInfo.cancellata ? 'Ripristino':'Sospensione'} delle fatture di ${month[(filterInfo.mese||0)-1]?.toLocaleUpperCase()}: confermi l'operazione?`}
               </Typography>
-            </div>
-                        
-          </div>
-                    
-          <div >
-                       
-                      
-            <Box sx={{ backgroundColor:'#F8F8F8', padding:'10px',marginTop:'40px',overflowY:'auto',height:'200px'}}>
-                           
+            </div>         
+          </div>        
+          <div >     
+            <Box sx={{ backgroundColor:'#F8F8F8', padding:'10px',marginTop:'40px',overflowY:'auto',height:'200px'}}>        
               <Typography sx={{marginLeft:"6px",textAlign:'center'}} variant="h6" gutterBottom>
                                    Fatture
-              </Typography>
-                         
-                           
+              </Typography> 
               <Table size="small">
                 <TableHead >
                   <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -83,27 +76,25 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
                   </TableRow>
                 </TableHead>
                 {arr.length > 0 &&
-                                <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                  {arr.map((el:FattureObj) =>{
+                <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
+                  {arr.map((el:FattureObj) =>{
                                        
-                                    return(
-                                      <TableRow  key={el.idfattura}>
-                                        <TableCell>
-                                          {el.ragionesociale}
-                                        </TableCell>
-                                        <TableCell>
-                                          {el.tipologiaFattura}
-                                        </TableCell>
-                                      </TableRow>
-                                    );
-                                  } )}
-                                </TableBody>
+                    return(
+                      <TableRow  key={el.idfattura}>
+                        <TableCell>
+                          {el.ragionesociale}
+                        </TableCell>
+                        <TableCell>
+                          {el.tipologiaFattura}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  } )}
+                </TableBody>
                 }
               </Table>
-            </Box>
-                  
-          </div>
-                   
+            </Box>    
+          </div>   
           <div className='container_buttons_modal d-flex justify-content-center'>
             <Button 
               sx={{marginRight:'20px'}} 

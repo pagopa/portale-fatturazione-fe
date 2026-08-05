@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { DataGridCommessa, GetAnniResponse, ResponseGetListaCommesse } from '../../types/typeModuloCommessaElenco';
 import { getAnni, getListaCommessaFilteredV2, getCommessaObbligatoriVerificaV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
+import ModalRedirect from '../../components/reusableComponents/modals/modalRedirect';
 import { manipulateObjModuloCommessa } from '../../reusableFunction/function';
 import { PathPf } from '../../types/enum';
 import { ManageErrorResponse } from '../../types/typesGeneral';

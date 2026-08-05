@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { createApiKey, getPageApiKeyVisibleIP} from "../api/apiSelfcare/apiKeySE/api";
-import ModalRedirect from "../components/commessaInserimento/madalRedirect";
+import ModalRedirect from "../components/reusableComponents/modals/modalRedirect";
 import { getPageApiKeyVisible, managePresaInCarico } from "../api/api";
 import IPAddressInput from "../components/reusableComponents/textField/inputIpAddress";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';

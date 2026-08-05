@@ -3,10 +3,10 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
 import { manageError, managePresaInCarico } from "../../api/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
-import ModalConfermaInserimento from "../../components/commessaInserimento/modalConfermaInserimento";
+import ModalConfermaInserimento from "../../components/reusableComponents/modals/modalConfermaInserimento";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import ModalAggiungi from "../../components/whiteList/modalAggiungi";
+import ModalAggiungi from "../../components/reusableComponents/modals/modalAggiungi";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
@@ -14,13 +14,14 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeR
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-import EnhancedTableCustom from "../../components/reusableComponents/grid/gridCustomBase/enhancedTabalToolbarCustom";
+
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate } from "../../reusableFunction/function";
+import EnhancedTableCustom from "../../components/reusableComponents/grid/enhancedTabalToolbarCustom";
 
 
 export interface BodyLista {

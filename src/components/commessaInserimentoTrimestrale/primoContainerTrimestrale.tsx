@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid , Typography} from '@mui/material';
-import LabelComponent from '../commessaInserimento/label';
+import LabelComponent from './label';
 
 type PrimoContainerInsComTrimestraleProps = {
     meseAnno:string,

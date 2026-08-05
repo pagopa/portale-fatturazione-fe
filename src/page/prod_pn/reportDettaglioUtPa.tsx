@@ -7,7 +7,7 @@ import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { getAnniNotifiche, getMesiNotifiche, listaNotifichePagoPa, getTipologiaEntiCompletiPagoPa, getContestazionePagoPa, downloadNotifchePagoPa } from "../../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
 import { listaEntiNotifichePageConsolidatore, listaEntiNotifichePage, listaNotifiche, listaNotificheRecapitista, listaNotificheConsolidatore, getContestazione, getContestazioneRecapitista, getContestazioneCosolidatore, downloadNotifche, downloadNotifcheRecapitista, downloadNotifcheConsolidatore, getMessaggiCountEnte, flagContestazione } from "../../api/apiSelfcare/notificheSE/api";
-import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
+import ModalRedirect from "../../components/reusableComponents/modals/modalRedirect";
 import ModalScadenziario from "../../components/reportDettaglio/modalScadenziario";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
@@ -816,8 +816,7 @@ const ReportDettaglio : React.FC = () => {
     bodyGetLista.sort.order !== null) ? "show" : "hidden"; 
     
 
-  return (
-        
+  return (  
     <MainBoxStyled title={"Notifiche"} actionButton={[{
       onButtonClick: () => setShowModalScadenziario(true),
       variant: "outlined",
