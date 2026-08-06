@@ -111,19 +111,15 @@ const RelPdfPage : React.FC = () =>{
 
   if(profilo.auth === "PAGOPA"){
     if((location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi") ) &&
-            rel.tipologiaFattura !== "PRIMO SALDO" && rel.tipologiaFattura !== "SECONDO SALDO"){
+            rel.tipologiaFattura === "ACCONTO" || rel.tipologiaFattura === "ANTICIPO"){
       showButtonDownloadReport = false;
-    }else if(location.pathname.includes("/rel/")){
-      showButtonDownloadReport = true;
     }else{
       showButtonDownloadReport = true;
     }
   }else if(profilo.auth === "SELFCARE"){
     if((location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi") ) &&
-            rel.tipologiaFattura !== "PRIMO SALDO" && rel.tipologiaFattura !== "SECONDO SALDO"){
+            rel.tipologiaFattura === "ACCONTO" || rel.tipologiaFattura === "ANTICIPO"){
       showButtonDownloadReport = false;
-    }else if(location.pathname.includes("/rel/")){
-      showButtonDownloadReport = true;
     }else{
       showButtonDownloadReport = true;
     }
