@@ -156,7 +156,7 @@ function usePageRelDocPdf({
 
       window.URL.revokeObjectURL(fileUrl);
 
-    } catch (error) {
+    } catch {
       if(pageFrom === "rel"){
         manageErrorDownload('404_RIGHE_ID', dispatchMainState);
       }else if(pageFrom === "documentiemessi"){ 
