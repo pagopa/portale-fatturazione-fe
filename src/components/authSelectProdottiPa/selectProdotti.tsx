@@ -7,6 +7,7 @@ import Select from '@mui/material/Select';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { Typography } from '@mui/material';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
+import { ProfiloObject } from '../../types/typesGeneral';
 
 
 const MenuProps = {
@@ -21,7 +22,6 @@ const MenuProps = {
 export default function MultipleSelectProdotti({setProductSelected}) {
 
   const mainState = useGlobalStore(state => state.mainState);
-
   const [valueSelect, setValueSelect] = React.useState('');
   const [openSelect, setOpenselect] = React.useState(false);
 
@@ -38,9 +38,6 @@ export default function MultipleSelectProdotti({setProductSelected}) {
     setValueSelect(value);
   };
 
-    
-
-    
 
   return (
     <div className='container_select_prodotti'>
@@ -55,24 +52,18 @@ export default function MultipleSelectProdotti({setProductSelected}) {
           input={<OutlinedInput label="Cerca prodotto" />}
           MenuProps={MenuProps}
         >
-          {mainState.prodotti.map((el:any) => {
-
+          {mainState.prodotti.map((el:ProfiloObject) => {
             let name = el?.prodotto;
             if(el?.prodotto === 'prod-pagopa'){
               name = 'Piattaforma pagoPA';
             }else if(el?.prodotto === 'prod-pn'){
               name = 'SEND - Servizio Notifiche Digitali';
             }
-
             return (
-              <MenuItem
-                key={el.jwt}
-                value={el.prodotto}
-              >
+              <MenuItem key={el.jwt} value={el.prodotto}>
                 <div className='icon_select_prodotti'> 
                   <AccountBalanceIcon sx={{color:'#A2ADB8'}} />
                 </div>
-        
                 <Typography variant="h6">{name}</Typography> 
               </MenuItem>
             );

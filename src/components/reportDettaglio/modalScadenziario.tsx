@@ -3,18 +3,13 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { manageError } from '../../api/api';
-import { Dispatch, useContext, useEffect, useState } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { getTipologieScadenziario } from '../../api/apiPagoPa/notifichePA/api';
 import { ActionReducerType } from '../../reducer/reducerMainState';
 import CloseIcon from '@mui/icons-material/Close';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
-
-
-
-
-
 
 interface ModalScadenziario {
     setOpen:React.Dispatch<React.SetStateAction<boolean>>,
@@ -117,14 +112,13 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                     <TableCell sx={{ whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">Verifica</TableCell>
                     <TableCell sx={{whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">Esito</TableCell>
                     {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
-                                            <>
-                                              <TableCell  sx={{whiteSpace: "nowrap"}} colSpan={1} align="center">Inizo risposta </TableCell>
-                                              <TableCell sx={{whiteSpace: "nowrap"}} colSpan={1} align="center">Fine risposta</TableCell>
-                                            </>
+                      <>
+                        <TableCell  sx={{whiteSpace: "nowrap"}} colSpan={1} align="center">Inizo risposta </TableCell>
+                        <TableCell sx={{whiteSpace: "nowrap"}} colSpan={1} align="center">Fine risposta</TableCell>
+                      </>
                     }
                   </TableRow>
-                </TableHead>
-                                
+                </TableHead>           
                 <TableBody>
                   {datiScadenziario.map((row) => (
                     <TableRow
@@ -140,18 +134,17 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                       <TableCell colSpan={2} sx={{ borderRight: "10px solid #e0e0e0",whiteSpace: "nowrap",boxSizing: "border-box"}}  align="center">{row.chiusuraContestazioni}</TableCell>
                       <TableCell colSpan={2} sx={{ borderRight: "10px solid #e0e0e0",whiteSpace: "nowrap",boxSizing: "border-box"}}  align="center">{row.tempoRisposta}</TableCell>
                       {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
-                                                <>
-                                                  <TableCell sx={{ whiteSpace: "nowrap"}} align="center">{row.dataRecapitistaInizio}</TableCell>
-                                                  <TableCell sx={{ borderRight: "10px solid #e0e0e0",boxSizing: "border-box",whiteSpace: "nowrap"}} align="center">{row.dataRecapitistaFine}</TableCell>
-                                                </>
+                        <>
+                          <TableCell sx={{ whiteSpace: "nowrap"}} align="center">{row.dataRecapitistaInizio}</TableCell>
+                          <TableCell sx={{ borderRight: "10px solid #e0e0e0",boxSizing: "border-box",whiteSpace: "nowrap"}} align="center">{row.dataRecapitistaFine}</TableCell>
+                        </>
                       }
                     </TableRow>
                   ))}
                 </TableBody> 
               </Table>
             </TableContainer>
-          </div> 
-                    
+          </div>     
         </Box>
       </Modal>
     </div>

@@ -245,7 +245,7 @@ const DocEm : React.FC = () =>{
           if(Object.values(filters.objectSortContestate).some(value => value !== 1)){
             const obj = filters.objectSortContestate;
             const label = Object.keys(obj).filter(key => obj[key] !== 1);
-            headerAction(label[0],setGridDataContestate,false,setObjectSortContestate,filters.pageContestate,filters.rowsPerPageContestate,orderDataCustomContestate);
+            headerAction(label[0],setGridDataContestate,false,setObjectSortContestate,filters.pageContestate,filters.rowsPerPageContestate,getObjectFatturaCancellati);
             //setObjectSortContestate(filters.objectSortContestate);
           }else{
             const start = filters.pageContestate * filters.rowsPerPageContestate;
@@ -666,7 +666,7 @@ const DocEm : React.FC = () =>{
        
   };
 
-  const bgColorRowFunctionContestate = (element) => {
+  const bgColorRowFunctionContestate = () => {
     return '#ffeff1';
   };
    

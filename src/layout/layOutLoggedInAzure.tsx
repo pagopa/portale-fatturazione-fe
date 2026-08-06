@@ -4,9 +4,6 @@ import HeaderProductAzure from "./headerProduct/headerProductAzure";
 import HeaderLogAzure from "./mainHeader/headerLogInOutAzure";
 import ScrollToTop from "../components/reusableComponents/scrollToTop";
 
-
-
-
 const LayoutAzure = ({sideNav}) => {
   return (
     <>
@@ -22,7 +19,6 @@ const LayoutAzure = ({sideNav}) => {
         </Grid>
       </Grid>
     </>
-      
   );
 };
 

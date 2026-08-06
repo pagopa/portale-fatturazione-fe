@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Rel } from "../types/typeRel";
 import { profiliEnti } from "../reusableFunction/actionLocalStorage";
-import { PathPf } from "../types/enum";
 import { getDocumentiEmessiPdf, getDocumentiSospesiPdf, getLogRelDocumentoFirmato, getRelExel, getRelPdf, getRelPdfFirmato, getSingleRel, uploadPdfRel } from "../api/apiSelfcare/relSE/api";
-import { manageError, manageErrorDownload, redirect } from "../api/api";
+import { manageError, manageErrorDownload } from "../api/api";
 import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa, getRelPdfPagoPa, getSingleRelPagopa } from "../api/apiPagoPa/relPA/api";
 import { ResponseDownloadPdf } from "../types/typeModuloCommessaInserimento";
 import { mesiWithZero } from "../reusableFunction/reusableArrayObj";
@@ -156,7 +155,7 @@ function usePageRelDocPdf({
 
       window.URL.revokeObjectURL(fileUrl);
 
-    } catch (error) {
+    } catch{
       if(pageFrom === "rel"){
         manageErrorDownload('404_RIGHE_ID', dispatchMainState);
       }else if(pageFrom === "documentiemessi"){ 

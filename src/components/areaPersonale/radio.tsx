@@ -15,20 +15,15 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
     if(mainState.statusPageDatiFatturazione === 'immutable'){
       makeSplitRadioDisable = true;
     }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
-      makeSplitRadioDisable = true;
-         
+      makeSplitRadioDisable = true;  
     }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
       makeSplitRadioDisable = false;
-      
     }
-
   }else{
     if(mainState.statusPageDatiFatturazione === 'immutable'){
       makeSplitRadioDisable = true;
-        
     }else{
-      makeSplitRadioDisable = false;
-           
+      makeSplitRadioDisable = false; 
     }
   }
 

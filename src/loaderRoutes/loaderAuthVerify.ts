@@ -5,9 +5,7 @@ import { apiKeyPageAvailable } from "../page/auth";
 import { useGlobalStore } from "../store/context/useGlobalStore";
 import { PathPf } from "../types/enum";
 
-
-
-export async function authVerify({ request }) {
+export async function authVerify() {
 
   const globalLocalStorage = localStorage.getItem('globalStatePF') || '{}';
   const result =  JSON.parse(globalLocalStorage);
@@ -22,24 +20,15 @@ export async function authVerify({ request }) {
         await getAuthProfilo(result?.state?.mainState.profilo.jwt); 
         await apiKeyPageAvailable(result?.state?.mainState.profilo.jwt, result?.state?.mainState.profilo.nonce,setMainData);   
       }
-    } catch (err) {
-      localStorage.clear();
-      /*Probabilmete da eliminare
-            if(result?.state?.mainState?.profilo.auth === "PAGOPA"){
-                return redirect(globalRedirectAZ);
-            }else{
-                return redirect(globalRedirect);
-            }*/
-                
-            
+    } catch{
+      localStorage.clear();      
     }
   } 
-    
   return null;
 }
 
 
-export async function authVerifyIsLoggedEnte({ request }) {
+export async function authVerifyIsLoggedEnte() {
 
   const globalLocalStorage = localStorage.getItem('globalStatePF') || '{}';
   const result =  JSON.parse(globalLocalStorage);
@@ -47,7 +36,6 @@ export async function authVerifyIsLoggedEnte({ request }) {
     return redirect(globalRedirect);
   } 
 
-   
   if(result?.state?.mainState?.authenticated === true && result?.state?.mainState?.profilo.auth === "PAGOPA" && result?.state?.mainState?.prodotti.length > 0  &&  result?.state?.mainState?.profilo.prodotto === "prod-pn"){
     return redirect(PathPf.LISTA_DATI_FATTURAZIONE);
   }
@@ -59,7 +47,7 @@ export async function authVerifyIsLoggedEnte({ request }) {
   return null;
 }
 
-export async function authVerifyIsLoggedSend({ request }) {
+export async function authVerifyIsLoggedSend() {
 
   const globalLocalStorage = localStorage.getItem('globalStatePF') || '{}';
   const result =  JSON.parse(globalLocalStorage);
@@ -79,7 +67,7 @@ export async function authVerifyIsLoggedSend({ request }) {
   return null;
 }
 
-export async function authVerifyIsLoggedProdPn({ request }) {
+export async function authVerifyIsLoggedProdPn() {
 
   const globalLocalStorage = localStorage.getItem('globalStatePF') || '{}';
   const result =  JSON.parse(globalLocalStorage);
@@ -101,7 +89,7 @@ export async function authVerifyIsLoggedProdPn({ request }) {
 }
 
 
-export async function authVerifyIfEnteAllowRelSection({ request }) {
+export async function authVerifyIfEnteAllowRelSection() {
 
   const globalLocalStorage = localStorage.getItem('globalStatePF') || '{}';
   const result =  JSON.parse(globalLocalStorage);

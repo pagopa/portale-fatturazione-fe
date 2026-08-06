@@ -1,6 +1,5 @@
 import { Grid } from "@mui/material";
 import FooterComponent from "./footer";
-
 import { Outlet } from "react-router";
 import BasicAlerts from "../components/reusableComponents/modals/alert";
 

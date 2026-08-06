@@ -4,10 +4,8 @@ import { PathPf } from "../../types/enum";
 import { manageError } from "../../api/api";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import {  transformDateTime, transformDateTimeWithNameMonth } from "../../reusableFunction/function";
 import { getListaAsyncDoc } from "../../api/apiSelfcare/asyncDoc/api";
 import { headerNameAsyncDoc, headerNameAsyncDocCollapse } from "../../assets/configurations/conf_GridAsyncDocEnte";
-import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import dayjs from "dayjs";
 import { getMessaggiCountEnte, getNotificheDownloadFromAsync } from "../../api/apiSelfcare/notificheSE/api";
 import ModalRedirect from "../../components/reusableComponents/modals/modalRedirect";
@@ -31,12 +29,10 @@ export interface DataGridAsyncDoc {
 }
 
 const AsyncDocumenti : React.FC = () => {
-
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
   const setCountMessages = useGlobalStore(state => state.setCountMessages);
   const statusQueryGetUri = useGlobalStore(state => state.statusQueryGetUri);
- 
  
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
@@ -125,8 +121,6 @@ const AsyncDocumenti : React.FC = () => {
       });
     }));
   };
-
-   
 
   const handleAnnullaButton = () => {
     setBodyGetLista({ init:null,end:null,ordinamento:1});

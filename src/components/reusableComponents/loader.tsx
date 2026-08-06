@@ -1,5 +1,5 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 
 type LoderProp = {
     sentence : string

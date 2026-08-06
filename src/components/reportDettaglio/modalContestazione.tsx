@@ -7,8 +7,7 @@ import {
   Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
 import { manageError } from '../../api/api'; 
-import {useState, useEffect, useContext} from 'react';
-import YupString from '../../validations/string/index';
+import {useState, useEffect } from 'react';
 import { createContestazione, modifyContestazioneConsolidatore, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
 import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notifichePA/api';
 import { profiliEnti } from '../../reusableFunction/actionLocalStorage';
@@ -261,13 +260,14 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     }));
   };
 
-  const requiredString = (string:string , nomeTextBox:string) =>{
+  /*
+  const requiredString = (string:string ) =>{
     YupString.required().validate(string).then(()=>{
       console.log('prova');
     }).catch(()=>{
       console.log('prova errore');
     });
-  };
+  };*/
 
   const handleClose = () => {
     setOpen(false);
@@ -524,8 +524,8 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                     {tipoContestazioni.map((el) => {
                       if(
                         el.id === 1 && el.tipo === 'Ritardo nella consegna' && stato === 1 ||
-                                                el.id === 9 && el.tipo === 'Mancato rispetto degli SLA (mera segnalazione)' && stato === 1 ||
-                                                el.id === 10 && el.tipo === 'Contestazione generica' && stato === 1 
+                        el.id === 9 && el.tipo === 'Mancato rispetto degli SLA (mera segnalazione)' && stato === 1 ||
+                        el.id === 10 && el.tipo === 'Contestazione generica' && stato === 1 
                       ){
                         return null;
                       }else{
@@ -557,7 +557,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                     const newContestazione = {...prev.contestazione, noteEnte:e.target.value};
                     return {...prev, contestazione:newContestazione};
                   })}
-                  onBlur={(e)=> requiredString(e.target.value, 'nota_ente')}
+                  ////TODO: probilmente non serve onBlur={(e)=> requiredString(e.target.value, 'nota_ente')}
                 />
               </div>
               {rispostaEnteIsHidden ? null : 
@@ -574,7 +574,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                       const newContestazione = {...prev.contestazione, rispostaEnte:e.target.value};
                       return {...prev, contestazione:newContestazione};
                     })}
-                    onBlur={(e)=> requiredString(e.target.value, 'risposta_ente')}
+                    ////TODO: probilmente non serveonBlur={(e)=> requiredString(e.target.value, 'risposta_ente')}
                   />
                 </div>
               }

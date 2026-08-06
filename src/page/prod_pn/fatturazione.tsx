@@ -66,7 +66,7 @@ const Fatturazione : React.FC = () =>{
   const [textAreaValue, setTextAreaValue] = useState<string>('');
 
 
-  const [elementSelected, setElementSelected] = useState<any>(null);
+  const [elementSelected, setElementSelected] = useState<FattureObj|null>(null);
   const [actionCalled, setActionCalled] = useState<string>("");
 
   const [page, setPage] = useState(0);
@@ -337,7 +337,7 @@ const Fatturazione : React.FC = () =>{
     await downloadFatturePagopa(token,profilo.nonce, body).then(response => response.blob()).then((response)=>{
       let title = `Lista fatturazione/${month[(body.mese||0) - 1]}/${body.anno}.xlsx`;
       if(body.idEnti.length === 1 && gridData[0]){
-        title = `Lista fatturazione/ ${gridData[0]?.ragioneSociale}/${month[(body.mese||0)  - 1]}/${body.anno}.xlsx`;
+        title = `Lista fatturazione/ ${gridData[0]?.ragionesociale}/${month[(body.mese||0)  - 1]}/${body.anno}.xlsx`;
       }
       saveAs(response,title);
       setShowDownloading(false);
@@ -363,7 +363,7 @@ const Fatturazione : React.FC = () =>{
     }).then((response)=>{
       let title = `Lista report/${month[(body.mese||0)  - 1]}/${body.anno}.zip`;
       if(body.idEnti.length === 1 && gridData[0]){
-        title = `Lista report/ ${gridData[0]?.ragioneSociale}/${month[(body.mese||0)  - 1]}/${body.anno}.zip`;
+        title = `Lista report/ ${gridData[0]?.ragionesociale}/${month[(body.mese||0)  - 1]}/${body.anno}.zip`;
       }
       saveAs(response,title);
       setShowDownloading(false);
@@ -517,7 +517,7 @@ const Fatturazione : React.FC = () =>{
     
   const keyValueObjModalInfo = [
     {
-      key:"ragioneSociale",
+      key:"ragionesociale",
       label:"Ragione Sociale"
     },
     {
@@ -565,7 +565,7 @@ const Fatturazione : React.FC = () =>{
         anno: year.toString(),
         tipologiaFattura: elementSelected.tipologiaFattura,
         azione: actionToApi,
-        idFattura: elementSelected.idFattura,
+        idFattura: elementSelected.idfattura,
         idEnte: elementSelected.istitutioID,
         nota: {
           data: formatDate(new Date()),
@@ -586,7 +586,7 @@ const Fatturazione : React.FC = () =>{
         dispatchMainState
       );
 
-    } catch (err) {
+    } catch{
       managePresaInCarico('GENERICO_KO',dispatchMainState);
     } finally {
       setShowLoadingGrid(false);

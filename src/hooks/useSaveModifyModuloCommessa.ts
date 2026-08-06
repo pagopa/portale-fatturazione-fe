@@ -1,4 +1,4 @@
-import { ReactNode, useRef, useState, ElementType } from "react";
+import { useRef, useState} from "react";
 import { ModuloCommessaType, Regioni, TotaleCommessa } from "../page/ente/moduloCommessaInserimentoUtEn30";
 import { manageError, managePresaInCarico } from "../api/api";
 import { ManageErrorResponse } from "../types/typesGeneral";
@@ -38,7 +38,7 @@ function useSaveModifyModuloCommessa({
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [arrayRegioni, setArrayRegioni] = useState<Regioni[]>([]);
-  const [arrayRegioniSelected, setArrayRegioniSelected] = useState<any[]>([]);
+  const [arrayRegioniSelected, setArrayRegioniSelected] = useState<number[]|string[]>([]);
   const [profiloViewRegione, setProfiloViewRegione] = useState<number>(0);
   const [errorArRegioni, setErrorArRegioni] = useState(false);
   const [error890Regioni, setError890Regioni] = useState(false);
@@ -107,7 +107,7 @@ function useSaveModifyModuloCommessa({
 
           const regioniToHideDelete = obbligatori[activeStepResult]?.valoriRegione.map(el => el.istatRegione) || [];
           getRegioni(regioniToHideDelete);
-        } catch (error) {
+        } catch{
           // Handle secondary API failure
           managePresaInCarico('NO_INSERIMENTO_COMMESSA', dispatchMainState);
           navigate(PathPf.LISTA_COMMESSE);

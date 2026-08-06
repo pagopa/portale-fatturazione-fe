@@ -1,4 +1,4 @@
-import { Box, Button, Grid, ListItemText, ThemeProvider, Typography} from '@mui/material';
+import { Box, Button, ListItemText, ThemeProvider, Typography} from '@mui/material';
 import {CompanyLinkType, Footer, FooterLinksType, HeaderAccount, PreLoginFooterLinksType, theme} from '@pagopa/mui-italia';
 import { IllusError } from "@pagopa/mui-italia";
 
