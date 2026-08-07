@@ -41,7 +41,7 @@ export const headersName: HeaderGridCustom[] = [
   { label:'Anno',align:'center',width:'100px',headerAction:false,keyValue:'anno',typeColumn: "string",variant:"caption-semibold"},
   { label: 'Mese',align:'center',width:'100px',headerAction:false,keyValue:'mese',typeColumn: "mese-number",variant:"caption-semibold"},
   { label: 'Tipologia',align:'center',width:'150px',headerAction:false,keyValue:'tipologia',typeColumn: "string",variant:"caption-semibold"},
-  { label: 'Fase',align:'center',width:'150px',headerAction:false,keyValue:'fase',typeColumn: "string",variant:"caption-semibold"},
+  { label: 'Fase',align:'center',width:'130px',headerAction:false,keyValue:'fase',typeColumn: "string",variant:"caption-semibold"},
   { label: 'Fine Contes.',align:'center',width:'130px',headerAction:false,keyValue:'dataFineContestazioni',typeColumn: "data",variant:"caption-semibold"},
   { label: 'Fatturazione',align:'center',width:'130px',headerAction:false,keyValue:'dataFatturazione',typeColumn: "data",variant:"caption-semibold"},
   { label: 'Counter',align:'center',width:'80px',headerAction:false,keyValue:'count',typeColumn: "number",variant:"caption-semibold"},

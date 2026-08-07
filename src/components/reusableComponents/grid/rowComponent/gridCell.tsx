@@ -16,10 +16,9 @@ import ArticleIcon from "@mui/icons-material/Article";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import dayjs from "dayjs";
 import { HeaderGridCustom } from "../gridCustom";
 import { mesiGrid } from "../../../../reusableFunction/reusableArrayObj";
-import { transformDateTime, transformDateTimeWithNameMonth } from "../../../../reusableFunction/function";
+import { transformDateTime019, transformDateTimeWithNameMonth } from "../../../../reusableFunction/function";
 
 type CopyCellProps = {
   value: string;
@@ -160,7 +159,7 @@ const GridCell = ({
             ? "--"
             : element.source === "facoltativo"
               ? "TBD"
-              : dayjs(element.dataChiusura).format("YYYY-MM-DD");
+              : transformDateTimeWithNameMonth(element.dataChiusura);
     }
     return (
       <TableCell key={`${i}-${value}`}  width={headerNames[i]?.width} align="center">
@@ -191,7 +190,7 @@ const GridCell = ({
       </Tooltip>
     );
   case "data-ora": {
-    const valueData = value ? transformDateTime(value) : "";
+    const valueData = value ? transformDateTime019(value) : "";
     return (
       <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
         <Typography variant={rowObject.variant||"body1"}>
@@ -204,7 +203,7 @@ const GridCell = ({
     return (
       <TableCell key={`${i}-${value}`}  width={headerNames[i]?.width} align="center">
         <Typography variant={rowObject.variant||"body1"}>
-          {value != null
+          {(value !== null && value !== 0)
             ? (Number(value) / 100).toLocaleString("de-DE", {
               style: "currency",
               currency: "EUR",
@@ -217,7 +216,7 @@ const GridCell = ({
     return (
       <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
         <Typography variant={rowObject.variant||"body1"}>
-          {value != null
+          {(value !== null && value !== 0)
             ? Number(value).toLocaleString("de-DE", {
               style: "currency",
               currency: "EUR",
@@ -328,7 +327,7 @@ const GridCell = ({
     );
   case "collaps":
     return (
-      <TableCell key={`expand-${element.id}-${i}`} align="center">
+      <TableCell width={headerNames[i]?.width} key={`expand-${element.id}-${i}`} align="center">
         <IconButton
           sx={{ color: "#227AFC" }}
           aria-label="expand row"
@@ -341,7 +340,7 @@ const GridCell = ({
     );
   case "arrow":
     return (
-      <TableCell key={`${i}-arrow`} align="center">
+      <TableCell width={headerNames[i]?.width} key={`${i}-arrow`} align="center">
         <IconButton
           size="medium"
           onClick={() => {

@@ -552,7 +552,7 @@ const RelPage : React.FC = () =>{
 
 
   let headerGridKeys = headerRelEnte;
-  if(profilo.auth !== "PAGOPA"){
+  if(profilo.auth === "PAGOPA"){
     headerGridKeys = headerRelAdmin;
   }
 

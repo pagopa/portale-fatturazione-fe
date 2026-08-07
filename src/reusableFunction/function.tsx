@@ -188,6 +188,14 @@ export  function transformDateTime(input: string): string {
   }
 }
 
+export function transformDateTime019(input: string): string {
+  if (input) {
+    return input.slice(0, 19);
+  } else {
+    return "";
+  }
+}
+
 export  function transformDateTimeWithNameMonth(input: string): string {
   if(input){
     const [datePart, timePart] = input.split("T"); // Split the input into date and time
@@ -392,21 +400,6 @@ export const sortByTipoFattura = <T,>(
 
   return copy;
 };
-
-
-export const getStatusColor = (stato: string): string => {
-  switch (stato) {
-  case "obbligatorio":
-    return "#5BB0D5";
-  case "archiviato":
-    return "#fafafa";
-  case "facoltativo":
-    return "#f7e7bc";
-  default:
-    return "#ffffff";
-  }
-};
-
 
 export const getOnereLabel = (notifica: NotificheList): string => {
   const onere = notifica.onere;

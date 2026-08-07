@@ -83,7 +83,7 @@ export const headerNamesGestioneFatture: HeaderGridCustom[] = [
   { label: 'Ragione Sociale', align: 'center', width: '200px', keyValue: 'ragioneSociale',typeColumn: "ragionesociale", makeAction: false, applyCss: true  },
   { label: 'Anno', align: 'center', width: '100px', keyValue: 'anno',typeColumn: "string" },
   { label: 'Mese', align: 'center', width: '100px', keyValue: 'mese',typeColumn: "mese-number" },
-  { label: 'Tipologia fattura', align: 'center', width: '150px', keyValue: 'tipologiaFattura', typeColumn: "string" },
+  { label: 'Tipologia fattura', align: 'center', width: '180px', keyValue: 'tipologiaFattura', typeColumn: "string" },
   { label: 'Tipo contratto', align: 'center', width: '150px', keyValue: 'idTipoContratto', typeColumn: "number-tipocontratto" },
   { label: 'Stato', align: 'center', width: '100px', keyValue: 'azione',typeColumn: "chip" ,funToManipulateValue:getStatusColor,keyToManipulateData:"azione" },
   { label: 'Nota', align: 'center', width: '70px', keyValue: 'note', typeColumn: "action",funToManipulateValue:showNoteGestioneFatture },

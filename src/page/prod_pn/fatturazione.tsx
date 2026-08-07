@@ -608,12 +608,13 @@ const Fatturazione : React.FC = () =>{
   }
     
 
-  const statusAnnulla = bodyFatturazione.idEnti.length !== 0 || 
+  const statusAnnulla = (bodyFatturazione.idEnti.length !== 0 || 
      bodyFatturazione.tipologiaFattura.length !== 0 ||
      bodyFatturazione.cancellata === true ||
      bodyFatturazione.idTipoContratto !== null ||
      bodyFatturazione.anno !== firstYearMonth[0] ||
-     Number(bodyFatturazione.mese) !== firstYearMonth[1]  ? "show" :"hidden";
+     Number(bodyFatturazione.mese) !== firstYearMonth[1] ||
+     bodyFatturazione.inviata !== 3)  ? "show" :"hidden";
 
 
   return (
@@ -808,7 +809,7 @@ const Fatturazione : React.FC = () =>{
         headerNamesCollapse={headersObjGridDocemessiSendCollapse}
         apiGet={handleGoToDetail}
         disabled={showLoadingGrid}
-        widthCustomSize="2000px"
+        widthCustomSize="2100px"
         setAction={showPopUpAction}
         sentenseEmpty={"Non sono presenti Regolari esecuzioni/Documenti di cortesia"}
         keyCollapse={"posizioni"}

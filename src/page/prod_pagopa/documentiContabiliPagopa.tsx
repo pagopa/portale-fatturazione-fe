@@ -421,7 +421,7 @@ const DocumentiContabili:React.FC = () =>{
         headerNames={headersDocContabiliPagopa}
         headerNamesCollapse={headersDocContabiliPagopaCollapse}
         disabled={getListaLoading}
-        widthCustomSize="1200px"
+        widthCustomSize="800px"
         sentenseEmpty={"Nessun dato disponibile"}
         keyCollapse={"posizioni"}
         titleRowCollapse={"Posizioni"}

@@ -640,7 +640,7 @@ const DocSospesiSend : React.FC = () =>{
         headerNamesCollapse={headersDocumentiSospesiSendCollapse}
         titleRowCollapse={"Posizioni"}
         disabled={showLoadingGrid}
-        widthCustomSize="2000px"
+        widthCustomSize="2100px"
         setGridData={setGridData}
         gridType={true}
         listaResponse={listaResponse}

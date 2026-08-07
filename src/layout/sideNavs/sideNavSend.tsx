@@ -271,7 +271,7 @@ const SideNavSend : React.FC = () => {
             </ListItemButton>
           </List>
         </Collapse> 
-        <ListItemButton selected={currentLocation === "accertamenti"} onClick={() => handleListItemClick("accertamenti")}>
+        <ListItemButton selected={currentLocation === "/send/accertamenti"} onClick={() => handleListItemClick("/send/accertamenti")}>
           <ListItemIcon>
             <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
           </ListItemIcon>
