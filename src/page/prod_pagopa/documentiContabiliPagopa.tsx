@@ -92,13 +92,27 @@ const DocumentiContabili:React.FC = () =>{
         const data = res.data.financialReports;
         setGridData(data);
         setCount(data.length);
-        setDataPaginated(data.slice(0, 10));
+        if(isInitialRender.current && Object.keys(filters).length > 0){
+          const rows = filters?.rows || 10;
+          const page = filters?.page || 0;
+          const start = page * rows;
+          const end = start + rows;
+          setDataPaginated(data.slice(start, end));
+          console.log({page:filters.page, row:filters.rows,data:data.slice(filters.page, filters.rows)});
+          isInitialRender.current = false;
+        }else{
+          setDataPaginated(data.slice(0, 10));
+        }
         setGetListaLoading(false); 
       }).catch(((err)=>{
         setGridData([]);
+        setDataPaginated([]);
         setCount(0);
         setGetListaLoading(false);
         manageError(err,dispatchMainState);
+        if(isInitialRender.current && Object.keys(filters).length > 0){
+          isInitialRender.current = false;
+        }
       })); 
   };
 
@@ -146,9 +160,8 @@ const DocumentiContabili:React.FC = () =>{
     await getQuartersDocContabiliPa(token, profilo.nonce,{year:y})
       .then((res)=>{
         setDataSelectQuarter(res.data);
-        isInitialRender.current = false;
+       
       }).catch(((err)=>{
-        isInitialRender.current = false;
         setValueQuarters([]);
         setDataSelectQuarter([]);
         manageError(err,dispatchMainState); 
@@ -315,9 +328,9 @@ const DocumentiContabili:React.FC = () =>{
           keyValue={"year"}
           keyBody={"year"}
           arrayValues={yearOnSelect}
-          extraCodeOnChange={()=>{
+          extraCodeOnChange={(e)=>{
             setValueQuarters([]);
-            setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
+            setBodyGetLista((prev)=>({...prev,...{year:e,quarters:[]}}));
             getQuarters(bodyGetLista.year);
           }}
         ></MainFilter>

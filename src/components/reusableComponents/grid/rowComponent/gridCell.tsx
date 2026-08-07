@@ -233,6 +233,7 @@ const GridCell = ({
             ? value.toLocaleString("de-DE", {
               style: "currency",
               currency: "EUR",
+              maximumFractionDigits: 14
             })
             : "--"}
         </Typography>

@@ -263,7 +263,11 @@ const Fatturazione : React.FC = () =>{
 
       let elementsToShow:FattureObj[] = [];
       if(isInitialRender.current && Object.keys(filters).length > 0){
-        elementsToShow = customObjData.slice(filters?.page||0, filters.rows||10);
+        const rows = filters?.rows || 10;
+        const page = filters?.page || 0;
+        const start = page * rows;
+        const end = start + rows;
+        elementsToShow = customObjData.slice(start, end);
       }else if(callLista.current || callAnnulla.current){
         elementsToShow = customObjData.slice(0, 10);
       }else{

@@ -86,12 +86,29 @@ const KpiPagamenti:React.FC = () =>{
         setGridData(data);
         setDataPaginated(data.slice(0, rowsPerPage));
         setCount(res.data.count);
+
+        if(isInitialRender.current && Object.keys(filters).length > 0){
+          const rows = filters?.rows || 10;
+          const page = filters?.page || 0;
+          const start = page * rows;
+          const end = start + rows;
+          setDataPaginated(data.slice(start, end));
+          isInitialRender.current = false;
+        }else{
+          setDataPaginated(data.slice(0, 10));
+        }
+        
         setGetListaLoading(false);
       }).catch(((err)=>{
         setGridData([]);
+        setDataPaginated([]);
         setCount(0);
         setGetListaLoading(false);
         manageError(err,dispatchMainState);
+
+        if(isInitialRender.current && Object.keys(filters).length > 0){
+          isInitialRender.current = false;
+        }
       })); 
   };
 
@@ -119,9 +136,7 @@ const KpiPagamenti:React.FC = () =>{
             setValueQuarters(filters.valueQuarters);
             setPage(filters.page);
             setRowsPerPage(filters.rows);
-            getQuarters(filters.body.year);
-
-                        
+            getQuarters(filters.body.year);      
           }else{
             setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
             setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
@@ -139,9 +154,9 @@ const KpiPagamenti:React.FC = () =>{
     await getQuartersDocContabiliPa(token, profilo.nonce,{year:y})
       .then((res)=>{
         setDataSelectQuarter(res.data);
-        isInitialRender.current = false;
+       
       }).catch(((err)=>{
-        isInitialRender.current = false;
+      
         setValueQuarters([]);
         setDataSelectQuarter([]);
         manageError(err,dispatchMainState); 
