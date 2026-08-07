@@ -53,7 +53,6 @@ export const manageErrorDownload = (res:string,dispatchMainState) =>{
       value:valueObj
     });
   };
-  
   if(res === '404'){
     const value = res+"_DOWNLOAD";
     handleModifyMainState({apiError:value});
