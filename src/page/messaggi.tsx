@@ -17,6 +17,7 @@ import { useGlobalStore } from "../store/context/useGlobalStore";
 import MainFilter from "../components/reusableComponents/mainFilter";
 import { FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../components/reusableComponents/layout/mainComponent";
 import { get2FinancialYear } from "../reusableFunction/function";
+import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 
 export interface Messaggio {
     idMessaggio:number,
@@ -51,15 +52,19 @@ interface FilterMessaggi{
 }
 
 
-const Messaggi : React.FC<any> = () => {
+const Messaggi : React.FC = () => {
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
   const setCountMessages = useGlobalStore(state => state.setCountMessages);
-
-
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
   const navigate = useNavigate();
+
+  const { 
+    filters,
+    updateFilters,
+    isInitialRender
+  } = useSavedFilters(PathPf.MESSAGGI,{});
 
   const handleModifyMainState = (valueObj) => {
     dispatchMainState({
@@ -82,6 +87,15 @@ const Messaggi : React.FC<any> = () => {
     letto:null
   });
 
+  useEffect(()=>{
+    if(isInitialRender.current && Object.keys(filters).length > 0){
+      setBodyCentroMessaggi(filters.body);
+      getMessaggi(filters.page, filters.rows, filters.body);
+    }else{
+      getMessaggi(page+1, rowsPerPage, bodyCentroMessaggi);
+    }
+  },[]);
+
   const [gridData, setGridData] = useState<Messaggio[]>([]);
   const [getListaLoading, setGetListaLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -96,6 +110,14 @@ const Messaggi : React.FC<any> = () => {
       setGetListaLoading(false);
       setGridData(res.data.messaggi);
       setCountMessaggi(res.data.count);
+      if(!isInitialRender.current){
+        updateFilters({
+          body:body,
+          pathPage:PathPf.MESSAGGI,
+          page:pa,
+          rows:ro
+        });
+      }
     }).catch((err)=>{
       setGetListaLoading(false);
       setGridData([]);
@@ -185,10 +207,6 @@ const Messaggi : React.FC<any> = () => {
     });
   };
 
-  useEffect(()=>{
-    getMessaggi(page+1, rowsPerPage, bodyCentroMessaggi);
-  },[]);
-
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number,
@@ -230,27 +248,46 @@ const Messaggi : React.FC<any> = () => {
   }
 
   const onAnnulla = () => {
-    getMessaggi(1,10,{
+
+    const newBody = {
       anno:null,
       mese:null,
       tipologiaDocumento:[],
       letto: null
-    });
-    setBodyCentroMessaggi({
-      anno:null,
-      mese:null,
-      tipologiaDocumento:[],
-      letto:null
-    });
-    setBodyCentroMessaggiOnFiltra({
-      anno:null,
-      mese:null,
-      tipologiaDocumento:[],
-      letto:null
-    });
+    };
+    getMessaggi(1,10,newBody);
+    setBodyCentroMessaggi(newBody);
+    setBodyCentroMessaggiOnFiltra(newBody);
     setPage(0);
     setRowsPerPage(10);
+
+    updateFilters({
+      body:newBody,
+      pathPage:PathPf.MESSAGGI,
+      page:0,
+      rows:10
+    });
   };
+
+
+  const onFiltra = () => {
+    getMessaggi(1,10,bodyCentroMessaggi);
+    setBodyCentroMessaggiOnFiltra(bodyCentroMessaggi);
+    setPage(0);
+    setRowsPerPage(10);
+    updateFilters({
+      body:bodyCentroMessaggi,
+      pathPage:PathPf.MESSAGGI,
+      page:0,
+      rows:10
+    });
+  };
+
+  const statusAnnulla = (
+    bodyCentroMessaggi.anno !== null ||
+     bodyCentroMessaggi.letto !== null ||
+      bodyCentroMessaggi.letto !== null
+  ) ? "show" : "hidden";
 
   return (
 
@@ -269,7 +306,6 @@ const Messaggi : React.FC<any> = () => {
           arrayValues={arrayLettura}
           extraCodeOnChange={(e)=>{
             let val;
-            console.log({e});
             if(e === 'tutti'){
               val = null;
             }else if(e.toString() === 'true'){
@@ -306,14 +342,9 @@ const Messaggi : React.FC<any> = () => {
       </ResponsiveGridContainer>
      
       <FilterActionButtons 
-        onButtonFiltra={() => {
-          getMessaggi(1,10,bodyCentroMessaggi);
-          setBodyCentroMessaggiOnFiltra(bodyCentroMessaggi);
-          setPage(0);
-          setRowsPerPage(10);
-        }} 
+        onButtonFiltra={onFiltra} 
         onButtonAnnulla={onAnnulla} 
-        statusAnnulla={'bo'}
+        statusAnnulla={statusAnnulla}
       />
       <div className="mb-5 mt-5">
         <Box sx={{
