@@ -118,7 +118,6 @@ const GridCustom = <T,>({
                 <EmptyRow sentenseEmpty={sentenseEmpty} />
               }
               {elements.length > 0 && elements.map((element,index) => {
-                console.log({el:element});
                 return (
                   <GridRowDesignByConfigFile
                     key={`${index}-${Object.values(element||{})[0]}`}

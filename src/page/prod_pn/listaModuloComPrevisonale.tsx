@@ -244,6 +244,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
   const clearOnChangeFilter = () => {
     setGridData([]);
     setCount(0);
+    setBodyGetLista((prev)=> ({...prev,page:0,size:10}));
   };
 
   const onButtonFiltra = () => {

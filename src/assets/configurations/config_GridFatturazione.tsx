@@ -2,6 +2,7 @@ import { Box, IconButton, Tooltip } from "@mui/material";
 import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import UpdateIcon from '@mui/icons-material/Update';
+import { formatDateString } from "../../reusableFunction/function";
 
 
 const getActionDocumentiEmessiSend = (obj,fun) => {
@@ -58,7 +59,7 @@ export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
   { label: "", align: "center", width: "30px", keyValue: "collaps", typeColumn: "collaps" },
   { label: "Ragione sociale", align: "center", width: "200px", keyValue: "ragionesociale", typeColumn: "ragionesociale", makeAction: true, applyCss: true },
   { label:"Azioni",align:"center",width:"100px",keyValue: "azione", typeColumn: "action",funToManipulateValue:getActionDocumentiEmessiSend, keyToManipulateData:"azione"},
-  { label: "Data Fattura", align: "center", width: "180px", keyValue: "dataFattura", typeColumn: "string" },
+  { label: "Data Fattura", align: "center", width: "180px", keyValue: "dataFattura", typeColumn: "data-exeption",funToManipulateValue:formatDateString },
   { label: "Elaborazione", align: "center", width: "160px", keyValue: "eleborazione", typeColumn: "chip-tooltip" ,funToManipulateValue:getChipElaborazione, keyToManipulateData:"inviata"},
   //{ label: "Stato", align: "center", width: "100px", keyValue: "stato", typeColumn: "data-exeption" , funToManipulateValue:getStatoFattura, keyToManipulateData:"stato"},
   { label: "T. Fattura", align: "center", width: "180px", keyValue: "tipologiaFattura", typeColumn: "string" },

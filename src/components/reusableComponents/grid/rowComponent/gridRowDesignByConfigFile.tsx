@@ -27,10 +27,14 @@ const GridRowDesignByConfigFile =  ({
 
   const [open, setOpen] = useState(false);
 
-  let dataInsideCollapse = element[keyCollapse];
+  let dataInsideCollapse = element[keyCollapse]||[];
   if (typeof dataInsideCollapse === 'string') {
     dataInsideCollapse = [JSON.parse(dataInsideCollapse)];
   } 
+
+  if (dataInsideCollapse[0] && "numeroLinea" in dataInsideCollapse[0]) {
+    dataInsideCollapse = [...dataInsideCollapse].sort((a, b) => a.numeroLinea - b.numeroLinea);
+  }
 
   return (
     <>
@@ -74,8 +78,7 @@ const GridRowDesignByConfigFile =  ({
                             <TableCell key={`position-${value.label}-${i}`} align='center'>{value.label}</TableCell>
                           );
                         })
-                      }
-                                                
+                      }                      
                     </TableRow>
                   </TableHead>
                   <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>

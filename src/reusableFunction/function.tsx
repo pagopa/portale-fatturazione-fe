@@ -41,10 +41,6 @@ export const fixResponseForDataGrid = <T,>(arr:T[]) =>{
         //totaleNotifiche:el.moduli.reduce((acc, item) => acc + item.totaleNotifiche, 0),
         arrow:"",
         moduli:el.moduli.map(mod => {
-
-                    
-
-
           let inserimentoInfo = {inserimento:"--",color:"#ffffff"};
 
           if(mod.stato === null ){
@@ -190,9 +186,9 @@ export  function transformDateTime(input: string): string {
 
 export function transformDateTime019(input: string): string {
   if (input) {
-    return input.slice(0, 19);
+    return input.slice(0, 19).replace("T", " ");
   } else {
-    return "";
+    return "--";
   }
 }
 
@@ -427,11 +423,11 @@ export const getOnereLabel = (notifica: NotificheList): string => {
   return '--';
 };
 
-export const getColorChipContestazioneStorico = (stato:number) => {
+export const getColorChipContestazioneStorico = (el:{stato:number}) => {
   let bgColorRow = "#F0F8FF"; 
-  if(stato === 3){
+  if(el.stato === 3){
     bgColorRow = "#F0FFF0";
-  }else if(stato === 2){
+  }else if(el.stato === 2){
     bgColorRow = "#FFF0F5";
   }
 
@@ -481,3 +477,8 @@ export const manipulateObjModuloCommessa = ( el ) =>{
     arrow:""
   };
 };
+
+export function formatDateString(el:{dataFattura:string}) {
+  const [year, month, day] = el.dataFattura.split("-");
+  return `${day}/${month}/${year}`;
+}

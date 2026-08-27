@@ -92,7 +92,7 @@ const Messaggi : React.FC = () => {
       setBodyCentroMessaggi(filters.body);
       getMessaggi(filters.page, filters.rows, filters.body);
     }else{
-      getMessaggi(page+1, rowsPerPage, bodyCentroMessaggi);
+      getMessaggi(page, rowsPerPage, bodyCentroMessaggi);
     }
   },[]);
 
@@ -269,7 +269,6 @@ const Messaggi : React.FC = () => {
     });
   };
 
-
   const onFiltra = () => {
     getMessaggi(1,10,bodyCentroMessaggi);
     setBodyCentroMessaggiOnFiltra(bodyCentroMessaggi);
@@ -278,7 +277,7 @@ const Messaggi : React.FC = () => {
     updateFilters({
       body:bodyCentroMessaggi,
       pathPage:PathPf.MESSAGGI,
-      page:0,
+      page:1,
       rows:10
     });
   };
@@ -340,12 +339,10 @@ const Messaggi : React.FC = () => {
           arrayValues={mesiDescNome}
         ></MainFilter>
       </ResponsiveGridContainer>
-     
       <FilterActionButtons 
         onButtonFiltra={onFiltra} 
         onButtonAnnulla={onAnnulla} 
-        statusAnnulla={statusAnnulla}
-      />
+        statusAnnulla={statusAnnulla}/>
       <div className="mb-5 mt-5">
         <Box sx={{
           backgroundColor: "background.paper",
@@ -391,7 +388,6 @@ const Messaggi : React.FC = () => {
                       <Typography color="text.secondary" variant="caption" component="div">
                         {getMonthString(item.dataInserimento)}
                       </Typography>
-
                     </TimelineNotificationOppositeContent>
                     <TimelineNotificationSeparator>
                       <TimelineConnector />
@@ -411,10 +407,8 @@ const Messaggi : React.FC = () => {
                       </Typography>}
                       <Typography color="text.primary" variant="overline" component="div">
                         {`Letto  `}
-                        {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon> }
-                                          
-                      </Typography>
-                                           
+                        {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon> }              
+                      </Typography>                
                       {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={item.categoriaDocumento.toLowerCase().includes("contestazione") ? <PreviewIcon/>:<AttachFileIcon />}>
                         {item.categoriaDocumento.toLowerCase().includes("contestazione") ? 'Visualizza documento' : 'Download documento'}
                       </ButtonNaked>}
@@ -429,8 +423,7 @@ const Messaggi : React.FC = () => {
           <TablePagination
             sx={{'.MuiTablePagination-selectLabel': {
               display:'none',
-              backgroundColor:'#f2f2f2'
-                                                
+              backgroundColor:'#f2f2f2'                                
             }}}
             component="div"
             page={page}
@@ -440,20 +433,17 @@ const Messaggi : React.FC = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
             SelectProps={{
               disabled: false
-            }}
-          ></TablePagination>
+            }}/>
         </div>
       </div>         
       <ModalLoading 
         open={showDownloading} 
         setOpen={setShowDownloading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
+        sentence={'Downloading...'} />
       <ModalLoading 
         open={getListaLoading} 
         setOpen={setGetListaLoading}
-        sentence={'Loading...'} >
-      </ModalLoading>
+        sentence={'Loading...'} />
     </MainBoxStyled>
   );
 };

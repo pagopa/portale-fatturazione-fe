@@ -227,18 +227,18 @@ const DettaglioDocContabile : React.FC = () =>{
                       <Table size="small">
                         <TableHead>
                           <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                            <TableCell sx={{ width:"300px"}} >ID Categoria</TableCell>
-                            <TableCell sx={{ width:"300px"}} >Codice articolo</TableCell>
-                            <TableCell sx={{ width:"300px"}}>Quantità</TableCell>
+                            <TableCell align="center" sx={{ width:"300px"}} >ID Categoria</TableCell>
+                            <TableCell align="center"sx={{ width:"300px"}} >Codice articolo</TableCell>
+                            <TableCell align="center" sx={{ width:"300px"}}>Quantità</TableCell>
                             <TableCell align="center" sx={{ width:"300px"}}>Importo €</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                           <TableRow key={singlePosizione.progressivoRiga}>
-                            <TableCell sx={{ width:"300px"}}>{singlePosizione.category}</TableCell>
-                            <TableCell sx={{ width:"300px"}}>{singlePosizione.codiceArticolo}</TableCell>
-                            <TableCell sx={{ width:"300px"}}>{singlePosizione.quantita}</TableCell>
-                            <TableCell  sx={{ width:"300px"}}align="right">{singlePosizione.importo.toLocaleString("de-DE", { style: 'decimal',maximumFractionDigits: 14})}</TableCell> 
+                            <TableCell  align="center" sx={{ width:"300px"}}>{singlePosizione.category||"--"}</TableCell>
+                            <TableCell  align="center" sx={{ width:"300px"}}>{singlePosizione.codiceArticolo||"--"}</TableCell>
+                            <TableCell  align="center" sx={{ width:"300px"}}>{singlePosizione.quantita||"--"}</TableCell>
+                            <TableCell  sx={{ width:"300px"}} align="right">{singlePosizione.importo.toLocaleString("de-DE", { style: 'decimal',maximumFractionDigits: 14})||"--"}</TableCell> 
                           </TableRow>
                         </TableBody>
                       </Table>

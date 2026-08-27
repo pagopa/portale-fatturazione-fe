@@ -390,7 +390,7 @@ const Storico: React.FC = () => {
           headerNames={headersName}
           apiGet={handleClickOnDetail}
           disabled={getListaContestazioniRunning}
-          widthCustomSize="auto"/>
+          widthCustomSize="1600px"/>
       </div>
       
       <ModalLoading 

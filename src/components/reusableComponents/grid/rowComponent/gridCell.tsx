@@ -141,7 +141,6 @@ const GridCell = ({
           }}
           width={headerNames[i]?.width}
           align={i === 0 ? "left" : "center"}
-          
         >
           <Typography sx={headerNames[i]?.applyCss ? getCssFirstColumRagioneSociale(headerNames[i]?.makeAction||false) : null} variant={rowObject.variant||"body1"}>
             {isLong ? value?.toString().slice(0, 37) + "..." : value}

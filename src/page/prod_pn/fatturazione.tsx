@@ -21,7 +21,7 @@ import { useGlobalStore } from "../../store/context/useGlobalStore";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { gestioneFattureInserisci } from "../../api/apiPagoPa/gestioneFatturePA/api";
-import { formatDate } from "../../reusableFunction/function";
+import { formatDate, formatDateString } from "../../reusableFunction/function";
 import { ElementToProcessComponent } from "./gestioneFatture";
 
 
@@ -534,8 +534,9 @@ const Fatturazione : React.FC = () =>{
     }
   ];
     
-  const showPopUpAction = (obj, action) => {  
-   
+  const showPopUpAction = (obj, action) => { 
+    
+    obj.dataFattura = formatDateString(obj);
     setElementSelected(obj);
     setActionCalled(action);
     if(action === "posticipa"){
@@ -817,8 +818,7 @@ const Fatturazione : React.FC = () =>{
         setAction={showPopUpAction}
         sentenseEmpty={"Non sono presenti Regolari esecuzioni/Documenti di cortesia"}
         keyCollapse={"posizioni"}
-        titleRowCollapse={"Posizioni"}
-      />  
+        titleRowCollapse={"Posizioni"}/>  
       <ModalLoading 
         open={showLoadingGrid} 
         setOpen={setShowLoadingGrid}
