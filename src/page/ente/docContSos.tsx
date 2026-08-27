@@ -41,8 +41,8 @@ export type Fattura = {
     split: boolean;
     inviata: number;
     posizioni: Posizione[];
-    datiGeneraliDocumento:any[],
-    metodoPagamento:any,
+    datiGeneraliDocumento:object[],
+    metodoPagamento:string|null,
     idFattura:number, 
 };
 
@@ -69,13 +69,6 @@ const DocSos : React.FC = () =>{
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
   const navigate = useNavigate();
  
-  const handleModifyMainState = (valueObj) => {
-    dispatchMainState({
-      type:'MODIFY_MAIN_STATE',
-      value:valueObj
-    });
-  };
-
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
 
@@ -86,7 +79,6 @@ const DocSos : React.FC = () =>{
     resetFilters,
     isInitialRender
   } = useSavedFilters(PathPf.DOCUMENTI_SOSPESI,{});
-
 
   //______________________NEW_________________
   const [listaResponse, setListaResponse] = useState<Fattura[]>([]);
@@ -420,11 +412,9 @@ const DocSos : React.FC = () =>{
     labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}-${month[bodyFatturazioneDownload.mese-1]}`;
   }
 
-
   const setIdDoc =(el) => {
-    navigate(PathPf.PDF_REL_EN+"/documentisospesi/"+el.idFattura);
+    navigate(PathPf.PDF_REL_EN+"/documentisospesi/"+el.idfattura);
   };   
-
 
   const headerAction = (
     label: string,
@@ -499,23 +489,18 @@ const DocSos : React.FC = () =>{
           case "Data Fattura":
             sortedFull = sortDates(sortedFull, isAsc);
             break;
-   
           case "Ident.":
             sortedFull = sortMonthYear(sortedFull, isAsc);
             break;
-   
           case "Tot.":
             sortedFull = sortByTotale(sortedFull, isAsc, "totale");
             break;
-   
           case "N. Fattura":
             sortedFull = sortByNumeroFattura(sortedFull, isAsc, "numero");
             break;
-   
           case "Tipo Documento":
             sortedFull = sortByTipoFattura(sortedFull, isAsc, "tipoDocumento");
             break;
-   
           default:
             break;
           }
@@ -536,12 +521,9 @@ const DocSos : React.FC = () =>{
         }
         return newSortObject;
       });
-    }
-          
+    }  
   };
       
-   
-
   return (
     <MainBoxStyled title={"Documenti contabili sospesi"} actionButton={[]}>
       <ResponsiveGridContainer >
@@ -555,10 +537,8 @@ const DocSos : React.FC = () =>{
           keyValue={"anno"}
           keyBody={"anno"}
           arrayValues={years.map(el => el.toString())}
-          extraCodeOnChange={(e)=>{
-                    
-            if(e.toString() === "9999"){
-                        
+          extraCodeOnChange={(e)=>{     
+            if(e.toString() === "9999"){          
               setBodyFatturazione((prev)=> ({...prev, ...{anno:9999,mese:9999,dataFattura:[],tipologiaFattura:[]}}));
               setArrayMonths([]);
               const arrayTipogie = Array.from( new Set(globalResponse
@@ -576,10 +556,8 @@ const DocSos : React.FC = () =>{
                 .filter(el =>
                   el.anno === Number(e))
                 .map(el => el.tipologiaFattura)));
-              setDataSelect(arrayTipogie);
-                           
-            }
-                        
+              setDataSelect(arrayTipogie);             
+            }         
             setValueMultiselectTipologie([]);
             setValueMultiselectDate([]);
           }}

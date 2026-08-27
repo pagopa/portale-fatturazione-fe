@@ -1034,8 +1034,7 @@ const ReportDettaglio : React.FC = () => {
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onAnnullaFiltri} 
-        statusAnnulla={statusAnnulla} 
-      ></FilterActionButtons>
+        statusAnnulla={statusAnnulla}/>
       <ActionTopGrid
         actionButtonRight={[{
           onButtonClick: () => downloadNotificheOnDownloadButton(),
@@ -1043,8 +1042,7 @@ const ReportDettaglio : React.FC = () => {
           label: "Download risultati",
           icon:{name:"download" },
           disabled:(notificheList.length === 0 || getNotificheWorking|| mainState.apiError !== null)
-        }]}
-      />      
+        }]}/>      
       <GridCustom
         nameParameterApi='idNotifica'
         elements={notificheList}
@@ -1059,9 +1057,7 @@ const ReportDettaglio : React.FC = () => {
         headerActionSortServerSide={headerActionSort}
         widthCustomSize="2000px"
         sentenseEmpty={"Non sono presenti notifiche"}
-        body={bodyGetLista}
-
-      />                       
+        body={bodyGetLista}/>                       
       <ModalContestazione open={open} 
         setOpen={setOpen} 
         mainState={mainState}
@@ -1074,8 +1070,7 @@ const ReportDettaglio : React.FC = () => {
         rows={rowsPerPage}
         valueRispostaEnte={valueRispostaEnte}
         contestazioneStatic={contestazioneStatic}
-        dispatchMainState={dispatchMainState}
-      />
+        dispatchMainState={dispatchMainState}/>
       <ModalRedirect
         setOpen={setOpenModalRedirect} 
         open={openModalRedirect}

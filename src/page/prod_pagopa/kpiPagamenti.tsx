@@ -180,7 +180,7 @@ const KpiPagamenti:React.FC = () =>{
       }
       saveAs( res,fileName );
       setShowLoading(false);
-    }).catch(err => {
+    }).catch(() => {
       setShowLoading(false);
       manageErrorDownload('404',dispatchMainState);
     });

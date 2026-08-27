@@ -18,8 +18,6 @@ import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse, headers
 import { downloadFattureEmesseEnte, getListaDocumentiContestati, getListaDocumentiEmessi, downloadFattureContestateEnte } from "../../api/apiSelfcare/documentiSospesiSE/api";
 import { sortByNumeroFattura, sortByTipoFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
 
-
-
 export type BodyDocumentiEmessiEnte = {
     anno:number,
     mese:number,
@@ -44,8 +42,8 @@ export type Fattura = {
     split: boolean;
     inviata: number;
     posizioni: Posizione[];
-    datiGeneraliDocumento:any[],
-    metodoPagamento:any,
+    datiGeneraliDocumento:object[],
+    metodoPagamento:string|null,
     idFattura:number, 
 };
 
@@ -77,14 +75,12 @@ const DocEm : React.FC = () =>{
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
 
-
   const { 
     filters,
     updateFilters,
     resetFilters,
     isInitialRender
   } = useSavedFilters(PathPf.DOCUMENTI_EMESSI,{});
-
 
   //______________________NEW_________________
   const [listaResponse, setListaResponse] = useState<Fattura[]>([]);
@@ -119,7 +115,6 @@ const DocEm : React.FC = () =>{
   const [totalDocumentiContestate, setTotalDocumentiContestate]  = useState(0);
   //__________________________________________________________________________________
   
-   
   const [openModalRedirect, setOpenModalRedirect] = useState(false);
   const [bodyFatturazione, setBodyFatturazione] = useState<BodyDocumentiEmessiEnte>({
     anno:9999,
@@ -152,7 +147,7 @@ const DocEm : React.FC = () =>{
       const yearsArray:number[] = Array.from( new Set(res.data.map(el => el.anno)));
       const allMonths:number[] = Array.from( new Set(res.data.map(el => el.mese)));//da eliminare
       const allTipologie:string[] = Array.from( new Set(res.data.map(el => el.tipologiaFattura)));
-      const dataFattura:string[] = Array.from( new Set(res.data.map(el => `${el.dataFattura}-${el.tipologiaFattura}`)));//da eliminare
+     
          
       setYears(yearsArray);
       if(isInitialRender.current && Object.keys(filters)?.length > 0){
@@ -523,7 +518,6 @@ const DocEm : React.FC = () =>{
     });
   };
 
-
   let bgHeader = "#E3E7EB";
   if(totaleHeader === 0){
     bgHeader = "#E3E7EB";
@@ -533,14 +527,12 @@ const DocEm : React.FC = () =>{
     bgHeader = "#ffeff1";
   }
 
-
   const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== 9999 || bodyFatturazione.anno !== 9999) ? false :true;
 
   const setIdDoc = async(el) => {
-    navigate(PathPf.PDF_REL_EN+"/documentiemessi/"+el.idFattura); 
+    navigate(PathPf.PDF_REL_EN+"/documentiemessi/"+el.idfattura); 
   };  
     
-
   const headerAction = (
     label: string,
     setGridDataParam: (data: any[]) => void,
@@ -556,7 +548,6 @@ const DocEm : React.FC = () =>{
     if(isInitialRender.current && Object.keys(filters)?.length > 0){
       const prev = emessiGrid ? filters.objectSort : filters.objectSortContestate;
           
-        
       //const label = Object.keys(prev).filter(key => prev[key] !== 1);
       const valueNotOne = Object.values(prev).find(value => value !== 1);
       let sortedFull = [...listaResponseParameter];
@@ -566,23 +557,18 @@ const DocEm : React.FC = () =>{
         case "Data Fattura":
           sortedFull = sortDates(sortedFull, booleanValue);
           break;
-
         case "Ident.":
           sortedFull = sortMonthYear(sortedFull, booleanValue);
           break;
-
         case "Tot.":
           sortedFull = sortByTotale(sortedFull, booleanValue, "totale");
           break;
-
         case "N. Fattura":
           sortedFull = sortByNumeroFattura(sortedFull, booleanValue, "numero");
           break;
-
         case "Tipo Documento":
           sortedFull = sortByTipoFattura(sortedFull, booleanValue, "tipoDocumento");
           break;
-
         default:
           break;
         }
