@@ -12,120 +12,120 @@ import HeaderLogAzure from "../layout/mainHeader/headerLogInOutAzure";
 import { useGlobalStore } from "../store/context/useGlobalStore";
 
 const AuthAzureProdotti : React.FC = () => {
-    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
-    const setCountMessages = useGlobalStore(state => state.setCountMessages);
-    const navigate = useNavigate();
+  const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+  const setCountMessages = useGlobalStore(state => state.setCountMessages);
+  const navigate = useNavigate();
 
-    const [productSelected, setProductSelected] = useState<ProfiloObject|null>(null);
-    const [loading, setLoading] = useState(false);
+  const [productSelected, setProductSelected] = useState<ProfiloObject|null>(null);
+  const [loading, setLoading] = useState(false);
    
 
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
+  const handleModifyMainState = (valueObj) => {
+    dispatchMainState({
+      type:'MODIFY_MAIN_STATE',
+      value:valueObj
+    });
+  };
 
-    const getCount = async (token,nonce) =>{
-        await getMessaggiCount(token,nonce).then((res)=>{
-            const numMessaggi = res.data;
-            setCountMessages(numMessaggi);
-        });
-    };
+  const getCount = async (token,nonce) =>{
+    await getMessaggiCount(token,nonce).then((res)=>{
+      const numMessaggi = res.data;
+      setCountMessages(numMessaggi);
+    });
+  };
 
-    const getProfilo = async ()=>{
+  const getProfilo = async ()=>{
         
-        if(productSelected?.jwt){
-            setLoading(true);
-            await getAuthProfilo(productSelected.jwt)
-                .then((resp) => {
-                    const storeProfilo = resp.data;
-                    const profiloDetails = {
-                        auth:storeProfilo.auth,
-                        nomeEnte:storeProfilo.nomeEnte,
-                        descrizioneRuolo:storeProfilo.descrizioneRuolo,
-                        ruolo:storeProfilo.ruolo,
-                        dataUltimo:storeProfilo.dataUltimo,
-                        dataPrimo:storeProfilo.dataPrimo,
-                        prodotto:storeProfilo.prodotto,
-                        jwt:productSelected.jwt,
-                        nonce:storeProfilo.nonce
+    if(productSelected?.jwt){
+      setLoading(true);
+      await getAuthProfilo(productSelected.jwt)
+        .then((resp) => {
+          const storeProfilo = resp.data;
+          const profiloDetails = {
+            auth:storeProfilo.auth,
+            nomeEnte:storeProfilo.nomeEnte,
+            descrizioneRuolo:storeProfilo.descrizioneRuolo,
+            ruolo:storeProfilo.ruolo,
+            dataUltimo:storeProfilo.dataUltimo,
+            dataPrimo:storeProfilo.dataPrimo,
+            prodotto:storeProfilo.prodotto,
+            jwt:productSelected.jwt,
+            nonce:storeProfilo.nonce
                         
-                    };
-                    //const storeJwt = {token:productSelected.jwt};
-                    //localStorage.setItem('token', JSON.stringify(storeJwt));
-                    //eliminare il nonce
-                    handleModifyMainState({
-                        ruolo:resp.data.ruolo,
-                        action:'LISTA_DATI_FATTURAZIONE',
-                        authenticated:true,
-                        profilo:profiloDetails
-                    });
+          };
+          //const storeJwt = {token:productSelected.jwt};
+          //localStorage.setItem('token', JSON.stringify(storeJwt));
+          //eliminare il nonce
+          handleModifyMainState({
+            ruolo:resp.data.ruolo,
+            action:'LISTA_DATI_FATTURAZIONE',
+            authenticated:true,
+            profilo:profiloDetails
+          });
 
-                    getCount(productSelected.jwt,storeProfilo.nonce);
-                    if(productSelected.prodotto === 'prod-pagopa'){
-                        navigate(PathPf.ANAGRAFICAPSP);
-                    }else if(productSelected.prodotto === 'prod-pn'){
-                        navigate("/send/listadatifatturazione");
-                    }
-                    setLoading(false);
-                }).catch(()=> {
-                    setLoading(false);
-                    window.location.href = redirect;
-                });
-        }
-    };
+          getCount(productSelected.jwt,storeProfilo.nonce);
+          if(productSelected.prodotto === 'prod-pagopa'){
+            navigate(PathPf.ANAGRAFICAPSP);
+          }else if(productSelected.prodotto === 'prod-pn'){
+            navigate("/send/listadatifatturazione");
+          }
+          setLoading(false);
+        }).catch(()=> {
+          setLoading(false);
+          window.location.href = redirect;
+        });
+    }
+  };
 
-    return (
-        <>
-            <HeaderLogAzure/>
+  return (
+    <>
+      <HeaderLogAzure/>
       
-            <div style={{height: '600px',marginTop:'100px'}}>
-                <div className="row">
-                    <div className="col">
-                    </div>
-                    <div className="col">
-                        <div className=" d-flex align-items-center justify-content-center">
-                            <Typography variant="h2">Seleziona il prodotto</Typography>
-                        </div>
-                        <div className=" d-flex align-items-center justify-content-center mt-2">
-                            <Typography  align="center">{`Se operi per più prodotti, potrai modificare la tua scelta dopo aver effettuato l’accesso.`}</Typography>                                                               
-                        </div>
-                        {!productSelected? 
-                            <div className=" d-flex align-items-center justify-content-center mt-5">
-                                <MultipleSelectProdotti  setProductSelected={setProductSelected}></MultipleSelectProdotti>
-                            </div> :
-                            <div className=" d-flex align-items-center justify-content-center mt-5">
-                                <DivProdotto productSelected={productSelected} setProductSelected={setProductSelected}/>
-                            </div>
-                        }
-                    </div>
-                    <div className="col">
-                    </div>
-                </div>
-                {productSelected && 
+      <div style={{height: '600px',marginTop:'100px'}}>
+        <div className="row">
+          <div className="col">
+          </div>
+          <div className="col">
+            <div className=" d-flex align-items-center justify-content-center">
+              <Typography variant="h2">Seleziona il prodotto</Typography>
+            </div>
+            <div className=" d-flex align-items-center justify-content-center mt-2">
+              <Typography  align="center">{`Se operi per più prodotti, potrai modificare la tua scelta dopo aver effettuato l’accesso.`}</Typography>                                                               
+            </div>
+            {!productSelected? 
+              <div className=" d-flex align-items-center justify-content-center mt-5">
+                <MultipleSelectProdotti  setProductSelected={setProductSelected}></MultipleSelectProdotti>
+              </div> :
+              <div className=" d-flex align-items-center justify-content-center mt-5">
+                <DivProdotto productSelected={productSelected} setProductSelected={setProductSelected}/>
+              </div>
+            }
+          </div>
+          <div className="col">
+          </div>
+        </div>
+        {productSelected && 
                 <div className="row mt-3">
 
-                    <div className="col">
-                    </div>
-                    <div className="col">
-                        {!loading ? <div className=" d-flex align-items-center justify-content-center mt-5">
-                            <Button variant="contained" onClick={()=> getProfilo()}>Accedi</Button>
-                        </div>:
-                            <div className="d-flex justify-content-center align-items-center mt-5">
-                                <div id='loader_on_gate_pages'>
-                                    <Loader sentence={'Attendere...'}></Loader> 
-                                </div>
-                            </div>}
-                    </div>
-                    <div className="col">
-                    </div>
+                  <div className="col">
+                  </div>
+                  <div className="col">
+                    {!loading ? <div className=" d-flex align-items-center justify-content-center mt-5">
+                      <Button variant="contained" onClick={()=> getProfilo()}>Accedi</Button>
+                    </div>:
+                      <div className="d-flex justify-content-center align-items-center mt-5">
+                        <div id='loader_on_gate_pages'>
+                          <Loader sentence={'Attendere...'}></Loader> 
+                        </div>
+                      </div>}
+                  </div>
+                  <div className="col">
+                  </div>
                 </div>
-                }
-            </div>
-        </>
-    );
+        }
+      </div>
+    </>
+  );
 };
 
 export default AuthAzureProdotti;

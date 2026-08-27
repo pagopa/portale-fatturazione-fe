@@ -1,23 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
 
 export default function useIsTabActive (){
-    const [isTabVisible, setIsTabVisible] = useState(false);
-    const handleVisibilityChange = useCallback(() => {
-        // eslint-disable-next-line no-undef
-        setIsTabVisible(document.visibilityState === 'visible');
-    }, []);
+  const [isTabVisible, setIsTabVisible] = useState(false);
+  const handleVisibilityChange = useCallback(() => {
+    setIsTabVisible(document.visibilityState === 'visible');
+  }, []);
 
-    useEffect(() => {
-        if(window.location.pathname  !== '/azureLogin'){
-            document.addEventListener('visibilitychange', handleVisibilityChange);
-            return () => {
-                // eslint-disable-next-line no-undef
-                document.removeEventListener('visibilitychange', handleVisibilityChange);
-            };
-        }
-        // eslint-disable-next-line no-undef
-     
-    }, []);
+  useEffect(() => {
+    if(window.location.pathname  !== '/azureLogin'){
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+      };
+    }
+  }, []);
   
-    return isTabVisible;
+  return isTabVisible;
 }

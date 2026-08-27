@@ -144,7 +144,7 @@ export interface BodyDownloadListaCommesse{
     mese:string| number
 }
 
-export interface BodyListaNotifiche{
+export interface BodyListaNotifiche {
     anno: number|null,
     mese: number|null,
     prodotto: string,
@@ -156,7 +156,26 @@ export interface BodyListaNotifiche{
     idEnti: string[],  // solo lato PAGOPA
     recipientId:string|null,
     recapitisti:{idEnte:string,descrizione:string}[],  // solo lato PAGOPA
-    consolidatori:{idEnte:string,descrizione:string}[] // solo lato PAGOPA
+    consolidatori:{idEnte:string,descrizione:string}[] // solo lato PAGOPA,
+    sort:{
+        columnName:string|null,
+        order:string|null
+    }
+}
+
+export interface BodyListaNotifichePagoPa {
+    anno: number|null,
+    mese: number|null,
+    prodotto: string,
+    cap: string|null ,
+    profilo: string,
+    tipoNotifica: number[],
+    statoContestazione: number[] | [],
+    iun:string | null,
+    idEnti: string[],  // solo lato PAGOPA
+    recipientId:string|null,
+    recapitisti:{idEnte:string,descrizione:string}[],  // solo lato PAGOPA
+    consolidatori:{idEnte:string,descrizione:string}[] // solo lato PAGOPA,
 }
 
 export interface BodyListaNotificheSelfcare{

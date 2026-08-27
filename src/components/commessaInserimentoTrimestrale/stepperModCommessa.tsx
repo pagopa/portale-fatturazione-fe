@@ -26,11 +26,11 @@ La logica era stata pensata con l'inserimento multiplo , logica iniziale del mod
         return indexes?.includes(step);
     };
 */
-    return(
-        <Stepper activeStep={activeStep}>
-            {steps.map((label, index) => {
+  return(
+    <Stepper activeStep={activeStep}>
+      {steps.map((label, index) => {
                
-                /*
+        /*
                 DA utilizzare nel caso di inserimento con piu moduli commessa
                 La logica era stata pensata con l'inserimento multiplo , logica iniziale del modulo commessa trimestrale
 
@@ -54,15 +54,15 @@ La logica era stata pensata con l'inserimento multiplo , logica iniziale del mod
                     );
                 }*/
 
-                return (
-                    <Step key={`${label}-${index}`}>
-                        <StepLabel>{label}</StepLabel>
-                    </Step>
-                );
-            })}
-        </Stepper>
+        return (
+          <Step key={`${label}-${index}`}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        );
+      })}
+    </Stepper>
                   
-    );
+  );
 };
 
 export default StepperCommessa;

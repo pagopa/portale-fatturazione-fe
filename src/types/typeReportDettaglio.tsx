@@ -30,7 +30,8 @@ export interface NotificheList{
     cap:string,
     statoEstero:string,
     onere:string,
-    recipientId:string
+    recipientId:string,
+    data:string,
 }
 
 export interface MultiSelectGroupedByProps{

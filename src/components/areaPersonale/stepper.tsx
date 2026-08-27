@@ -8,16 +8,16 @@ const steps = ['Modulo Commessa', 'Conferma dati'];
 
 const HorizontalLinearStepper: React.FC<StepperProps> = ({indexStepper}) => {
 
-    return (
-        <Box sx={{
-            width: "100%"
-        }}>
-            <Stepper activeStep={indexStepper}>
-                {steps.map(label => <Step key={label}>
-                    <StepLabel>{label}</StepLabel>
-                </Step>)}
-            </Stepper>
-        </Box>
-    );
+  return (
+    <Box sx={{
+      width: "100%"
+    }}>
+      <Stepper activeStep={indexStepper}>
+        {steps.map(label => <Step key={label}>
+          <StepLabel>{label}</StepLabel>
+        </Step>)}
+      </Stepper>
+    </Box>
+  );
 };
 export default  HorizontalLinearStepper;

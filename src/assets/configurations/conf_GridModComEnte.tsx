@@ -19,30 +19,30 @@ export interface HeaderGridCustom {
 
 
 export const headerNameModComTrimestraleENTE: HeaderGridCustom[] = [
-    { label: '',align:'center',width:'60px', headerAction:false,gridOpenDetail:(disabled,open,setOpen) =>
-        <IconButton
-            size="medium"
-            onClick={() => setOpen && setOpen(!open)}
-            disabled={disabled}
-        > {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-        </IconButton>
-    },
-    { label: 'Anno',align:'center',width:'160px', headerAction:false},
-    { label: 'Trimestre',align:'center',width:'160px', headerAction:false},
-    { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) =>  
-        <Tooltip
-            placement="bottom"
-            title={label}
-        ><span><CheckCircleIcon sx={{ color: color }}/></span></Tooltip> },
-    // { label: 'Tot. Notifiche',align:'center',width:'100px',headerAction:false},
-    { label: '',align:'center',width:'60',headerAction:false,
-        gridAction:(fun,color,disabled,obj) =>
-            <IconButton
-                size="medium"
-                onClick={() => fun(obj)}
-                disabled={disabled}
-            > <ArrowForwardIcon sx={{ color: color }}/>
-            </IconButton>
-    }
+  { label: '',align:'center',width:'60px', headerAction:false,gridOpenDetail:(disabled,open,setOpen) =>
+    <IconButton
+      size="medium"
+      onClick={() => setOpen && setOpen(!open)}
+      disabled={disabled}
+    > {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+    </IconButton>
+  },
+  { label: 'Anno',align:'center',width:'160px', headerAction:false},
+  { label: 'Trimestre',align:'center',width:'160px', headerAction:false},
+  { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) =>  
+    <Tooltip
+      placement="bottom"
+      title={label}
+    ><span><CheckCircleIcon sx={{ color: color }}/></span></Tooltip> },
+  // { label: 'Tot. Notifiche',align:'center',width:'100px',headerAction:false},
+  { label: '',align:'center',width:'60',headerAction:false,
+    gridAction:(fun,color,disabled,obj) =>
+      <IconButton
+        size="medium"
+        onClick={() => fun(obj)}
+        disabled={disabled}
+      > <ArrowForwardIcon sx={{ color: color }}/>
+      </IconButton>
+  }
 ];
 

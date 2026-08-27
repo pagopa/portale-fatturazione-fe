@@ -166,7 +166,7 @@ height: 48px;
    position: fixed;
    top: -100%;
    opacity:0;
-   z-index: 2;
+   z-index: 9999;
    left: 50%;
    transform: translateX(-50%);
    animation: smooth-appear 1s ease forwards;
@@ -196,7 +196,7 @@ height: 48px;
    position: fixed;
    top: -100%;
    opacity:0;
-   z-index: 2;
+   z-index: 9999;
    left: 50%;
    transform: translateX(-50%);
    animation: smooth-appear 1s ease forwards;
@@ -239,5 +239,4 @@ height: 48px;
   background-color: transparent;
   }
 
- 
  
