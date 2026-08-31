@@ -6,7 +6,7 @@ const getStatoFattura = (obj) =>{
 
 export const headersDocumentiSospesiiSend : HeaderGridCustom[] = [
   { label: "", align: "center", width: "30px", keyValue: "collaps", typeColumn: "collaps" },
-  { label: "Ragione sociale", align: "center", width: "200px", keyValue: "ragioneSociale", typeColumn: "ragionesociale", makeAction: true, applyCss: true },
+  { label: "Ragione sociale", align: "center", width: "200px", keyValue: "ragionesociale", typeColumn: "ragionesociale", makeAction: true, applyCss: true },
   { label: "Data Fattura", align: "center", width: "180px", keyValue: "dataFattura", typeColumn: "string" },
   //{ label: "Stato", align: "center", width: "100px", keyValue: "stato", typeColumn: "data-exeption" , funToManipulateValue:getStatoFattura, keyToManipulateData:"stato"},
   { label: "T. Fattura", align: "center", width: "180px", keyValue: "tipologiaFattura", typeColumn: "string" },
