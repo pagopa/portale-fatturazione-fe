@@ -55,11 +55,11 @@ const getIconLettura = (el) => {
 
 export const headerNameAsyncDoc: HeaderGridCustom[] = [
   { label: "", align: "center", width: "30px", keyValue: "collaps", typeColumn: "collaps" },
-  { label: 'Data Richiesta', keyValue:'dataInserimento', typeColumn:"string",align:'center',width:'160px', headerAction:true, },
+  { label: 'Data Richiesta', keyValue:'dataInserimento', typeColumn:"data-ora",align:'center',width:'160px', headerAction:true, },
   { label: 'Anno',align:'center',width:'100px',headerAction:false,keyValue:'anno',typeColumn:"string" },
   { label: 'Mese',align:'center',width:'100px',headerAction:false,keyValue:'mese' ,typeColumn:"mese-number"},
   { label: 'Tot. Not.',align:'center',width:'80px',headerAction:false,keyValue:'count',typeColumn:"number" },
-  { label: 'Data Esecuzione',align:'center',width:'150px',headerAction:false,keyValue:'dataFine',typeColumn:"string" },
+  { label: 'Data Esecuzione',align:'center',width:'150px',headerAction:false,keyValue:'dataFine',typeColumn:"data-ora" },
   { label: 'Stato',align:'center',width:'100px',headerAction:false,keyValue:'custom-value',typeColumn:"custom-value",funToManipulateValue:getChipStato },
   { label: 'Letto',align:'center',width:'30px',headerAction:false,keyValue:'custom-value',typeColumn:"custom-value",funToManipulateValue:getIconLettura },
   { label: '',align:'center',width:'60',headerAction:false,keyValue:'custom-value',typeColumn:"custom-value",funToManipulateValue:getDownloadAction}
