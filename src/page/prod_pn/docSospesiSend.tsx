@@ -471,7 +471,7 @@ const DocSospesiSend : React.FC = () =>{
     }else if(el.tipocontratto === "PAC"){
       idTipoContratto = 2;
     }
-    navigate(`${PathPf.PDF_REL}/documentisospesi/${el.idFattura}/${el.istitutioID}/${idTipoContratto}`); 
+    navigate(`${PathPf.PDF_REL}/documentisospesi/${el.idfattura}/${el.istitutioID}/${idTipoContratto}`); 
   }; 
 
   const statusAnnulla = ( 
