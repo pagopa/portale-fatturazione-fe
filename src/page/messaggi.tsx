@@ -92,7 +92,7 @@ const Messaggi : React.FC = () => {
       setBodyCentroMessaggi(filters.body);
       getMessaggi(filters.page, filters.rows, filters.body);
     }else{
-      getMessaggi(page, rowsPerPage, bodyCentroMessaggi);
+      getMessaggi(page+1, rowsPerPage, bodyCentroMessaggi);
     }
   },[]);
 
