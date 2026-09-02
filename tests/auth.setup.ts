@@ -1,6 +1,12 @@
 import { test as setup } from '@playwright/test';
 import axios from 'axios';
 import path from 'path';
+import https from 'https';
+
+// Allow self-signed certificates for dev environment
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false
+});
 
 const BASE_URL = "https://api.dev.portalefatturazione.pagopa.it";
 const TOKEN = 'eyJraWQiOiJqd3QtZXhjaGFuZ2VfZWE6NDg6NTI6ZTQ6YWU6OGY6MzA6YjU6YWQ6M2M6ZDI6MDU6NzQ6Nzk6Yzk6ZWYiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJmYW1pbHlfbmFtZSI6Ik1hbmNpbmkiLCJmaXNjYWxfbnVtYmVyIjoiTU5DQ1NEMDFSMTNBNzU3RyIsIm5hbWUiOiJDZXNpZGlhIiwic3BpZF9sZXZlbCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L1NwaWRMMiIsImZyb21fYWEiOmZhbHNlLCJ1aWQiOiJmMGJjZDQ2OC1kODUzLTRjNjQtYmZiMS0zZTQ3YjUyNDU1ZjEiLCJsZXZlbCI6IkwyIiwiaWF0IjoxNzA2Njk0MTQyLCJleHAiOjE3MDY2OTQxNTcsImF1ZCI6ImRldi5wb3J0YWxlZmF0dHVyYXppb25lLnBhZ29wYS5pdCIsImlzcyI6Imh0dHBzOi8vdWF0LnNlbGZjYXJlLnBhZ29wYS5pdCIsImp0aSI6ImQ4MTk1NjQwLTMwOGEtNDZkOS05MjQ4LTI1YTRjMjYzZWE3OSIsImVtYWlsIjoiYy5tYW5jaW5pQHRlc3QuZW1haWwuaXQiLCJvcmdhbml6YXRpb24iOnsiaWQiOiI3MjkzNTJlOS01YmI5LTRhZmYtYTZiNS1jYTBjODBjMGQzYjQiLCJuYW1lIjoiQ29tdW5lIGRpIFNhbiBNYXVybyBUb3JpbmVzZSIsInJvbGVzIjpbeyJwYXJ0eVJvbGUiOiJNQU5BR0VSIiwicHJvZHVjdElkIjoicHJvZC1wbiIsInJvbGUiOiJhZG1pbiJ9XSwiZmlzY2FsX2NvZGUiOiIwMTExMzE4MDAxMCIsImlwYUNvZGUiOiJjX2kwMzAifSwiZGVzaXJlZF9leHAiOjE3MDY3MjY0ODR9.meZlmu9ERwmXQeT1eS0rfA-Z3qPsc3KsLtInRa9N8VB2mHu6rljKOKEU7jsVYyPkKPG2dl5tSQ5-ScVFJeXxZmiSNyT2tBxTvrl-IT1yYv51YsA7tbyNp0HKQnsCKKIq55BjLd4QZXVgeltoHmoreeCjd7fAiDlLm8inEMJovAMeFei9QI6xMr3icex1CZt_zsegLJUNwGOIhHqs2Q8PUa3I1RP0E9EEnSIkZoirFEfobp501mO956ghduvuDpVwbSN9lTHTtpEk0kjgjFakbs_1NA33iWI5DkNTnfygr9bUBP3cBoXYiBoKNTaygBgUttepali18e_R6tTRKWwuyg'; // <- replace with a valid token
@@ -11,6 +17,7 @@ setup('authenticate', async ({ page, request }) => {
   
   const selfcareRes = await axios.get(`${BASE_URL}/api/auth/selfcare/login?selfcareToken=${TOKEN}`, {
     headers: { Accept: 'application/json' },
+    httpsAgent: httpsAgent,
   });
 
   if (selfcareRes.status !== 200) {
@@ -26,6 +33,7 @@ setup('authenticate', async ({ page, request }) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${jwt}`,
     },
+    httpsAgent: httpsAgent,
   });
 
   if (profiloRes.status !== 200) {

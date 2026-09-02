@@ -136,8 +136,8 @@ const MainFilter = <T,>({
   switch (filterName) {
         
   case "select_key_value": 
-    return ( !hidden && keyBody && <MainBoxContainer>
-      <FormControl id={id||inputLabel} fullWidth>
+    return ( !hidden && keyBody && <MainBoxContainer itemProps={itemProps}>
+      <FormControl disabled={disabled} fullWidth>
         <InputLabel>
           {inputLabel}
         </InputLabel>
@@ -165,8 +165,8 @@ const MainFilter = <T,>({
       </FormControl>
     </MainBoxContainer>);
   case "select_key_value_description":
-    return ( !hidden && keyBody && keyOption && <MainBoxContainer>
-      <FormControl id={id||inputLabel} fullWidth >
+    return ( !hidden && keyBody && keyOption && <MainBoxContainer itemProps={itemProps}>
+      <FormControl fullWidth >
         <InputLabel>
           {inputLabel}
         </InputLabel>
@@ -184,6 +184,7 @@ const MainFilter = <T,>({
         >
           {arrayValues?.map((el) => (
             <MenuItem
+              key={Math.random()}
               value={el[keyDescription]}
             >
               {el[keyOption]}
