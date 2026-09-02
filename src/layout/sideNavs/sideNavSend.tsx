@@ -29,6 +29,7 @@ import BatchPredictionIcon from '@mui/icons-material/BatchPrediction';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DescriptionIcon from '@mui/icons-material/Description';
+import SendIcon from '@mui/icons-material/Send';
 
 const SideNavSend : React.FC = () => {
 
@@ -251,8 +252,8 @@ const SideNavSend : React.FC = () => {
           <ListItemButton sx={{ pl: 4 }} 
             selected={
               currentLocation === PathPf.FATTURAZIONE || 
-              currentLocation.includes("send/fatturapdf/documentiemessi") ||
-              currentLocation.includes(PathPf.JSON_TO_SAP)
+              currentLocation.includes("send/fatturapdf/documentiemessi") //||
+              //currentLocation.includes(PathPf.JSON_TO_SAP)
             } 
             onClick={()=> handleListItemClick(PathPf.FATTURAZIONE)}>
             <ListItemIcon>
@@ -268,6 +269,14 @@ const SideNavSend : React.FC = () => {
                 <FormatListBulletedIcon fontSize="inherit" />
               </ListItemIcon>
               <ListItemText primary="Gestione Fatture" />
+            </ListItemButton>
+          </List>
+          <List component="div" disablePadding>
+            <ListItemButton selected={currentLocation === PathPf.JSON_TO_SAP} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.JSON_TO_SAP)}>
+              <ListItemIcon>
+                <SendIcon fontSize="inherit" />
+              </ListItemIcon>
+              <ListItemText primary="Generazione JSON" />
             </ListItemButton>
           </List>
         </Collapse> 

@@ -11,6 +11,7 @@ import {
   Alert,
   SxProps,
   Theme,
+  Checkbox,
 } from "@mui/material";
 import ArticleIcon from "@mui/icons-material/Article";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -25,7 +26,7 @@ type CopyCellProps = {
   align?: "left" | "center" | "right" | "inherit" | "justify";
 };
 
-type GridCellProps = {
+type GridCellProps<T> = {
   rowObject: HeaderGridCustom;
   index: number;
   element: Record<string, any>;
@@ -37,6 +38,8 @@ type GridCellProps = {
   isRowOpen?: boolean; // stato di espansione, per il case "collaps"
   onToggleRow?: () => void; // handler per il case "collaps"
   setAction?: (obj:T, action:string) => void;
+  manageCheckbox?: (currentRow:T) => boolean;
+  manageCheckboxCollapse?: (currentRow:K) => boolean;
 };
 
 const flexCenterStyle: SxProps<Theme> = {
@@ -75,9 +78,13 @@ const GridCell = ({
   apiGet,
   isRowOpen,
   onToggleRow,
-  setAction
-}: GridCellProps) => {
+  setAction,
+  manageCheckbox,
+  manageCheckboxCollapse
+}: GridCellProps<any>) => {
   const value = element[rowObject.keyValue];
+  const [checked, setChecked] = useState(false);
+  console.log({checked});
 
   switch (rowObject.typeColumn) {
   case "string": {
@@ -258,10 +265,21 @@ const GridCell = ({
       </TableCell>
     );
   case "checkbox":
-    // TODO: implementare rendering reale, per ora placeholder
     return (
       <TableCell key={`${i}-checkbox`} align="center">
-          checkbox
+        <Checkbox 
+          checked={checked}
+          onChange={(event) =>{
+           
+            if(manageCheckbox && manageCheckbox(element)){
+              setChecked(event.target.checked);
+            }
+
+            if(manageCheckboxCollapse && manageCheckboxCollapse(element)){
+              setChecked(event.target.checked);
+            }
+            
+          } }/>
       </TableCell>
     );
   case "chip": {

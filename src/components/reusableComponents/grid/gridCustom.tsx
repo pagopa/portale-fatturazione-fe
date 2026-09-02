@@ -4,7 +4,7 @@ import HeaderGridCustom from "./headerGrid/headerGridCustom";
 import EmptyRow from "./emptyRow";
 
 import GridRowDesignByConfigFile from "./rowComponent/gridRowDesignByConfigFile";
-interface GridCustomProps<T> {
+interface GridCustomProps<T,K> {
     elements:  T[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
     changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
@@ -17,7 +17,7 @@ interface GridCustomProps<T> {
     apiGet?:(el: T)=> void 
     disabled:boolean
     widthCustomSize:string
-    setAction?:(obj:T,action:string) => void
+    setAction?:(obj:T,action:string) => voi
     buttons?:{
         stringIcon:string
         icon:React.ReactNode
@@ -36,7 +36,10 @@ interface GridCustomProps<T> {
     headerActionSortServerSide?:(label:string) => void,
     titleRowCollapse?:string,
     keyCollapse?:string,
-    bgColorRowFunction?:(element:T) => string
+    bgColorRowFunction?:(element:T) => string,
+    manageCheckbox?:(currentRow:T) => boolean,
+    manageCheckboxCollapse?:(currentRow:K) => boolean,
+    filterOnCollapse?:boolean
 }
 
 export interface HeaderGridCustom {
@@ -62,7 +65,7 @@ export interface HeaderGridCustom {
 }
 
 
-const GridCustom = <T,>({
+const GridCustom = <T,K>({
   elements,
   changePage,
   changeRow,
@@ -88,8 +91,11 @@ const GridCustom = <T,>({
   headerActionSortServerSide,
   titleRowCollapse,
   keyCollapse,
-  bgColorRowFunction
-}: GridCustomProps<T>) => {
+  bgColorRowFunction,
+  manageCheckbox,
+  manageCheckboxCollapse,
+  filterOnCollapse=false
+}: GridCustomProps<T,K>) => {
  
   return (
     <div>
@@ -129,6 +135,9 @@ const GridCustom = <T,>({
                     titleRowCollapse={titleRowCollapse}
                     keyCollapse={keyCollapse}
                     bgColorRowFunction={bgColorRowFunction}
+                    manageCheckbox={manageCheckbox}
+                    manageCheckboxCollapse={manageCheckboxCollapse}
+                    filterOnCollapse={filterOnCollapse}
                   />
                 );
               })}

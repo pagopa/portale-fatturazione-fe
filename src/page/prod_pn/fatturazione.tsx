@@ -697,7 +697,6 @@ const Fatturazione : React.FC = () =>{
             setBodyFatturazione((prev) => ({...prev,...{tipologiaFattura:e}}));
           }}
           iconMaterial={RenderIcon("invoice",true)}
-                    
         ></MainFilter>
         <MainFilter 
           filterName={"multi_checkbox"}
@@ -777,14 +776,7 @@ const Fatturazione : React.FC = () =>{
             disabled:disableButtonSap,
             tooltipMessage:"Invia a SAP",
             withText:false
-          },{
-            onButtonClick: () => navigate(PathPf.JSON_TO_SAP),
-            variant: "outlined",
-            icon:{name:"iso_share" },
-            tooltipMessage:"Invio fatture",
-            withText:false
-          },
-              
+          }    
         ]}
       />
       <ActionTopGrid
