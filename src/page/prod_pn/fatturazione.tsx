@@ -535,16 +535,19 @@ const Fatturazione : React.FC = () =>{
   ];
     
   const showPopUpAction = (obj, action) => { 
+    const newObj = { ...obj };
     
-    obj.dataFattura = formatDateString(obj);
-    setElementSelected(obj);
+    newObj.dataFattura = formatDateString(newObj);
+
+    setElementSelected(newObj);
     setActionCalled(action);
     if(action === "posticipa"){
-      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Posticipare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Posticipare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
     }else if(action === "eliminazione"){
-      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
     }
   };
+
 
   
 
