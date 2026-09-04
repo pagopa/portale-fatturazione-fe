@@ -22,7 +22,8 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { gestioneFattureInserisci } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { formatDate, formatDateString } from "../../reusableFunction/function";
-import { ElementToProcessComponent } from "./gestioneFatture";
+import { ElementToProcessComponent } from "../../components/reusableComponents/tableViewData";
+
 
 
 

@@ -14,14 +14,13 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeR
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
-import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate } from "../../reusableFunction/function";
 import EnhancedTableCustom from "../../components/reusableComponents/grid/enhancedTabalToolbarCustom";
+import { ElementToProcessComponent } from "../../components/reusableComponents/tableViewData";
 
 
 export interface BodyLista {
@@ -690,31 +689,3 @@ export default GestioneFatture;
       
 
 
-export const ElementToProcessComponent = ({obj, title , keyValueObj}) => {
-  
-  return (
-    <Box sx={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center', mt:2, mb:2}}>
-      <Typography > {title}</Typography>
-      <Box sx={{ backgroundColor:'#F8F8F8', padding:'10px',marginTop:'20px',width:'100%'}}>
-        <Table size="small">
-          <TableHead>
-            <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-              {keyValueObj.map((el,i) => (
-                <TableCell key={i} align="center" sx={{ marginLeft:"16px"}} >{el.label}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-            <TableRow >
-              {keyValueObj.map((el,i) => (
-                <Tooltip key={i} title={obj[el.key]?.length > 20 ? obj[el.key]:null} >
-                  <TableCell  align="center">{obj[el.key]?.length > 20 ? obj[el.key].slice(0, 20) + '...':obj[el.key]}</TableCell>
-                </Tooltip> 
-              ))}
-            </TableRow>
-          </TableBody>
-        </Table>
-      </Box>
-    </Box>
-  );
-};

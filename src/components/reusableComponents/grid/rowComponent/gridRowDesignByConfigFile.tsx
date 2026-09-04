@@ -1,9 +1,10 @@
-import { Box, Collapse, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Button, Collapse, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { HeaderGridCustom } from "../gridCustom";
 import GridCell from "./gridCell";
 import { useState, useMemo } from 'react';
 import Loader from "../../loader";
 import MainFilter from "../../mainFilter";
+import CustomTablePagination from "../pagination";
 
 
 interface GridRowsRendererProps<T ,K>{
@@ -18,9 +19,10 @@ interface GridRowsRendererProps<T ,K>{
   manageCheckbox?: ( currentRow:Record<string, any>) => Record<string, any>;
   manageCheckboxCollapse?:(currentRow:Record<string, any>) => Record<string, any>,
   filterOnCollapse:boolean,
-  getAsyncDetails?:(currentRow:Record<string, any>) => Promise<Record<string, any>[]>,
+  getAsyncDetails?:(currentRow:Record<string, any>,val:boolean) => void,
   collapseDataLoading?:boolean,
-  selectedRow:K[]
+  selectedRows:K[],
+  manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
 }
 
 const GridRowDesignByConfigFile=<T,K>({
@@ -37,7 +39,8 @@ const GridRowDesignByConfigFile=<T,K>({
   filterOnCollapse,
   getAsyncDetails,
   collapseDataLoading,
-  selectedRow=[]
+  selectedRows=[],
+  manageStateCheckbox
 }: GridRowsRendererProps<T,K>) => {
 
   const [open, setOpen] = useState(false);
@@ -120,7 +123,9 @@ const GridRowDesignByConfigFile=<T,K>({
             setAction={setAction}
             manageCheckbox={manageCheckbox}
             getAsyncDetails={getAsyncDetails}
-            selectedRow={selectedRow}
+            selectedRows={selectedRows}
+            manageStateCheckbox={manageStateCheckbox}
+            usedInside={"main-row"}
           />
         ))}
       </TableRow>
@@ -144,16 +149,6 @@ const GridRowDesignByConfigFile=<T,K>({
                <>
                  <MainFilter 
                    sizeHeight={"small"}
-                   filterName={"input_text"}
-                   inputLabel={"ID Fattura"}
-                   clearOnChangeFilter={() => null}
-                   setBody={() => null}
-                   body={{}}
-                   keyDescription='iun'
-                   keyBody={"iun"}
-                   keyValue={"iun"}/>
-                 <MainFilter 
-                   sizeHeight={"small"}
                    filterName={"multi_checkbox"}
                    inputLabel={"Rag. Soc. Ente"}
                    clearOnChangeFilter={()=> null}
@@ -171,6 +166,17 @@ const GridRowDesignByConfigFile=<T,K>({
                    keyBody={"idEnti"} />
                  <MainFilter 
                    sizeHeight={"small"}
+                   filterName={"input_text"}
+                   inputLabel={"Numero Fattura"}
+                   clearOnChangeFilter={() => null}
+                   setBody={() => null}
+                   body={{}}
+                   keyDescription='iun'
+                   keyBody={"iun"}
+                   keyValue={"iun"}/>
+                 
+                 <MainFilter 
+                   sizeHeight={"small"}
                    filterName={"date_from_to"}
                    inputLabel={"Data Fattura"}
                    clearOnChangeFilter={() => null}
@@ -182,58 +188,69 @@ const GridRowDesignByConfigFile=<T,K>({
                    keyCompare="il nulla"
                    error={false}
                  />
-               </>
-                   
-                  }
+                 <Button disabled={manageStateCheckbox && manageStateCheckbox(element,"",selectedRows)?.disabled || selectedRows.length === 0} onClick={apiGet} size={"small"} variant="outlined">Generazione Json</Button>
+               </> }
                 </Stack>
-
-                <Table size="small" aria-label="purchases">
-                  <TableHead>
-                    <TableRow sx={{ borderColor: "white", borderWidth: "thick" }}>
-                      {
-                        Object.values(headerNamesCollapse)?.map((value: any, i: number) => {
-                          return (
-                            <TableCell key={`position-${value.label}-${i}`} align='center'>{value.label}</TableCell>
-                          );
-                        })
-                      }
-                    </TableRow>
-                  </TableHead>
-                  {collapseDataLoading ? 
-                    <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
-                      <TableRow>
-                        <TableCell 
-                          colSpan={Object.keys(headerNamesCollapse).length} 
-                          sx={{ textAlign: "center", border: "none" }}
-                        >
-                          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", py: 4 }}>
-                            <Loader sentence={"Caricamento..."} />
-                          </Box>
-                        </TableCell>
+                <>
+                  <Table size="small" aria-label="purchases">
+                    <TableHead>
+                      <TableRow sx={{ borderColor: "white", borderWidth: "thick" }}>
+                        {Object.values(headerNamesCollapse)?.map((value: any, i: number) => (
+                          <TableCell key={`position-${value.label}-${i}`} align='center'>
+                            {value.label}
+                          </TableCell>
+                        ))}
                       </TableRow>
-                    </TableBody>
-                    :
-                    <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
-                      {dataInsideCollapse?.map((el: any, rowIndex: number) => (
-                        <TableRow key={`row-${rowIndex}`}>
-                          {Object.values(headerNamesCollapse).map(
-                            (rowObjectCollapsed: HeaderGridCustom, colIndex: number) => (
-                              <GridCell
-                                key={`${rowObjectCollapsed.keyValue}-${colIndex}`}
-                                rowObject={rowObjectCollapsed}
-                                index={colIndex}
-                                element={el}
-                                headerNames={headerNamesCollapse}
-                                manageCheckboxCollapse={manageCheckboxCollapse}
-                                selectedRow={selectedRow}
-                              />
-                            )
-                          )}
+                    </TableHead>
+                    {collapseDataLoading ? (
+                      <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
+                        <TableRow>
+                          <TableCell 
+                            colSpan={Object.keys(headerNamesCollapse).length} 
+                            sx={{ textAlign: "center", border: "none" }}
+                          >
+                            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", py: 4 }}>
+                              <Loader sentence={"Caricamento..."} />
+                            </Box>
+                          </TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  }
-                </Table>
+                      </TableBody>
+                    ) : (
+                      <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
+                        {dataInsideCollapse?.map((el: any, rowIndex: number) => (
+                          <TableRow key={`row-${rowIndex}`}>
+                            {Object.values(headerNamesCollapse).map(
+                              (rowObjectCollapsed: HeaderGridCustom, colIndex: number) => (
+                                <GridCell
+                                  key={`${rowObjectCollapsed.keyValue}-${colIndex}`}
+                                  rowObject={rowObjectCollapsed}
+                                  index={colIndex}
+                                  element={el}
+                                  headerNames={headerNamesCollapse}
+                                  manageCheckboxCollapse={manageCheckboxCollapse}
+                                  selectedRows={selectedRows}
+                                  manageStateCheckbox={manageStateCheckbox}
+                                  usedInside={"collapse-row"}
+                                />
+                              )
+                            )}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    )}
+                  </Table>
+
+                  {/* ✅ ora è FUORI dalla Table, come sibling */}
+                  {!collapseDataLoading && (
+                    <CustomTablePagination
+                      total={0}
+                      page={1}
+                      rows={10}
+                      changePage={() => null}
+                      changeRow={() => null}
+                    />
+                  )}
+                </>
               </Box>
             </Collapse>
           </TableCell>

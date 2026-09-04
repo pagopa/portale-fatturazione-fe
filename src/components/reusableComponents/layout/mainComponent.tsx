@@ -18,6 +18,7 @@ import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import PersonIcon from '@mui/icons-material/Person';
 import MarkChatUnreadIcon from '@mui/icons-material/MarkChatUnread';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import SendIcon from '@mui/icons-material/Send';
 
 
 const MainBox = styled(Box)({
@@ -279,7 +280,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                 onClick={action.onButtonClick}
                 startIcon={action.icon && RenderIcon(action.icon.name)}
                 disabled={action.disabled}
-                variant={"text"}
+                variant={action.variant}
               >
                 {action.label}
               </CustomButton>
@@ -324,13 +325,19 @@ interface CustomButtonProps extends ButtonProps {
 export const CustomButton = styled(Button, {
   shouldForwardProp: (prop) => prop !== "withText" && prop !== "colorAction",
 })<CustomButtonProps>(({ theme, withText = true, colorAction }) => ({
-  minWidth: withText ? "130px" : undefined,
-  padding: withText ? theme.spacing(1, 3) : undefined,
+  minWidth: withText ? "130px" : "auto",
+  padding: withText ? theme.spacing(1, 3) : theme.spacing(1),
   fontWeight: 500,
   textTransform: "none",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  ...(!withText && {
+    "& .MuiButton-startIcon": {
+      marginLeft: 0,
+      marginRight: 0,
+    },
+  }),
 }));
 
 
@@ -339,37 +346,38 @@ export const RenderIcon = (iconName,sx = true) => {
   case "download":
     return <DownloadIcon sx={{
       marginRight:sx ? '10px':null    
-    }}></DownloadIcon>;
+    }}/>;
   case "event_note":
     return <EventNoteIcon/>;
   case "circle_arrow_icon":
-    return  <ArrowCircleDownIcon></ArrowCircleDownIcon>;
+    return  <ArrowCircleDownIcon/>;
   case "iso_share":
-    return <IosShareIcon></IosShareIcon>;
+    return <IosShareIcon/>;
   case "preview":
-    return <PreviewIcon></PreviewIcon>;
+    return <PreviewIcon/>;
   case "restart":
-    return <RestartAltIcon></RestartAltIcon>;
+    return <RestartAltIcon/>;
   case "list":
-    return <ListIcon></ListIcon>;
+    return <ListIcon/>;
   case "invoice":
-    return <DescriptionIcon></DescriptionIcon>;
+    return <DescriptionIcon/>;
   case "contract":
-    return <GavelIcon></GavelIcon>;
+    return <GavelIcon/>;
   case "date":
-    return <DateRangeIcon fontSize={sx ? "small":"medium"}></DateRangeIcon>;
+    return <DateRangeIcon fontSize={sx ? "small":"medium"}/>;
   case "status":
-    return <AutorenewIcon fontSize={sx ? "small":"medium"}></AutorenewIcon>;
+    return <AutorenewIcon fontSize={sx ? "small":"medium"}/>;
   case "typology":
-    return <InboxIcon fontSize={sx ? "small":"medium"} ></InboxIcon>;  
+    return <InboxIcon fontSize={sx ? "small":"medium"}/>;
   case "fase":
-    return <HourglassBottomIcon fontSize={sx ? "small":"medium"} ></HourglassBottomIcon>;
+    return <HourglassBottomIcon fontSize={sx ? "small":"medium"}/>;
   case "person":
-    return <PersonIcon fontSize={sx ? "small":"medium"}></PersonIcon>;
+    return <PersonIcon fontSize={sx ? "small":"medium"}/>;
   case "type-not":
-    return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}></MarkChatUnreadIcon>;
+    return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}/>;
   case "add-action":
     return <NoteAddIcon fontSize={sx ? "small":"medium"}/>;
-
+  case "send":
+    return <SendIcon fontSize={sx ? "small":"medium"}/>;
   }
 };

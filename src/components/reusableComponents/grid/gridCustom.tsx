@@ -39,9 +39,10 @@ interface GridCustomProps<T,K> {
     manageCheckbox?:(currentRow:Record<string, any>) => Record<string, any>,
     manageCheckboxCollapse?:(currentRow:Record<string, any>) => Record<string, any>,
     filterOnCollapse?:boolean,
-    getAsyncDetails?:(currentRow:Record<string, any>) => Promise<Record<string, any>[]>,
+    getAsyncDetails?:(currentRow:Record<string, any>,val:boolean) => void,
     collapseDataLoading?:boolean,
-    selectedRow?:K[]
+    selectedRows?:K[],
+    manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
 }
 
 export interface HeaderGridCustom {
@@ -99,7 +100,8 @@ const GridCustom = <T,K>({
   filterOnCollapse=false,
   getAsyncDetails,
   collapseDataLoading,
-  selectedRow=[]
+  selectedRows=[],
+  manageStateCheckbox
 }: GridCustomProps<T,K>) => {
  
   return (
@@ -145,7 +147,8 @@ const GridCustom = <T,K>({
                     filterOnCollapse={filterOnCollapse}
                     getAsyncDetails={getAsyncDetails}
                     collapseDataLoading={collapseDataLoading}
-                    selectedRow={selectedRow}
+                    selectedRows={selectedRows}
+                    manageStateCheckbox={manageStateCheckbox}
                   />
                 );
               })}

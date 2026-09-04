@@ -11,7 +11,9 @@ import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, Responsi
 import { saveAs } from "file-saver";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
-import { headerNamesInvioFatture, headerNamesInvioFattureCollapse } from "../../assets/configurations/conf_GridInvioFatture";
+import { headerNamesInvioFatture, headerNamesInvioFattureCollapse, keyValueObjModalInfo } from "../../assets/configurations/conf_GridInvioFatture";
+import MainModalComponent from "../../components/reusableComponents/modals/mainModalComponent";
+import { ElementToProcessComponent } from "../../components/reusableComponents/tableViewData";
 
 
 interface ListaFatture {
@@ -271,19 +273,28 @@ const InvioFatture : React.FC = () => {
   const [gridData, setGridData] = useState<Fattura[]>([]);
   const [objectSort, setObjectSort] = useState<{[key:string]:number}>({"Anno Riferimento":1,"Mese Riferimento":1});
   const [listaResponse, setListaResponse] = useState<any[]>([]);
+  const [openModalFatture, setOpenModalFatture]= useState(false);
 
 
-  const [elementSelected,setElementSelected] = useState<SelectedJsonSap[]>([]);
+  const [elementsSelected,setElementSelected] = useState<Record<string, any>[]>([]);
   const [arrayCollapseSelected,setArrayCollapseSelected] = useState<SelectedJsonSap[]>([]);
 
   const manageCheckbox = (currentRow: Record<string, any>):Record<string, any>=> {
-    const verifyIfSelected = !!elementSelected.find((el) =>{
+
+    const checkLengthOfCollapse = listaFatture.find((el) =>{
       return el.annoRiferimento === currentRow.annoRiferimento &&
        el.meseRiferimento === currentRow.meseRiferimento && 
        el.tipologiaFattura === currentRow.tipologiaFattura &&
-       el.idFattura === null;
-    } );
-    console.log({verifyIfSelected});
+       el.statoInvio === currentRow.statoInvio;
+    } )?.fatture.length;
+
+    const verifyIfSelected = (!!elementsSelected.find((el) =>{
+      return el.annoRiferimento === currentRow.annoRiferimento &&
+       el.meseRiferimento === currentRow.meseRiferimento && 
+       el.tipologiaFattura === currentRow.tipologiaFattura &&
+       el.statoInvio === currentRow.statoInvio;
+    } )) && checkLengthOfCollapse !== 0 && checkLengthOfCollapse === elementsSelected.length;
+
     if(verifyIfSelected){
       setElementSelected([]);
       return {
@@ -291,12 +302,14 @@ const InvioFatture : React.FC = () => {
         key:"idFattura"
       };
     }else{
-      setElementSelected([{
-        annoRiferimento:currentRow.annoRiferimento,
-        meseRiferimento:currentRow.meseRiferimento,
-        tipologiaFattura:currentRow.tipologiaFattura,
-        idFattura:null
-      }]);
+      //prendo tutti i sotto elementi
+      console.log("CIAOP|");
+      const elementsSelected = listaFatture.find((el) =>{
+        return el.annoRiferimento === currentRow.annoRiferimento &&
+       el.meseRiferimento === currentRow.meseRiferimento && 
+       el.tipologiaFattura === currentRow.tipologiaFattura;
+      } )?.fatture||[];
+      setElementSelected(elementsSelected);
       return {
         checkboxStatus:true,
         key:"idFattura"
@@ -305,16 +318,15 @@ const InvioFatture : React.FC = () => {
   };
 
   const manageCheckboxCollapse = (currentRow: Record<string, any>): Record<string, any> => {
-    const verifyIfSelected = !!elementSelected.find((el) =>{
+    const verifyIfSelected = (!!elementsSelected.find((el) =>{
       return el.annoRiferimento === currentRow.annoRiferimento &&
        el.meseRiferimento === currentRow.meseRiferimento && 
        el.tipologiaFattura === currentRow.tipologiaFattura &&
        el.idFattura === currentRow.idFattura;
-
-    } );
+    } ));
     if(verifyIfSelected){
       console.log("22222");
-      setElementSelected(elementSelected.filter(el => el.idFattura !== currentRow.idFattura));
+      setElementSelected(elementsSelected.filter(el => el.idFattura !== currentRow.idFattura));
       return {
         checkboxStatus:false,
         key:"idFattura"
@@ -336,7 +348,7 @@ const InvioFatture : React.FC = () => {
   };
   
   // va inserito dentro la fundione la logica del checkjed
-  console.log({elementSelected});
+  console.log({elementsSelected});
   const handleGetDetails = (el: ListaFatture) => {
     navigate(PathPf.JSON_TO_SAP_DETAILS.replace(":id",`${el.annoRiferimento}-${el.meseRiferimento}-${el.tipologiaFattura}`));
   };
@@ -356,25 +368,35 @@ const InvioFatture : React.FC = () => {
     }
   };
 
-  const handleGetDetailsRowCollapsed = async (el: Record<string, any>) => {
+  //Bisogna aggiungere un parametro che controlla se è collapsed altrimenti non devo faren la chiamata
+  const handleGetDetailsRowCollapsed = async (el: Record<string, any>, clickOnCheckbox:boolean = false) => {
     if(!(el.annoRiferimento === 2022)){
       const resCollapseDetails = await getDetailSingleRow({
         annoRiferimento: el.annoRiferimento,
         meseRiferimento: el.meseRiferimento,
-        tipologiaFattura: el.tipologiaFattura
+        tipologiaFattura: el.tipologiaFattura,
       });
+      const addStatoInvioInsideCollapse = resCollapseDetails.map((collapseEl) => {
+        collapseEl.statoInvio = el.statoInvio;
+        return collapseEl;
+      });
+      console.log({33:addStatoInvioInsideCollapse });
       setListaFatture((prevState) =>
         prevState.map((item) =>
           item.annoRiferimento === el.annoRiferimento &&
           item.tipologiaFattura === el.tipologiaFattura &&
           item.meseRiferimento === el.meseRiferimento &&
           item.statoInvio === el.statoInvio
-            ? { ...item, fatture: resCollapseDetails }
+            ? { ...item, fatture: addStatoInvioInsideCollapse }
             : item
         )
       );
 
-      console.log('Row collapsed clicked:', el, resCollapseDetails);
+
+      if(clickOnCheckbox){
+        setElementSelected(resCollapseDetails);
+      }
+    
       return resCollapseDetails;
     }else{
       setCollapseDataLoading(false);
@@ -392,7 +414,66 @@ const InvioFatture : React.FC = () => {
   ) => {};
 
   const statusAnnulla = "hidden";
-  console.log({listaFatture});
+
+
+
+
+
+  const manageStateCheckbox = (row, isMainCheck="",elementsSel) =>{
+    
+    let verifyIfSelected = false;
+    let disabled = false;
+   
+    if(isMainCheck === "main-row"){
+      const elementsInsideCollapse = listaFatture.find((el) =>{
+        return el.annoRiferimento === row.annoRiferimento &&
+       el.meseRiferimento === row.meseRiferimento && 
+       el.tipologiaFattura === row.tipologiaFattura;
+      } )?.fatture;
+
+      verifyIfSelected = (!!elementsSel.find((el) =>{
+        return el.annoRiferimento === row.annoRiferimento &&
+       el.meseRiferimento === row.meseRiferimento && 
+       el.tipologiaFattura === row.tipologiaFattura &&
+       el.statoInvio === row.statoInvio;
+      } )) && (elementsInsideCollapse?.length||0) === elementsSel.length;
+
+      
+      console.log({1:(elementsSel.find((el) =>{
+        return el.annoRiferimento === row.annoRiferimento &&
+       el.meseRiferimento === row.meseRiferimento && 
+       el.tipologiaFattura === row.tipologiaFattura &&
+       el.statoInvio === row.statoInvio;
+      } )),2:(elementsInsideCollapse?.length||0) , 3:elementsSel,4:row});
+      //MAnage disable 
+
+    
+
+    }else{
+      
+      verifyIfSelected = (!!elementsSel.find((el) =>{
+        return el.annoRiferimento === row.annoRiferimento &&
+       el.meseRiferimento === row.meseRiferimento && 
+       el.tipologiaFattura === row.tipologiaFattura &&
+        el.idFattura === row.idFattura;
+      } ));
+      console.log("ZORRO",{verifyIfSelected,row,isMainCheck });
+    }
+
+
+    disabled = elementsSelected.length !== 0 && (!!elementsSel.find((el) =>{
+      return el.annoRiferimento !== row.annoRiferimento ||
+       el.meseRiferimento !== row.meseRiferimento || 
+       el.tipologiaFattura !== row.tipologiaFattura; 
+    } ));
+
+    return {
+      verifyIfSelected,
+      disabled:row.statoInvio === 2 || disabled
+    };
+  };
+  
+
   return(
 
     <MainBoxStyled title={"Generazione JSON"}>
@@ -491,7 +572,7 @@ const InvioFatture : React.FC = () => {
           rows={rowsPerPage}
           headerNames={headerNamesInvioFatture}
           headerNamesCollapse={headerNamesInvioFattureCollapse}
-          apiGet={handleGetDetails}
+          apiGet={()=>setOpenModalFatture(true)}
           disabled={false}
           widthCustomSize="1600px"
           //setAction={showPopUpAction}
@@ -500,12 +581,13 @@ const InvioFatture : React.FC = () => {
           filterOnCollapse={true}
           getAsyncDetails={handleGetDetailsRowCollapsed}
           collapseDataLoading={collapseDataLoading}
-          selectedRow={elementSelected}
+          selectedRows={elementsSelected}
           headerActionSort={headerAction}
           setGridData={setGridData}
           gridType={true}
           setObjectSort={setObjectSort}
           objectSort={objectSort}
+          manageStateCheckbox={manageStateCheckbox}
           listaResponse={listaResponse}
           sentenseEmpty={"Nessuna fattura disponibile"}
           keyCollapse={"fatture"}
@@ -569,12 +651,33 @@ const InvioFatture : React.FC = () => {
         open={showDownloading} 
         setOpen={setShowDownloading}
         sentence={'Downloading...'} />
+      <MainModalComponent 
+        width={"800px"}
+        open={openModalFatture}
+        setOpen={setOpenModalFatture}
+        children={<ElementToProcessComponent 
+          closeIcon={true}
+          title={"Fatture Selezionate"}
+          obj={elementsSelected}
+          keyValueObj={keyValueObjModalInfo}
+          showButton={true}
+          setOpen={setOpenModalFatture}
+        />} />
+       
     </MainBoxStyled>
   );
 };
 export default InvioFatture;
 
 
+
+export const checkIfElementSelected = (arraySel, row) =>{
+  return !arraySel.find((el) =>{
+    return el.annoRiferimento === row.annoRiferimento &&
+       el.meseRiferimento === row.meseRiferimento && 
+       el.tipologiaFattura === row.tipologiaFattura &&
+       el.statoInvio === row.statoInvio;});
+}; 
 /*
 
   <FormControl fullWidth size="medium">

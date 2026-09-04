@@ -40,8 +40,10 @@ type GridCellProps<T,K> = {
   setAction?: (obj:T, action:string) => void;
   manageCheckbox?: (currentRow:Record<string, any>) => Record<string, any>;
   manageCheckboxCollapse?: (currentRow:Record<string, any>) => Record<string, any>;
-  getAsyncDetails?:(currentRow:Record<string, any>) => Promise<Record<string, any>[]>,
-  selectedRow:K[]
+  getAsyncDetails?:(currentRow:Record<string, any>,val?:boolean) => void,
+  selectedRows?:Record<string, any>[],
+  manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
+  usedInside?:string
 };
 
 const flexCenterStyle: SxProps<Theme> = {
@@ -84,10 +86,14 @@ const GridCell = <T, K> ({
   manageCheckbox,
   manageCheckboxCollapse,
   getAsyncDetails,
-  selectedRow
+  selectedRows=[],
+  manageStateCheckbox,
+  usedInside=""
 }: GridCellProps<T, K>) => {
   const value = element[rowObject.keyValue];
-  const [checked, setChecked] = useState(false);
+
+
+ 
 
   switch (rowObject.typeColumn) {
   case "string": {
@@ -271,13 +277,20 @@ const GridCell = <T, K> ({
     return (
       <TableCell key={`${i}-checkbox`} align="center">
         <Checkbox 
-          checked={checked}
+          disabled={manageStateCheckbox && manageStateCheckbox(element,usedInside,selectedRows)?.disabled}
+          checked={manageStateCheckbox && manageStateCheckbox(element,usedInside,selectedRows)?.verifyIfSelected}
           onChange={(event) =>{
             console.log({event:event.target.checked});
             if(manageCheckbox){
               //setChecked(event.target.checked);
+              if (getAsyncDetails && !isRowOpen){
+                if (onToggleRow) onToggleRow();
+                getAsyncDetails(element,true);
+              }
               manageCheckbox(element);
+              
             }
+
             if(manageCheckboxCollapse){
               //setChecked(event.target.checked);
               manageCheckboxCollapse(element);

@@ -223,9 +223,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
   
   return (
     <div>
-      <Modal
-        open={open}
-      >
+      <Modal open={open}>
         <Box sx={style}>
           <div className='d-flex justify-content-between'>
             <div className='d-flex align-items-center justify-content-start'>
