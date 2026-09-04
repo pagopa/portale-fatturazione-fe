@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { GridCellParams, GridEventListener, GridRowParams, GridRowSelectionModel, MuiEvent } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
-import { downloadReportRelNonFatturate, getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa } from "../../api/apiPagoPa/fatturazionePA/api";
+import { downloadReportRelNonFatturate, getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFatturePagoPa } from "../../api/apiPagoPa/fatturazionePA/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested";
 import { PathPf } from "../../types/enum";
@@ -27,7 +27,8 @@ interface ListaFatture {
 export interface SelectedJsonSap {
   annoRiferimento: number,
   meseRiferimento: number,
-  tipologiaFattura: string
+  tipologiaFattura: string,
+  idFattura:number|null
 }
 
 
@@ -50,6 +51,9 @@ const InvioFatture : React.FC = () => {
   const [showDownloading, setShowDownloading] = useState(false);
   const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
   const [infoPage , setInfoPage] = useState({ page: 0, pageSize: 10 });
+
+
+  const [collapseDataLoading,setCollapseDataLoading] = useState(true);
 
 
   const [bodyFatturazione, setBodyFatturazione] = useState<Record<string, unknown>>({
@@ -83,106 +87,54 @@ const InvioFatture : React.FC = () => {
     }
   },[tipologia]);
 
-
-  const mock = [
-    {
-      "tipologiaFattura": "PRIMO SALDO",
-      "numeroFatture": 3,
-      "annoRiferimento": 2026,
-      "meseRiferimento": 2,
-      "importo": 27,
-      "statoInvio": 0,
-      "fatture":[
-        {
-          "idFattura": 26227,
-          "tipologiaFattura": "PRIMO SALDO",
-          "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
-          "ragioneSociale": "Regione Lombardia",
-          "annoRiferimento": 2024,
-          "meseRiferimento": 12,
-          "importo": 9091.07,
-          "dataFattura": "2025-02-10T00:00:00"
-        },
-        {
-          "idFattura": 26314,
-          "tipologiaFattura": "SECONDO SALDO",
-          "idEnte": "a3f28c91-1e6b-4d7a-9c3f-7b8e2f4d9a01",
-          "ragioneSociale": "Comune di Milano",
-          "annoRiferimento": 2024,
-          "meseRiferimento": 9,
-          "importo": 15230.50,
-          "dataFattura": "2024-11-05T00:00:00"
-        },
-        {
-          "idFattura": 26401,
-          "tipologiaFattura": "SALDO FINALE",
-          "idEnte": "f19b7e3c-2a4d-4c8f-b6e0-8d5a1c9f3e77",
-          "ragioneSociale": "Regione Piemonte",
-          "annoRiferimento": 2023,
-          "meseRiferimento": 6,
-          "importo": 4327.85,
-          "dataFattura": "2023-08-22T00:00:00"
-        }
-      ]
-    },
-    {
-      "tipologiaFattura": "SECONDO SALDO",
-      "numeroFatture": 3,
-      "annoRiferimento": 2026,
-      "meseRiferimento": 2,
-      "importo": 27,
-      "statoInvio": 0,
-      "fatture":[
-        {
-          "idFattura": 26401,
-          "tipologiaFattura": "SALDO FINALE",
-          "idEnte": "f19b7e3c-2a4d-4c8f-b6e0-8d5a1c9f3e77",
-          "ragioneSociale": "Regione Piemonte",
-          "annoRiferimento": 2026,
-          "meseRiferimento": 2,
-          "importo": 4327.85,
-          "dataFattura": "2023-08-22T00:00:00"
-        },
-        {
-          "idFattura": 26489,
-          "tipologiaFattura": "ACCONTO",
-          "idEnte": "5c8e19a2-7f3d-4b91-a0e6-9f2c8d1b6a34",
-          "ragioneSociale": "Comune di Napoli",
-          "annoRiferimento": 2026,
-          "meseRiferimento": 2,
-          "importo": 22750.00,
-          "dataFattura": "2025-03-15T00:00:00"
-        },
-        {
-          "idFattura": 26512,
-          "tipologiaFattura": "PRIMO SALDO",
-          "idEnte": "9d2f6b8e-4c1a-47d9-b3e5-1a8f7c9d2e60",
-          "ragioneSociale": "Regione Toscana",
-          "annoRiferimento": 2026,
-          "meseRiferimento": 2,
-          "importo": 6489.32,
-          "dataFattura": "2024-05-18T00:00:00"
-        },
-        {
-          "idFattura": 26578,
-          "tipologiaFattura": "SALDO FINALE",
-          "idEnte": "e4a1c7f9-8b2d-4e56-9f0a-3c7d1e8b4f92",
-          "ragioneSociale": "Comune di Torino",
-          "annoRiferimento": 2026,
-          "meseRiferimento": 2,
-          "importo": 18042.19,
-          "dataFattura": "2024-01-09T00:00:00"
-        }
-      ]
-      
-    },
-    
-  ];
-    
+ 
   const getLista = async (tipologia) =>{
     await getListaJsonFatturePagoPa(token,profilo.nonce).then((res)=>{
-      setListaFatture(mock);
-      console.log('Lista Fatture:', res.data);
+
+      const addMockInviate = [
+        {
+          "tipologiaFattura": "PRIMO SALDO",
+          "numeroFatture": 1,
+          "annoRiferimento": 2022,
+          "meseRiferimento": 12,
+          "importo": 11,
+          "statoInvio": 3,
+          "fatture":[
+            {
+              "idFattura": 1111,
+              "tipologiaFattura": "PRIMO SALDO",
+              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
+              "ragioneSociale": "Regione Lombardia",
+              "annoRiferimento": 2022,
+              "meseRiferimento": 12,
+              "importo": 11,
+              "dataFattura": "2025-02-10T00:00:00"
+            }
+          ]
+        },
+        {
+          "tipologiaFattura": "SECONDO SALDO",
+          "numeroFatture": 1,
+          "annoRiferimento": 2022,
+          "meseRiferimento": 12,
+          "importo": 100,
+          "statoInvio": 3,
+          "fatture":[
+            {
+              "idFattura": 22222,
+              "tipologiaFattura": "SECONDO SALDO",
+              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
+              "ragioneSociale": "Regione Lombardia",
+              "annoRiferimento": 2022,
+              "meseRiferimento": 12,
+              "importo": 100,
+              "dataFattura": "2025-02-10T00:00:00"
+            }
+          ]
+        }
+      ];
+      setListaFatture([...addMockInviate,...res.data]);
+      
       const array = res.data.map( el => el.tipologiaFattura);
       const ORDER = ["Anticipo", "Acconto", "Primo Saldo", "Secondo Saldo", "Var. Semestrale"];
 
@@ -287,16 +239,12 @@ const InvioFatture : React.FC = () => {
     setShowDownloading(true);
     try {
       const response = await downloadReportRelNonFatturate(token, profilo.nonce, {tipologiaFattura:tipologia === 'Tutte' ? null : [tipologia]});
-
       if (!response.ok) throw '404';
-
       const blob = await response.blob();
-
       let title = `Lista Report Non Inviate.zip`;
       if (tipologia !== 'Tutte') {
         title = `Lista Report Non Inviate/${tipologia}.zip`;
       }
-
       saveAs(blob, title);
     } catch {
       manageErrorDownload('404', dispatchMainState);
@@ -320,25 +268,131 @@ const InvioFatture : React.FC = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
+  const [gridData, setGridData] = useState<Fattura[]>([]);
+  const [objectSort, setObjectSort] = useState<{[key:string]:number}>({"Anno Riferimento":1,"Mese Riferimento":1});
+  const [listaResponse, setListaResponse] = useState<any[]>([]);
 
-  const manageCheckbox = (currentRow: ListaFatture):boolean => {
-    console.log({currentRow});
-    const verifyIfSelected = selected.find(el => el.annoRiferimento === currentRow.annoRiferimento && el.meseRiferimento === currentRow.meseRiferimento && el.tipologiaFattura === currentRow.tipologiaFattura);
+
+  const [elementSelected,setElementSelected] = useState<SelectedJsonSap[]>([]);
+  const [arrayCollapseSelected,setArrayCollapseSelected] = useState<SelectedJsonSap[]>([]);
+
+  const manageCheckbox = (currentRow: Record<string, any>):Record<string, any>=> {
+    const verifyIfSelected = !!elementSelected.find((el) =>{
+      return el.annoRiferimento === currentRow.annoRiferimento &&
+       el.meseRiferimento === currentRow.meseRiferimento && 
+       el.tipologiaFattura === currentRow.tipologiaFattura &&
+       el.idFattura === null;
+    } );
+    console.log({verifyIfSelected});
     if(verifyIfSelected){
-      return false;
+      setElementSelected([]);
+      return {
+        checkboxStatus:false,
+        key:"idFattura"
+      };
     }else{
-      return true;
+      setElementSelected([{
+        annoRiferimento:currentRow.annoRiferimento,
+        meseRiferimento:currentRow.meseRiferimento,
+        tipologiaFattura:currentRow.tipologiaFattura,
+        idFattura:null
+      }]);
+      return {
+        checkboxStatus:true,
+        key:"idFattura"
+      };
     }
   };
 
+  const manageCheckboxCollapse = (currentRow: Record<string, any>): Record<string, any> => {
+    const verifyIfSelected = !!elementSelected.find((el) =>{
+      return el.annoRiferimento === currentRow.annoRiferimento &&
+       el.meseRiferimento === currentRow.meseRiferimento && 
+       el.tipologiaFattura === currentRow.tipologiaFattura &&
+       el.idFattura === currentRow.idFattura;
 
-
+    } );
+    if(verifyIfSelected){
+      console.log("22222");
+      setElementSelected(elementSelected.filter(el => el.idFattura !== currentRow.idFattura));
+      return {
+        checkboxStatus:false,
+        key:"idFattura"
+      };
+    }else{
+      console.log("dentro elelelel");
+      setElementSelected((prev)=>{
+        return [...prev,{
+          annoRiferimento:currentRow.annoRiferimento,
+          meseRiferimento:currentRow.meseRiferimento,
+          tipologiaFattura:currentRow.tipologiaFattura,
+          idFattura:currentRow.idFattura
+        }];});
+      return {
+        checkboxStatus:true,
+        key:"idFattura"
+      };
+    }
+  };
+  
+  // va inserito dentro la fundione la logica del checkjed
+  console.log({elementSelected});
   const handleGetDetails = (el: ListaFatture) => {
-    navigate(PathPf.JSON_TO_SAP_DETAILS.replace(":id",el.id));
+    navigate(PathPf.JSON_TO_SAP_DETAILS.replace(":id",`${el.annoRiferimento}-${el.meseRiferimento}-${el.tipologiaFattura}`));
   };
 
-  const statusAnnulla = "hidden";
+  const getDetailSingleRow = async (obj: {annoRiferimento: number,meseRiferimento: number,tipologiaFattura: string}): Promise<Record<string, any>[]> => {
+    setCollapseDataLoading(true);
+    try {
+      const res = await sendListaJsonFatturePagoPa(token, profilo.nonce, obj);
+      console.log('Response from sendListaJsonFatturePagoPa:', res);
+      setCollapseDataLoading(false);
+      return res.data;
+    } catch {
+      managePresaInCarico("ERROR_LIST_JSON_TO_SAP", dispatchMainState);
+      navigate(PathPf.JSON_TO_SAP);
+      setCollapseDataLoading(false); 
+      return [];
+    }
+  };
 
+  const handleGetDetailsRowCollapsed = async (el: Record<string, any>) => {
+    if(!(el.annoRiferimento === 2022)){
+      const resCollapseDetails = await getDetailSingleRow({
+        annoRiferimento: el.annoRiferimento,
+        meseRiferimento: el.meseRiferimento,
+        tipologiaFattura: el.tipologiaFattura
+      });
+      setListaFatture((prevState) =>
+        prevState.map((item) =>
+          item.annoRiferimento === el.annoRiferimento &&
+          item.tipologiaFattura === el.tipologiaFattura &&
+          item.meseRiferimento === el.meseRiferimento &&
+          item.statoInvio === el.statoInvio
+            ? { ...item, fatture: resCollapseDetails }
+            : item
+        )
+      );
+
+      console.log('Row collapsed clicked:', el, resCollapseDetails);
+      return resCollapseDetails;
+    }else{
+      setCollapseDataLoading(false);
+    }
+  };
+
+  const headerAction = (
+    label: string,
+    setGridDataParam: (data: any[]) => void,
+    emessiGrid = true,
+    setObjectSort: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>,
+    page: number,
+    rowsPerPage: number,
+    listaResponseParameter: any[],
+  ) => {};
+
+  const statusAnnulla = "hidden";
+  console.log({listaFatture});
   return(
 
     <MainBoxStyled title={"Generazione JSON"}>
@@ -442,9 +496,18 @@ const InvioFatture : React.FC = () => {
           widthCustomSize="1600px"
           //setAction={showPopUpAction}
           manageCheckbox={manageCheckbox}
-          manageCheckboxCollapse={manageCheckbox}
+          manageCheckboxCollapse={manageCheckboxCollapse}
           filterOnCollapse={true}
-          sentenseEmpty={"Non sono presenti Regolari esecuzioni/Documenti di cortesia"}
+          getAsyncDetails={handleGetDetailsRowCollapsed}
+          collapseDataLoading={collapseDataLoading}
+          selectedRow={elementSelected}
+          headerActionSort={headerAction}
+          setGridData={setGridData}
+          gridType={true}
+          setObjectSort={setObjectSort}
+          objectSort={objectSort}
+          listaResponse={listaResponse}
+          sentenseEmpty={"Nessuna fattura disponibile"}
           keyCollapse={"fatture"}
           titleRowCollapse={"Dettaglio Fatture"}/>
         {/*  <DataGrid

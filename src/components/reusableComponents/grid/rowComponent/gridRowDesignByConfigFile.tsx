@@ -1,10 +1,12 @@
-import { Box, Collapse, FormControl, InputLabel, MenuItem, Select, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Collapse, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { HeaderGridCustom } from "../gridCustom";
 import GridCell from "./gridCell";
 import { useState, useMemo } from 'react';
+import Loader from "../../loader";
+import MainFilter from "../../mainFilter";
 
 
-interface GridRowsRendererProps<T = any>{
+interface GridRowsRendererProps<T ,K>{
   element: any;
   apiGet?: (el: any) => void;
   headerNames:HeaderGridCustom[];
@@ -13,12 +15,15 @@ interface GridRowsRendererProps<T = any>{
   titleRowCollapse?:string,
   keyCollapse?:string,
   bgColorRowFunction?: (element:any) => string;
-  manageCheckbox?: ( currentRow:T) => boolean;
-  manageCheckboxCollapse?:(currentRow:K) => boolean,
-  filterOnCollapse:boolean
+  manageCheckbox?: ( currentRow:Record<string, any>) => Record<string, any>;
+  manageCheckboxCollapse?:(currentRow:Record<string, any>) => Record<string, any>,
+  filterOnCollapse:boolean,
+  getAsyncDetails?:(currentRow:Record<string, any>) => Promise<Record<string, any>[]>,
+  collapseDataLoading?:boolean,
+  selectedRow:K[]
 }
 
-const GridRowDesignByConfigFile =  ({
+const GridRowDesignByConfigFile=<T,K>({
   element,
   apiGet,
   headerNames,
@@ -29,8 +34,11 @@ const GridRowDesignByConfigFile =  ({
   bgColorRowFunction,
   manageCheckbox,
   manageCheckboxCollapse,
-  filterOnCollapse
-}: GridRowsRendererProps) => {
+  filterOnCollapse,
+  getAsyncDetails,
+  collapseDataLoading,
+  selectedRow=[]
+}: GridRowsRendererProps<T,K>) => {
 
   const [open, setOpen] = useState(false);
  
@@ -111,6 +119,8 @@ const GridRowDesignByConfigFile =  ({
             onToggleRow={() => setOpen(!open)}
             setAction={setAction}
             manageCheckbox={manageCheckbox}
+            getAsyncDetails={getAsyncDetails}
+            selectedRow={selectedRow}
           />
         ))}
       </TableRow>
@@ -122,57 +132,58 @@ const GridRowDesignByConfigFile =  ({
 
                 <Stack
                   direction="row"
-                  gap={2}
+                  gap={4}
                   alignItems="center"
-                  sx={{ marginBottom: '10px' }}
+                  sx={{marginBottom:"10px"}}
+                 
                 >
                   <Typography sx={{ marginLeft: "6px" }} variant="h6" gutterBottom component="div">
                     {titleRowCollapse}
                   </Typography>
                   {filterOnCollapse &&
-                  <Stack direction="row" spacing={2}>
-                    <FormControl size="small" sx={{ minWidth: 120 }}>
-                      <InputLabel>Anno</InputLabel>
-                      <Select
-                        value={filtroAnno}
-                        label="Anno"
-                        onChange={(e) => setFiltroAnno(e.target.value)}
-                      >
-                        <MenuItem value="tutti">Tutti</MenuItem>
-                        {anniDisponibili.map((anno: number) => (
-                          <MenuItem key={anno} value={anno}>{anno}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-
-                    <FormControl size="small" sx={{ minWidth: 140 }}>
-                      <InputLabel>Mese</InputLabel>
-                      <Select
-                        value={filtroMese}
-                        label="Mese"
-                        onChange={(e) => setFiltroMese(e.target.value)}
-                      >
-                        <MenuItem value="tutti">Tutti</MenuItem>
-                        {mesiDisponibili.map((mese: number) => (
-                          <MenuItem key={mese} value={mese}>{nomiMesi[mese - 1]}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-
-                    <FormControl size="small" sx={{ minWidth: 160 }}>
-                      <InputLabel>Tipologia Fattura</InputLabel>
-                      <Select
-                        value={filtroTipologia}
-                        label="Tipologia Fattura"
-                        onChange={(e) => setFiltroTipologia(e.target.value)}
-                      >
-                        <MenuItem value="tutti">Tutte</MenuItem>
-                        {tipologieDisponibili.map((tipo: string) => (
-                          <MenuItem key={tipo} value={tipo}>{tipo}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Stack>
+               <>
+                 <MainFilter 
+                   sizeHeight={"small"}
+                   filterName={"input_text"}
+                   inputLabel={"ID Fattura"}
+                   clearOnChangeFilter={() => null}
+                   setBody={() => null}
+                   body={{}}
+                   keyDescription='iun'
+                   keyBody={"iun"}
+                   keyValue={"iun"}/>
+                 <MainFilter 
+                   sizeHeight={"small"}
+                   filterName={"multi_checkbox"}
+                   inputLabel={"Rag. Soc. Ente"}
+                   clearOnChangeFilter={()=> null}
+                   setBody={() => null}
+                   body={{}}
+                   keyCompare={""}
+                   dataSelect={[]}
+                   setTextValue={() => null}
+                   textValue={""}
+                   valueAutocomplete={[]}
+                   setValueAutocomplete={() => null}
+                   keyDescription={"descrizione"}
+                   keyValue={"idEnte"}
+                   keyOption='descrizione'
+                   keyBody={"idEnti"} />
+                 <MainFilter 
+                   sizeHeight={"small"}
+                   filterName={"date_from_to"}
+                   inputLabel={"Data Fattura"}
+                   clearOnChangeFilter={() => null}
+                   setBody={() => null}
+                   body={{}}
+                   keyValue={"init"}
+                   keyDescription="start"
+                   keyBody="init"
+                   keyCompare="il nulla"
+                   error={false}
+                 />
+               </>
+                   
                   }
                 </Stack>
 
@@ -188,24 +199,40 @@ const GridRowDesignByConfigFile =  ({
                       }
                     </TableRow>
                   </TableHead>
-                  <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
-                    {dataInsideCollapse?.map((el: any, rowIndex: number) => (
-                      <TableRow key={`row-${rowIndex}`}>
-                        {Object.values(headerNamesCollapse).map(
-                          (rowObjectCollapsed: HeaderGridCustom, colIndex: number) => (
-                            <GridCell
-                              key={`${rowObjectCollapsed.keyValue}-${colIndex}`}
-                              rowObject={rowObjectCollapsed}
-                              index={colIndex}
-                              element={el}
-                              headerNames={headerNamesCollapse}
-                              manageCheckboxCollapse={manageCheckboxCollapse}
-                            />
-                          )
-                        )}
+                  {collapseDataLoading ? 
+                    <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
+                      <TableRow>
+                        <TableCell 
+                          colSpan={Object.keys(headerNamesCollapse).length} 
+                          sx={{ textAlign: "center", border: "none" }}
+                        >
+                          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", py: 4 }}>
+                            <Loader sentence={"Caricamento..."} />
+                          </Box>
+                        </TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
+                    </TableBody>
+                    :
+                    <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
+                      {dataInsideCollapse?.map((el: any, rowIndex: number) => (
+                        <TableRow key={`row-${rowIndex}`}>
+                          {Object.values(headerNamesCollapse).map(
+                            (rowObjectCollapsed: HeaderGridCustom, colIndex: number) => (
+                              <GridCell
+                                key={`${rowObjectCollapsed.keyValue}-${colIndex}`}
+                                rowObject={rowObjectCollapsed}
+                                index={colIndex}
+                                element={el}
+                                headerNames={headerNamesCollapse}
+                                manageCheckboxCollapse={manageCheckboxCollapse}
+                                selectedRow={selectedRow}
+                              />
+                            )
+                          )}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  }
                 </Table>
               </Box>
             </Collapse>

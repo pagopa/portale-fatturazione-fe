@@ -75,6 +75,7 @@ const HeaderGridCustom = ({
           case 'docEmessiEnte':
           case 'docEmessiEnteContestate':
           case 'docSospesiSend':
+          case 'invioFatture':
             return (
               <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
                 {(el.headerActionSort && objectSort && objectSort[el.label]) &&

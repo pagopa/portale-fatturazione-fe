@@ -54,7 +54,8 @@ export type MainFilterProps<T> = {
     valueAutocompleteSingle?:T|null,
     setValueAutocompleteSingle?: Dispatch<SetStateAction<T|null>>;
     helperText?:string,
-    placeHolder?:string
+    placeHolder?:string,
+    sizeHeight?: "small" | "medium" | undefined;
 };
 
 const MainFilter = <T,>({
@@ -93,7 +94,8 @@ const MainFilter = <T,>({
   valueAutocompleteSingle,
   setValueAutocompleteSingle,
   helperText,
-  placeHolder
+  placeHolder,
+  sizeHeight
 }: MainFilterProps<T>) => {
 
 
@@ -137,7 +139,7 @@ const MainFilter = <T,>({
         
   case "select_key_value": 
     return ( !hidden && keyBody && <MainBoxContainer itemProps={itemProps}>
-      <FormControl disabled={disabled} fullWidth>
+      <FormControl size={sizeHeight ? sizeHeight : undefined} disabled={disabled} fullWidth>
         <InputLabel>
           {inputLabel}
         </InputLabel>
@@ -166,7 +168,7 @@ const MainFilter = <T,>({
     </MainBoxContainer>);
   case "select_key_value_description":
     return ( !hidden && keyBody && keyOption && <MainBoxContainer itemProps={itemProps}>
-      <FormControl fullWidth >
+      <FormControl size={sizeHeight ? sizeHeight : undefined} fullWidth >
         <InputLabel>
           {inputLabel}
         </InputLabel>
@@ -196,7 +198,7 @@ const MainFilter = <T,>({
   case "select_value":
     return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer itemProps={itemProps}>
-              <FormControl fullWidth disabled={disabled}>
+              <FormControl size={sizeHeight ? sizeHeight : undefined} fullWidth disabled={disabled}>
                 <InputLabel>
                   {inputLabel}
                 </InputLabel>
@@ -228,7 +230,7 @@ const MainFilter = <T,>({
   case "select_value_with_tutti":
     return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer itemProps={itemProps} >
-              <FormControl fullWidth disabled={disabled}>
+              <FormControl size={sizeHeight ? sizeHeight : undefined} fullWidth disabled={disabled}>
                 <InputLabel>{inputLabel}</InputLabel>
                 <Select
                   label={inputLabel}
@@ -254,7 +256,7 @@ const MainFilter = <T,>({
     return (
       !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer itemProps={itemProps}>
-              <FormControl fullWidth disabled={disabled}>
+              <FormControl size={sizeHeight ? sizeHeight : undefined} fullWidth disabled={disabled}>
                 <InputLabel>{inputLabel}</InputLabel>
 
                 <Select
@@ -296,7 +298,7 @@ const MainFilter = <T,>({
   case "select_value_nobody":
     return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer itemProps={itemProps}>
-              <FormControl fullWidth >
+              <FormControl size={sizeHeight ? sizeHeight : undefined} fullWidth >
                 <InputLabel>
                   {inputLabel}
                 </InputLabel>
@@ -328,7 +330,7 @@ const MainFilter = <T,>({
   case "select_value_string":
     return ( !hidden &&  keyBody &&
             <MainBoxContainer itemProps={itemProps}>
-              <FormControl disabled={disabled}  fullWidth >
+              <FormControl size={sizeHeight ? sizeHeight : undefined} disabled={disabled}  fullWidth >
                 <InputLabel>
                   {inputLabel}
                 </InputLabel>
@@ -359,6 +361,7 @@ const MainFilter = <T,>({
     return (!hidden && 
             <MainBoxContainer itemProps={itemProps}> 
               <TextField
+                size={sizeHeight ? sizeHeight : undefined}
                 fullWidth
                 label={inputLabel}
                 placeholder={inputLabel}
@@ -383,6 +386,7 @@ const MainFilter = <T,>({
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
         <DesktopDatePicker
           label={inputLabel}
+         
           value={(body[keyValue] === ""||body[keyValue] === null) ? null : new Date(body[keyValue])}
           onChange={(e:any | null)  =>{
             if(e !== null && !isDateInvalid(e)){
@@ -411,6 +415,7 @@ const MainFilter = <T,>({
           slotProps={{
             textField: {
               error:error,
+              size:sizeHeight ? sizeHeight : undefined,
               fullWidth: true,
               sx: {
                 // Force calendar icon to default color
@@ -432,8 +437,9 @@ const MainFilter = <T,>({
           <Autocomplete
             disabled={disabled}
             fullWidth
+            size={sizeHeight ? sizeHeight : undefined}
             sx={{           
-              height:"59px",
+              height:sizeHeight ? undefined :"59px",
               "& .MuiAutocomplete-inputRoot.Mui-focused": {
                 zIndex: 2,
                 backgroundColor: "#F3F4F6",  
@@ -499,6 +505,7 @@ const MainFilter = <T,>({
             renderInput={(params) => (
               <TextField
                 {...params}
+                size={sizeHeight ? sizeHeight : undefined}
                 sx={{
                   "& .MuiAutocomplete-popupIndicator": {
                     color: "rgba(0,0,0,0.54)",
@@ -520,6 +527,7 @@ const MainFilter = <T,>({
       return (
         <MainBoxContainer itemProps={itemProps}>
           <Autocomplete
+            size={sizeHeight ? sizeHeight : undefined}
             fullWidth
             disabled={disabled}
             limitTags={1}
@@ -570,6 +578,7 @@ const MainFilter = <T,>({
     return (
       <MainBoxContainer itemProps={itemProps}>
         <TextField
+          size={sizeHeight ? sizeHeight : undefined}
           value={body[keyDescription]?.testo ?? ""}
           disabled={disabled}
           label={inputLabel}
@@ -628,7 +637,7 @@ export const MainBoxContainer = ({ children, itemProps }: MainBoxContainerProps)
       sx={{
         display: "flex",
         justifyContent: { xs: "center", sm: "center", md: "flex-start" },
-        marginTop: "1rem",
+        // marginTop: "1rem",
       }}
     >
       {children}

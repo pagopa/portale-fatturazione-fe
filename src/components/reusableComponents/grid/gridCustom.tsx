@@ -2,7 +2,6 @@ import { Card, Table, TableBody, TableCellProps, TablePagination } from "@mui/ma
 import React, { SetStateAction } from "react";
 import HeaderGridCustom from "./headerGrid/headerGridCustom";
 import EmptyRow from "./emptyRow";
-
 import GridRowDesignByConfigFile from "./rowComponent/gridRowDesignByConfigFile";
 interface GridCustomProps<T,K> {
     elements:  T[],
@@ -37,9 +36,12 @@ interface GridCustomProps<T,K> {
     titleRowCollapse?:string,
     keyCollapse?:string,
     bgColorRowFunction?:(element:T) => string,
-    manageCheckbox?:(currentRow:T) => boolean,
-    manageCheckboxCollapse?:(currentRow:K) => boolean,
-    filterOnCollapse?:boolean
+    manageCheckbox?:(currentRow:Record<string, any>) => Record<string, any>,
+    manageCheckboxCollapse?:(currentRow:Record<string, any>) => Record<string, any>,
+    filterOnCollapse?:boolean,
+    getAsyncDetails?:(currentRow:Record<string, any>) => Promise<Record<string, any>[]>,
+    collapseDataLoading?:boolean,
+    selectedRow?:K[]
 }
 
 export interface HeaderGridCustom {
@@ -94,7 +96,10 @@ const GridCustom = <T,K>({
   bgColorRowFunction,
   manageCheckbox,
   manageCheckboxCollapse,
-  filterOnCollapse=false
+  filterOnCollapse=false,
+  getAsyncDetails,
+  collapseDataLoading,
+  selectedRow=[]
 }: GridCustomProps<T,K>) => {
  
   return (
@@ -138,6 +143,9 @@ const GridCustom = <T,K>({
                     manageCheckbox={manageCheckbox}
                     manageCheckboxCollapse={manageCheckboxCollapse}
                     filterOnCollapse={filterOnCollapse}
+                    getAsyncDetails={getAsyncDetails}
+                    collapseDataLoading={collapseDataLoading}
+                    selectedRow={selectedRow}
                   />
                 );
               })}

@@ -5,7 +5,9 @@ const getChipElaborazione = (row) =>{
   if(row.statoInvio === 0){
     tooltipObj = {label:'Da inviare',title:'Da inviare',color:'#86E1FD'};
   }else if(row.statoInvio === 2){
-    tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:"#FFE5A3"};
+    tooltipObj = {label:'Elaborazione',title:'La fatture sono in elaborazione',color:"#FFE5A3"};
+  }else if(row.statoInvio === 3){
+    tooltipObj = {label:'Inviate',title:'La fattura sono state inviate',color:'#B5E2B4'};
   }
   return tooltipObj;
 };
@@ -18,8 +20,8 @@ export const headerNamesInvioFatture: HeaderGridCustom[] = [
   { label: "Tipologia Fattura", align: "center", width: "200px", keyValue: "tipologiaFattura", typeColumn: 'string', makeAction: true, applyCss: true },
   { label: "Stato Invio",align: "center", width: "180px",keyValue: "statoInvio", typeColumn: "chip-tooltip" ,funToManipulateValue:getChipElaborazione},
   { label: "Numero Fatture", align: "center", width: "150px", keyValue: "numeroFatture", typeColumn: 'number' },
-  { label: "Anno Riferimento", align: "center", width: "150px", keyValue: "annoRiferimento", typeColumn: 'string' },
-  { label: "Mese Riferimento", align: "center", width: "150px", keyValue: "meseRiferimento", typeColumn: 'mese-number' },
+  { label: "Anno Riferimento", align: "center", width: "150px", keyValue: "annoRiferimento", typeColumn: 'string',headerActionSort:true, },
+  { label: "Mese Riferimento", align: "center", width: "150px", keyValue: "meseRiferimento", typeColumn: 'mese-number',headerActionSort:true },
   { label: "Importo", align: "center", width: "150px", keyValue: "importo", typeColumn: 'euro' },
   {label:"", align:"center", width:"80px", keyValue:"arrow", typeColumn:"arrow"}
 ];

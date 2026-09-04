@@ -26,7 +26,7 @@ type CopyCellProps = {
   align?: "left" | "center" | "right" | "inherit" | "justify";
 };
 
-type GridCellProps<T> = {
+type GridCellProps<T,K> = {
   rowObject: HeaderGridCustom;
   index: number;
   element: Record<string, any>;
@@ -35,11 +35,13 @@ type GridCellProps<T> = {
   cssFirstColum?: any;
   cssFirstColumRagioneSociale?: any;
   flexCenterStyle?: any;
-  isRowOpen?: boolean; // stato di espansione, per il case "collaps"
-  onToggleRow?: () => void; // handler per il case "collaps"
+  isRowOpen?: boolean;
+  onToggleRow?: () => void;
   setAction?: (obj:T, action:string) => void;
-  manageCheckbox?: (currentRow:T) => boolean;
-  manageCheckboxCollapse?: (currentRow:K) => boolean;
+  manageCheckbox?: (currentRow:Record<string, any>) => Record<string, any>;
+  manageCheckboxCollapse?: (currentRow:Record<string, any>) => Record<string, any>;
+  getAsyncDetails?:(currentRow:Record<string, any>) => Promise<Record<string, any>[]>,
+  selectedRow:K[]
 };
 
 const flexCenterStyle: SxProps<Theme> = {
@@ -70,7 +72,7 @@ const cssFirstColum : SxProps<Theme> = {
   cursor: 'pointer',
 };
 
-const GridCell = ({
+const GridCell = <T, K> ({
   rowObject,
   index: i,
   element,
@@ -80,11 +82,12 @@ const GridCell = ({
   onToggleRow,
   setAction,
   manageCheckbox,
-  manageCheckboxCollapse
-}: GridCellProps<any>) => {
+  manageCheckboxCollapse,
+  getAsyncDetails,
+  selectedRow
+}: GridCellProps<T, K>) => {
   const value = element[rowObject.keyValue];
   const [checked, setChecked] = useState(false);
-  console.log({checked});
 
   switch (rowObject.typeColumn) {
   case "string": {
@@ -270,15 +273,15 @@ const GridCell = ({
         <Checkbox 
           checked={checked}
           onChange={(event) =>{
-           
-            if(manageCheckbox && manageCheckbox(element)){
-              setChecked(event.target.checked);
+            console.log({event:event.target.checked});
+            if(manageCheckbox){
+              //setChecked(event.target.checked);
+              manageCheckbox(element);
             }
-
-            if(manageCheckboxCollapse && manageCheckboxCollapse(element)){
-              setChecked(event.target.checked);
+            if(manageCheckboxCollapse){
+              //setChecked(event.target.checked);
+              manageCheckboxCollapse(element);
             }
-            
           } }/>
       </TableCell>
     );
@@ -350,7 +353,10 @@ const GridCell = ({
           sx={{ color: "#227AFC" }}
           aria-label="expand row"
           size="small"
-          onClick={onToggleRow}
+          onClick={() =>{
+            if (onToggleRow) onToggleRow();
+            if (getAsyncDetails && !isRowOpen) getAsyncDetails(element);
+          } }
         >
           {isRowOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         </IconButton>
