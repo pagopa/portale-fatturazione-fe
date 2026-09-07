@@ -110,7 +110,9 @@ const InvioFatture : React.FC = () => {
               "annoRiferimento": 2022,
               "meseRiferimento": 12,
               "importo": 11,
-              "dataFattura": "2025-02-10T00:00:00"
+              "dataFattura": "2025-02-10T00:00:00",
+              "dataGenerazione": "2026-09-09T00:00:00",
+              "statoInvio": 3
             }
           ]
         },
@@ -130,7 +132,9 @@ const InvioFatture : React.FC = () => {
               "annoRiferimento": 2022,
               "meseRiferimento": 12,
               "importo": 100,
-              "dataFattura": "2025-02-10T00:00:00"
+              "dataFattura": "2025-02-10T00:00:00",
+              "dataGenerazione": "2026-09-09T00:00:00",
+              "statoInvio": 3
             }
           ]
         }
@@ -303,7 +307,7 @@ const InvioFatture : React.FC = () => {
       };
     }else{
       //prendo tutti i sotto elementi
-      console.log("CIAOP|");
+   
       const elementsSelected = listaFatture.find((el) =>{
         return el.annoRiferimento === currentRow.annoRiferimento &&
        el.meseRiferimento === currentRow.meseRiferimento && 
@@ -322,23 +326,25 @@ const InvioFatture : React.FC = () => {
       return el.annoRiferimento === currentRow.annoRiferimento &&
        el.meseRiferimento === currentRow.meseRiferimento && 
        el.tipologiaFattura === currentRow.tipologiaFattura &&
-       el.idFattura === currentRow.idFattura;
+       el.idFattura === currentRow.idFattura
     } ));
     if(verifyIfSelected){
-      console.log("22222");
+    
       setElementSelected(elementsSelected.filter(el => el.idFattura !== currentRow.idFattura));
       return {
         checkboxStatus:false,
         key:"idFattura"
       };
     }else{
-      console.log("dentro elelelel");
+  
       setElementSelected((prev)=>{
         return [...prev,{
           annoRiferimento:currentRow.annoRiferimento,
           meseRiferimento:currentRow.meseRiferimento,
           tipologiaFattura:currentRow.tipologiaFattura,
-          idFattura:currentRow.idFattura
+          idFattura:currentRow.idFattura,
+          statoInvio:currentRow.statoInvio,
+          ragioneSociale:currentRow.ragioneSociale
         }];});
       return {
         checkboxStatus:true,
@@ -357,7 +363,7 @@ const InvioFatture : React.FC = () => {
     setCollapseDataLoading(true);
     try {
       const res = await sendListaJsonFatturePagoPa(token, profilo.nonce, obj);
-      console.log('Response from sendListaJsonFatturePagoPa:', res);
+  
       setCollapseDataLoading(false);
       return res.data;
     } catch {
@@ -380,7 +386,7 @@ const InvioFatture : React.FC = () => {
         collapseEl.statoInvio = el.statoInvio;
         return collapseEl;
       });
-      console.log({33:addStatoInvioInsideCollapse });
+   
       setListaFatture((prevState) =>
         prevState.map((item) =>
           item.annoRiferimento === el.annoRiferimento &&
@@ -438,13 +444,13 @@ const InvioFatture : React.FC = () => {
        el.statoInvio === row.statoInvio;
       } )) && (elementsInsideCollapse?.length||0) === elementsSel.length;
 
-      
+      /*
       console.log({1:(elementsSel.find((el) =>{
         return el.annoRiferimento === row.annoRiferimento &&
        el.meseRiferimento === row.meseRiferimento && 
        el.tipologiaFattura === row.tipologiaFattura &&
        el.statoInvio === row.statoInvio;
-      } )),2:(elementsInsideCollapse?.length||0) , 3:elementsSel,4:row});
+      } )),2:(elementsInsideCollapse?.length||0) , 3:elementsSel,4:row});*/
       //MAnage disable 
 
     
@@ -457,7 +463,7 @@ const InvioFatture : React.FC = () => {
        el.tipologiaFattura === row.tipologiaFattura &&
         el.idFattura === row.idFattura;
       } ));
-      console.log("ZORRO",{verifyIfSelected,row,isMainCheck });
+    
     }
 
 
@@ -557,7 +563,7 @@ const InvioFatture : React.FC = () => {
         actionButtonRight={[{
           onButtonClick:downloadReport,
           variant: "outlined",
-          label: "Download Report Non Inviate",
+          label: "Download Risultati",
           icon:{name:"download"},
           disabled:(listaFatture?.length === 0)
         }]}/>

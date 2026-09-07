@@ -34,7 +34,7 @@ export const headerNamesInvioFattureCollapse: HeaderGridCustom[] = [
   { label: "Importo", align: "center", width: "150px", keyValue: "importo", typeColumn: 'euro' },
   { label: "FK ID Doc.", align: "center", width: "150px", keyValue: "", typeColumn: 'string' },
   { label: "Data Fattura", align: "center", width: "180px", keyValue: "dataFattura", typeColumn: 'data' },
-  { label: "Data Generazione", align: "center", width: "180px", keyValue: "", typeColumn: 'data' }
+  { label: "Data Generazione", align: "center", width: "180px", keyValue: "dataGenerazione", typeColumn: 'data' }
 ];
 
 export const keyValueObjModalInfo = [
