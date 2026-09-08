@@ -1,7 +1,5 @@
-import {Box, Button, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TablePagination, Typography } from "@mui/material";
+import {Box, Chip, TablePagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
-import SelectMese from "../components/reusableComponents/select/selectMese";
 import { downloadMessaggioPagoPaCsv, downloadMessaggioPagoPaZipExel, getListaMessaggi, getMessaggiCount, readMessaggioPagoPa} from "../api/apiPagoPa/centroMessaggi/api";
 import { ButtonNaked, TimelineNotification, TimelineNotificationContent, TimelineNotificationDot, TimelineNotificationItem, TimelineNotificationOppositeContent, TimelineNotificationSeparator } from "@pagopa/mui-italia";
 import { TimelineConnector } from "@mui/lab";
@@ -11,11 +9,15 @@ import { saveAs } from "file-saver";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import { month } from "../reusableFunction/reusableArrayObj";
+import { mesiDescNome, month } from "../reusableFunction/reusableArrayObj";
 import PreviewIcon from '@mui/icons-material/Preview';
 import { useNavigate } from "react-router";
 import { PathPf } from "../types/enum";
 import { useGlobalStore } from "../store/context/useGlobalStore";
+import MainFilter from "../components/reusableComponents/mainFilter";
+import { FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../components/reusableComponents/layout/mainComponent";
+import { get2FinancialYear } from "../reusableFunction/function";
+import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 
 export interface Messaggio {
     idMessaggio:number,
@@ -50,15 +52,19 @@ interface FilterMessaggi{
 }
 
 
-const Messaggi : React.FC<any> = () => {
+const Messaggi : React.FC = () => {
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
   const setCountMessages = useGlobalStore(state => state.setCountMessages);
-
-
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
   const navigate = useNavigate();
+
+  const { 
+    filters,
+    updateFilters,
+    isInitialRender
+  } = useSavedFilters(PathPf.MESSAGGI,{});
 
   const handleModifyMainState = (valueObj) => {
     dispatchMainState({
@@ -81,12 +87,22 @@ const Messaggi : React.FC<any> = () => {
     letto:null
   });
 
+  useEffect(()=>{
+    if(isInitialRender.current && Object.keys(filters).length > 0){
+      setBodyCentroMessaggi(filters.body);
+      getMessaggi(filters.page, filters.rows, filters.body);
+    }else{
+      getMessaggi(page+1, rowsPerPage, bodyCentroMessaggi);
+    }
+  },[]);
+
   const [gridData, setGridData] = useState<Messaggio[]>([]);
   const [getListaLoading, setGetListaLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [countMessaggi, setCountMessaggi] = useState(0);
   const [showDownloading, setShowDownloading] = useState(false);
+  const arrayLettura  = [ { label: "Tutti",value:"tutti" },{ label: "Si",value:true },{ label: "No",value:false }];
    
   const getMessaggi = async (pa,ro,body) =>{
     setGetListaLoading(true);
@@ -94,6 +110,14 @@ const Messaggi : React.FC<any> = () => {
       setGetListaLoading(false);
       setGridData(res.data.messaggi);
       setCountMessaggi(res.data.count);
+      if(!isInitialRender.current){
+        updateFilters({
+          body:body,
+          pathPage:PathPf.MESSAGGI,
+          page:pa,
+          rows:ro
+        });
+      }
     }).catch((err)=>{
       setGetListaLoading(false);
       setGridData([]);
@@ -142,7 +166,7 @@ const Messaggi : React.FC<any> = () => {
       }).catch(((err)=>{
         setShowDownloading(false);
         manageError(err,dispatchMainState);
-        getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
+        getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra); 
       }));
     }else if(contentType === "application/zip"){
       setShowDownloading(true);
@@ -182,10 +206,6 @@ const Messaggi : React.FC<any> = () => {
       // da aggiungere un messaggio apposito
     });
   };
-
-  useEffect(()=>{
-    getMessaggi(page+1, rowsPerPage, bodyCentroMessaggi);
-  },[]);
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -227,89 +247,102 @@ const Messaggi : React.FC<any> = () => {
       .substring(0, 3);
   }
 
-  return (
-    <div className="mx-5">
-      <div className="marginTop24 ">
-        <Typography variant="h4">Messaggi</Typography>
-      </div>
-      <div className="mt-5">
-        <div className="row">
-          <div  className="col-3">
-            <Box sx={{width:'80%'}}>
-              <FormControl fullWidth>
-                <InputLabel id="select lettura">Lettura</InputLabel>
-                <Select
-                  labelId="select-lettura"
-                  id="select-lettura"
-                  value={bodyCentroMessaggi.letto?.toString()||'tutti'}
-                  label="Lettura"
-                  onChange={(e:SelectChangeEvent)=> {
-                    let val;
-                    if(e.target.value === 'tutti'){
-                      val = null;
-                    }else if(e.target.value === 'true'){
-                      val = true;
-                    }else{
-                      val = false;
-                    }
-                    setBodyCentroMessaggi((prev)=>({...prev,...{letto:val}}));
-                  }}
-                >
-                  <MenuItem value={'tutti'}>Tutti</MenuItem>
-                  <MenuItem value={'true'}>Si</MenuItem>
-                  <MenuItem value={'false'}>No</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-          </div>
-          <div className="col-3">
-            <SelectUltimiDueAnni values={bodyCentroMessaggi} setValue={setBodyCentroMessaggi}></SelectUltimiDueAnni>
-          </div>
-          <div  className="col-3">
-            <SelectMese values={bodyCentroMessaggi} setValue={setBodyCentroMessaggi}></SelectMese>
-          </div>
-        </div>
-        <div className="d-flex mt-5">
-          <Button 
-            onClick={()=>{
-              getMessaggi(1,10,bodyCentroMessaggi);
-              setBodyCentroMessaggiOnFiltra(bodyCentroMessaggi);
-              setPage(0);
-              setRowsPerPage(10);
+  const onAnnulla = () => {
 
-            } } 
-            sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-            variant="contained"> Filtra
-          </Button>
-                   
-          <Button
-            onClick={()=>{
-              getMessaggi(1,10,{
-                anno:null,
-                mese:null,
-                tipologiaDocumento:[],
-                letto: null
-              });
-              setBodyCentroMessaggi({
-                anno:null,
-                mese:null,
-                tipologiaDocumento:[],
-                letto:null
-              });
-              setBodyCentroMessaggiOnFiltra({
-                anno:null,
-                mese:null,
-                tipologiaDocumento:[],
-                letto:null
-              });
-              setPage(0);
-              setRowsPerPage(10);
-            } }
-            sx={{marginLeft:'24px'}} >
-                   Annulla filtri
-          </Button>
-        </div>
-      </div>
+    const newBody = {
+      anno:null,
+      mese:null,
+      tipologiaDocumento:[],
+      letto: null
+    };
+    getMessaggi(1,10,newBody);
+    setBodyCentroMessaggi(newBody);
+    setBodyCentroMessaggiOnFiltra(newBody);
+    setPage(0);
+    setRowsPerPage(10);
+
+    updateFilters({
+      body:newBody,
+      pathPage:PathPf.MESSAGGI,
+      page:0,
+      rows:10
+    });
+  };
+
+  const onFiltra = () => {
+    getMessaggi(1,10,bodyCentroMessaggi);
+    setBodyCentroMessaggiOnFiltra(bodyCentroMessaggi);
+    setPage(0);
+    setRowsPerPage(10);
+    updateFilters({
+      body:bodyCentroMessaggi,
+      pathPage:PathPf.MESSAGGI,
+      page:1,
+      rows:10
+    });
+  };
+
+  const statusAnnulla = (
+    bodyCentroMessaggi.anno !== null ||
+     bodyCentroMessaggi.letto !== null ||
+      bodyCentroMessaggi.letto !== null
+  ) ? "show" : "hidden";
+
+  return (
+
+    <MainBoxStyled title={"Messaggi"}>
+      <ResponsiveGridContainer >
+        <MainFilter 
+          filterName={"select_key_value"}
+          inputLabel={"Lettura"}
+          clearOnChangeFilter={() => console.log("ciao")}
+          setBody={setBodyCentroMessaggi}
+          body={bodyCentroMessaggi}
+          keyValue={"value"}
+          keyDescription='label'
+          keyBody={"letto"}
+          defaultValue={"tutti"}
+          arrayValues={arrayLettura}
+          extraCodeOnChange={(e)=>{
+            let val;
+            if(e === 'tutti'){
+              val = null;
+            }else if(e.toString() === 'true'){
+              val = true;
+            }else{
+              val = false;
+            }
+            setBodyCentroMessaggi((prev)=>({...prev,...{letto:val}}));          
+          }}
+        ></MainFilter>
+        <MainFilter 
+          filterName={"select_value_string"}
+          inputLabel={"Anno"}
+          clearOnChangeFilter={() => console.log("ciao")}
+          setBody={setBodyCentroMessaggi}
+          body={bodyCentroMessaggi}
+          keyDescription={"anno"}
+          keyValue={"anno"}
+          keyBody={"anno"}
+          defaultValue={""}
+          arrayValues={get2FinancialYear()}
+        ></MainFilter>
+        <MainFilter 
+          filterName={"select_key_value"}
+          inputLabel={"Mese"}
+          clearOnChangeFilter={() => console.log("ciao")}
+          setBody={setBodyCentroMessaggi}
+          body={bodyCentroMessaggi}
+          keyValue={"mese"}
+          keyDescription='descrizione'
+          keyBody={"mese"}
+          arrayValues={mesiDescNome}
+        ></MainFilter>
+      </ResponsiveGridContainer>
+      <FilterActionButtons 
+        onButtonFiltra={onFiltra} 
+        onButtonAnnulla={onAnnulla} 
+        statusAnnulla={statusAnnulla}/>
       <div className="mb-5 mt-5">
         <Box sx={{
           backgroundColor: "background.paper",
@@ -355,7 +388,6 @@ const Messaggi : React.FC<any> = () => {
                       <Typography color="text.secondary" variant="caption" component="div">
                         {getMonthString(item.dataInserimento)}
                       </Typography>
-
                     </TimelineNotificationOppositeContent>
                     <TimelineNotificationSeparator>
                       <TimelineConnector />
@@ -375,10 +407,8 @@ const Messaggi : React.FC<any> = () => {
                       </Typography>}
                       <Typography color="text.primary" variant="overline" component="div">
                         {`Letto  `}
-                        {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon> }
-                                          
-                      </Typography>
-                                           
+                        {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon> }              
+                      </Typography>                
                       {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={item.categoriaDocumento.toLowerCase().includes("contestazione") ? <PreviewIcon/>:<AttachFileIcon />}>
                         {item.categoriaDocumento.toLowerCase().includes("contestazione") ? 'Visualizza documento' : 'Download documento'}
                       </ButtonNaked>}
@@ -393,8 +423,7 @@ const Messaggi : React.FC<any> = () => {
           <TablePagination
             sx={{'.MuiTablePagination-selectLabel': {
               display:'none',
-              backgroundColor:'#f2f2f2'
-                                                
+              backgroundColor:'#f2f2f2'                                
             }}}
             component="div"
             page={page}
@@ -404,21 +433,18 @@ const Messaggi : React.FC<any> = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
             SelectProps={{
               disabled: false
-            }}
-          ></TablePagination>
+            }}/>
         </div>
       </div>         
       <ModalLoading 
         open={showDownloading} 
         setOpen={setShowDownloading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
+        sentence={'Downloading...'} />
       <ModalLoading 
         open={getListaLoading} 
         setOpen={setGetListaLoading}
-        sentence={'Loading...'} >
-      </ModalLoading>
-    </div>
+        sentence={'Loading...'} />
+    </MainBoxStyled>
   );
 };
 

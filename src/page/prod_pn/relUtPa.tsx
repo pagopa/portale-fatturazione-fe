@@ -3,14 +3,14 @@ import { useNavigate } from "react-router";
 import { profiliEnti,  } from "../../reusableFunction/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { downloadListaRel, getAnniRelSend, getListaRel, getMesiRelSend, getTipologieFatture } from "../../api/apiSelfcare/relSE/api";
-import { mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj";
+import { mesiWithZero } from "../../reusableFunction/reusableArrayObj";
 import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, downloadReportRelPagoPa, getAnniRel, getListaRelPagoPa, getMesiRel, getTipologieContrattoRel, getTipologieFatturePagoPa } from "../../api/apiPagoPa/relPA/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
+import ModalRedirect from "../../components/reusableComponents/modals/modalRedirect";
 import { manageError, manageErrorDownload } from "../../api/api";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { Rel, BodyRel } from "../../types/typeRel";
@@ -234,24 +234,7 @@ const RelPage : React.FC = () =>{
       await  getListaRel(token,profilo.nonce,nPage, nRows, newBody)
         .then((res)=>{
           // ordino i dati in base all'header della grid
-          const orderDataCustom = res.data.relTestate.map((obj)=>{
-            // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
-            // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
-            return {
-              idTestata:obj.idTestata,
-              ragioneSociale:obj.ragioneSociale,
-              tipologiaFattura:obj.tipologiaFattura,
-              firmata:obj.firmata,
-              idContratto:obj.idContratto,
-              anno:obj.anno,
-              mese:mesiGrid[obj.mese],
-              totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-              totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-              totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
-              totaleNotificheDigitali:obj.totaleNotificheDigitali,
-              totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-            };
-          });
+          const orderDataCustom = res.data.relTestate;
           setData(orderDataCustom);
           setTotalNotifiche(res.data.count);
           setGetListaRelRunning(false);
@@ -270,25 +253,7 @@ const RelPage : React.FC = () =>{
         const checkIfAllCaricata = res.data.relTestate.every(v => v.caricata === 1);
         setDisableListaPdf(checkIfAllCaricata);
         // ordino i dati in base all'header della grid
-        const orderDataCustom = res.data.relTestate.map((obj)=>{
-          // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
-          // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
-          return {
-            idTestata:obj.idTestata,
-            ragioneSociale:obj.ragioneSociale,
-            tipologiaFattura:obj.tipologiaFattura,
-            tipologiaContratto:obj?.tipologiaContratto,
-            firmata:obj.firmata,
-            idContratto:obj.idContratto,
-            anno:obj.anno,
-            mese:mesiGrid[obj.mese],
-            totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-            totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-            totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
-            totaleNotificheDigitali:obj.totaleNotificheDigitali,
-            totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-          };
-        });
+        const orderDataCustom = res.data.relTestate;
         setData(orderDataCustom);
         setTotalNotifiche(res.data.count);
         setGetListaRelRunning(false);
@@ -433,9 +398,9 @@ const RelPage : React.FC = () =>{
       idTipoContratto = 2;
     }
     if(profilo.auth === 'PAGOPA'){
-      navigate(`${profilePath}/rel/${el.id}/_/${idTipoContratto}`);
+      navigate(`${profilePath}/rel/${el.idTestata}/_/${idTipoContratto}`);
     }else{
-      navigate(`${profilePath}/rel/${el.id}`);
+      navigate(`${profilePath}/rel/${el.idTestata}`);
     }
         
   };  
@@ -587,7 +552,7 @@ const RelPage : React.FC = () =>{
 
 
   let headerGridKeys = headerRelEnte;
-  if(profilo.auth !== "PAGOPA"){
+  if(profilo.auth === "PAGOPA"){
     headerGridKeys = headerRelAdmin;
   }
 

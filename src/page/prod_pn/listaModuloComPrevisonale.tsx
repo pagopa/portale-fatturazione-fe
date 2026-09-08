@@ -1,5 +1,5 @@
 import { manageError } from '../../api/api';
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { getContrattoModuliCommessaPA } from "../../api/apiPagoPa/moduloComessaPA/api";
 import { saveAs } from "file-saver";
@@ -14,7 +14,6 @@ import { downloadDocumentoListaPrevisionaleaPagoPa, listaModuloCommessaPrevisona
 import dayjs from "dayjs";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersGridPrevisionale } from "../../assets/configurations/conf_GridModComPrevisionale";
-import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
@@ -64,8 +63,6 @@ const ListaCommessaPrevisionale:React.FC = () =>{
   const future = new Date(now.getFullYear(), now.getMonth() + 4, 1);
   const defaultDataFineModulo = new Date(future.getFullYear(), future.getMonth() + 1, 0);
   
- 
-
   const [gridData, setGridData] = useState<ItemGridPrevisonale[]>([]);
   const [count, setCount] = useState(0);
   const [bodyGetLista, setBodyGetLista] = useState<BodyPrevisionale>({
@@ -85,11 +82,9 @@ const ListaCommessaPrevisionale:React.FC = () =>{
   const [showLoading,setShowLoading] = useState(false);
   const [showLoadingLista,setShowLoadingLista] = useState(false);
   const [arrayContratto,setArrayContratto]= useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
-
   const [errorData, setErrorData] = useState(false);
   const [errorContratto, setErrorContratto] = useState(false);
 
-   
   const { 
     filters,
     updateFilters,
@@ -110,9 +105,6 @@ const ListaCommessaPrevisionale:React.FC = () =>{
     return () => clearTimeout(timer);
   },[textValue]);
 
-
-
-  
   const getContratti = async() => {
   
     await getContrattoModuliCommessaPA(token, profilo.nonce).then((res)=>{
@@ -149,35 +141,8 @@ const ListaCommessaPrevisionale:React.FC = () =>{
     await listaModuloCommessaPrevisonalePagopa(bodyFormattedDate ,token, profilo.nonce)
       .then((res)=>{
            
-        setCount(res.data.count);
-        const finalData = res.data.moduliCommessa.map(el => {
-              
-          return {
-            id:el.ragioneSociale+el.annoValidita+el.meseValidita,
-            idTipoContratto: el.idTipoContratto,
-            meseValidita:el.meseValidita,
-            prodotto:el.prodotto,
-            idEnte:el.idEnte,
-            ragioneSociale:el.ragioneSociale,
-            annoValidita:el.annoValidita,
-            mese:mesiGrid[el.meseValidita],
-            stato:el.source||"--",
-            tipologiaContratto:el.tipologiaContratto||"--",
-            dataContratto:dayjs(el.dataContratto).format("YYYY-MM-DD"),
-            dataInserimento:dayjs(el.dataInserimento).format("YYYY-MM-DD"),
-            dataChiusura:el.source === "archiviato" ? "--" : el.source === "facoltativo" ? "TBD" : dayjs(el.dataChiusura).format("YYYY-MM-DD"),
-            totaleNotificheDigitaleNaz:el.totaleNotificheDigitaleNaz !== null && el.totaleNotificheDigitaleNaz !== "" ? el.totaleNotificheDigitaleNaz :"--",
-            totaleNotificheDigitaleInternaz:el.totaleNotificheDigitaleInternaz !== null && el.totaleNotificheDigitaleInternaz !== "" ? el.totaleNotificheDigitaleInternaz:"--",
-            totaleNotificheAnalogicoARNaz:el.totaleNotificheAnalogicoARNaz !== null && el.totaleNotificheAnalogicoARNaz !== "" ? el.totaleNotificheAnalogicoARNaz:"--",
-            totaleNotificheAnalogicoARInternaz:el.totaleNotificheAnalogicoARInternaz !== null && el.totaleNotificheAnalogicoARInternaz !== "" ? el.totaleNotificheAnalogicoARInternaz:"--",
-            totaleNotificheAnalogico890Naz:(el.totaleNotificheAnalogico890Naz !== null && el.totaleNotificheAnalogico890Naz !== "") ? el.totaleNotificheAnalogico890Naz:"--",
-            totaleNotifiche:el.totaleNotifiche !== null && el.totaleNotifiche !== "" ? el.totaleNotifiche:"--",
-            action:""
-          };
-        });
-
-             
-        setGridData(finalData);
+        setCount(res.data.count);     
+        setGridData(res.data.moduliCommessa);
         isInitialRender.current = false;
         setShowLoadingLista(false);
       }).catch((err)=>{
@@ -279,6 +244,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
   const clearOnChangeFilter = () => {
     setGridData([]);
     setCount(0);
+    setBodyGetLista((prev)=> ({...prev,page:0,size:10}));
   };
 
   const onButtonFiltra = () => {
@@ -447,10 +413,11 @@ const ListaCommessaPrevisionale:React.FC = () =>{
         total={count}
         page={bodyGetLista.page}
         rows={bodyGetLista.size}
-        headerNames={headersGridPrevisionale(handleEvent)}
+        headerNames={headersGridPrevisionale}
         disabled={showLoadingLista}
         widthCustomSize="2000px"
         body={bodyGetLista}
+        apiGet={handleEvent}
         sentenseEmpty={"Non sono presenti moduli commessa"}
       />
       <ModalLoading 

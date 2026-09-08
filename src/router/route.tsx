@@ -30,7 +30,6 @@ import RelPage from '../page/prod_pn/relUtPa';
 import ReportDettaglio from '../page/prod_pn/reportDettaglioUtPa';
 import Storico from '../page/prod_pn/storicoContestazioni';
 import PageTipologiaContratto from '../page/prod_pn/tipologiaContratto';
-import ListaDocEmessi from '../page/prod_pn/whiteList';
 import SideNavSend from '../layout/sideNavs/sideNavSend';
 import AuthAzureProdotti from '../page/authAzureProdotti';
 import ListaCommessaPrevisionale from '../page/prod_pn/listaModuloComPrevisonale';
@@ -58,6 +57,8 @@ import { useEffect } from 'react';
 import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedProdPn, authVerifyIsLoggedSend, authVerifyIfEnteAllowRelSection, authVerifyPageProdotto } from '../loaderRoutes/loaderAuthVerify';
 import DocSospesiSend from '../page/prod_pn/docSospesiSend';
 import DocStoricoSend from '../page/prod_pn/docStoricoSend';
+import GestioneFatture from '../page/prod_pn/gestioneFatture';
+
 
 const RouteProfile = () => {
   const mainState = useGlobalStore(state => state.mainState);
@@ -140,12 +141,12 @@ const router2 = createBrowserRouter([
           { path: PathRoutePf.FATTURAZIONE, Component: Fatturazione },
           { path: PathRoutePf.MESSAGGI, Component: Messaggi },
           { path: PathRoutePf.ACCERTAMENTI, Component: Accertamenti },
-          { path: PathRoutePf.LISTA_DOC_EMESSI, Component: ListaDocEmessi },
           { path: PathRoutePf.JSON_TO_SAP, Component: InvioFatture },
           { path: PathRoutePf.JSON_TO_SAP_DETAILS, Component: InvioFattureDetails },
           { path: PathRoutePf.ORCHESTRATORE, Component: ProcessiOrchestartore },
           { path: PathRoutePf.LISTA_STORICO_DOCUMENTI_SEND, Component:  DocStoricoSend },
           { path: PathRoutePf.DOCUMENTI_SOSPESI_SEND, Component:  DocSospesiSend },
+          { path: PathRoutePf.GESTIONE_FATTURE, Component:  GestioneFatture },
         ],
       },
       {

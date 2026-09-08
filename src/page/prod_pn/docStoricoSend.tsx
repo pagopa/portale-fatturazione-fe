@@ -167,25 +167,7 @@ const DocStoricoSend : React.FC = () =>{
     await  getFatturazioneRiepilogoPagoPa(token,profilo.nonce,body)
       .then((res)=>{
         // ordino i dati in base all'header della grid
-        const orderDataCustom = res.data.map((obj:any)=>{
-          // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
-          // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
-          return {
-            id:Math.random(),
-            ragioneSociale:obj.ragioneSociale,
-            anno:obj.annoRiferimento,
-            mese:mesiGrid[obj.meseRiferimento],
-            tipologiaContratto:obj.tipologiaContratto || "--",
-            anticipo:obj.anticipo ? obj.anticipo.toLocaleString("de-DE", { style: "currency", currency: "EUR" }) : "--",
-            anticipoSospeso:obj.anticipoSospeso ? "Si":"No",
-            acconto:obj.acconto ? obj.acconto.toLocaleString("de-DE", { style: "currency", currency: "EUR" }) : "--",
-            accontoSospeso:obj.accontoSospeso ? "Si":"No",
-            primoSaldo:obj.primoSaldo ? obj.primoSaldo.toLocaleString("de-DE", { style: "currency", currency: "EUR" }) : "--",
-            primoSaldoSospeso:obj.primoSaldoSospeso ?  "Si":"No",
-            secondoSaldo:obj.secondoSaldo ? obj.secondoSaldo.toLocaleString("de-DE", { style: "currency", currency: "EUR" }) : "--",
-            secondoSaldoSospeso:obj.secondoSaldoSospeso  ? "Si":"No"
-          };
-        });
+        const orderDataCustom = res.data;
             
         setTotalListEl(res.data.length);
         //setStorno(mockRes.importoSospeso.toLocaleString("de-DE", { style: "currency", currency: "EUR" }));

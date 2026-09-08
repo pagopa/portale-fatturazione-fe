@@ -18,12 +18,9 @@ type JwtUser = {
 };
 
 const HeaderPostLogin = () => {
-
-  const mainState = useGlobalStore(state => state.mainState);
-  const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
-
   const location  = useLocation();
   const navigate = useNavigate();
+  const mainState = useGlobalStore(state => state.mainState);
 
   const pagoPALink = {
     label: 'PagoPA S.p.A.',
@@ -38,7 +35,10 @@ const HeaderPostLogin = () => {
     surname: "",
     email: "",
   };
-
+  
+  const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+  const statusUser = mainState.authenticated && user;
+  const { instance } = useMsal();
   const [showDownloading, setShowDownloading] = useState(false);
   // start actions sul manuale operativo , download del manuale
 
@@ -56,7 +56,7 @@ const HeaderPostLogin = () => {
           saveAs( res,fileName );
         }); 
       }
-    } ).catch((err) => {
+    } ).catch(() => {
       setShowDownloading(false);
       managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
     });
@@ -65,27 +65,19 @@ const HeaderPostLogin = () => {
     // start on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
   function onEmailClick() {
     if(mainState.profilo.auth === "PAGOPA" || location.pathname === '/azureLogin' || mainState.prodotti.length > 0){
-      window.open(`mailto:fatturazione@assistenza.pagopa.it`);
-            
+      window.open(`mailto:fatturazione@assistenza.pagopa.it`); 
     }else{
       window.location.href = "https://uat.selfcare.pagopa.it/assistenza?productId=prod-pf";
-    }
-        
+    }    
   }
-  // end on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
-
-  const { instance } = useMsal();
-   
+  
   const handleLoginRedirect = () => {
     instance.loginRedirect(loginRequest).catch(() => {
       managePresaInCarico('AZURE_LOGIN_ERROR',dispatchMainState); 
     });
   };
 
-  const statusUser = mainState.authenticated && user;
-
   return (
-
     <div className="div_header">
       <>
         <HeaderAccount

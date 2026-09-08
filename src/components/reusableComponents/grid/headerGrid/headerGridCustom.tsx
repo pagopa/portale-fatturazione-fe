@@ -46,9 +46,7 @@ const HeaderGridCustom = ({
       <TableRow>
         {headerNames.map((el, i) => {
           const sortValue = objectSort?.[el.label] ?? 0;
-
           switch(nameParameterApi) {
-
           case 'idOrchestratore':
           case 'asyncDocEnte':
           case 'idPrevisonale':
@@ -69,13 +67,11 @@ const HeaderGridCustom = ({
                 </Tooltip>}
               </TableCell>
             );
-
           case 'contestazionePage':
           case 'modComTrimestrale':
             return (
               <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}</TableCell>
             );
-
           case 'docEmessiEnte':
           case 'docEmessiEnteContestate':
           case 'docSospesiSend':
@@ -101,7 +97,6 @@ const HeaderGridCustom = ({
                 </Tooltip>}
               </TableCell>
             );
-
           case 'idNotifica':
             return (
               <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
@@ -122,10 +117,9 @@ const HeaderGridCustom = ({
                 </Tooltip>}
               </TableCell>
             );
-
           default:
             return (
-              <TableCell key={`tableCell-${i}`} align="center">{el.label}</TableCell>
+              <TableCell key={`tableCell-${i}`} width={el.width} align="center">{el.label}</TableCell>
             );
           }
         })}

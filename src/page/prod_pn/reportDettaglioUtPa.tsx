@@ -1,4 +1,4 @@
-import React , { useState, useEffect, useContext} from 'react';
+import React , { useState, useEffect} from 'react';
 import { getTipologiaProfilo, manageError, managePresaInCarico} from "../../api/api";
 import {NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox, OptionMultiselectChackboxTipoNot  } from "../../types/typeReportDettaglio";
 import { BodyListaNotifiche, BodyListaNotificheSelfcare } from "../../types/typesGeneral";
@@ -7,13 +7,13 @@ import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { getAnniNotifiche, getMesiNotifiche, listaNotifichePagoPa, getTipologiaEntiCompletiPagoPa, getContestazionePagoPa, downloadNotifchePagoPa } from "../../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
 import { listaEntiNotifichePageConsolidatore, listaEntiNotifichePage, listaNotifiche, listaNotificheRecapitista, listaNotificheConsolidatore, getContestazione, getContestazioneRecapitista, getContestazioneCosolidatore, downloadNotifche, downloadNotifcheRecapitista, downloadNotifcheConsolidatore, getMessaggiCountEnte, flagContestazione } from "../../api/apiSelfcare/notificheSE/api";
-import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
+import ModalRedirect from "../../components/reusableComponents/modals/modalRedirect";
 import ModalScadenziario from "../../components/reportDettaglio/modalScadenziario";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
-import { mesiGrid, mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
+import { mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
@@ -262,7 +262,7 @@ const ReportDettaglio : React.FC = () => {
         setRowsPerPage(filters.rows);
       }
 
-    } catch (err) {
+    } catch ( err ) {
       console.log("Error NOTIFICHE");
     } finally {
       setGetNotificheWorking(false);
@@ -328,93 +328,6 @@ const ReportDettaglio : React.FC = () => {
     }
   };
     
- 
-  const notificheListWithOnere = notificheList.map((notifica:NotificheList) =>{
-    let newOnere = '--';
-    if( notifica.onere === 'PA_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'PA_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'PA_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if( notifica.onere === 'GSP_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'GSP_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'GSP_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if( notifica.onere === 'SCP_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'SCP_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'SCP_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if( notifica.onere === 'PSP_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'PSP_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'PSP_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if( notifica.onere === 'AS_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'AS_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'AS_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if( notifica.onere === 'SA_SEND' ){
-      newOnere = 'SEND';
-    }else if( notifica.onere === 'SA_REC' ){
-      newOnere = 'RECAPITISTA';
-    }else if( notifica.onere === 'SA_CON' ){
-      newOnere = 'CONSOLIDATORE';
-    }else if(notifica.onere === 'SEND_PA'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_GSP'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_SCP'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_PSP'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_AS'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_SA'){
-      newOnere = 'ENTE';
-    }else if(notifica.onere === 'SEND_SEND'){
-      newOnere = 'SEND';
-    }else if(notifica.onere === 'SEND_REC'){
-      newOnere = 'RECAPITISTA';
-    }else if(notifica.onere === 'SEND_CON'){
-      newOnere = 'CONSOLIDATORE';
-    }else if(notifica.onere === 'REC'){
-      newOnere = 'RECAPITISTA';
-    }else if(notifica.onere === 'CON'){
-      newOnere = 'CONSOLIDATORE';
-    }
-        
-    const element = {
-      idNotifica:notifica.idNotifica,
-      contestazione:notifica.contestazione,
-      id:notifica.idNotifica,
-      onere:newOnere,
-      recipientId:notifica.recipientId||"--",
-      anno:notifica.anno,
-      mese:mesiGrid[Number(notifica.mese)],
-      data:notifica.data?.replace('T', ' ').split('.')[0]||"--",
-      ragioneSociale:notifica.ragioneSociale,
-      tipoNotifica:notifica.tipoNotifica||"--",
-      iun:notifica.iun||"--",
-      dataInvio:new Date(notifica.dataInvio).toISOString().split('T')[0],
-      statoEstero:notifica.statoEstero||"--",
-      cap:notifica.cap||"--",
-      costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-    };
-    if(profilo.profilo === 'REC' || profilo.profilo === 'CON' || (profilo.profilo === "PA" && profilo.auth === "SELFCARE")){
-      const {ragioneSociale, ...result} = element;
-      return result;
-    }else{
-      return element;
-    }
-  });
     
   const onAnnullaFiltri = () =>{
     // to make call equal on initial render
@@ -654,7 +567,7 @@ const ReportDettaglio : React.FC = () => {
   };
     
   const getContestazioneModal = async(el) =>{
-    const idNotifica = el.id;
+    const idNotifica = el.idNotifica;
     setShowLoadingGrid(true);
     if(enti){
       await getContestazione(token, profilo.nonce , idNotifica).then((res)=>{
@@ -889,22 +802,21 @@ const ReportDettaglio : React.FC = () => {
   };
   const statusAnnulla =  (
     bodyGetLista.profilo !== '' ||
-            bodyGetLista.prodotto !== '' ||
-            (bodyGetLista.tipoNotifica !== null && bodyGetLista.tipoNotifica?.length !== 0) ||
-            bodyGetLista.statoContestazione.length !== 0 ||
-            bodyGetLista.cap !== null ||
-            bodyGetLista.idEnti?.length !== 0 ||
-            bodyGetLista.mese !== Number(arrayMesi[0]?.mese) ||
-            bodyGetLista.anno !== arrayAnni[0]||
-            bodyGetLista.recipientId !== null ||
-            bodyGetLista.consolidatori?.length !== 0 ||
-            bodyGetLista.recapitisti?.length !== 0 ||
-            bodyGetLista.sort.columnName !== null ||
-            bodyGetLista.sort.order !== null) ? "show" : "hidden"; 
+    bodyGetLista.prodotto !== '' ||
+    (bodyGetLista.tipoNotifica !== null && bodyGetLista.tipoNotifica?.length !== 0) ||
+    bodyGetLista.statoContestazione.length !== 0 ||
+    bodyGetLista.cap !== null ||
+    bodyGetLista.idEnti?.length !== 0 ||
+    bodyGetLista.mese !== Number(arrayMesi[0]?.mese) ||
+    bodyGetLista.anno !== arrayAnni[0]||
+    bodyGetLista.recipientId !== null ||
+    bodyGetLista.consolidatori?.length !== 0 ||
+    bodyGetLista.recapitisti?.length !== 0 ||
+    bodyGetLista.sort.columnName !== null ||
+    bodyGetLista.sort.order !== null) ? "show" : "hidden"; 
     
 
-  return (
-        
+  return (  
     <MainBoxStyled title={"Notifiche"} actionButton={[{
       onButtonClick: () => setShowModalScadenziario(true),
       variant: "outlined",
@@ -1122,8 +1034,7 @@ const ReportDettaglio : React.FC = () => {
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onAnnullaFiltri} 
-        statusAnnulla={statusAnnulla} 
-      ></FilterActionButtons>
+        statusAnnulla={statusAnnulla}/>
       <ActionTopGrid
         actionButtonRight={[{
           onButtonClick: () => downloadNotificheOnDownloadButton(),
@@ -1131,11 +1042,10 @@ const ReportDettaglio : React.FC = () => {
           label: "Download risultati",
           icon:{name:"download" },
           disabled:(notificheList.length === 0 || getNotificheWorking|| mainState.apiError !== null)
-        }]}
-      />      
+        }]}/>      
       <GridCustom
         nameParameterApi='idNotifica'
-        elements={notificheListWithOnere}
+        elements={notificheList}
         changePage={handleChangePage}
         changeRow={handleChangeRowsPerPage} 
         total={totalNotifiche}
@@ -1147,8 +1057,7 @@ const ReportDettaglio : React.FC = () => {
         headerActionSortServerSide={headerActionSort}
         widthCustomSize="2000px"
         sentenseEmpty={"Non sono presenti notifiche"}
-        body={bodyGetLista}
-      />                       
+        body={bodyGetLista}/>                       
       <ModalContestazione open={open} 
         setOpen={setOpen} 
         mainState={mainState}
@@ -1161,8 +1070,7 @@ const ReportDettaglio : React.FC = () => {
         rows={rowsPerPage}
         valueRispostaEnte={valueRispostaEnte}
         contestazioneStatic={contestazioneStatic}
-        dispatchMainState={dispatchMainState}
-      />
+        dispatchMainState={dispatchMainState}/>
       <ModalRedirect
         setOpen={setOpenModalRedirect} 
         open={openModalRedirect}

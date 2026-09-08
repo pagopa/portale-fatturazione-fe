@@ -3,6 +3,7 @@ import { ArrayTipologieCommesse, DatiModuloCommessaPdf, ModuliCommessa } from ".
 import { month, objMesiWithZero } from "./reusableArrayObj";
 import { ManageErrorResponse } from "../types/typesGeneral";
 import { Fattura } from "../page/ente/docConEme";
+import { NotificheList } from "../types/typeReportDettaglio";
 
 export const fixResponseForDataGrid = <T,>(arr:T[]) =>{
   const res = arr.map( (singlObj:any) =>{    
@@ -40,10 +41,6 @@ export const fixResponseForDataGrid = <T,>(arr:T[]) =>{
         //totaleNotifiche:el.moduli.reduce((acc, item) => acc + item.totaleNotifiche, 0),
         arrow:"",
         moduli:el.moduli.map(mod => {
-
-                    
-
-
           let inserimentoInfo = {inserimento:"--",color:"#ffffff"};
 
           if(mod.stato === null ){
@@ -166,7 +163,7 @@ export const findStatoContestazioni = (code:number) => {
   case 11:
     return "Processo completato";
   default:
-    "Caricamento file";
+    return "Caricamento file";
             
   }
 };
@@ -187,11 +184,19 @@ export  function transformDateTime(input: string): string {
   }
 }
 
+export function transformDateTime019(input: string): string {
+  if (input) {
+    return input.slice(0, 19).replace("T", " ");
+  } else {
+    return "--";
+  }
+}
+
 export  function transformDateTimeWithNameMonth(input: string): string {
   if(input){
     const [datePart, timePart] = input.split("T"); // Split the input into date and time
     const [year, month, day] = datePart.split("-"); // Split the date into components
-    return `${day}-${objMesiWithZero[month]}-${year} ${timePart}`; // Rearrange and return the formatted string
+    return `${day}-${objMesiWithZero[month]}-${year}`; // Rearrange and return the formatted string
   }else{
     return "";
   }
@@ -308,8 +313,8 @@ export const sortDates = (array: Fattura[], ascending = true) => {
   };
 
   return [...array].sort((a, b) => {
-    const dateA = normalize(a.dataFattura);
-    const dateB = normalize(b.dataFattura);
+    const dateA = normalize(new Date(a.dataFattura).toLocaleDateString('it-IT'));
+    const dateB = normalize(new Date(b.dataFattura).toLocaleDateString('it-IT'));
 
     return ascending
       ? dateA.localeCompare(dateB)
@@ -392,3 +397,88 @@ export const sortByTipoFattura = <T,>(
   return copy;
 };
 
+export const getOnereLabel = (notifica: NotificheList): string => {
+  const onere = notifica.onere;
+
+  if (!onere) {
+    return '--';
+  }
+
+  if (onere.endsWith('_SEND')) {
+    return 'SEND';
+  }
+
+  if (onere.endsWith('_REC') || onere === 'REC') {
+    return 'RECAPITISTA';
+  }
+
+  if (onere.endsWith('_CON') || onere === 'CON') {
+    return 'CONSOLIDATORE';
+  }
+
+  if (onere.startsWith('SEND_')) {
+    return 'ENTE';
+  }
+
+  return '--';
+};
+
+export const getColorChipContestazioneStorico = (el:{stato:number}) => {
+  let bgColorRow = "#F0F8FF"; 
+  if(el.stato === 3){
+    bgColorRow = "#F0FFF0";
+  }else if(el.stato === 2){
+    bgColorRow = "#FFF0F5";
+  }
+
+  return bgColorRow;
+};
+ 
+export function formatDate(date) {
+  const pad = (n) => String(n).padStart(2, '0');
+
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+}
+
+
+export const manipulateObjModuloCommessa = ( el ) =>{
+  
+  let inserimentoInfo = {inserimento:"--",color:"#ffffff"};
+
+  if(el.totaleNotifiche === null ){
+    inserimentoInfo = {inserimento:"Non inserito",color:"#FB9EAC"};
+  }else{
+    inserimentoInfo = {inserimento:"Inserito",color:"#B5E2B4"};
+  }
+
+  return {
+    id:el.meseValidita+"/"+el.annoValidita,
+    meseAnno:month[el.meseValidita-1]+"/"+el.annoValidita,
+    stato:el.source.charAt(0).toUpperCase() + el.source.slice(1)||"--",
+    inserimento:inserimentoInfo,
+    dataInserimento:el.dataInserimento?.split('T')[0]|| "--",
+    dataChiusura:el.source === "archiviato" ? "--" : el.source === "facoltativo" ? "TBD" : (el.dataChiusura?.split('T')[0]|| "--"),
+    totaleDig:el.totaleNotificheDigitaleNaz !== null ?el.totaleNotificheDigitaleNaz:"--",
+    totaleNotificheDigitaleInternaz:el.totaleNotificheDigitaleInternaz !== null ? el.totaleNotificheDigitaleInternaz: "--",
+    totaleAR:el.totaleNotificheAnalogicoARNaz!== null ?el.totaleNotificheAnalogicoARNaz :"--",
+    totaleARInt:el.totaleNotificheAnalogicoARInternaz !== null ? el.totaleNotificheAnalogicoARInternaz: "--",    
+    totaleAnalogico890Naz:el.totaleNotificheAnalogico890Naz !== null ? el.totaleNotificheAnalogico890Naz: "--",
+    totale:el.totaleNotifiche !== null ? el.totaleNotifiche : "--",
+    source:el.source,
+    modifica:el.modifica,
+    quarter:el.quarter,
+    arrow:""
+  };
+};
+
+export function formatDateString(el:{dataFattura:string}) {
+  const [year, month, day] = el.dataFattura.split("-");
+  return `${day}/${month}/${year}`;
+}

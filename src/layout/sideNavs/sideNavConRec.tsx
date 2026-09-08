@@ -17,11 +17,9 @@ const SideNavRecCon: React.FC = () => {
 
   const mainState = useGlobalStore(state => state.mainState);
   const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
-
   const navigate = useNavigate();
   const location = useLocation();
   const currentLocation = location.pathname;
-
   const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
     
   const handleListItemClickNotifiche = () => {

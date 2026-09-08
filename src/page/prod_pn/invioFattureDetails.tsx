@@ -8,7 +8,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { managePresaInCarico } from "../../api/api";
 import { sendListaJsonFatturePagoPa } from "../../api/apiPagoPa/fatturazionePA/api";
-import SkeletonRelPdf from "../../components/rel/skeletonRelPdf";
+import SkeletonRelPdf from "../../components/reusableComponents/skeletonRelPdf";
 import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
 import SkeletonGridLoading from "../../components/reusableComponents/skeletonGridLoading";
 import { mesiGrid, month } from "../../reusableFunction/reusableArrayObj";

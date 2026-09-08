@@ -1,27 +1,18 @@
-import { TableCellProps } from "@mui/material";
+import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 
-interface HeaderStoricoDocContabili {
-    label:string,
-    align:TableCellProps['align'],
-    width:number|string,
-    keyValue:string,
-    headerAction?:boolean| ((row: any) => void),
-    chip?:boolean,
-
-}
-
-export const headerGridStoricoDocContabili:HeaderStoricoDocContabili[] = [
-  { label: "Ragione Sociale", align: "center", width: "200px", keyValue: "ragioneSociale" },
-  { label: "Anno", align: "center", width: "100px", keyValue: "anno" },
-  { label: "Mese", align: "center", width: "100px", keyValue: "mese" },
-  { label: "T. Contratto", align: "center", width: "150px", keyValue: "tipoContratto" },
-  { label: "Anticipo", align: "center", width: "150px", keyValue: "anticipo" },
-  { label: "Anticipo Sospeso", align: "center", width: "150px", keyValue: "anticipoSospeso" },
-  { label: "Acconto", align: "center", width: "150px", keyValue: "acconto" },
-  { label: "Acconto Sospeso", align: "center", width: "150px", keyValue: "accontoSospeso" },
-  { label: "Primo Saldo", align: "center", width: "150px", keyValue: "primoSaldo" },
-  { label: "Primo Saldo Sospeso", align: "center", width: "150px", keyValue: "primoSaldoSospeso" },
-  { label: "Secondo Saldo", align: "center", width: "150px", keyValue: "secondoSaldo" },
-  { label: "Secondo Saldo Sospeso", align: "center", width: "150px", keyValue: "secondoSaldoSospeso" },
+export const headerGridStoricoDocContabili:HeaderGridCustom[] = [
+  { label: "Ragione Sociale", align: "center", width: "200px", keyValue: "ragioneSociale",typeColumn:"ragionesociale",makeAction:false, applyCss:true },
+  { label: "Anno", align: "center", width: "100px", keyValue: "annoRiferimento" ,typeColumn:"string" },
+  { label: "Mese", align: "center", width: "100px", keyValue: "meseRiferimento" ,typeColumn:"mese-number"},
+  { label: "T. Contratto", align: "center", width: "150px", keyValue: "idTipologiaContratto" ,typeColumn:"number-tipocontratto" },
+  { label: "Anticipo", align: "center", width: "150px", keyValue: "anticipo" ,typeColumn:"euro" },
+  { label: "Anticipo Sospeso", align: "center", width: "150px", keyValue: "anticipoSospeso",typeColumn:"boolean" },
+  { label: "Acconto", align: "center", width: "150px", keyValue: "acconto",typeColumn:"euro" },
+  { label: "Acconto Sospeso", align: "center", width: "150px", keyValue: "accontoSospeso",typeColumn:"boolean" },
+  { label: "Primo Saldo", align: "center", width: "150px", keyValue: "primoSaldo",typeColumn:"euro" },
+  { label: "Primo Saldo Sospeso", align: "center", width: "150px", keyValue: "primoSaldoSospeso",typeColumn:"boolean" },
+  { label: "Secondo Saldo", align: "center", width: "150px", keyValue: "secondoSaldo",typeColumn:"euro" },
+  { label: "Secondo Saldo Sospeso", align: "center", width: "150px", keyValue: "secondoSaldoSospeso" ,typeColumn:"boolean"},
+  
 ];
    

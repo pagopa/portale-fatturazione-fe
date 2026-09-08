@@ -12,7 +12,7 @@ type ApiKeyPage = {
 type GlobalStore = {
     /* ---------- MAIN STATE ---------- */
     mainState: MainState;
-    dispatchMainState: (action: { type: string; value?: any }) => void;
+    dispatchMainState: (action: { type: string; value?: Partial<MainState> }) => void;
 
     appVersion:string;
 
@@ -33,7 +33,7 @@ type GlobalStore = {
     setCountMessages: (v: number) => void;
 
     statusQueryGetUri: string[];
-    setStatusQueryGetUri: (v: any[]) => void;
+    setStatusQueryGetUri: (v: string[]) => void;
 
     /* ---------- EXTRA DATA ---------- */
     mainData: {

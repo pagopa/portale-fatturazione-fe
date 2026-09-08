@@ -5,7 +5,7 @@ import { ButtonNaked } from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
 import {  getRegioniModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
+import ModalRedirect from '../../components/reusableComponents/modals/modalRedirect';
 import BasicModal from '../../components/reusableComponents/modals/modal';
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../../types/enum';

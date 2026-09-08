@@ -1,10 +1,10 @@
 import { Card, Table, TableBody, TableCellProps, TablePagination } from "@mui/material";
-import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
 import React, { SetStateAction } from "react";
 import HeaderGridCustom from "./headerGrid/headerGridCustom";
 import EmptyRow from "./emptyRow";
-import GridRowsRenderer from "./rowComponent/gridRowsRenderer";
-interface GridCustomProps<T = any> {
+
+import GridRowDesignByConfigFile from "./rowComponent/gridRowDesignByConfigFile";
+interface GridCustomProps<T> {
     elements:  T[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
     changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
@@ -12,47 +12,57 @@ interface GridCustomProps<T = any> {
     total:number,
     rows:number,
     headerNames:HeaderGridCustom[],
-    headerNamesCollapse?:string[]|{label:string,align: TableCellProps['align'],width:number|string}[],
+    headerNamesCollapse?:HeaderGridCustom[],
     nameParameterApi:string 
-    apiGet?:(el: any)=>void 
+    apiGet?:(el: T)=> void 
     disabled:boolean
     widthCustomSize:string
-    setOpenModalDelete?:React.Dispatch<SetStateAction<boolean>>
-    setOpenModalAdd?:React.Dispatch<SetStateAction<boolean>>
-    selected?:number[]
-    setSelected?:React.Dispatch<SetStateAction<number[]>>
+    setAction?:(obj:T,action:string) => void
     buttons?:{
         stringIcon:string
         icon:React.ReactNode
         action:string
     }[],
     headerAction?:(val:number) =>void,
-    body?: any,
+    body?: T,
     paginationVisibile?:boolean,
     objectSort?:{[key:string]:number},
     sentenseEmpty?:string,
     headerActionSort?:(val:string, setGridData:React.Dispatch<SetStateAction<Record<string, unknown>[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number,listaResponse: Record<string, unknown>[]) =>void,
-    setGridData?:React.Dispatch<SetStateAction<any>[]>
+    setGridData?:React.Dispatch<SetStateAction<T[]>>
     gridType?:boolean,
     setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
     listaResponse?: Record<string, unknown>[],
-    headerActionSortServerSide?:(label:string) => void
+    headerActionSortServerSide?:(label:string) => void,
+    titleRowCollapse?:string,
+    keyCollapse?:string,
+    bgColorRowFunction?:(element:T) => string
 }
 
 export interface HeaderGridCustom {
     label:string,
     align:TableCellProps['align'],
-    width:number|string,
+    width:string|undefined,
     headerAction?:boolean,
     headerTooltip?: (title: string, label: string, color: string) => JSX.Element,
     headerChip?: (title: string, label: string, color: string) => JSX.Element,
-    gridAction?:(fun:(id) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
+    gridAction?:(fun:(obj:T,action:string) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
     gridOpenDetail?:(disabled:boolean,open?:boolean,setOpen?:(val)=>void) => JSX.Element,
-    headerActionSort?:boolean
+    headerActionSort?:boolean,
+    keyValue:string,
+    typeColumn?:string,
+    hideColumn?:boolean,
+    switchValue?:{keySwitch:number, valueSwitch:string}[],
+    chip?:boolean,
+    funToManipulateValue?: (val: any, fun?: any) => any;
+    makeAction?:boolean,
+    applyCss?:boolean,
+    keyToManipulateData?:string,
+    variant?: "caption-semibold" | "caption" | "body1" | "body2" | "subtitle1" | "subtitle2" | "h6" | "h5" | "h4" | "h3" | "h2" | "h1"; 
 }
 
 
-const GridCustom: React.FC<GridCustomProps> = ({
+const GridCustom = <T,>({
   elements,
   changePage,
   changeRow,
@@ -63,11 +73,7 @@ const GridCustom: React.FC<GridCustomProps> = ({
   nameParameterApi,
   apiGet,
   widthCustomSize,
-  setOpenModalDelete,
-  setOpenModalAdd,
-  buttons,
-  selected,
-  setSelected,
+  setAction,
   headerAction,
   body,
   paginationVisibile,
@@ -79,16 +85,14 @@ const GridCustom: React.FC<GridCustomProps> = ({
   headerActionSort,
   setObjectSort,
   listaResponse=[],
-  headerActionSortServerSide
-}) =>{
-
-  const checkIfChecked = (id: number) => {
-    return Boolean(selected?.includes(id));
-  };
-    
+  headerActionSortServerSide,
+  titleRowCollapse,
+  keyCollapse,
+  bgColorRowFunction
+}: GridCustomProps<T>) => {
+ 
   return (
     <div>
-      {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
       <div style={{ overflowX: 'auto', width: '100%' }}>
         <Card sx={{ width: widthCustomSize, minWidth: '100%', backgroundColor: 'transparent' }}>
           <Table sx={{ backgroundColor: 'white' }}>
@@ -114,38 +118,17 @@ const GridCustom: React.FC<GridCustomProps> = ({
                 <EmptyRow sentenseEmpty={sentenseEmpty} />
               }
               {elements.length > 0 && elements.map((element,index) => {
-                let sliced = Object.fromEntries(Object.entries(element).slice(1));
-
-                if (nameParameterApi === 'idWhite') {
-                  sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
-                } else if (nameParameterApi === 'contestazionePage') {
-                  sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
-                } else if (nameParameterApi === 'modComTrimestrale') {
-                  sliced = Object.fromEntries(Object.entries(element).slice(1, -4));
-                } else if (nameParameterApi === 'idPrevisonale') {
-                  sliced = Object.fromEntries(Object.entries(element).slice(5));
-                } else if (nameParameterApi === 'docEmessiEnte') {
-                  sliced = Object.fromEntries(Object.entries(element).slice(3, -1));
-                } else if (nameParameterApi === 'docEmessiEnteContestate') {
-                  sliced = Object.fromEntries(Object.entries(element).slice(4, -2));
-                } else if (nameParameterApi === 'docSospesiSend') {
-                  sliced = Object.fromEntries(Object.entries(element).slice(2, -3));
-                }
-
-                const elementKey = (element as Record<string, unknown>).id ?? Math.random();
-
                 return (
-                  <GridRowsRenderer
-                    key={String(`${elementKey||"row"}-${index}`)}
+                  <GridRowDesignByConfigFile
+                    key={`${index}-${Object.values(element||{})[0]}`}
                     element={element}
-                    sliced={sliced}
-                    nameParameterApi={nameParameterApi}
                     apiGet={apiGet}
                     headerNames={headerNames}
                     headerNamesCollapse={headerNamesCollapse}
-                    selected={selected}
-                    setSelected={setSelected}
-                    checkIfChecked={checkIfChecked}
+                    setAction={setAction}
+                    titleRowCollapse={titleRowCollapse}
+                    keyCollapse={keyCollapse}
+                    bgColorRowFunction={bgColorRowFunction}
                   />
                 );
               })}
@@ -175,7 +158,6 @@ const GridCustom: React.FC<GridCustomProps> = ({
           />
         </div>
       }
-      
     </div>
   );
 };

@@ -4,12 +4,12 @@ import { Box, BoxProps, Button, Table, TableBody, TableCell, TableHead, TableRow
 import { useNavigate, useParams } from 'react-router';
 import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
 import DownloadIcon from '@mui/icons-material/Download';
-import ModalUploadPdf from '../../components/rel/modalUploadPdf';
+import ModalUploadPdf from '../../components/reusableComponents/modals/modalUploadPdf';
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../../types/enum';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../../reusableFunction/function';
-import SkeletonRelPdf from '../../components/rel/skeletonRelPdf';
+import SkeletonRelPdf from '../../components/reusableComponents/skeletonRelPdf';
 import NavigatorHeader from '../../components/reusableComponents/navigatorHeader';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 import usePageRelDocPdf from '../../hooks/usePageRelDocPdf';

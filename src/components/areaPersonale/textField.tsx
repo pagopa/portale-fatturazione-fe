@@ -4,11 +4,8 @@ import {DatiFatturazione, TextFieldProps, StateEnableConferma}  from '../../type
 import { _YupPec} from '../../validations/email/index';
 import YupString from '../../validations/string/index';
 import { getValidationCodiceSdi } from '../../api/apiPagoPa/datiDiFatturazionePA/api';
-
 import { getValidationCodiceSdiEnte } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
-
-
 
 const TextFieldComponent : React.FC<TextFieldProps> = props => {
 
@@ -32,7 +29,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const [errorValidation, setErrorValidation] = useState(false);
-
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
 
@@ -46,11 +42,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     }
   },[mainState.statusPageDatiFatturazione]);
 
-  
-
-  
   useEffect(()=>{
-
     if(keyObject === 'cup' && datiFatturazione.cup === '' && (datiFatturazione.idDocumento !== '' ||  (datiFatturazione.dataDocumento !== null && datiFatturazione.dataDocumento !== "") ) && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
       setErrorValidation(true);
       setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );

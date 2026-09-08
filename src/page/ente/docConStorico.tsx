@@ -10,7 +10,7 @@ import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
+import ModalRedirect from "../../components/reusableComponents/modals/modalRedirect";
 import { manageError, manageErrorDownload } from "../../api/api";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { BodyRel } from "../../types/typeRel";

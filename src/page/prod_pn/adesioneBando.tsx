@@ -3,12 +3,12 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../../types/typesGeneral";
 import { saveAs } from "file-saver";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { downloadDocumentoAsseverazionePagoPa, exportDocumentoAsseverazionePagoPa, listaAsseverazionePagopa, uploadExelAsseverazionePagopa } from "../../api/apiPagoPa/adesioneBandoPA/api";
 import { Asseverazione } from "../../types/typeAdesioneBando";
 import { manageError } from "../../api/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import ModalUploadPdf from "../../components/rel/modalUploadPdf";
+import ModalUploadPdf from "../../components/reusableComponents/modals/modalUploadPdf";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
@@ -35,7 +35,6 @@ const AdesioneBando : React.FC = () => {
   const { 
     filters,
     updateFilters,
-    resetFilters,
     isInitialRender
   } = useSavedFilters(PathPf.ADESIONE_BANDO,{});
 

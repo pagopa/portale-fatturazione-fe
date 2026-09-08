@@ -1,4 +1,4 @@
-import {Navigate, Route} from "react-router";
+import { Navigate } from "react-router";
 import { PathPf } from "../types/enum";
 import { useGlobalStore } from "../store/context/useGlobalStore";
 import { redirect } from "../api/api";

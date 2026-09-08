@@ -1,19 +1,4 @@
-import { useState,useEffect, useRef } from "react";
-
-interface BodyFilters {
-    pathPage:string,
-    body:any,
-    textAutocomplete?:string,
-    valueAutocomplete?:string[],
-    page:number,
-    row:number,
-    valueFgContestazione?:string[]
-}
-
-interface FilterHook {
-    bodyFilters:BodyFilters
-}
-
+import { useState, useRef } from "react";
 
 function useSavedFilters(key, defaultFilters = {}) {
   const isInitialRender = useRef(true);

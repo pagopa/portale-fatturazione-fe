@@ -4,7 +4,7 @@ import { month } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
+import ModalRedirect from "../../components/reusableComponents/modals/modalRedirect";
 import { manageError, } from "../../api/api";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
@@ -17,8 +17,6 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse, headersDocumentiEmessiEnteContestate } from "../../assets/configurations/conf_GridDocEmessiEnte";
 import { downloadFattureEmesseEnte, getListaDocumentiContestati, getListaDocumentiEmessi, downloadFattureContestateEnte } from "../../api/apiSelfcare/documentiSospesiSE/api";
 import { sortByNumeroFattura, sortByTipoFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
-
-
 
 export type BodyDocumentiEmessiEnte = {
     anno:number,
@@ -44,8 +42,8 @@ export type Fattura = {
     split: boolean;
     inviata: number;
     posizioni: Posizione[];
-    datiGeneraliDocumento:any[],
-    metodoPagamento:any,
+    datiGeneraliDocumento:object[],
+    metodoPagamento:string|null,
     idFattura:number, 
 };
 
@@ -77,14 +75,12 @@ const DocEm : React.FC = () =>{
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
 
-
   const { 
     filters,
     updateFilters,
     resetFilters,
     isInitialRender
   } = useSavedFilters(PathPf.DOCUMENTI_EMESSI,{});
-
 
   //______________________NEW_________________
   const [listaResponse, setListaResponse] = useState<Fattura[]>([]);
@@ -119,7 +115,6 @@ const DocEm : React.FC = () =>{
   const [totalDocumentiContestate, setTotalDocumentiContestate]  = useState(0);
   //__________________________________________________________________________________
   
-   
   const [openModalRedirect, setOpenModalRedirect] = useState(false);
   const [bodyFatturazione, setBodyFatturazione] = useState<BodyDocumentiEmessiEnte>({
     anno:9999,
@@ -152,7 +147,7 @@ const DocEm : React.FC = () =>{
       const yearsArray:number[] = Array.from( new Set(res.data.map(el => el.anno)));
       const allMonths:number[] = Array.from( new Set(res.data.map(el => el.mese)));//da eliminare
       const allTipologie:string[] = Array.from( new Set(res.data.map(el => el.tipologiaFattura)));
-      const dataFattura:string[] = Array.from( new Set(res.data.map(el => `${el.dataFattura}-${el.tipologiaFattura}`)));//da eliminare
+     
          
       setYears(yearsArray);
       if(isInitialRender.current && Object.keys(filters)?.length > 0){
@@ -227,44 +222,6 @@ const DocEm : React.FC = () =>{
     }
   };
 
-
-  const funcToMapElements = (obj:any) => {
-    return obj.map((obj, index) => ({
-      ragioneSociale: obj.ragioneSociale || '--',
-      idFattura:obj.idfattura,
-      id: obj.identificativo ?? index,
-      arrow: '',
-      dataFattura: obj.dataFattura
-        ?  new Date(obj.dataFattura).toLocaleDateString('it-IT')
-        : '--',
-      stato: 'Emessa',
-      tipologiaFattura: obj.datiGeneraliDocumento[0].tipologia || "--",
-      identificativo: obj.identificativo,
-      tipocontratto: obj.tipocontratto === 'PAL'
-        ? 'PAC - PAL senza requisiti'
-        : 'PAC - PAL con requisiti',
-      totale: obj.totale.toLocaleString('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-      }),
-      numero: obj.numero,
-      tipoDocumento: obj.tipoDocumento,
-      divisa: obj.divisa,
-      metodoPagamento: obj.metodoPagamento,
-      split: obj.split ? 'Si' : 'No',
-      arrowDetails: 'arrowDetails',
-      posizioni:obj?.posizioni ? obj?.posizioni.map(el => ({
-        numerolinea: el.numeroLinea,
-        codiceMateriale: el.codiceMateriale,
-        imponibile:el.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })  || '--',
-        periodoRiferimento: el.periodoRiferimento
-          ? el.periodoRiferimento : '--', 
-        periodoFatturazione:el?.periodoFatturazione || '--',
-      }))?.sort((a, b) => (a.numerolinea ?? 0) - (b.numerolinea ?? 0)):[],
-    }));
-  };
-
-
   const getlistaFatturazione = async (body,isCalledOnFiltraButton=false) => {
     if(isCalledOnFiltraButton){
       setShowLoadingGrid(true);
@@ -274,22 +231,22 @@ const DocEm : React.FC = () =>{
       if(isInitialRender.current){
         const resCancellati = await getListaDocumentiContestati(token,profilo.nonce);
         const getObjectFatturaCancellati = resCancellati.data.dettagli.map(el => el.fattura);
-        const orderDataCustomContestate:Fattura[] = funcToMapElements(getObjectFatturaCancellati);
-        setListaResponseContestate(orderDataCustomContestate);
-        setListaResponseaSortedContestate(orderDataCustomContestate);
+      
+        setListaResponseContestate(getObjectFatturaCancellati);
+        setListaResponseaSortedContestate(getObjectFatturaCancellati);
         setTotalDocumentiContestate(resCancellati.data.dettagli.length);
                 
         if(isInitialRender.current && Object.keys(filters)?.length > 0){
           if(Object.values(filters.objectSortContestate).some(value => value !== 1)){
             const obj = filters.objectSortContestate;
             const label = Object.keys(obj).filter(key => obj[key] !== 1);
-            headerAction(label[0],setGridDataContestate,false,setObjectSortContestate,filters.pageContestate,filters.rowsPerPageContestate,orderDataCustomContestate);
+            headerAction(label[0],setGridDataContestate,false,setObjectSortContestate,filters.pageContestate,filters.rowsPerPageContestate,getObjectFatturaCancellati);
             //setObjectSortContestate(filters.objectSortContestate);
           }else{
             const start = filters.pageContestate * filters.rowsPerPageContestate;
             const end = start + filters.rowsPerPageContestate;
      
-            const elementsToShow = orderDataCustomContestate.slice(start, end);
+            const elementsToShow = getObjectFatturaCancellati.slice(start, end);
             setGridDataContestate(elementsToShow);
           }
           if(filters.pageContestate !== 0){
@@ -300,7 +257,7 @@ const DocEm : React.FC = () =>{
           }
                     
         }else{
-          const elementsToShow = orderDataCustomContestate.slice(0, 10);
+          const elementsToShow = getObjectFatturaCancellati.slice(0, 10);
           setGridDataContestate(elementsToShow);
         }
       }
@@ -309,7 +266,7 @@ const DocEm : React.FC = () =>{
       const res = await getListaDocumentiEmessi(token,profilo.nonce,body);
       const totaleSum = res.data.importo;
       const getObjectFattura = res.data.dettagli.map(el => el.fattura);
-      const orderDataCustom:Fattura[] = funcToMapElements(getObjectFattura);
+     
 
            
       if(isInitialRender.current && Object.keys(filters)?.length > 0  ){
@@ -317,13 +274,13 @@ const DocEm : React.FC = () =>{
           const obj = filters.objectSort;
           const label = Object.keys(obj).filter(key => obj[key] !== 1);
                  
-          headerAction(label[0],setGridData,true,setObjectSort,filters.page,filters.rows,orderDataCustom);
+          headerAction(label[0],setGridData,true,setObjectSort,filters.page,filters.rows,getObjectFattura);
           //setObjectSort(filters.objectSort);
         }else{
           const start = filters.page * filters.rows;
           const end = start + filters.rows;
      
-          const elementsToShow = orderDataCustom.slice(start, end);
+          const elementsToShow = getObjectFattura.slice(start, end);
           setGridData(elementsToShow);
         }
         if(filters.page !== 0){
@@ -333,11 +290,11 @@ const DocEm : React.FC = () =>{
           setRowsPerPage(filters.rows);
         }
       }else{
-        const dataToShow = orderDataCustom.slice(0, 10);
+        const dataToShow = getObjectFattura.slice(0, 10);
         setGridData(dataToShow);
       }
-      setListaResponse(orderDataCustom);
-      setListaResponseaSorted(orderDataCustom);
+      setListaResponse(getObjectFattura);
+      setListaResponseaSorted(getObjectFattura);
       setTotalDocumenti(res.data.dettagli.length);
       setTotaleHeader(totaleSum);
          
@@ -561,7 +518,6 @@ const DocEm : React.FC = () =>{
     });
   };
 
-
   let bgHeader = "#E3E7EB";
   if(totaleHeader === 0){
     bgHeader = "#E3E7EB";
@@ -571,14 +527,12 @@ const DocEm : React.FC = () =>{
     bgHeader = "#ffeff1";
   }
 
-
   const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== 9999 || bodyFatturazione.anno !== 9999) ? false :true;
 
   const setIdDoc = async(el) => {
-    navigate(PathPf.PDF_REL_EN+"/documentiemessi/"+el.idFattura); 
+    navigate(PathPf.PDF_REL_EN+"/documentiemessi/"+el.idfattura); 
   };  
     
-
   const headerAction = (
     label: string,
     setGridDataParam: (data: any[]) => void,
@@ -594,7 +548,6 @@ const DocEm : React.FC = () =>{
     if(isInitialRender.current && Object.keys(filters)?.length > 0){
       const prev = emessiGrid ? filters.objectSort : filters.objectSortContestate;
           
-        
       //const label = Object.keys(prev).filter(key => prev[key] !== 1);
       const valueNotOne = Object.values(prev).find(value => value !== 1);
       let sortedFull = [...listaResponseParameter];
@@ -604,23 +557,18 @@ const DocEm : React.FC = () =>{
         case "Data Fattura":
           sortedFull = sortDates(sortedFull, booleanValue);
           break;
-
         case "Ident.":
           sortedFull = sortMonthYear(sortedFull, booleanValue);
           break;
-
         case "Tot.":
           sortedFull = sortByTotale(sortedFull, booleanValue, "totale");
           break;
-
         case "N. Fattura":
           sortedFull = sortByNumeroFattura(sortedFull, booleanValue, "numero");
           break;
-
         case "Tipo Documento":
           sortedFull = sortByTipoFattura(sortedFull, booleanValue, "tipoDocumento");
           break;
-
         default:
           break;
         }
@@ -702,6 +650,10 @@ const DocEm : React.FC = () =>{
       });
     }
        
+  };
+
+  const bgColorRowFunctionContestate = () => {
+    return '#ffeff1';
   };
    
    
@@ -863,7 +815,7 @@ const DocEm : React.FC = () =>{
         headerNames={headersDocumentiEmessiEnte}
         headerNamesCollapse={headersDocumentiEmessiEnteCollapse}
         disabled={showLoadingGrid}
-        widthCustomSize="2000px"
+        widthCustomSize="1800px"
         apiGet={setIdDoc}
         objectSort={objectSort}
         headerActionSort={headerAction}
@@ -872,6 +824,8 @@ const DocEm : React.FC = () =>{
         setObjectSort={setObjectSort}
         listaResponse={listaResponse}
         sentenseEmpty={"Non sono presenti fatture emesse"}
+        keyCollapse={"posizioni"}
+        titleRowCollapse={"Posizioni"}
       />
       <Box sx={{marginLeft:"1.25rem"}}>
         <Grid
@@ -914,6 +868,7 @@ const DocEm : React.FC = () =>{
         setObjectSort={setObjectSortContestate}
         sentenseEmpty={"Non sono presenti fatture contestate"}
         listaResponse={listaResponseContestate}
+        bgColorRowFunction={bgColorRowFunctionContestate}
       />
       <ModalLoading 
         open={showDownloading} 

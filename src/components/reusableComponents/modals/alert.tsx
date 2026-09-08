@@ -47,7 +47,7 @@ const BasicAlerts:React.FC = () => {
     colorAlert = 'warning';
   }else if(!mainState.apiError && !errorAlert.error){
     colorAlert = 'warning';
-  }else if(mainState.apiError === "FORMAT_FILE_ERROR" || mainState.apiError === "NO_INSERIMENTO_COMMESSA"|| mainState.apiError === "AZURE_LOGIN_ERROR"){
+  }else if(mainState.apiError === "FORMAT_FILE_ERROR" || mainState.apiError === "NO_INSERIMENTO_COMMESSA"|| mainState.apiError === "AZURE_LOGIN_ERROR" || mainState.apiError === "GENERICO_KO"){
     colorAlert = 'error';
   }
 

@@ -8,18 +8,23 @@ import { saveAs } from "file-saver";
 import { month, statoInvio } from "../../reusableFunction/reusableArrayObj";
 import ModalSap from "../../components/fatturazione/modalSap";
 import { useNavigate } from "react-router";
-
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
 import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa, fattureTipologiaSapPa, getAnniDocEmessiPagoPa, getFatturazionePagoPa, getMesiDocEmessiPagoPa, getTipologieContratto, getTipologieFaPagoPa, getTipologieFaPagoPaWithData } from "../../api/apiPagoPa/fatturazionePA/api";
 import { getMessaggiCount } from "../../api/apiPagoPa/centroMessaggi/api";
-import CollapsibleTable from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsibleWithCheckbox";
 import ModalConfermaRipristina from "../../components/fatturazione/modalConfermaRipristina";
 import ModalResetFilter from "../../components/fatturazione/modalResetFilter";
-import { headersObjGrid } from "../../assets/configurations/config_GridFatturazione";
+import {  headersObjGridDocemessiSend, headersObjGridDocemessiSendCollapse } from "../../assets/configurations/config_GridFatturazione";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
+import { gestioneFattureInserisci } from "../../api/apiPagoPa/gestioneFatturePA/api";
+import { formatDate, formatDateString } from "../../reusableFunction/function";
+import { ElementToProcessComponent } from "./gestioneFatture";
+
+
 
 
 const Fatturazione : React.FC = () =>{
@@ -33,13 +38,8 @@ const Fatturazione : React.FC = () =>{
   const callLista = useRef(true);
   const callAnnulla = useRef(false);
   const navigate = useNavigate();
-  let profilePath; 
+  const profilePath = PathPf.FATTURAZIONE;
 
-  if(profilo.auth === 'PAGOPA'){
-    profilePath = PathPf.FATTURAZIONE;
-  }else{
-    profilePath = PathPf.FATTURAZIONE_EN;
-  }
 
   const [firstYearMonth, setFirstYearMonth] = useState<number[]>([]);
   const [gridData, setGridData] = useState<FattureObj[]>([]);
@@ -62,7 +62,17 @@ const Fatturazione : React.FC = () =>{
   const [dateTipologie, setDateTipologie] = useState<string[]>([]);
   const [valueMulitselectDateTipologie, setValueMultiselectDateTipologie] = useState<string[]>([]);
   const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
+  const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
+  const [textAreaValue, setTextAreaValue] = useState<string>('');
 
+
+  const [elementSelected, setElementSelected] = useState<FattureObj|null>(null);
+  const [actionCalled, setActionCalled] = useState<string>("");
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [count, setCount] = useState(0);
+  const [showedData, setShowedData] = useState<FattureObj[]>([]);
 
    
   const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
@@ -108,7 +118,7 @@ const Fatturazione : React.FC = () =>{
     return () => clearTimeout(timer);
   },[textValue]);
 
-
+  //:TODO useEffect da elkiminare
   useEffect(()=>{
     if(bodyFatturazione.anno && bodyFatturazione.mese && !isInitialRender.current){
       getDateTipologieFatturazione(bodyFatturazione);
@@ -172,7 +182,7 @@ const Fatturazione : React.FC = () =>{
         setValueMultiselectTipologie([]);
         if(callLista.current){
           getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:mesiCamelCase[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null}});
-        }
+        } 
                
       }
     }).catch((err)=>{
@@ -222,10 +232,21 @@ const Fatturazione : React.FC = () =>{
 
       let dataString = valueMulitselectDateTipologie.map(el =>  el.split("-").slice(1).join("-"));
             
-      if(isInitialRender.current && Object.keys(filters).length > 0 ){
+      if(isInitialRender.current && Object.keys(filters).length > 0){
         dataString = filters?.valueMulitselectDateTipologie.map(el =>  el.split("-").slice(1).join("-"));
-      }else if( callAnnulla.current){
+        setPage(filters.page||0);
+        setRowsPerPage(filters.rows||10);
+      }else if( callAnnulla.current ){
         dataString = [];
+        setPage(0);
+        setRowsPerPage(10);
+      }else if( callLista.current){
+        dataString = valueMulitselectDateTipologie.map(el =>  el.split("-").slice(1).join("-"));
+        setPage(0);
+        setRowsPerPage(10);
+      }else{
+        setPage(0);
+        setRowsPerPage(10);
       }
        
       let data: FattureObj[] = [];
@@ -234,26 +255,43 @@ const Fatturazione : React.FC = () =>{
       }else{
         data = res.data.map(el => el?.fattura).filter(obj => dataString.includes(obj.dataFattura));
       } 
-      //ATTENZIONE :Tipo contratto è utilizzato come valore nella sezione dettaglio , 
-      //se bisogna modificare la label nella grid bisogna modificare anche la funzione al click sulla row grid che porta al dettaglio documento emesso 
-      if(data.length > 0){
-        data = data.map(fat =>{
-          fat.tipocontratto === 'PAL' ? fat.tipocontratto = 'PAC - PAL senza requisiti' : fat.tipocontratto = 'PAC - PAL con requisiti';
-          return fat;
-        } );
-      } 
-      setGridData(data);
+    
+      const customObjData : FattureObj[] = data;
+    
+      setCount(customObjData?.length || 0);
+      setGridData(customObjData);
+
+      let elementsToShow:FattureObj[] = [];
+      if(isInitialRender.current && Object.keys(filters).length > 0){
+        const rows = filters?.rows || 10;
+        const page = filters?.page || 0;
+        const start = page * rows;
+        const end = start + rows;
+        elementsToShow = customObjData.slice(start, end);
+      }else if(callLista.current || callAnnulla.current){
+        elementsToShow = customObjData.slice(0, 10);
+      }else{
+        elementsToShow = customObjData.slice(page, rowsPerPage);
+      }
+
+      
+      setShowedData(elementsToShow);
       setShowLoadingGrid(false);
       setBodyFatturazioneDownload(body);
       callAnnulla.current = false;
     }).catch((error)=>{
       if(error?.response?.status === 404){
         setGridData([]);
+        setShowedData([]);
+        setPage(0);
+        setRowsPerPage(10);
       }
       setBodyFatturazioneDownload(body);
       setShowLoadingGrid(false);
       manageError(error, dispatchMainState);
       callAnnulla.current = false;
+
+    
     });  
     getTipologieFattureInvioSap(body.anno,body.mese);
     if(isInitialRender.current){
@@ -439,13 +477,152 @@ const Fatturazione : React.FC = () =>{
   };
 
 
+  const handleGoToDetail = async(el) => {
+    let idTipoContratto = 0;
+    if(el.tipocontratto === "PAL"){
+      idTipoContratto = 1;
+    }else if(el.tipocontratto === "PAC"){
+      idTipoContratto = 2;
+    }
+    if(idTipoContratto !== 0){
+      navigate(`${PathPf.PDF_REL}/documentiemessi/${el.idfattura}/${el.istitutioID}/${idTipoContratto}`);
+    }
+  }; 
 
-  const statusAnnulla = bodyFatturazione.idEnti.length !== 0 || 
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+          
+    const start = newPage * rowsPerPage;
+    const end = start + rowsPerPage;
+       
+    const elementsToShow = gridData.slice(start, end);
+    setShowedData(elementsToShow);
+  
+    upadateOnSelctedChange(newPage,rowsPerPage);
+  };
+                          
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const newRows = parseInt(event.target.value, 10);
+  
+    setRowsPerPage(newRows);
+    setPage(0);
+  
+    const elementsToShow = gridData.slice(0, newRows);
+    setShowedData(elementsToShow);
+    upadateOnSelctedChange(0,newRows);
+  };
+
+    
+  const keyValueObjModalInfo = [
+    {
+      key:"ragionesociale",
+      label:"Ragione Sociale"
+    },
+    {
+      key:"dataFattura",
+      label:"Data Fattura"
+    },
+    {
+      key:"tipologiaFattura",
+      label:"Tipologia Fattura"
+    }
+  ];
+    
+  const showPopUpAction = (obj, action) => { 
+    const newObj = { ...obj };
+    
+    newObj.dataFattura = formatDateString(newObj);
+
+    setElementSelected(newObj);
+    setActionCalled(action);
+    if(action === "posticipa"){
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Posticipare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
+    }else if(action === "eliminazione"){
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
+    }
+  };
+
+
+  
+
+
+  const azioneApi = async () => {
+    setShowLoadingGrid(true);
+
+    try {
+   
+      let actionToApi = "";
+      if (actionCalled === "posticipa") {
+        actionToApi = "posticipa";
+      }else if (actionCalled === "eliminazione") {
+        actionToApi = "elimina";
+      }
+
+      if (!elementSelected) return;
+      const [month, year] = elementSelected.identificativo.split("/");
+      
+      
+      const bodyApi = {
+        mese: parseInt(month, 10).toString(),
+        anno: year.toString(),
+        tipologiaFattura: elementSelected.tipologiaFattura,
+        azione: actionToApi,
+        idFattura: elementSelected.idfattura,
+        idEnte: elementSelected.istitutioID,
+        nota: {
+          data: formatDate(new Date()),
+          testo: textAreaValue
+        }
+      };
+      
+      await gestioneFattureInserisci(
+        token,
+        profilo.nonce,
+        bodyApi
+      );
+
+      await getlistaFatturazione(bodyFatturazione);
+
+      managePresaInCarico(
+        "INSER_DELETE_WHITE_LIST",
+        dispatchMainState
+      );
+
+    } catch{
+      managePresaInCarico('GENERICO_KO',dispatchMainState);
+    } finally {
+      setShowLoadingGrid(false);
+    }
+  };
+
+  const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
+
+  function isValidText(str) {
+    return regex.test(str.trim());
+  }
+
+  function isValidText2(str: string): boolean {
+    const trimmed = str.trim();
+    if (!trimmed) return false;
+
+    const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
+    return words.length >= 3;
+  }
+    
+
+  const statusAnnulla = (bodyFatturazione.idEnti.length !== 0 || 
      bodyFatturazione.tipologiaFattura.length !== 0 ||
      bodyFatturazione.cancellata === true ||
      bodyFatturazione.idTipoContratto !== null ||
      bodyFatturazione.anno !== firstYearMonth[0] ||
-     Number(bodyFatturazione.mese) !== firstYearMonth[1]  ? "show" :"hidden";
+     Number(bodyFatturazione.mese) !== firstYearMonth[1] ||
+     bodyFatturazione.inviata !== 3)  ? "show" :"hidden";
 
 
   return (
@@ -553,7 +730,6 @@ const Fatturazione : React.FC = () =>{
           keyValue={"tipologiaFattura"}
           keyBody={"dataFattura"}
           extraCodeOnChangeArray={(e)=>{
-                      
             setValueMultiselectDateTipologie(e);
           }}
           iconMaterial={RenderIcon("date",true)}
@@ -596,29 +772,21 @@ const Fatturazione : React.FC = () =>{
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onButtonAnnulla} 
         statusAnnulla={statusAnnulla} 
-        actionButton={[  {
-          onButtonClick: () => onButtonSap(1),
-          variant: "outlined",
-          icon:{name:"restart" },
-          disabled:disableButtonReset,
-          tooltipMessage:"Reset",
-          withText:false,
-          colorAction:"error"
-        }, 
-        {
-          onButtonClick: () => onButtonSap(0),
-          variant: "outlined",
-          icon:{name:"preview" },
-          disabled:disableButtonSap,
-          tooltipMessage:"Invia a SAP",
-          withText:false
-        },{
-          onButtonClick: () => navigate(PathPf.JSON_TO_SAP),
-          variant: "outlined",
-          icon:{name:"iso_share" },
-          tooltipMessage:"Invio fatture",
-          withText:false
-        },
+        actionButton={[
+          {
+            onButtonClick: () => onButtonSap(0),
+            variant: "outlined",
+            icon:{name:"preview" },
+            disabled:disableButtonSap,
+            tooltipMessage:"Invia a SAP",
+            withText:false
+          },{
+            onButtonClick: () => navigate(PathPf.JSON_TO_SAP),
+            variant: "outlined",
+            icon:{name:"iso_share" },
+            tooltipMessage:"Invio fatture",
+            withText:false
+          },
               
         ]}
       />
@@ -636,28 +804,24 @@ const Fatturazione : React.FC = () =>{
           icon:{name:"download"},
           disabled:(gridData.length === 0)
         }]}/>
-              
-      <CollapsibleTable 
-        data={gridData}
-        headerNames={headersObjGrid}
-        stato={bodyFatturazioneDownload.cancellata}
-        setOpenConfermaModal={setOpenConfermaModal}
-        setOpenResetFilterModal={setOpenResetFilterModal}
-        monthFilterIsEqualMonthDownload={bodyFatturazione.mese === bodyFatturazioneDownload.mese}
-        selected={fattureSelected}
-        setSelected={setFattureSelected}
-        updateFilters={updateFilters}
-        pathPage={profilePath}
-        body={{
-          body:bodyFatturazioneDownload,
-          textValue:textValue,
-          valueAutocomplete:valueAutocomplete,
-          valueMulitselectTipologie:valueMulitselectTipologie,
-          fattureSelected:fattureSelected}}
-        infoPageLocalStorage={{page:filters.page,rows:filters.rows}}
-        firstRender={isInitialRender.current}
-        upadateOnSelctedChange={upadateOnSelctedChange}
-      />
+
+      <GridCustom
+        nameParameterApi='docEmessiSend'
+        elements={showedData}
+        changePage={handleChangePage}
+        changeRow={handleChangeRowsPerPage} 
+        total={count}
+        page={page}
+        rows={rowsPerPage}
+        headerNames={headersObjGridDocemessiSend}
+        headerNamesCollapse={headersObjGridDocemessiSendCollapse}
+        apiGet={handleGoToDetail}
+        disabled={showLoadingGrid}
+        widthCustomSize="2100px"
+        setAction={showPopUpAction}
+        sentenseEmpty={"Non sono presenti Regolari esecuzioni/Documenti di cortesia"}
+        keyCollapse={"posizioni"}
+        titleRowCollapse={"Posizioni"}/>  
       <ModalLoading 
         open={showLoadingGrid} 
         setOpen={setShowLoadingGrid}
@@ -687,6 +851,15 @@ const Fatturazione : React.FC = () =>{
         filterInfo={bodyFatturazioneDownload}
         filterNotExecuted={bodyFatturazione}
         getListaFatture={getlistaFatturazione}/>
+      <ModalInfo 
+        setOpen={setOpenModalInfo}
+        open={openModalInfo}
+        width={800}
+        textAreaValue={textAreaValue}
+        setTextAreaValue={setTextAreaValue}
+        externalActionButton={azioneApi}
+        errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
+      />
     </MainBoxStyled>   
   );
 };

@@ -46,7 +46,8 @@ i18n.use(initReactI18next) // Passes i18n down to react-i18next
             'NO_INSERIMENTO_COMMESSA': "Al momento non è possibile inserire il modulo commessa. Contattare l'assistenza",
             'SAVE_COMMESSA_OK': "Modulo commessa inserito",
             'SAVE_DATIFATTURAZIONE_OK': "Dati di fatturazione inseriti ",
-            "AZURE_LOGIN_ERROR": "Errore durante il login. Contattare l'assistenza"
+            "AZURE_LOGIN_ERROR": "Errore durante il login. Contattare l'assistenza",
+            "GENERICO_KO": "L'operazione non è andata a buon fine. Contattare l'assistenza",
           }
         }
       }

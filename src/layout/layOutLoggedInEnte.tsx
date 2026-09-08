@@ -3,10 +3,6 @@ import { Outlet } from "react-router-dom";
 import HeaderProductEnte from "./headerProduct/headerProductEnte";
 import HeaderLogEnte from "./mainHeader/headerLogInOutEnte";
 import ScrollToTop from "../components/reusableComponents/scrollToTop";
-
-
-
-
 const LayoutEnte = ({sideNav}) => {
   return (
     <>
@@ -22,7 +18,6 @@ const LayoutEnte = ({sideNav}) => {
         </Grid>
       </Grid>
     </>
-      
   );
 };
 

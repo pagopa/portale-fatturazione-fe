@@ -4,7 +4,6 @@ import { ButtonNaked } from '@pagopa/mui-italia';
 import DnsIcon from '@mui/icons-material/Dns';
 import {  useNavigate } from 'react-router';
 import { PathPf } from '../../types/enum';
-import { InfoOpen } from '../../types/typesGeneral';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
@@ -12,10 +11,7 @@ import { useGlobalStore } from '../../store/context/useGlobalStore';
 const PageTitleNavigation = ({setOpen}) => {
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
-  const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
-
   const profilo =  mainState.profilo;
-
   const navigate = useNavigate();
 
   const handleModifyMainState = (valueObj) => {
@@ -47,26 +43,25 @@ const PageTitleNavigation = ({setOpen}) => {
 
   return (
     <div className="mx-5 marginTop24">
-      {((mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione) || profilo.auth === 'PAGOPA')
-                &&
-                    <div>
-                      <ButtonNaked
-                        color="primary"
-                        size="small"
-                        startIcon={<ArrowBackIcon />}
-                        onClick={() => onIndietroButtonPagoPa()}
-                        sx={{marginBottom:'2px'}}
-                      >
+      {((mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione) || profilo.auth === 'PAGOPA') &&
+      <div>
+        <ButtonNaked
+          color="primary"
+          size="small"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => onIndietroButtonPagoPa()}
+          sx={{marginBottom:'2px'}}
+        >
                           Indietro 
-                      </ButtonNaked>
-                      <Typography sx={{ marginLeft: '20px',fontWeight:cssPath1 }} variant="caption">
-                        <DnsIcon fontSize="inherit" sx={{marginRight:'5px'}}></DnsIcon>
+        </ButtonNaked>
+        <Typography sx={{ marginLeft: '20px',fontWeight:cssPath1 }} variant="caption">
+          <DnsIcon fontSize="inherit" sx={{marginRight:'5px'}}></DnsIcon>
                               Dati di fatturazione /
-                      </Typography>
-                      <Typography sx={{fontWeight:cssPath2 }} variant="caption">
-                        {!mainState.datiFatturazione ? 'Inserisci i dati di fatturazione':'Modifica i dati di fatturazione'}
-                      </Typography>
-                    </div>
+        </Typography>
+        <Typography sx={{fontWeight:cssPath2 }} variant="caption">
+          {!mainState.datiFatturazione ? 'Inserisci i dati di fatturazione':'Modifica i dati di fatturazione'}
+        </Typography>
+      </div>
       }
       <div className="marginTop24">
         <Typography variant="h4">{titleNavigation} {profilo.auth === 'PAGOPA' && `/ ${mainState.nomeEnteClickOn}`} </Typography>
