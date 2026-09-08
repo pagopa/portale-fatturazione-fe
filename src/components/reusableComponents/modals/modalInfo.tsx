@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import CloseIcon from '@mui/icons-material/Close';
 import { Button, TextField } from '@mui/material';
+import Loader from '../loader';
 
 export interface ModalInfoProps <T>{
     setOpen:(v: { open: boolean; sentence: React.ReactNode|string }) => void,
@@ -11,6 +12,8 @@ export interface ModalInfoProps <T>{
       open:boolean,
       sentence:React.ReactNode|string,
       buttonIsVisible?:boolean|null,
+      loaderIsVisible?:boolean,
+      sentenceLoader?:string,
       labelButton?:string,
       actionButton?:()=>void,icon?:React.ElementType
     },
@@ -83,7 +86,7 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
         
           )}
         </div>
-        {open?.buttonIsVisible &&
+        {(open?.buttonIsVisible && !open.loaderIsVisible) &&
             <div className='d-flex justify-content-evenly text-center mt-5'>
               <Button variant="outlined" onClick={handleClose}>Annulla</Button>
               <Button disabled={setTextAreaValue && (((textAreaValue?.length||0) < 10) || errorTextInput)} variant="contained" 
@@ -100,10 +103,19 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
                     setTextAreaValue("");
                   } 
                 }}>
-                      Prosegui
+                     Prosegui
               </Button>    
             </div>
-        }    
+        }  
+        {(open.loaderIsVisible && open.sentenceLoader) && 
+        <>
+          <div className='d-flex justify-content-center mt-3'>
+            <div   id='loader_download_contestazione'>
+              <Loader sentence={open.sentenceLoader}></Loader> 
+            </div> 
+          </div>
+        </>
+        }  
       </Box>  
     </Modal>
   );

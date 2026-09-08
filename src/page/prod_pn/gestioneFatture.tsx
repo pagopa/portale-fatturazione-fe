@@ -18,10 +18,12 @@ import { useGlobalStore } from "../../store/context/useGlobalStore";
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
-import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
+import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, gestioneFattureVerificaNotaPii, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate } from "../../reusableFunction/function";
 import EnhancedTableCustom from "../../components/reusableComponents/grid/enhancedTabalToolbarCustom";
+import MainModalComponent from "../../components/reusableComponents/modals/mainModalComponent";
+import Loader from "../../components/reusableComponents/loader";
 
 
 export interface BodyLista {
@@ -412,6 +414,7 @@ const GestioneFatture : React.FC = () => {
  
 
   const azioneApi = async () => {
+    console.log(9999);
     setGetListaLoading(true);
     try {
       let actionToApi = "";
@@ -448,13 +451,24 @@ const GestioneFatture : React.FC = () => {
         dispatchMainState
       );
 
-    } catch (err) {
+    } catch {
       managePresaInCarico('GENERICO_KO',dispatchMainState);
-     
     } finally {
       setGetListaLoading(false);
       getLista((page+1), rowsPerPage, bodyGetLista);
     }
+  };
+
+  const verificaTestoNota = async() => {
+    try{
+      const responseVerifica = await gestioneFattureVerificaNotaPii( token,profilo.nonce, {testo:textAreaValue});
+      console.log({dd:responseVerifica});
+    }catch(err){
+      console.log({err});
+    }finally{
+      console.log("ciao");
+    }
+   
   };
   
       
@@ -643,16 +657,15 @@ const GestioneFatture : React.FC = () => {
         setAction={showPopUpAction}
         buttons={buttonsTopHeader}
         sentenseEmpty={"Non sono presenti documenti"}
-        widthCustomSize="1000px"
-      />
+        widthCustomSize="1000px"/>
       <ModalAggiungi 
         getLista={onButtonAggiungi}
         open={openModalAdd}
-        setOpen={setOpenModalAdd} />
+        setOpen={setOpenModalAdd}/>
       <ModalLoading 
         open={getListaLoading} 
         setOpen={setGetListaLoading}
-        sentence={'Loading...'} />
+        sentence={'Loading...'}/>
       <ModalLoading 
         open={showLoading} 
         setOpen={setShowLoading}
@@ -663,23 +676,21 @@ const GestioneFatture : React.FC = () => {
         open={openModalAction}
         onButtonComfermaPopUp={onButtonComfermaPopUp}
         mainState={mainState}
-        sentence={"Sei sicuro di voler procedere"}
-      />
+        sentence={"Sei sicuro di voler procedere"}/>
       <DialogInfo 
         open={showPopUpNota}
         onClose={setShowPopUpNota}
         clearAction={()=>{setNotes([]);}}
         array={notes}
         title="Storico Note"
-        sentenseEmptyArray="Nessuna nota disponibile."
-      />
+        sentenseEmptyArray="Nessuna nota disponibile."/>
       <ModalInfo 
         setOpen={setOpenModalInfo}
         open={openModalInfo}
         width={800}
         textAreaValue={textAreaValue}
         setTextAreaValue={setTextAreaValue}
-        externalActionButton={azioneApi}
+        externalActionButton={verificaTestoNota}
         errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
       />
     </MainBoxStyled>
@@ -716,5 +727,29 @@ export const ElementToProcessComponent = ({obj, title , keyValueObj}) => {
         </Table>
       </Box>
     </Box>
+  );
+};
+
+
+const PiiConfimComponent = ({sentence}) => {
+
+  return (
+    <>
+      <div className='d-flex justify-content-center'>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          {sentence}
+        </Typography>
+      </div>
+      <div className='d-flex justify-content-center mt-3'>
+        <Typography id="modal-modal-title" variant="body1" gutterBottom>
+            Controllo dei 
+        </Typography>
+      </div>
+      <div className='d-flex justify-content-center mt-3'>
+        <div   id='loader_download_contestazione'>
+          <Loader sentence={sentence}></Loader> 
+        </div> 
+      </div>
+    </>
   );
 };

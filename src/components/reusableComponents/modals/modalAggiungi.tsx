@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { SetStateAction, useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useRef, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { ElementMultiSelect } from '../../../types/typeReportDettaglio';
 import { listaEntiNotifichePage } from '../../../api/apiSelfcare/notificheSE/api';
@@ -11,7 +11,7 @@ import { manageError, managePresaInCarico } from '../../../api/api';
 import Loader from '../loader';
 import { useGlobalStore } from '../../../store/context/useGlobalStore';
 import MainFilter from '../mainFilter';
-import { gestioneFattureInserisci, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../../api/apiPagoPa/gestioneFatturePA/api';
+import { gestioneFattureInserisci, gestioneFattureVerificaNotaPii, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../../api/apiPagoPa/gestioneFatturePA/api';
 import { formatDate } from '../../../reusableFunction/function';
 import { month as NOMI_MESI} from '../../../reusableFunction/reusableArrayObj';
 
@@ -71,6 +71,9 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
   const [arrayYears,setArrayYears] = useState<number[]>([]);
   const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [showLoader, setShowLoader] = useState(false);
+  const [loaderVerifica, setLoaderVeridfica] = useState(false);
+
+  const verifica = useRef(false);
   //const [noteText, setNoteText] = useState('');
   const azioni = ["Posticipa","Elimina"];
   
@@ -178,6 +181,22 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
       manageError(err,dispatchMainState);
       clearPopUp();
     });
+  };
+
+  const verificaTestoNota = async() => {
+    setLoaderVeridfica(true);
+    try{
+      const responseVerifica = await gestioneFattureVerificaNotaPii( token,profilo.nonce, {testo:bodyAction.nota?.testo||''});
+      console.log({dd:responseVerifica});
+    }catch(err){
+      console.log({err});
+    }finally{
+      // andare ad inserire la nuova nota nel body
+      setLoaderVeridfica(false);
+      verifica.current = true;
+      console.log("ciao");
+    }
+     
   };
   
   const clearPopUp = () => {
@@ -411,11 +430,11 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               <Button  
                 disabled={disableBotton}
                 variant='contained'
-                onClick={()=> onButtonOK(bodyAction)}
+                onClick={() => verifica.current ? onButtonOK(bodyAction): verificaTestoNota()}//
               >Inserisci</Button>
             </div>:
             <div id='loader_on_modal' className='container_buttons_modal d-flex justify-content-center mt-5'>
-              <Loader sentence={'Attendere...'}></Loader> 
+              <Loader sentence={verifica.current ?'Attendere':'Verifica della nota in corso'}></Loader> 
             </div>}
       
         </Box>
