@@ -3,29 +3,33 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import CloseIcon from '@mui/icons-material/Close';
-import { Button, TextField } from '@mui/material';
-import Loader from '../loader';
-
+import { Button, CircularProgress } from '@mui/material';
+import te from 'date-fns/esm/locale/te/index.js';
 export interface ModalInfoProps <T>{
     setOpen:(v: { open: boolean; sentence: React.ReactNode|string }) => void,
     open:{
-      open:boolean,
-      sentence:React.ReactNode|string,
-      buttonIsVisible?:boolean|null,
-      loaderIsVisible?:boolean,
-      sentenceLoader?:string,
-      labelButton?:string,
+    open:boolean,
+    sentence:React.ReactNode|string,
+    buttonIsVisible?:boolean|null,
+    loaderIsVisible?:boolean,
+    sentenceLoader?:string,
+    labelButton?:string,
       actionButton?:()=>void,icon?:React.ElementType
     },
     width?:number,
     textAreaValue?:string,
     setTextAreaValue?:(v:string)=>void,
     externalActionButton?:(obj?:T )=>void,
-    errorTextInput?:boolean
-    
+    errorTextInput?:boolean,
+    TextField:React.ComponentType<{
+        value: string;
+        onChange?: (v: string) => void;
+        error?: boolean;
+    }>,
+    verifiedText?:boolean
 }
 
-const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,externalActionButton,errorTextInput}: ModalInfoProps<T>) => {
+const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,externalActionButton,errorTextInput,TextField,verifiedText}: ModalInfoProps<T>) => {
    
   const handleClose = () =>{
     setOpen({open:false, sentence:''});
@@ -69,52 +73,54 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
             </Typography>
           </div>}
         <div className='d-flex justify-content-center text-center align-items-center w-100'>
-          {setTextAreaValue && (
+          {(TextField && textAreaValue !== undefined) && (
             <TextField
-              label="Inserisci una nota (obbligatoria)"
-              multiline
-              minRows={2}
-              fullWidth
               value={textAreaValue}
-              onChange={(e) => setTextAreaValue && setTextAreaValue(e.target.value)}
+              onChange={setTextAreaValue}
               error={errorTextInput}
-              placeholder={"Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici."}
-              helperText={(textAreaValue?.length||0) > 500 ?
-                "Inserisci una nota (max 500 caratteri)":
-                "Inserisci una nota ( min 10 caratteri)"}
             />
-        
           )}
         </div>
-        {(open?.buttonIsVisible && !open.loaderIsVisible) &&
-            <div className='d-flex justify-content-evenly text-center mt-5'>
-              <Button variant="outlined" onClick={handleClose}>Annulla</Button>
-              <Button disabled={setTextAreaValue && (((textAreaValue?.length||0) < 10) || errorTextInput)} variant="contained" 
-                onClick={() =>{
-                  window.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: "auto"
-                  });
+        {(open?.buttonIsVisible) &&
+          <div className='d-flex justify-content-evenly  gap-3 text-center mt-5'>
+            <Button 
+              disabled={open.loaderIsVisible} 
+              variant="outlined" 
+              onClick={handleClose}
+              sx={{ width: 120, flexShrink: 0 }}
+            > 
+            Annulla
+            </Button>
+            <Button 
+              startIcon={open?.loaderIsVisible ? <CircularProgress size={16} color="inherit" /> : null}
+              disabled={(setTextAreaValue && (((textAreaValue?.length || 0) < 10) || errorTextInput)) || open.loaderIsVisible}
+              variant="contained" 
+              sx={{
+                width: open.sentenceLoader ? 250 : 120,
+                flexShrink: 0,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: 'inline-flex'
+              }}
+              onClick={() => {
+                window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+                if (open?.actionButton) open?.actionButton();
+                if (externalActionButton && setTextAreaValue) {
+                  externalActionButton();
+                  if(verifiedText){
+                    handleClose();
+                  }
+                  
+                  //setTextAreaValue("");
+                } else {
                   handleClose();
-                  if(open?.actionButton) open?.actionButton();
-                  if(externalActionButton && setTextAreaValue ){
-                    externalActionButton(); 
-                    setTextAreaValue("");
-                  } 
-                }}>
-                     Prosegui
-              </Button>    
-            </div>
-        }  
-        {(open.loaderIsVisible && open.sentenceLoader) && 
-        <>
-          <div className='d-flex justify-content-center mt-3'>
-            <div   id='loader_download_contestazione'>
-              <Loader sentence={open.sentenceLoader}></Loader> 
-            </div> 
+                }
+              }}
+            >
+              {open.sentenceLoader ? open.sentenceLoader : "Prosegui"}
+            </Button>    
           </div>
-        </>
         }  
       </Box>  
     </Modal>
