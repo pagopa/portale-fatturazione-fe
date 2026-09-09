@@ -13,7 +13,8 @@ interface ElementToProcessComponentProps<T,> {
   keyValueObj: TableColumn[];
   closeIcon?: boolean;
   setOpen?: Dispatch<SetStateAction<boolean>>;
-  showButton?:boolean
+  showButton?:boolean;
+  showCounter?:boolean
 }
 
 export const ElementToProcessComponent = <T,> ({
@@ -22,7 +23,8 @@ export const ElementToProcessComponent = <T,> ({
   keyValueObj,
   closeIcon = false,
   setOpen,
-  showButton=false
+  showButton=false,
+  showCounter=false
 }: ElementToProcessComponentProps<T>) => {
   // normalizza sempre a array, così gestiamo singolo obj o array con la stessa logica
   const rows = obj === null ? [] : Array.isArray(obj) ? obj : [obj];
@@ -35,8 +37,31 @@ export const ElementToProcessComponent = <T,> ({
         justifyContent: 'space-between', 
         width: '100%'
       }}>
-        <div className='d-flex align-items-center justify-content-start'>
-          <Typography id="modal-modal-title" variant="h6" component="h2">{title}</Typography>
+        <div className="d-flex align-items-center justify-content-start" style={{ gap: 12 }}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            {title}
+          </Typography>
+
+          {showCounter && (
+            <Box
+              sx={{
+                minWidth: 34,
+                height: 34,
+                px: keyValueObj.length > 9 ? 0.75 : 0,
+                borderRadius: '4px',
+                backgroundColor: '#c1bcbc',
+                color: 'black',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 13,
+                fontWeight: 600,
+                lineHeight: 1,
+              }}
+            >
+              {rows.length}
+            </Box>
+          )}
         </div>
         <div className="d-flex align-items-center justify-content-end">
           <div className='icon_close'>

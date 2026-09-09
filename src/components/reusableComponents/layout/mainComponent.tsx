@@ -1,7 +1,7 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { Grid, Typography, Button, ButtonProps, Tooltip } from "@mui/material";
+import { Grid, Typography, Button, ButtonProps, Tooltip, Toolbar } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
@@ -234,7 +234,8 @@ export const FilterActionButtons = ({
 };
 
 
-export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
+export const ActionTopGrid = ({actionButtonRight,actionButtonLeft,counter}:{
+    counter:number,
     actionButtonRight?:{
         onButtonClick:()=> void,
         variant:"text" | "outlined" | "contained",
@@ -273,7 +274,19 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
               gap: 1,
               flexWrap: "wrap",
             }}
-          >
+          >  {(counter > 0) && <Box>
+              { counter > 0 ? 
+                <Toolbar sx={{bgcolor:"rgba(23, 50, 77, 0.08)"}}>
+                  <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1"component="div">
+                    {`${counter}  Selezionate`} 
+                  </Typography>
+                </Toolbar>
+                :
+                <Typography sx={{ flex: '1 1 100%', visibility: 'hidden', height:'64px' }} variant="subtitle1" component="div">
+                                                    Placeholder
+                </Typography>
+              }
+            </Box>}
             {actionButtonLeft?.map((action, index) => (
               <CustomButton
                 key={index}
@@ -310,6 +323,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                 {action.label}
               </CustomButton>
             ))}
+           
           </Box>
         </Box>
       </Grid>

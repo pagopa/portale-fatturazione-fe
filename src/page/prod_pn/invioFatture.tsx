@@ -326,7 +326,7 @@ const InvioFatture : React.FC = () => {
       return el.annoRiferimento === currentRow.annoRiferimento &&
        el.meseRiferimento === currentRow.meseRiferimento && 
        el.tipologiaFattura === currentRow.tipologiaFattura &&
-       el.idFattura === currentRow.idFattura
+       el.idFattura === currentRow.idFattura;
     } ));
     if(verifyIfSelected){
     
@@ -479,7 +479,7 @@ const InvioFatture : React.FC = () => {
     };
   };
   
-
+  console.log({elementsSelected,length:elementsSelected.length});
   return(
 
     <MainBoxStyled title={"Generazione JSON"}>
@@ -560,6 +560,7 @@ const InvioFatture : React.FC = () => {
         statusAnnulla={statusAnnulla} 
       />
       <ActionTopGrid
+        counter={elementsSelected.length}
         actionButtonRight={[{
           onButtonClick:downloadReport,
           variant: "outlined",
@@ -668,6 +669,7 @@ const InvioFatture : React.FC = () => {
           keyValueObj={keyValueObjModalInfo}
           showButton={true}
           setOpen={setOpenModalFatture}
+          showCounter={true}
         />} />
        
     </MainBoxStyled>
