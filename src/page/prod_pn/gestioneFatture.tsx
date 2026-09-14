@@ -1,4 +1,4 @@
-import {  useEffect, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
 import { manageError, managePresaInCarico } from "../../api/api";
@@ -14,15 +14,12 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeR
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
-import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
-import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
+import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
+import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, gestioneFattureVerificaNotaPii, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate } from "../../reusableFunction/function";
-import EnhancedTableCustom from "../../components/reusableComponents/grid/enhancedTabalToolbarCustom";
-
 
 export interface BodyLista {
   idEnti: string[]
@@ -47,11 +44,6 @@ export interface GestioneFatture {
   ente:string;
 }
 
-
-
-
-
-
 const GestioneFatture : React.FC = () => {
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
@@ -74,8 +66,10 @@ const GestioneFatture : React.FC = () => {
   const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [showPopUpNota, setShowPopUpNota] = useState(false);
   const [notes, setNotes] = useState<{Testo:string,Data:Date,Azione:string}[]>([]);
-  const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
+  const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void }>({open:false, sentence:''});
   const [textAreaValue, setTextAreaValue] = useState<string>('');
+  const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
+  const textNoteVerified = useRef(false);
   const [elementSelected, setElementSelected] = useState<GestioneFatture|null>(null);
   const [actionCalled, setActionCalled] = useState<string>("");
 
@@ -84,7 +78,7 @@ const GestioneFatture : React.FC = () => {
   
   const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
   const [openModalAction, setOpenModalAction] = useState(false);
-  const [openModalAdd, setOpenModalAdd] = useState(false);
+  const [openModalAdd, setOpenModalAdd] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void }>({open:false, sentence:''});
   
   const [selected, setSelected] = useState<number[]>([]);
   const [bodyGetLista, setBodyGetLista] = useState<GestioneFattureInterface>({
@@ -433,7 +427,7 @@ const GestioneFatture : React.FC = () => {
         idEnte: elementSelected.ente,
         nota: {
           data: formatDate(new Date()),
-          testo: textAreaValue
+          testo: textAreaValuePii
         }
       };
       await gestioneFattureInserisci(
@@ -448,15 +442,46 @@ const GestioneFatture : React.FC = () => {
         dispatchMainState
       );
 
-    } catch (err) {
+    } catch {
       managePresaInCarico('GENERICO_KO',dispatchMainState);
-     
     } finally {
       setGetListaLoading(false);
       getLista((page+1), rowsPerPage, bodyGetLista);
+      setTextAreaValue("");
+      setTextAreaValuePii("");
     }
   };
-  
+
+  const verificaTestoNota = async (): Promise<void> => {
+    setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:true,sentenceLoader:"Verifica della NOTA in corso ..."}));
+    try {
+      const response = await gestioneFattureVerificaNotaPii(
+        token,
+        profilo.nonce,
+        { testo: textAreaValue }
+      );
+      const responseVerifica = response.data as {redactedString:string};
+
+      setTextAreaValuePii(responseVerifica?.redactedString ?? "");
+      
+     
+    } catch (err: unknown) {
+      //TODO aggiungere manage error
+      console.log({ err });
+    } finally {
+      setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
+      textNoteVerified.current = true;
+    }
+  };
+
+  const setTextAreaValueClearPii = (e) => {
+    if(textNoteVerified.current){
+      textNoteVerified.current = false;
+      setTextAreaValuePii("");
+    }else{
+      setTextAreaValue(e);
+    }
+  };
       
   const buttonsTopHeader =  [
     {
@@ -489,7 +514,6 @@ const GestioneFatture : React.FC = () => {
     bodyGetLista.azione !== null
   ) ? 'show' : 'hidden';
 
-        
   const noData = arrayYears.length === 0;
   return (
     <MainBoxStyled title={"Gestione Fatture"}>
@@ -629,7 +653,15 @@ const GestioneFatture : React.FC = () => {
           icon:{name:"download"},
           disabled:(gridData.length === 0||getListaLoading)
         }]}/>
-      <EnhancedTableCustom setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttonsTopHeader} />
+      <Toolbar sx={{bgcolor:'#EDEFF1', justifyContent: 'flex-end' }}>
+        <Tooltip className="m-2" title={"Aggiungi"}>
+          <span>
+            <Button variant="outlined" onClick={()=>{ setOpenModalAdd((prev)=>({...prev,open:true})); }}>
+              <AddCircleIcon sx={{ color:selected.length === 0 ? "#1976D2" : "#A2ADB8", cursor: 'pointer' }} />
+            </Button>
+          </span>          
+        </Tooltip>
+      </Toolbar>
       <GridCustom
         nameParameterApi='idWhite'
         elements={gridData}
@@ -643,16 +675,15 @@ const GestioneFatture : React.FC = () => {
         setAction={showPopUpAction}
         buttons={buttonsTopHeader}
         sentenseEmpty={"Non sono presenti documenti"}
-        widthCustomSize="1000px"
-      />
+        widthCustomSize="1000px"/>
       <ModalAggiungi 
         getLista={onButtonAggiungi}
         open={openModalAdd}
-        setOpen={setOpenModalAdd} />
+        setOpen={setOpenModalAdd}/>
       <ModalLoading 
         open={getListaLoading} 
         setOpen={setGetListaLoading}
-        sentence={'Loading...'} />
+        sentence={'Loading...'}/>
       <ModalLoading 
         open={showLoading} 
         setOpen={setShowLoading}
@@ -663,25 +694,24 @@ const GestioneFatture : React.FC = () => {
         open={openModalAction}
         onButtonComfermaPopUp={onButtonComfermaPopUp}
         mainState={mainState}
-        sentence={"Sei sicuro di voler procedere"}
-      />
+        sentence={"Sei sicuro di voler procedere"}/>
       <DialogInfo 
         open={showPopUpNota}
         onClose={setShowPopUpNota}
         clearAction={()=>{setNotes([]);}}
         array={notes}
         title="Storico Note"
-        sentenseEmptyArray="Nessuna nota disponibile."
-      />
+        sentenseEmptyArray="Nessuna nota disponibile."/>
       <ModalInfo 
         setOpen={setOpenModalInfo}
         open={openModalInfo}
         width={800}
-        textAreaValue={textAreaValue}
-        setTextAreaValue={setTextAreaValue}
-        externalActionButton={azioneApi}
+        textAreaValue={textAreaValuePii ? textAreaValuePii : textAreaValue}
+        setTextAreaValue={setTextAreaValueClearPii}
+        externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
         errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
-      />
+        TextField={NotaTextField}
+        verifiedText={textNoteVerified.current}/>
     </MainBoxStyled>
           
   );
@@ -716,5 +746,63 @@ export const ElementToProcessComponent = ({obj, title , keyValueObj}) => {
         </Table>
       </Box>
     </Box>
+  );
+};
+
+
+interface NotaTextFieldProps {
+  value: string;
+  onChange?: (value: string) => void;
+  label?: string;
+  placeholder?: string;
+  error?: boolean;
+  minRows?: number;
+  maxLength?: number;
+  minLength?: number;
+  fullWidth?: boolean;
+  multiline?: boolean;
+  helperText?: string;
+  disabled?: boolean;
+}
+
+export const NotaTextField: React.FC<NotaTextFieldProps> = ({
+  value,
+  onChange,
+  label = 'Inserisci una nota (obbligatoria)',
+  placeholder = 'Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.',
+  error = false,
+  minRows = 2,
+  maxLength = 500,
+  minLength = 10,
+  fullWidth = true,
+  multiline = true,
+  helperText,
+  disabled = false,
+}) => {
+  const currentLength = value?.length || 0;
+
+  const computedHelperText =
+    helperText ??
+    (currentLength > maxLength
+      ? `Inserisci una nota (max ${maxLength} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`
+      : `Inserisci una nota (min ${minLength} max ${maxLength} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    onChange?.(e.target.value);
+  };
+
+  return (
+    <TextField
+      label={label}
+      multiline={multiline}
+      minRows={minRows}
+      fullWidth={fullWidth}
+      value={value}
+      onChange={handleChange}
+      error={error}
+      disabled={disabled}
+      placeholder={placeholder}
+      helperText={computedHelperText}
+    />
   );
 };

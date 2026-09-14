@@ -100,3 +100,14 @@ export const gestioneFattureInserisci = async (token:string, nonce:string,body:{
   );
   return response;
 };
+
+export const gestioneFattureVerificaNotaPii = async (token:string, nonce:string,body:{testo:string}) => {
+  const response =  await axios.post(`${url}/api/language/pii?nonce=${nonce}`,
+    body,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    }}
+  );
+  return response;
+};
+
