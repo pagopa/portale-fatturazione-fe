@@ -242,11 +242,10 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
 
   const setTextAreaValueClearPii = (e) => {
     if(textNoteVerified.current){
-      console.log({1:e,textAreaValuePii,bodyAction});
       textNoteVerified.current = false;
       setBodyAction((prev)=>({...prev,nota:{testo:textAreaValuePii,data:''}}));
+      setOpen((prev)=> ({...prev,sentenceLoader:"Prosegui"}));
     }else{
-      console.log({2:e});
       setTextAreaValuePii('');
       setBodyAction((prev)=> ({...prev, ...{nota:{
         "data": formatDate(new Date()),

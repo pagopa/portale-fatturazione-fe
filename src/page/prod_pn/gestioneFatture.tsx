@@ -656,7 +656,7 @@ const GestioneFatture : React.FC = () => {
       <Toolbar sx={{bgcolor:'#EDEFF1', justifyContent: 'flex-end' }}>
         <Tooltip className="m-2" title={"Aggiungi"}>
           <span>
-            <Button variant="outlined" onClick={()=>{ setOpenModalAdd((prev)=>({...prev,open:true})); }}>
+            <Button variant="outlined" onClick={()=>{ setOpenModalAdd((prev)=>({...prev,open:true,sentenceLoader:"Prosegui"})); }}>
               <AddCircleIcon sx={{ color:selected.length === 0 ? "#1976D2" : "#A2ADB8", cursor: 'pointer' }} />
             </Button>
           </span>          
