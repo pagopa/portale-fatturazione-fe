@@ -44,6 +44,16 @@ export interface GestioneFatture {
   ente:string;
 }
 
+type OpenModalAggiungi = {
+    open:boolean,
+    sentence:React.ReactNode|string,
+    buttonIsVisible?:boolean|null,
+    loaderIsVisible?:boolean,
+    sentenceLoader?:string,
+    labelButton?:string,
+    actionButton?:()=>void,icon?:React.ElementType
+}
+
 const GestioneFatture : React.FC = () => {
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
@@ -78,7 +88,7 @@ const GestioneFatture : React.FC = () => {
   
   const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
   const [openModalAction, setOpenModalAction] = useState(false);
-  const [openModalAdd, setOpenModalAdd] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void }>({open:false, sentence:''});
+  const [openModalAdd, setOpenModalAdd] = useState<OpenModalAggiungi>({open:false, sentence:''});
   
   const [selected, setSelected] = useState<number[]>([]);
   const [bodyGetLista, setBodyGetLista] = useState<GestioneFattureInterface>({
@@ -404,7 +414,6 @@ const GestioneFatture : React.FC = () => {
     }
   };
  
-
   const azioneApi = async () => {
     setGetListaLoading(true);
     try {
@@ -415,7 +424,6 @@ const GestioneFatture : React.FC = () => {
       }else if(actionCalled === "annulla eliminazione" ||actionCalled === "annulla") {
         actionToApi = "cancella";
       }
-     
       if (!elementSelected) return;
 
       const bodyApi = {
@@ -435,13 +443,10 @@ const GestioneFatture : React.FC = () => {
         profilo.nonce,
         bodyApi
       );
-     
-
       managePresaInCarico(
         "INSER_DELETE_WHITE_LIST",
         dispatchMainState
       );
-
     } catch {
       managePresaInCarico('GENERICO_KO',dispatchMainState);
     } finally {
@@ -461,10 +466,7 @@ const GestioneFatture : React.FC = () => {
         { testo: textAreaValue }
       );
       const responseVerifica = response.data as {redactedString:string};
-
       setTextAreaValuePii(responseVerifica?.redactedString ?? "");
-      
-     
     } catch (err: unknown) {
       //TODO aggiungere manage error
       console.log({ err });
@@ -474,15 +476,19 @@ const GestioneFatture : React.FC = () => {
     }
   };
 
-  const setTextAreaValueClearPii = (e) => {
-    if(textNoteVerified.current){
+  const setTextAreaValueClearPii = (e:string,onAction:string|undefined):void => {
+    if(textNoteVerified.current && onAction === null){
       textNoteVerified.current = false;
       setTextAreaValuePii("");
+    }else if(onAction === "back"){
+      setTextAreaValuePii("");
+      setTextAreaValue("");
+      textNoteVerified.current = false;
     }else{
       setTextAreaValue(e);
     }
   };
-      
+ 
   const buttonsTopHeader =  [
     {
       stringIcon:"Aggiungi",
@@ -504,7 +510,6 @@ const GestioneFatture : React.FC = () => {
     return words.length >= 3;
   }
 
-   
   const statusAnnulla = (
     bodyGetLista.anno !== null ||
     bodyGetLista.idEnti.length !== 0 ||
@@ -712,16 +717,12 @@ const GestioneFatture : React.FC = () => {
         errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
         TextField={NotaTextField}
         verifiedText={textNoteVerified.current}/>
-    </MainBoxStyled>
-          
+    </MainBoxStyled>     
   );
 };
 export default GestioneFatture;
       
-
-
 export const ElementToProcessComponent = ({obj, title , keyValueObj}) => {
-  
   return (
     <Box sx={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center', mt:2, mb:2}}>
       <Typography > {title}</Typography>

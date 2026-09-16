@@ -129,12 +129,13 @@ const MainFilter = <T,>({
     } else if (body[keyBody] === true) {
       valueOnBodydifferentFromRealValue = 2;
     }
+  }else if(valueOnBodydifferentFromRealValue?.length === 0){
+    valueOnBodydifferentFromRealValue = "";
   }
 
 
 
   switch (filterName) {
-        
   case "select_key_value": 
     return ( !hidden && keyBody && <MainBoxContainer itemProps={itemProps}>
       <FormControl disabled={disabled} fullWidth>
@@ -157,8 +158,7 @@ const MainFilter = <T,>({
             <MenuItem
               key={el[keyValue]}
               value={el[keyValue]}
-            >
-              {el[keyDescription]??""}
+            >{el[keyDescription]??""}
             </MenuItem>
           ))}
         </Select>
@@ -349,7 +349,7 @@ const MainFilter = <T,>({
                       key={el}
                       value={el}
                     >
-                      {inputLabel === "Mese" ? mesiGrid[el] : el}
+                      {inputLabel === "Mese" ? mesiGrid[el] : (el ?? "")}
                     </MenuItem>
                   ))}
                 </Select>
@@ -539,13 +539,13 @@ const MainFilter = <T,>({
             options={dataSelect}
             disableCloseOnSelect
             getOptionLabel={(option) => option[keyDescription]||''}
-            value={valueAutocompleteSingle}
+            value={valueAutocompleteSingle ?? null}
             isOptionEqualToValue={(o, v) => getId(o) === getId(v)}
             onInputChange={(e, val) => setTextValue && setTextValue(val)}
             renderOption={(props, option) =>{
-              const newProps = {...props,...{key:option[keyValue]}};
+              const { key, ...restProps } = props;
               return (
-                <li {...newProps}   >
+                <li key={option[keyValue]} {...restProps}>
                   {option[keyDescription]}
                 </li>
               );

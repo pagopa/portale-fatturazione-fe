@@ -27,7 +27,7 @@ const style = {
   borderRadius:'20px'
 };
 
-interface ModalAggiungiProps {
+export interface ModalAggiungiProps {
   open:{
       open:boolean,
       sentence:React.ReactNode|string,
@@ -35,7 +35,7 @@ interface ModalAggiungiProps {
       loaderIsVisible?:boolean,
       sentenceLoader?:string,
       labelButton?:string,
-        actionButton?:()=>void,icon?:React.ElementType
+      actionButton?:()=>void,icon?:React.ElementType
       },
   setOpen:React.Dispatch<SetStateAction<any>>,
   getLista:any
@@ -223,6 +223,8 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     setArrayMonths([]);
     setDataSelect([]);
     setTextValue('');
+    setTextAreaValuePii("");
+    textNoteVerified.current = false;
   };
 
   const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
@@ -274,7 +276,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
             </div>
             <div className="d-flex align-items-center justify-content-end">
               <div className='icon_close'>
-                <CloseIcon onClick={() =>{ setOpen(false); clearPopUp();}} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
+                <CloseIcon onClick={() =>{ setOpen((prev)=>({...prev.open,open:false})); clearPopUp();}} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
               </div>
             </div>
           </div>
@@ -290,6 +292,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               keyValue={"azione"}
               keyBody={"azione"}
               arrayValues={azioni}
+              defaultValue={""}
               extraCodeOnChange={(e)=>{
                 setBodyAction((prev)=> ({...prev, ...{azione:e,tipologiaFattura:null,anno:null,mese:[],nota:null}}));
                 setValueAutocomplete(null);
@@ -354,6 +357,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               disabled={bodyAction.idEnte === null}
               itemProps={inputPropsObj}
               filterName={"select_value_string"}
+              defaultValue={""}
               inputLabel={"Tipologia Fattura"}
               clearOnChangeFilter={()=> null}
               setBody={setBodyAction}
@@ -363,12 +367,10 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               keyBody={"tipologiaFattura"}
               arrayValues={tipologiaFatture}
               extraCodeOnChange={(e)=>{
-                
                 setBodyAction((prev)=> ({...prev, ...{tipologiaFattura:e,anno:null,mese:[],nota:null}}));
                 if(bodyAction.idEnte === exceptionId && e === "PRIMO SALDO"){
                   const exeptionAnniMesi = generaRangeAnnoMese();
                   const newArray:number[] = Array.from(new Set(exeptionAnniMesi.map(el => el.anno))).reverse();
-                  
                   setArrayYears(newArray);
                 }else{
                   getAnni(e, bodyAction.azione);
@@ -378,6 +380,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               disabled={bodyAction.tipologiaFattura === null}
               itemProps={inputPropsObj}
               filterName={"select_value_string"}
+              defaultValue={""}
               inputLabel={"Anno"}
               clearOnChangeFilter={()=> null}
               setBody={setBodyAction}
@@ -405,6 +408,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
             <MainFilter 
               itemProps={ inputPropsObj}
               filterName={"select_key_value"}
+              defaultValue={""}
               inputLabel={"Mese"}
               disabled={bodyAction.anno === null}
               clearOnChangeFilter={()=> null}
@@ -418,7 +422,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 const value = Number(e);
                 setBodyAction((prev)=> ({...prev, ...{mese:[value],nota:null}}));             
               }}
-            ></MainFilter>
+            />
             <MainFilter 
               disabled={bodyAction.mese.length === 0}
               itemProps={inputPropsObj}
@@ -438,7 +442,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 `Inserisci una nota (max ${500} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`
                 : `Inserisci una nota (min ${10} max ${500} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`}
               placeHolder={"Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici."}
-            ></MainFilter>
+            />
           </Box>
           {!showLoader ?
             <div className='container_buttons_modal d-flex justify-content-center mt-5'>
