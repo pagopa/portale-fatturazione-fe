@@ -614,7 +614,6 @@ const Fatturazione : React.FC = () =>{
       console.log({ err });
     } finally {
       setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
-      console.log("ciao");
       textNoteVerified.current = true;
     }
   };
