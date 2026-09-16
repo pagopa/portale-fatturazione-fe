@@ -38,8 +38,6 @@ const MainModalComponent: React.FC<MainModalComponentProps> = ({
 
   return (
     <Modal
-      aria-labelledby="main-modal-title"
-      aria-describedby="main-modal-description"
       open={open}
       onClose={handleClose}
     >

@@ -235,7 +235,7 @@ export const FilterActionButtons = ({
 
 
 export const ActionTopGrid = ({actionButtonRight,actionButtonLeft,counter}:{
-    counter:number,
+    counter?:number,
     actionButtonRight?:{
         onButtonClick:()=> void,
         variant:"text" | "outlined" | "contained",

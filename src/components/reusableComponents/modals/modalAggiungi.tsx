@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import { Button, CircularProgress } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { SetStateAction, useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useRef, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { ElementMultiSelect } from '../../../types/typeReportDettaglio';
 import { listaEntiNotifichePage } from '../../../api/apiSelfcare/notificheSE/api';
@@ -11,7 +11,7 @@ import { manageError, managePresaInCarico } from '../../../api/api';
 import Loader from '../loader';
 import { useGlobalStore } from '../../../store/context/useGlobalStore';
 import MainFilter from '../mainFilter';
-import { gestioneFattureInserisci, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../../api/apiPagoPa/gestioneFatturePA/api';
+import { gestioneFattureInserisci, gestioneFattureVerificaNotaPii, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../../api/apiPagoPa/gestioneFatturePA/api';
 import { formatDate } from '../../../reusableFunction/function';
 import { month as NOMI_MESI} from '../../../reusableFunction/reusableArrayObj';
 
@@ -28,8 +28,16 @@ const style = {
 };
 
 interface ModalAggiungiProps {
-  open:boolean,
-  setOpen:React.Dispatch<SetStateAction<boolean>>,
+  open:{
+      open:boolean,
+      sentence:React.ReactNode|string,
+      buttonIsVisible?:boolean|null,
+      loaderIsVisible?:boolean,
+      sentenceLoader?:string,
+      labelButton?:string,
+        actionButton?:()=>void,icon?:React.ElementType
+      },
+  setOpen:React.Dispatch<SetStateAction<any>>,
   getLista:any
 }
 
@@ -71,7 +79,9 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
   const [arrayYears,setArrayYears] = useState<number[]>([]);
   const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [showLoader, setShowLoader] = useState(false);
-  //const [noteText, setNoteText] = useState('');
+  const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
+  const textNoteVerified = useRef(false);
+
   const azioni = ["Posticipa","Elimina"];
   
   const [bodyAction, setBodyAction] = useState<BodyAction>({
@@ -102,7 +112,6 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     const result:{anno:number,mese:{mese:number,descrizione:string}}[] = [];
     let anno = annoInizio;
     let mese = meseInizio;
-
     while (anno < annoFine || (anno === annoFine && mese <= meseFine)) {
       result.push({
         anno,
@@ -111,14 +120,12 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
           descrizione: NOMI_MESI[mese - 1] 
         }
       });
-
       mese++;
       if (mese > 12) {
         mese = 1;
         anno++;
       }
     }
-
     return result;
   }
 
@@ -149,13 +156,11 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
       setArrayYears([]);
       manageError(err,dispatchMainState);
     }));   
-    
   };
   
   const getMesi = async(tipologiaFattura,azione,anno) => {
     await getMesiGestioneFattureAzione(token, profilo.nonce,{tipologiaFattura:tipologiaFattura, azione:azione,anno:anno.toString()}).then((res)=>{
       setArrayMonths(res.data);
-
     }).catch(((err)=>{
       setArrayMonths([]);
       manageError(err,dispatchMainState);
@@ -163,21 +168,45 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
   };
   
   
-  const onButtonOK = async(body) => {
+  const actionInserisci = async(body) => {
     setShowLoader(true);
-    const newBody ={...body,...{mese:body.mese[0].toString(),anno:body.anno.toString(),idFattura:null}};
-    await gestioneFattureInserisci(token, profilo.nonce, newBody).then((res)=>{
+    const newBody ={...body,mese:body.mese[0].toString(),anno:body.anno.toString(),idFattura:null};
+    await gestioneFattureInserisci(token, profilo.nonce, newBody).then(()=>{
       managePresaInCarico('INSER_DELETE_WHITE_LIST',dispatchMainState);
       setShowLoader(false);
       setOpen(false);
       getLista(body.anno);
       clearPopUp();
+      textNoteVerified.current = false;
     }).catch((err)=>{
       setShowLoader(false);
       setOpen(false);
       manageError(err,dispatchMainState);
       clearPopUp();
+      textNoteVerified.current = false;
     });
+  };
+
+  const verificaTestoNota = async (): Promise<void> => {
+    setOpen((prev)=> ({...prev,loaderIsVisible:true,sentenceLoader:"Verifica della NOTA in corso ..."}));
+    try {
+      const response = await gestioneFattureVerificaNotaPii(
+        token,
+        profilo.nonce,
+        { testo: bodyAction.nota?.testo||'' }
+      );
+      const responseVerifica = response.data as {redactedString:string};
+
+      setBodyAction((prev)=>({...prev,nota:{ testo:responseVerifica?.redactedString||'',data:formatDate(new Date())}}));
+      setTextAreaValuePii(bodyAction.nota?.testo||"");
+      
+    } catch (err: unknown) {
+      console.log({ err });
+    } finally {
+      setOpen((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
+      console.log("ciao");
+      textNoteVerified.current = true;
+    }
   };
   
   const clearPopUp = () => {
@@ -209,21 +238,33 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
     return words.length >= 3;
   }
-  
- 
 
+
+  const setTextAreaValueClearPii = (e) => {
+    if(textNoteVerified.current){
+      textNoteVerified.current = false;
+      setBodyAction((prev)=>({...prev,nota:{testo:textAreaValuePii,data:''}}));
+      setOpen((prev)=> ({...prev,sentenceLoader:"Prosegui"}));
+    }else{
+      setTextAreaValuePii('');
+      setBodyAction((prev)=> ({...prev, ...{nota:{
+        "data": formatDate(new Date()),
+        "testo": e
+      }}}));  
+    }
+  };
+  
   const disableBotton = (bodyAction.anno === null 
   || bodyAction.mese.length === 0 
   || bodyAction.tipologiaFattura === null
   ||(bodyAction.nota?.testo && bodyAction.nota.testo.length < 10)
   || bodyAction.nota === null 
-  || !isValidText(bodyAction.nota.testo||"") )? true : false;
+  || !isValidText(bodyAction.nota.testo||"") 
+  || open.loaderIsVisible )? true : false;
 
-
-  
   return (
     <div>
-      <Modal open={open}>
+      <Modal open={open.open}>
         <Box sx={style}>
           <div className='d-flex justify-content-between'>
             <div className='d-flex align-items-center justify-content-start'>
@@ -253,9 +294,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 setBodyAction((prev)=> ({...prev, ...{azione:e,tipologiaFattura:null,anno:null,mese:[],nota:null}}));
                 setValueAutocomplete(null);
                 setTextValue('');
-                
               }}
-             
             />
             <MainFilter 
               disabled={bodyAction.azione === null}
@@ -393,29 +432,39 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               keyBody={"nota"}
               error={(!isValidText2(bodyAction.nota?.testo||"") || !isValidText(bodyAction.nota?.testo||""))&& bodyAction.mese.length !== 0}
               extraCodeOnChange={(e)=>{
-                setBodyAction((prev)=> ({...prev, ...{nota:{
-                  "data": formatDate(new Date()),
-                  "testo": e
-                }}}));             
+                setTextAreaValueClearPii(e);
               }}
               helperText={(bodyAction.nota?.testo?.length||0) > 500 ?
-                "Inserisci una nota (max 500 caratteri)":
-                "Inserisci una nota ( min 10 caratteri)"}
+                `Inserisci una nota (max ${500} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`
+                : `Inserisci una nota (min ${10} max ${500} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`}
               placeHolder={"Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici."}
             ></MainFilter>
           </Box>
           {!showLoader ?
             <div className='container_buttons_modal d-flex justify-content-center mt-5'>
-              <Button  
+              <Button 
+                startIcon={open?.loaderIsVisible ? <CircularProgress size={16} color="inherit" /> : null}
                 disabled={disableBotton}
-                variant='contained'
-                onClick={()=> onButtonOK(bodyAction)}
-              >Inserisci</Button>
+                variant="contained" 
+                sx={{
+                  width: open.sentenceLoader ? 250 : 120,
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: 'inline-flex'
+                }}
+                onClick={() => {
+                  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+                  textNoteVerified.current ? actionInserisci(bodyAction): verificaTestoNota();
+                }}
+              >
+                {open.sentenceLoader ? open.sentenceLoader : "Inserisci"}
+              </Button> 
             </div>:
             <div id='loader_on_modal' className='container_buttons_modal d-flex justify-content-center mt-5'>
-              <Loader sentence={'Attendere...'}></Loader> 
+              <Loader sentence={textNoteVerified.current ?'Attendere':'Verifica della nota in corso'}></Loader> 
             </div>}
-      
         </Box>
       </Modal>
     </div>
