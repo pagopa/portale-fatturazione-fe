@@ -18,7 +18,7 @@ export interface ModalInfoProps <T>{
     },
     width?:number,
     textAreaValue?:string,
-    setTextAreaValue?:(v:string)=>void,
+    setTextAreaValue?:(v:string,s?:string)=>void,
     externalActionButton?:(obj?:T )=>void,
     errorTextInput?:boolean,
     TextField:React.ComponentType<{
@@ -31,11 +31,22 @@ export interface ModalInfoProps <T>{
 
 const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,externalActionButton,errorTextInput,TextField,verifiedText}: ModalInfoProps<T>) => {
    
-  const handleClose = () =>{
-    setOpen({open:false, sentence:''});
-    setTimeout(() => window.scrollTo(0, 0), 50);
-    if(setTextAreaValue) setTextAreaValue("");
+  const handleClose = (
+    event?: object,
+    reason?: 'backdropClick' | 'escapeKeyDown',
+    whereFunIsInvoked?:string
+  ) => {
+  // ignora la chiusura se il motivo è click fuori dal modal
+    if (reason === 'backdropClick') return;
 
+    setOpen({ open: false, sentence: '' });
+    setTimeout(() => window.scrollTo(0, 0), 50);
+    if(whereFunIsInvoked === "back"){
+      if (setTextAreaValue) setTextAreaValue('',"back");
+    }else{
+      if (setTextAreaValue) setTextAreaValue('');
+    }
+    
   }; 
  
   return (
@@ -56,7 +67,7 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
       }}>
         <div className="d-flex align-items-center justify-content-end">
           <div className='icon_close'>
-            <CloseIcon onClick={handleClose} sx={{color:'#17324D'}}/>
+            <CloseIcon onClick={()=> handleClose(undefined,undefined,"back")} sx={{color:'#17324D'}}/>
           </div>
       
         </div>
@@ -86,7 +97,7 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
             <Button 
               disabled={open.loaderIsVisible} 
               variant="outlined" 
-              onClick={handleClose}
+              onClick={()=> handleClose(undefined,undefined,"back")}
               sx={{ width: 120, flexShrink: 0 }}
             > 
             Annulla

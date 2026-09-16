@@ -619,10 +619,14 @@ const Fatturazione : React.FC = () =>{
     }
   };
 
-  const setTextAreaValueClearPii = (e) => {
-    if(textNoteVerified.current){
+  const setTextAreaValueClearPii = (e:string,onAction:string|undefined):void => {
+    if(textNoteVerified.current && onAction === null){
       textNoteVerified.current = false;
       setTextAreaValuePii("");
+    }else if(onAction === "back"){
+      setTextAreaValuePii("");
+      setTextAreaValue("");
+      textNoteVerified.current = false;
     }else{
       setTextAreaValue(e);
     }
@@ -863,7 +867,7 @@ const Fatturazione : React.FC = () =>{
         externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
         errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
         TextField={NotaTextField}
-        verifiedText={textNoteVerified.current}      />
+        verifiedText={textNoteVerified.current}/>
     </MainBoxStyled>   
   );
 };

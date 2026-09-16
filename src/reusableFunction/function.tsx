@@ -478,7 +478,8 @@ export const manipulateObjModuloCommessa = ( el ) =>{
   };
 };
 
-export function formatDateString(el:{dataFattura:string}) {
-  const [year, month, day] = el.dataFattura.split("-");
+export function formatDateString(el: { dataFattura: string }) {
+  const datePart = el.dataFattura.split("T")[0]; // rimuove l'eventuale orario
+  const [year, month, day] = datePart.split("-");
   return `${day}/${month}/${year}`;
 }
