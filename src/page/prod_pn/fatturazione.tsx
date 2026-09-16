@@ -620,7 +620,7 @@ const Fatturazione : React.FC = () =>{
   };
 
   const setTextAreaValueClearPii = (e:string,onAction:string|undefined):void => {
-    if(textNoteVerified.current && onAction === null){
+    if(textNoteVerified.current && !onAction){
       textNoteVerified.current = false;
       setTextAreaValuePii("");
     }else if(onAction === "back"){

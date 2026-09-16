@@ -477,7 +477,7 @@ const GestioneFatture : React.FC = () => {
   };
 
   const setTextAreaValueClearPii = (e:string,onAction:string|undefined):void => {
-    if(textNoteVerified.current && onAction === null){
+    if(textNoteVerified.current && !onAction){
       textNoteVerified.current = false;
       setTextAreaValuePii("");
     }else if(onAction === "back"){
@@ -630,7 +630,7 @@ const GestioneFatture : React.FC = () => {
         ></MainFilter>
         <MainFilter 
           filterName={"select_value_with_tutti"}
-          inputLabel={"Azioni"}
+          inputLabel={"Stato"}
           clearOnChangeFilter={clearOnChangeFilter}
           setBody={setBodyGetLista}
           body={bodyGetLista}
