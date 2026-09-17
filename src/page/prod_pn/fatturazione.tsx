@@ -21,8 +21,9 @@ import { useGlobalStore } from "../../store/context/useGlobalStore";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { gestioneFattureInserisci, gestioneFattureVerificaNotaPii } from "../../api/apiPagoPa/gestioneFatturePA/api";
-import { formatDate, formatDateString } from "../../reusableFunction/function";
+import { formatDate, formatDateString, isValidText2NotaPii, isValidTextNotaPii } from "../../reusableFunction/function";
 import { ElementToProcessComponent, NotaTextField } from "./gestioneFatture";
+import axios from "axios";
 
 
 const Fatturazione : React.FC = () =>{
@@ -387,7 +388,6 @@ const Fatturazione : React.FC = () =>{
       }else{
         setDisableButtonSap(true);
       }
-    
       setResponseTipologieSap(res.data);
     }).catch((()=>{
       setDisableButtonSap(true);
@@ -447,7 +447,6 @@ const Fatturazione : React.FC = () =>{
     setDataSelect([]);
     setValueMultiselectTipologie([]);
     setValueAutocomplete([]);
-        
   };
     
   const upadateOnSelctedChange = (page,rowsPerPage) =>{
@@ -486,10 +485,8 @@ const Fatturazione : React.FC = () =>{
           
     const start = newPage * rowsPerPage;
     const end = start + rowsPerPage;
-       
     const elementsToShow = gridData.slice(start, end);
     setShowedData(elementsToShow);
-  
     upadateOnSelctedChange(newPage,rowsPerPage);
   };
                           
@@ -497,16 +494,13 @@ const Fatturazione : React.FC = () =>{
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const newRows = parseInt(event.target.value, 10);
-  
     setRowsPerPage(newRows);
     setPage(0);
-  
     const elementsToShow = gridData.slice(0, newRows);
     setShowedData(elementsToShow);
     upadateOnSelctedChange(0,newRows);
   };
 
-    
   const keyValueObjModalInfo = [
     {
       key:"ragionesociale",
@@ -524,9 +518,7 @@ const Fatturazione : React.FC = () =>{
     
   const showPopUpAction = (obj, action) => { 
     const newObj = { ...obj };
-    
     newObj.dataFattura = formatDateString(newObj);
-
     setElementSelected(newObj);
     setActionCalled(action);
     if(action === "posticipa"){
@@ -535,10 +527,6 @@ const Fatturazione : React.FC = () =>{
       setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
     }
   };
-
-
-  
-
 
   const azioneApi = async () => {
     setShowLoadingGrid(true);
@@ -577,27 +565,14 @@ const Fatturazione : React.FC = () =>{
         "INSER_DELETE_WHITE_LIST",
         dispatchMainState
       );
-
     } catch{
       managePresaInCarico('GENERICO_KO',dispatchMainState);
     } finally {
       setShowLoadingGrid(false);
+      setTextAreaValue("");
+      setTextAreaValuePii("");
     }
   };
-
-  const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
-
-  function isValidText(str) {
-    return regex.test(str.trim());
-  }
-
-  function isValidText2(str: string): boolean {
-    const trimmed = str.trim();
-    if (!trimmed) return false;
-
-    const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
-    return words.length >= 3;
-  }
 
   const verificaTestoNota = async (): Promise<void> => {
     setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:true,sentenceLoader:"Verifica della NOTA in corso ..."}));
@@ -610,8 +585,12 @@ const Fatturazione : React.FC = () =>{
       const responseVerifica = response.data as {redactedString:string};
       setTextAreaValuePii(responseVerifica?.redactedString ?? "");
     } catch (err: unknown) {
-      //TODO: manage error
-      console.log({ err });
+      if (axios.isAxiosError(err)) {
+        if(err.response?.status === 404){
+          textNoteVerified.current = true;
+          setTextAreaValuePii(textAreaValue);
+        } 
+      }
     } finally {
       setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
       textNoteVerified.current = true;
@@ -872,7 +851,7 @@ const Fatturazione : React.FC = () =>{
         textAreaValue={textAreaValuePii ? textAreaValuePii : textAreaValue}
         setTextAreaValue={setTextAreaValueClearPii}
         externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
-        errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
+        errorTextInput={!isValidText2NotaPii(textAreaValue) || !isValidTextNotaPii(textAreaValue)}
         TextField={NotaTextField}
         verifiedText={textNoteVerified.current}/>
     </MainBoxStyled>   

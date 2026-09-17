@@ -38,7 +38,6 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
   ) => {
   // ignora la chiusura se il motivo è click fuori dal modal
     if (reason === 'backdropClick') return;
-
     setOpen({ open: false, sentence: '' });
     setTimeout(() => window.scrollTo(0, 0), 50);
     if(whereFunIsInvoked === "back"){
@@ -46,7 +45,6 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
     }else{
       if (setTextAreaValue) setTextAreaValue('');
     }
-    
   }; 
  
   return (

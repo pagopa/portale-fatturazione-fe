@@ -12,8 +12,9 @@ import Loader from '../loader';
 import { useGlobalStore } from '../../../store/context/useGlobalStore';
 import MainFilter from '../mainFilter';
 import { gestioneFattureInserisci, gestioneFattureVerificaNotaPii, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../../api/apiPagoPa/gestioneFatturePA/api';
-import { formatDate } from '../../../reusableFunction/function';
+import { formatDate, isValidText2NotaPii, isValidTextNotaPii } from '../../../reusableFunction/function';
 import { month as NOMI_MESI} from '../../../reusableFunction/reusableArrayObj';
+import axios from 'axios';
 
 const style = {
   position: 'absolute' as const,
@@ -201,10 +202,14 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
       setTextAreaValuePii(bodyAction.nota?.testo||"");
       
     } catch (err: unknown) {
-      console.log({ err });
+      if (axios.isAxiosError(err)) {
+        if(err.response?.status === 404){
+          setTextAreaValuePii(bodyAction.nota?.testo||"");
+          setBodyAction((prev)=>({...prev,nota:{ testo:prev.nota?.testo||'',data:formatDate(new Date())}}));
+        } 
+      }
     } finally {
       setOpen((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
-      console.log("ciao");
       textNoteVerified.current = true;
     }
   };
@@ -227,21 +232,6 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     textNoteVerified.current = false;
   };
 
-  const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
-
-  function isValidText(str) {
-    return regex.test(str.trim());
-  }
-
-  function isValidText2(str: string): boolean {
-    const trimmed = str.trim();
-    if (!trimmed) return false;
-
-    const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
-    return words.length >= 3;
-  }
-
-
   const setTextAreaValueClearPii = (e) => {
     if(textNoteVerified.current){
       textNoteVerified.current = false;
@@ -261,7 +251,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
   || bodyAction.tipologiaFattura === null
   ||(bodyAction.nota?.testo && bodyAction.nota.testo.length < 10)
   || bodyAction.nota === null 
-  || !isValidText(bodyAction.nota.testo||"") 
+  || !isValidTextNotaPii(bodyAction.nota.testo||"") 
   || open.loaderIsVisible )? true : false;
 
   return (
@@ -434,7 +424,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               keyValue={"nota"}
               keyDescription={"nota"}
               keyBody={"nota"}
-              error={(!isValidText2(bodyAction.nota?.testo||"") || !isValidText(bodyAction.nota?.testo||""))&& bodyAction.mese.length !== 0}
+              error={(!isValidText2NotaPii(bodyAction.nota?.testo||"") || !isValidTextNotaPii(bodyAction.nota?.testo||""))&& bodyAction.mese.length !== 0}
               extraCodeOnChange={(e)=>{
                 setTextAreaValueClearPii(e);
               }}

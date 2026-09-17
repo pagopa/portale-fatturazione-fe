@@ -483,3 +483,32 @@ export function formatDateString(el: { dataFattura: string }) {
   const [year, month, day] = datePart.split("-");
   return `${day}/${month}/${year}`;
 }
+
+
+const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
+
+export function isValidTextNotaPii(str) {
+  return regex.test(str.trim());
+}
+
+export function isValidText2NotaPii(str: string): boolean {
+  const trimmed = str.trim();
+  if (!trimmed) return false;
+
+  const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
+  return words.length >= 3;
+}
+
+/* se vogliamo implementare l'errore anche solo con gli asterischi
+function isValidText(str: string): boolean {
+  const trimmed = str.trim();
+
+  // deve rispettare lunghezza/numero minimo di "parole"
+  if (!regex.test(trimmed)) return false;
+
+  // deve contenere almeno un carattere che NON sia asterisco o spazio
+  const hasRealContent = /[^\s*]/.test(trimmed);
+  if (!hasRealContent) return false;
+
+  return true;
+} */

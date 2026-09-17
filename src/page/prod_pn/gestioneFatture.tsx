@@ -19,7 +19,8 @@ import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
 import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, gestioneFattureVerificaNotaPii, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
-import { formatDate } from "../../reusableFunction/function";
+import { formatDate, isValidText2NotaPii, isValidTextNotaPii } from "../../reusableFunction/function";
+import axios from "axios";
 
 export interface BodyLista {
   idEnti: string[]
@@ -300,9 +301,7 @@ const GestioneFatture : React.FC = () => {
             parts.push(month[meseIndex]);
           }
         }
-
         const fileName = `${parts.join("/")}.xlsx`;
-          
         setShowLoading(true);
         saveAs(response,fileName);
         setShowLoading(false);
@@ -468,8 +467,12 @@ const GestioneFatture : React.FC = () => {
       const responseVerifica = response.data as {redactedString:string};
       setTextAreaValuePii(responseVerifica?.redactedString ?? "");
     } catch (err: unknown) {
-      //TODO aggiungere manage error
-      console.log({ err });
+      if (axios.isAxiosError(err)) {
+        if(err.response?.status === 404){
+          textNoteVerified.current = true;
+          setTextAreaValuePii(textAreaValue);
+        } 
+      }
     } finally {
       setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
       textNoteVerified.current = true;
@@ -496,19 +499,6 @@ const GestioneFatture : React.FC = () => {
       action:"Add"
     }];
 
-  const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
-
-  function isValidText(str) {
-    return regex.test(str.trim());
-  }
-
-  function isValidText2(str: string): boolean {
-    const trimmed = str.trim();
-    if (!trimmed) return false;
-
-    const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
-    return words.length >= 3;
-  }
 
   const statusAnnulla = (
     bodyGetLista.anno !== null ||
@@ -520,6 +510,8 @@ const GestioneFatture : React.FC = () => {
   ) ? 'show' : 'hidden';
 
   const noData = arrayYears.length === 0;
+
+  const noteToValdate = textAreaValuePii ? textAreaValuePii : textAreaValue;
   return (
     <MainBoxStyled title={"Gestione Fatture"}>
       <ResponsiveGridContainer >
@@ -711,10 +703,10 @@ const GestioneFatture : React.FC = () => {
         setOpen={setOpenModalInfo}
         open={openModalInfo}
         width={800}
-        textAreaValue={textAreaValuePii ? textAreaValuePii : textAreaValue}
+        textAreaValue={noteToValdate}
         setTextAreaValue={setTextAreaValueClearPii}
         externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
-        errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
+        errorTextInput={!isValidText2NotaPii(noteToValdate) || !isValidTextNotaPii(noteToValdate)}
         TextField={NotaTextField}
         verifiedText={textNoteVerified.current}/>
     </MainBoxStyled>     
