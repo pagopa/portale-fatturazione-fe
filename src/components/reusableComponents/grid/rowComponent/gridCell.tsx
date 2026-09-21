@@ -20,10 +20,14 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { HeaderGridCustom } from "../gridCustom";
 import { mesiGrid } from "../../../../reusableFunction/reusableArrayObj";
 import { transformDateTime019, transformDateTimeWithNameMonth } from "../../../../reusableFunction/function";
+import DescriptionIcon from '@mui/icons-material/Description';
 
-type CopyCellProps = {
+type CopyCellProps<T,> = {
   value: string;
   align?: "left" | "center" | "right" | "inherit" | "justify";
+  icon?:string,
+  sentence?:string,
+  element:T
 };
 
 type GridCellProps<T,K> = {
@@ -357,6 +361,9 @@ const GridCell = <T, K> ({
         key={`${i}-snackbar`}
         value={value}
         align={headerNames[i]?.align}
+        icon={headerNames[i]?.icon}
+        sentence={headerNames[i]?.sentenceSnackbar}
+        element={element}
       />
     );
   case "collaps":
@@ -399,7 +406,7 @@ export default GridCell;
 
 
 
-const CopyToClipboardCell = ({ value, align = "center" }: CopyCellProps) => {
+const CopyToClipboardCell = ({ value, align = "center", icon, sentence="Event ID Copiato!",element }: CopyCellProps) => {
   const [open, setOpen] = useState(false);
 
   const handleCopy = () => {
@@ -407,11 +414,25 @@ const CopyToClipboardCell = ({ value, align = "center" }: CopyCellProps) => {
     setOpen(true);
   };
 
+  const getIcon = () => {
+    switch(icon){
+    case "file_invio_sap":
+      return <DescriptionIcon sx={{ color: "default" }} fontSize="small" />;
+    default : 
+      return <ArticleIcon sx={{ color: "default" }} fontSize="small" />;
+    }
+  };
+
+  let disabled = false;
+  if(element.statoInvio === 0 ||element.statoInvio === 2 && icon === "file_invio_sap"){
+    disabled = true;
+  }
+ 
   return (
     <TableCell align={align}>
       <Tooltip title={value}>
-        <IconButton onClick={handleCopy}>
-          <ArticleIcon sx={{ color: "default" }} fontSize="small" />
+        <IconButton disabled={disabled} onClick={handleCopy}>
+          {getIcon()}
         </IconButton>
       </Tooltip>
       <Snackbar
@@ -421,7 +442,7 @@ const CopyToClipboardCell = ({ value, align = "center" }: CopyCellProps) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert onClose={() => setOpen(false)} severity="success">
-          Event ID Copiato!
+          {sentence}
         </Alert>
       </Snackbar>
     </TableCell>

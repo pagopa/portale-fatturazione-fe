@@ -23,6 +23,7 @@ interface GridRowsRendererProps<T ,K>{
   collapseDataLoading?:boolean,
   selectedRows:K[],
   manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
+  colSpanCollaps?:number
 }
 
 const GridRowDesignByConfigFile=<T,K>({
@@ -40,7 +41,8 @@ const GridRowDesignByConfigFile=<T,K>({
   getAsyncDetails,
   collapseDataLoading,
   selectedRows=[],
-  manageStateCheckbox
+  manageStateCheckbox,
+  colSpanCollaps=7
 }: GridRowsRendererProps<T,K>) => {
 
   const [open, setOpen] = useState(false);
@@ -131,16 +133,14 @@ const GridRowDesignByConfigFile=<T,K>({
       </TableRow>
       {(headerNamesCollapse && titleRowCollapse) &&
         <TableRow key={`tableRow-position-${element.id}`} >
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={7}>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={colSpanCollaps}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 2, backgroundColor: '#F8F8F8', padding: '10px' }}>
-
                 <Stack
                   direction="row"
                   gap={4}
                   alignItems="center"
                   sx={{marginBottom:"10px"}}
-                 
                 >
                   <Typography sx={{ marginLeft: "6px" }} variant="h6" gutterBottom component="div">
                     {titleRowCollapse}
@@ -231,6 +231,7 @@ const GridRowDesignByConfigFile=<T,K>({
                                   selectedRows={selectedRows}
                                   manageStateCheckbox={manageStateCheckbox}
                                   usedInside={"collapse-row"}
+                                  setAction={setAction}
                                 />
                               )
                             )}

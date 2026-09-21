@@ -43,6 +43,7 @@ interface GridCustomProps<T,K> {
     collapseDataLoading?:boolean,
     selectedRows?:K[],
     manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
+    colSpanCollaps?:number
 }
 
 export interface HeaderGridCustom {
@@ -65,6 +66,8 @@ export interface HeaderGridCustom {
     applyCss?:boolean,
     keyToManipulateData?:string,
     variant?: "caption-semibold" | "caption" | "body1" | "body2" | "subtitle1" | "subtitle2" | "h6" | "h5" | "h4" | "h3" | "h2" | "h1"; 
+    icon?:string,
+    sentenceSnackbar?:string
 }
 
 
@@ -101,7 +104,8 @@ const GridCustom = <T,K>({
   getAsyncDetails,
   collapseDataLoading,
   selectedRows=[],
-  manageStateCheckbox
+  manageStateCheckbox,
+  colSpanCollaps
 }: GridCustomProps<T,K>) => {
  
   return (
@@ -149,6 +153,7 @@ const GridCustom = <T,K>({
                     collapseDataLoading={collapseDataLoading}
                     selectedRows={selectedRows}
                     manageStateCheckbox={manageStateCheckbox}
+                    colSpanCollaps={colSpanCollaps}
                   />
                 );
               })}

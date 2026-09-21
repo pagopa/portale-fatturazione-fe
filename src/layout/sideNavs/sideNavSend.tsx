@@ -276,7 +276,7 @@ const SideNavSend : React.FC = () => {
               <ListItemIcon>
                 <SendIcon fontSize="inherit" />
               </ListItemIcon>
-              <ListItemText primary="Generazione JSON" />
+              <ListItemText primary="Invio a SAP" />
             </ListItemButton>
           </List>
         </Collapse> 

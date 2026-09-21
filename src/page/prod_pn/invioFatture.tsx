@@ -14,6 +14,8 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headerNamesInvioFatture, headerNamesInvioFattureCollapse, keyValueObjModalInfo } from "../../assets/configurations/conf_GridInvioFatture";
 import MainModalComponent from "../../components/reusableComponents/modals/mainModalComponent";
 import { ElementToProcessComponent } from "../../components/reusableComponents/tableViewData";
+import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
+import { Box, DialogContent, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
 
 
 interface ListaFatture {
@@ -59,13 +61,14 @@ const InvioFatture : React.FC = () => {
 
 
   const [bodyFatturazione, setBodyFatturazione] = useState<Record<string, unknown>>({
-    anno:"",
+    anno:"2026",
     mese:"",
     tipologiaFattura:[],
-    inviata:3
+    inviata:3,
+
   });
 
-  const [arrayYears,setArrayYears] = useState<number[]>([]);
+  const [arrayYears,setArrayYears] = useState<number[]>([2025,2026,2027]);
   const [arrayMonths,setArrayMonths] = useState<{mese:string,descrizione:string}[]>([]);
 
   const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
@@ -95,9 +98,10 @@ const InvioFatture : React.FC = () => {
 
       const addMockInviate = [
         {
+          "idFat":"mock",
           "tipologiaFattura": "PRIMO SALDO",
           "numeroFatture": 1,
-          "annoRiferimento": 2022,
+          "annoRiferimento": 2026,
           "meseRiferimento": 12,
           "importo": 11,
           "statoInvio": 3,
@@ -107,19 +111,34 @@ const InvioFatture : React.FC = () => {
               "tipologiaFattura": "PRIMO SALDO",
               "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
               "ragioneSociale": "Regione Lombardia",
-              "annoRiferimento": 2022,
+              "annoRiferimento": 2026,
               "meseRiferimento": 12,
               "importo": 11,
               "dataFattura": "2025-02-10T00:00:00",
-              "dataGenerazione": "2026-09-09T00:00:00",
-              "statoInvio": 3
+              "dataGenerazione": "2026-09-09T11:00:00",
+              "statoInvio": 3,
+              "fileJson":"FatturePagoPa_01012026_1230.json"
+            },
+            {
+              "idFattura": 1112,
+              "tipologiaFattura": "PRIMO SALDO",
+              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
+              "ragioneSociale": "Regione Puglia",
+              "annoRiferimento": 2026,
+              "meseRiferimento": 12,
+              "importo": 12,
+              "dataFattura": "2025-02-10T00:00:00",
+              "dataGenerazione": "2026-09-09T11:00:00",
+              "statoInvio": 4,
+              "fileJson":"FatturePagoPa_01012026_1230.json"
             }
           ]
         },
         {
+          "idFat":"mock",
           "tipologiaFattura": "SECONDO SALDO",
           "numeroFatture": 1,
-          "annoRiferimento": 2022,
+          "annoRiferimento": 2026,
           "meseRiferimento": 12,
           "importo": 100,
           "statoInvio": 3,
@@ -129,17 +148,18 @@ const InvioFatture : React.FC = () => {
               "tipologiaFattura": "SECONDO SALDO",
               "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
               "ragioneSociale": "Regione Lombardia",
-              "annoRiferimento": 2022,
+              "annoRiferimento": 2026,
               "meseRiferimento": 12,
               "importo": 100,
               "dataFattura": "2025-02-10T00:00:00",
-              "dataGenerazione": "2026-09-09T00:00:00",
-              "statoInvio": 3
+              "dataGenerazione": "2026-09-09T10:00:00",
+              "statoInvio": 3,
+              "fileJson":"FatturePagoPa_01012026_1230.json"
             }
           ]
         }
       ];
-      setListaFatture([...addMockInviate,...res.data]);
+      setListaFatture([...addMockInviate,...res.data.filter(el => el.annoRiferimento === 2026)].slice(0,10));
       
       const array = res.data.map( el => el.tipologiaFattura);
       const ORDER = ["Anticipo", "Acconto", "Primo Saldo", "Secondo Saldo", "Var. Semestrale"];
@@ -278,6 +298,9 @@ const InvioFatture : React.FC = () => {
   const [objectSort, setObjectSort] = useState<{[key:string]:number}>({"Anno Riferimento":1,"Mese Riferimento":1});
   const [listaResponse, setListaResponse] = useState<any[]>([]);
   const [openModalFatture, setOpenModalFatture]= useState(false);
+  const [infoReinvio, setInforeInvio] = useState<{dataInvio:string}[]>([]);
+
+  const [showPopUpDateInvio, setShowPopUpdateInvio] = useState(false);
 
 
   const [elementsSelected,setElementSelected] = useState<Record<string, any>[]>([]);
@@ -376,7 +399,7 @@ const InvioFatture : React.FC = () => {
 
   //Bisogna aggiungere un parametro che controlla se è collapsed altrimenti non devo faren la chiamata
   const handleGetDetailsRowCollapsed = async (el: Record<string, any>, clickOnCheckbox:boolean = false) => {
-    if(!(el.annoRiferimento === 2022)){
+    if(!(el.idFat === "mock")){
       const resCollapseDetails = await getDetailSingleRow({
         annoRiferimento: el.annoRiferimento,
         meseRiferimento: el.meseRiferimento,
@@ -384,6 +407,7 @@ const InvioFatture : React.FC = () => {
       });
       const addStatoInvioInsideCollapse = resCollapseDetails.map((collapseEl) => {
         collapseEl.statoInvio = el.statoInvio;
+        collapseEl.fileJson = collapseEl.statoInvio !== 0 ? "FatturePagoPa_01012026_1230.json" : "--";
         return collapseEl;
       });
    
@@ -397,7 +421,6 @@ const InvioFatture : React.FC = () => {
             : item
         )
       );
-
 
       if(clickOnCheckbox){
         setElementSelected(resCollapseDetails);
@@ -420,9 +443,6 @@ const InvioFatture : React.FC = () => {
   ) => {};
 
   const statusAnnulla = "hidden";
-
-
-
 
 
   const manageStateCheckbox = (row, isMainCheck="",elementsSel) =>{
@@ -453,8 +473,6 @@ const InvioFatture : React.FC = () => {
       } )),2:(elementsInsideCollapse?.length||0) , 3:elementsSel,4:row});*/
       //MAnage disable 
 
-    
-
     }else{
       
       verifyIfSelected = (!!elementsSel.find((el) =>{
@@ -478,11 +496,23 @@ const InvioFatture : React.FC = () => {
       disabled:row.statoInvio === 2 || disabled
     };
   };
+
+  const showPopUpAction = (obj, action) => { 
+    console.log({obj});
+    let array = [1,2,3];
+    if(obj.statoInvio !== 4){
+      array = [ 1 ];
+    }
+    const notes = array.map((el,i) => ({
+      dataInvio:`0${i+1}/12/2026 - 0${i+1}:20:00`,
+      testo:"Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since 1966,"}));
+    setInforeInvio(notes);
+    setShowPopUpdateInvio(true);
   
-  console.log({elementsSelected,length:elementsSelected.length});
+  };
   return(
 
-    <MainBoxStyled title={"Generazione JSON"}>
+    <MainBoxStyled title={"Invio a SAP"}>
       <ResponsiveGridContainer >
         <MainFilter 
           filterName={"select_value_string"}
@@ -553,6 +583,20 @@ const InvioFatture : React.FC = () => {
             setBodyFatturazione((prev) => ({...prev,...{tipologiaFattura:e}}));
           }}
           iconMaterial={RenderIcon("invoice",true)}/>
+        <MainFilter
+          filterName="radio_group"
+          inputLabel="Re-Inviate"
+          arrayValues={[
+            { id: 1, descrizione: "Si" },
+            { id: 2, descrizione: "No" },
+          ]}
+          keyValue="id"
+          keyDescription="descrizione"
+          keyBody="gender"
+          body={bodyFatturazione}
+          setBody={setBodyFatturazione}
+          clearOnChangeFilter={() => {}}
+        />
       </ResponsiveGridContainer>
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
@@ -561,13 +605,21 @@ const InvioFatture : React.FC = () => {
       />
       <ActionTopGrid
         counter={elementsSelected.length}
-        actionButtonRight={[{
-          onButtonClick:downloadReport,
-          variant: "outlined",
-          label: "Download Risultati",
-          icon:{name:"download"},
-          disabled:(listaFatture?.length === 0)
-        }]}/>
+        actionButtonRight={[
+          {
+            onButtonClick:downloadReport,
+            variant: "outlined",
+            label: "Download Non Fatturate",
+            icon:{name:"download"},
+            disabled:(listaFatture?.length === 0)
+          },
+          {
+            onButtonClick:downloadReport,
+            variant: "outlined",
+            label: "Download Risultati",
+            icon:{name:"download"},
+            disabled:(listaFatture?.length === 0)
+          }]}/>
       <div className="mt-1 mb-5" style={{ width: '100%'}}> 
         <GridCustom
           nameParameterApi='invioFatture'
@@ -598,7 +650,10 @@ const InvioFatture : React.FC = () => {
           listaResponse={listaResponse}
           sentenseEmpty={"Nessuna fattura disponibile"}
           keyCollapse={"fatture"}
-          titleRowCollapse={"Dettaglio Fatture"}/>
+          titleRowCollapse={"Dettaglio Fatture"}
+          colSpanCollaps={12}
+          setAction={showPopUpAction}
+        />
         {/*  <DataGrid
           sx={{
             height:'400px',
@@ -671,6 +726,13 @@ const InvioFatture : React.FC = () => {
           setOpen={setOpenModalFatture}
           showCounter={true}
         />} />
+      <DialogInfo 
+        open={showPopUpDateInvio}
+        onClose={setShowPopUpdateInvio}
+        clearAction={() => { setInforeInvio([]); } }
+        array={infoReinvio}
+        title="Storico Invio"
+        ContentComponent={DilogContentList}/>
        
     </MainBoxStyled>
   );
@@ -686,6 +748,50 @@ export const checkIfElementSelected = (arraySel, row) =>{
        el.tipologiaFattura === row.tipologiaFattura &&
        el.statoInvio === row.statoInvio;});
 }; 
+
+
+const DilogContentList : React.FC<any> = ({ array = [] }) => { 
+  return (
+    <DialogContent dividers>
+      {array.length === 0 ? (
+        <Typography color="text.secondary">
+          Nessuna DATA disponibile.
+        </Typography>
+      ) : (
+        <List  
+          disablePadding 
+          sx={{ 
+            maxHeight: 400, 
+            overflowY: 'auto' 
+          }}>
+          {array.map((el, index) => {
+            return (
+              <Box key={`${el}-{index}`} sx={{ backgroundColor: "grey.100",marginBottom: 1, borderRadius: 1, padding: 1 }}>
+                <ListItem alignItems="flex-start">
+                  <ListItemText
+                    primary={el.testo}
+                    secondary={
+                      <Stack direction="row" spacing={1} alignItems="center" component="span">
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.secondary"
+                        >
+                          {el.dataInvio}
+                        </Typography>
+                      </Stack>
+                    }
+                  />
+                </ListItem>
+                {index < array.length - 1 && <Divider />}
+              </Box>
+            );})}
+        </List>
+      )}
+    </DialogContent>
+  );
+};
+
 /*
 
   <FormControl fullWidth size="medium">

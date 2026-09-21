@@ -786,7 +786,7 @@ const Fatturazione : React.FC = () =>{
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onButtonAnnulla} 
         statusAnnulla={statusAnnulla} 
-        actionButton={[
+        /* actionButton={[
           {
             onButtonClick: () => onButtonSap(0),
             variant: "outlined",
@@ -795,7 +795,7 @@ const Fatturazione : React.FC = () =>{
             tooltipMessage:"Invia a SAP",
             withText:false
           }    
-        ]}
+        ]}*/
       />
       <ActionTopGrid
         actionButtonRight={[{

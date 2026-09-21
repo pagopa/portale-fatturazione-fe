@@ -1,4 +1,4 @@
-import { Autocomplete, Checkbox, Chip, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
+import { Autocomplete, Checkbox, Chip, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField, Tooltip, Typography } from "@mui/material";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 import { DateView, DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -599,6 +599,37 @@ const MainFilter = <T,>({
           placeholder={placeHolder}
         />
       </MainBoxContainer>);
+  case "radio_group":
+    return (
+      !hidden && keyBody && arrayValues &&
+      <MainBoxContainer itemProps={itemProps}>
+        <FormControl fullWidth disabled={disabled}>
+          <FormLabel>{inputLabel}</FormLabel>
+          <RadioGroup
+            row
+            name={keyBody}
+            value={body[keyBody] ?? defaultValue ?? ""}
+            onChange={(e) => {
+              clearOnChangeFilter();
+              if (extraCodeOnChange) {
+                extraCodeOnChange(e.target.value);
+              } else {
+                setBody((prev) => ({ ...prev, [keyBody]: e.target.value }));
+              }
+            }}
+          >
+            {arrayValues.map((option) => (
+              <FormControlLabel
+                key={getId(option)}
+                value={getId(option)}
+                control={<Radio />}
+                label={getLabel(option)}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+      </MainBoxContainer>
+    );
   default:
     return (
       <h1>ciao</h1>

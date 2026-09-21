@@ -14,9 +14,9 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeR
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
+import DialogInfo, { DialogInfoProps } from "../../components/reusableComponents/modals/dialogInfo";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
-import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Chip, DialogContent, Divider, List, ListItem, ListItemText, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
 import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, gestioneFattureVerificaNotaPii, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate } from "../../reusableFunction/function";
@@ -53,6 +53,11 @@ type OpenModalAggiungi = {
     labelButton?:string,
     actionButton?:()=>void,icon?:React.ElementType
 }
+
+type DialogContentProps<T = any> = Pick<
+  DialogInfoProps<T>,
+  "array"
+>;
 
 const GestioneFatture : React.FC = () => {
   const mainState = useGlobalStore(state => state.mainState);
@@ -706,7 +711,7 @@ const GestioneFatture : React.FC = () => {
         clearAction={()=>{setNotes([]);}}
         array={notes}
         title="Storico Note"
-        sentenseEmptyArray="Nessuna nota disponibile."/>
+        ContentComponent={DilogContentList}/>
       <ModalInfo 
         setOpen={setOpenModalInfo}
         open={openModalInfo}
@@ -805,5 +810,78 @@ export const NotaTextField: React.FC<NotaTextFieldProps> = ({
       placeholder={placeholder}
       helperText={computedHelperText}
     />
+  );
+};
+
+const DilogContentList : React.FC<DialogContentProps> = ({ array = [] }) => { 
+  return (
+    <DialogContent dividers>
+      {array.length === 0 ? (
+        <Typography color="text.secondary">
+          Nessuna nota disponibile.
+        </Typography>
+      ) : (
+        <List  
+          disablePadding 
+          sx={{ 
+            maxHeight: 400, 
+            overflowY: 'auto' 
+          }}>
+          {array.map((nota, index) => {
+            let colorChip:string|undefined = undefined;
+          
+            if(nota?.Azione === "RIPRISTINA"){
+              colorChip = '#B5E2B4';
+            }else if(nota?.Azione === "POSTICIPA"){
+              colorChip = '#FFE5A3';
+            }else if(nota?.Azione === "ELIMINA"){
+              colorChip = '#ef9a9a';
+            }else if(nota?.Azione === "CANCELLA"){
+              colorChip = '#FFF0F5';
+            }
+          
+            return (
+              <Box key={nota.IdNota} sx={{ backgroundColor: "grey.100",marginBottom: 1, borderRadius: 1, padding: 1 }}>
+                <ListItem alignItems="flex-start">
+                  <ListItemText
+                    primary={nota.Testo}
+                    secondary={
+                      <Stack direction="row" spacing={1} alignItems="center" component="span">
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.secondary"
+                        >
+                          {new Date(nota.Data).toLocaleString("it-IT")}
+                        </Typography>
+                        {nota.Azione &&
+                      <>
+                        <Typography 
+                          component="span"
+                          variant="body2"
+                          color="text.secondary">
+                            - Azione :
+                        </Typography>
+                        <Chip variant="outlined" size="small" label={nota?.Azione} 
+                          sx={{
+                            backgroundColor: colorChip,
+                            height: 18,
+                            fontSize: '0.65rem',
+                            '& .MuiChip-label': {
+                              padding: '0 6px',
+                            }
+                          }}   />
+                      </>
+                        }
+                      </Stack>
+                    }
+                  />
+                </ListItem>
+                {index < array.length - 1 && <Divider />}
+              </Box>
+            );})}
+        </List>
+      )}
+    </DialogContent>
   );
 };
