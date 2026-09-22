@@ -16,6 +16,7 @@ import MainModalComponent from "../../components/reusableComponents/modals/mainM
 import { ElementToProcessComponent } from "../../components/reusableComponents/tableViewData";
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import { Box, DialogContent, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
+import { NotaTextField } from "./gestioneFatture";
 
 
 interface ListaFatture {
@@ -65,6 +66,7 @@ const InvioFatture : React.FC = () => {
     mese:"",
     tipologiaFattura:[],
     inviata:3,
+    tipoInvio:3
 
   });
 
@@ -100,7 +102,7 @@ const InvioFatture : React.FC = () => {
         {
           "idFat":"mock",
           "tipologiaFattura": "PRIMO SALDO",
-          "numeroFatture": 1,
+          "numeroFatture": 6,
           "annoRiferimento": 2026,
           "meseRiferimento": 12,
           "importo": 11,
@@ -130,6 +132,54 @@ const InvioFatture : React.FC = () => {
               "dataFattura": "2025-02-10T00:00:00",
               "dataGenerazione": "2026-09-09T11:00:00",
               "statoInvio": 4,
+              "fileJson":"FatturePagoPa_01012026_1230.json"
+            },{
+              "idFattura": 1113,
+              "tipologiaFattura": "PRIMO SALDO",
+              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
+              "ragioneSociale": "Regione Puglia",
+              "annoRiferimento": 2026,
+              "meseRiferimento": 12,
+              "importo": 12,
+              "dataFattura": "2025-02-10T00:00:00",
+              "dataGenerazione": "2026-09-09T11:00:00",
+              "statoInvio": 3,
+              "fileJson":"FatturePagoPa_01012026_1230.json"
+            },{
+              "idFattura": 1114,
+              "tipologiaFattura": "PRIMO SALDO",
+              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
+              "ragioneSociale": "Regione Puglia",
+              "annoRiferimento": 2026,
+              "meseRiferimento": 12,
+              "importo": 12,
+              "dataFattura": "2025-02-10T00:00:00",
+              "dataGenerazione": "2026-09-09T11:00:00",
+              "statoInvio": 4,
+              "fileJson":"FatturePagoPa_01012026_1230.json"
+            },{
+              "idFattura": 1115,
+              "tipologiaFattura": "PRIMO SALDO",
+              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
+              "ragioneSociale": "Regione Puglia",
+              "annoRiferimento": 2026,
+              "meseRiferimento": 12,
+              "importo": 12,
+              "dataFattura": "2025-02-10T00:00:00",
+              "dataGenerazione": "2026-09-09T11:00:00",
+              "statoInvio": 4,
+              "fileJson":"FatturePagoPa_01012026_1230.json"
+            },{
+              "idFattura": 1116,
+              "tipologiaFattura": "PRIMO SALDO",
+              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
+              "ragioneSociale": "Regione Puglia",
+              "annoRiferimento": 2026,
+              "meseRiferimento": 12,
+              "importo": 12,
+              "dataFattura": "2025-02-10T00:00:00",
+              "dataGenerazione": "2026-09-09T11:00:00",
+              "statoInvio": 3,
               "fileJson":"FatturePagoPa_01012026_1230.json"
             }
           ]
@@ -584,15 +634,15 @@ const InvioFatture : React.FC = () => {
           }}
           iconMaterial={RenderIcon("invoice",true)}/>
         <MainFilter
-          filterName="radio_group"
-          inputLabel="Re-Inviate"
+          filterName={"select_key_value"}
+          inputLabel="Tipologia Invio"
           arrayValues={[
-            { id: 1, descrizione: "Si" },
-            { id: 2, descrizione: "No" },
+            { id: 3, descrizione: "Tutte" },
+            { id: 1, descrizione: "Re-inviate" }
           ]}
           keyValue="id"
           keyDescription="descrizione"
-          keyBody="gender"
+          keyBody="tipoInvio"
           body={bodyFatturazione}
           setBody={setBodyFatturazione}
           clearOnChangeFilter={() => {}}
@@ -609,9 +659,9 @@ const InvioFatture : React.FC = () => {
           {
             onButtonClick:downloadReport,
             variant: "outlined",
-            label: "Download Non Fatturate",
+            label: "Download Fatture Re-inviate",
             icon:{name:"download"},
-            disabled:(listaFatture?.length === 0)
+            disabled:(bodyFatturazione.tipoInvio === 3)
           },
           {
             onButtonClick:downloadReport,
@@ -714,18 +764,21 @@ const InvioFatture : React.FC = () => {
         setOpen={setShowDownloading}
         sentence={'Downloading...'} />
       <MainModalComponent 
-        width={"800px"}
+        width={"900px"}
         open={openModalFatture}
         setOpen={setOpenModalFatture}
+        //TODO : unire tutti  i sotto componenti come un unico children
         children={<ElementToProcessComponent 
           closeIcon={true}
           title={"Fatture Selezionate"}
           obj={elementsSelected}
           keyValueObj={keyValueObjModalInfo}
-          showButton={true}
+          showButton={false}
           setOpen={setOpenModalFatture}
           showCounter={true}
-        />} />
+        />}
+        TextField={NotaTextField}
+      />
       <DialogInfo 
         open={showPopUpDateInvio}
         onClose={setShowPopUpdateInvio}

@@ -108,7 +108,31 @@ const Messaggi : React.FC = () => {
     setGetListaLoading(true);
     await getListaMessaggi(token,profilo.nonce,body,pa,ro).then((res)=>{
       setGetListaLoading(false);
-      setGridData(res.data.messaggi);
+      const mock = {
+        "idMessaggio": 309,
+        "idEnte": null,
+        "idUtente": "8ff88a50-6050-415a-8280-0d7362311a38",
+        "json": null,
+        "anno": 2026,
+        "mese": 9,
+        "prodotto": "prod-pn",
+        "gruppoRuolo": "fat-d-adgroup-assistenza",
+        "auth": "PAGOPA",
+        "stato": "2",
+        "dataInserimento": "2026-07-03T15:30:48.337",
+        "dataStepCorrente": null,
+        //"linkDocumento": "reportaccertamenti/preseincarico/2025-09/Report_preseincarico_2025-09.csv",
+        "tipologiaDocumento": "FatturePagoPa_01012026_1230.json",
+        "categoriaDocumento": "Invio JSON a SAP",
+        //"lettura": false,
+        "hash": "1a19eb3f0dc462bf4310f381d36239039e61575948f062077d70e30e6a5d112a",
+        "rhash": "1a19eb3f0dc462bf4310f381d36239039e61575948f062077d70e30e6a5d112a",
+        "contentType": "text/csv",
+        "contentLanguage": "it-IT",
+        "idReport": 256,
+        "ragioneSociale": null
+      };
+      setGridData([mock,...res.data.messaggi]);
       setCountMessaggi(res.data.count);
       if(!isInitialRender.current){
         updateFilters({
@@ -288,6 +312,8 @@ const Messaggi : React.FC = () => {
       bodyCentroMessaggi.letto !== null
   ) ? "show" : "hidden";
 
+  console.log({gridData});
+
   return (
 
     <MainBoxStyled title={"Messaggi"}>
@@ -377,45 +403,81 @@ const Messaggi : React.FC = () => {
                 colorMessaggio = "error";
                 disableDownload = true;
               }
-              return (
-                <div key={item.idMessaggio} id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
-                  <TimelineNotificationItem 
-                    key={item.idMessaggio}>
-                    <TimelineNotificationOppositeContent >
-                      <Typography>
-                        {getDay(item.dataInserimento)}
-                      </Typography>
-                      <Typography color="text.secondary" variant="caption" component="div">
-                        {getMonthString(item.dataInserimento)}
-                      </Typography>
-                    </TimelineNotificationOppositeContent>
-                    <TimelineNotificationSeparator>
-                      <TimelineConnector />
-                      <TimelineNotificationDot  variant={item.lettura ? undefined : "outlined"} size="default"/>
-                      <TimelineConnector />
-                    </TimelineNotificationSeparator>
-                    <TimelineNotificationContent>
-                      <Typography variant="caption" color="text.secondary" component="div">
-                        {getTime(item.dataInserimento)}
-                      </Typography>
-                      {item.stato && <Chip variant="outlined" size="small" label={statoMessaggio} color={colorMessaggio} />}
-                      {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
-                        {`${item.categoriaDocumento} : ${item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale :item.tipologiaDocumento}`}
-                      </Typography>}
-                      {item.anno && <Typography color="text.primary" variant="caption-semibold" component="div">
-                        {`${month[item.mese-1]}/${item.anno}  `}
-                      </Typography>}
-                      <Typography color="text.primary" variant="overline" component="div">
-                        {`Letto  `}
-                        {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon> }              
-                      </Typography>                
-                      {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={item.categoriaDocumento.toLowerCase().includes("contestazione") ? <PreviewIcon/>:<AttachFileIcon />}>
-                        {item.categoriaDocumento.toLowerCase().includes("contestazione") ? 'Visualizza documento' : 'Download documento'}
-                      </ButtonNaked>}
-                    </TimelineNotificationContent>
-                  </TimelineNotificationItem>
-                </div> 
-              );
+              if(item.categoriaDocumento === "Invio JSON a SAP"){
+                return (
+                  <div key={item.idMessaggio} id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
+                    <TimelineNotificationItem 
+                      key={item.idMessaggio}>
+                      <TimelineNotificationOppositeContent >
+                        <Typography>
+                          {getDay(item.dataInserimento)}
+                        </Typography>
+                        <Typography color="text.secondary" variant="caption" component="div">
+                          {getMonthString(item.dataInserimento)}
+                        </Typography>
+                      </TimelineNotificationOppositeContent>
+                      <TimelineNotificationSeparator>
+                        <TimelineConnector />
+                        <TimelineNotificationDot  variant={item.lettura ? undefined : "outlined"} size="default"/>
+                        <TimelineConnector />
+                      </TimelineNotificationSeparator>
+                      <TimelineNotificationContent>
+                        <Typography variant="caption" color="text.secondary" component="div">
+                          {getTime(item.dataInserimento)}
+                        </Typography>
+                        {item.stato && <Chip variant="outlined" size="small" label={statoMessaggio} color={colorMessaggio} />}
+                        {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
+                          {`${item.categoriaDocumento} : ${item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale :item.tipologiaDocumento}`}
+                        </Typography>}
+                        {item.anno && <Typography color="text.primary" variant="caption-semibold" component="div">
+                          {`${month[item.mese-1]}/${item.anno}  - Primo Saldo - Numero Fatture Generate: 10 `}
+                        </Typography>}
+                      </TimelineNotificationContent>
+                    </TimelineNotificationItem>
+                  </div> 
+                );
+              }else{
+                return (
+                  <div key={item.idMessaggio} id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
+                    <TimelineNotificationItem 
+                      key={item.idMessaggio}>
+                      <TimelineNotificationOppositeContent >
+                        <Typography>
+                          {getDay(item.dataInserimento)}
+                        </Typography>
+                        <Typography color="text.secondary" variant="caption" component="div">
+                          {getMonthString(item.dataInserimento)}
+                        </Typography>
+                      </TimelineNotificationOppositeContent>
+                      <TimelineNotificationSeparator>
+                        <TimelineConnector />
+                        <TimelineNotificationDot  variant={item.lettura ? undefined : "outlined"} size="default"/>
+                        <TimelineConnector />
+                      </TimelineNotificationSeparator>
+                      <TimelineNotificationContent>
+                        <Typography variant="caption" color="text.secondary" component="div">
+                          {getTime(item.dataInserimento)}
+                        </Typography>
+                        {item.stato && <Chip variant="outlined" size="small" label={statoMessaggio} color={colorMessaggio} />}
+                        {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
+                          {`${item.categoriaDocumento} : ${item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale :item.tipologiaDocumento}`}
+                        </Typography>}
+                        {item.anno && <Typography color="text.primary" variant="caption-semibold" component="div">
+                          {`${month[item.mese-1]}/${item.anno}  `}
+                        </Typography>}
+                        <Typography color="text.primary" variant="overline" component="div">
+                          {`Letto  `}
+                          {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon> }              
+                        </Typography>                
+                        {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={item.categoriaDocumento.toLowerCase().includes("contestazione") ? <PreviewIcon/>:<AttachFileIcon />}>
+                          {item.categoriaDocumento.toLowerCase().includes("contestazione") ? 'Visualizza documento' : 'Download documento'}
+                        </ButtonNaked>}
+                      </TimelineNotificationContent>
+                    </TimelineNotificationItem>
+                  </div> 
+                );
+              }
+              
             })}
           </TimelineNotification>
         </Box>

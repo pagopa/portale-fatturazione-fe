@@ -600,6 +600,7 @@ const MainFilter = <T,>({
         />
       </MainBoxContainer>);
   case "radio_group":
+    //TODO: verificare il funzionamento , mai implementata
     return (
       !hidden && keyBody && arrayValues &&
       <MainBoxContainer itemProps={itemProps}>

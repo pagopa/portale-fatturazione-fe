@@ -26,7 +26,7 @@ const getChipElaborazioneCollapse = (row) =>{
   }else if(row.statoInvio === 3){
     tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'#B5E2B4'};
   }else if(row.statoInvio === 4){
-    tooltipObj = {label:'Re-Inviata',title:'La fattura è stata re-inviata',color:'#6ba569'};
+    tooltipObj = {label:'Re-Inviata',title:'La fattura è stata re-inviata',color:'#B5E2B4'};
   }
   return tooltipObj;
 };
@@ -92,6 +92,10 @@ export const keyValueObjModalInfo = [
   {
     key:"tipologiaFattura",
     label:"Tipologia Fattura"
+  },
+  {
+    key:"statoInvio",
+    label:"N. Invio"
   }
 ];
 

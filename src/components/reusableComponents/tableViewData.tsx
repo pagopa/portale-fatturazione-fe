@@ -86,10 +86,12 @@ export const ElementToProcessComponent = <T,> ({
             {rows.map((rowObj, rowIndex) => (
               <TableRow key={rowIndex}>
                 {keyValueObj.map((el, i) => {
-                  const value = rowObj[el.key];
+                  //:TO da eliminare
+                  const mockNumeroInvii = el.key === "statoInvio" && rowObj[el.key] === 4 ? 3 : 1;
+                  //:TO da rispristinare const value = rowObj[el.key];
+                  const value = el.key === "statoInvio" ? mockNumeroInvii : rowObj[el.key];
                   const textValue = value === null || value === undefined ? '' : String(value);
                   const isTruncated = typeof value === 'string' && value.length > 20;
-
                   return (
                     <Tooltip key={i} title={isTruncated ? value : null}>
                       <TableCell align="center">
