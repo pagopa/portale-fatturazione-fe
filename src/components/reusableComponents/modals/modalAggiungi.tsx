@@ -14,7 +14,7 @@ import MainFilter from '../mainFilter';
 import { gestioneFattureInserisci, gestioneFattureVerificaNotaPii, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../../api/apiPagoPa/gestioneFatturePA/api';
 import { formatDate, isValidText2NotaPii, isValidTextNotaPii } from '../../../reusableFunction/function';
 import { month as NOMI_MESI} from '../../../reusableFunction/reusableArrayObj';
-import axios from 'axios';
+import { ManageErrorResponse } from '../../../types/typesGeneral';
 
 const style = {
   position: 'absolute' as const,
@@ -200,20 +200,29 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
 
       setBodyAction((prev)=>({...prev,nota:{ testo:responseVerifica?.redactedString||'',data:formatDate(new Date())}}));
       setTextAreaValuePii(bodyAction.nota?.testo||"");
-      
+      textNoteVerified.current = true;
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        if(err.response?.status === 404){
-          setTextAreaValuePii(bodyAction.nota?.testo||"");
-          setBodyAction((prev)=>({...prev,nota:{ testo:prev.nota?.testo||'',data:formatDate(new Date())}}));
-        } 
+      const error = err as ManageErrorResponse; 
+      if(error.response?.status === 404){
+        setTextAreaValuePii(bodyAction.nota?.testo||"");
+        setBodyAction((prev)=>({...prev,nota:{ testo:prev.nota?.testo||'',data:formatDate(new Date())}}));
+        textNoteVerified.current = true;
+      }else if(error.response?.status === 401 || error.message === "Network Error"){
+        manageError(error,dispatchMainState);
+        setTextAreaValuePii("");
+        setBodyAction((prev)=>({...prev,nota:null}));
+        textNoteVerified.current = false;
+      }else{
+        managePresaInCarico('GENERICO_KO',dispatchMainState);
+        setTextAreaValuePii("");
+        setBodyAction((prev)=>({...prev,nota:null}));
+        textNoteVerified.current = false;
       }
     } finally {
       setOpen((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
-      textNoteVerified.current = true;
     }
   };
-  
+
   const clearPopUp = () => {
     setBodyAction({
       mese: [],

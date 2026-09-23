@@ -23,7 +23,7 @@ import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { gestioneFattureInserisci, gestioneFattureVerificaNotaPii } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { formatDate, formatDateString, isValidText2NotaPii, isValidTextNotaPii } from "../../reusableFunction/function";
 import { ElementToProcessComponent, NotaTextField } from "./gestioneFatture";
-import axios from "axios";
+import { ManageErrorResponse } from "../../types/typesGeneral";
 
 
 const Fatturazione : React.FC = () =>{
@@ -584,16 +584,27 @@ const Fatturazione : React.FC = () =>{
       );
       const responseVerifica = response.data as {redactedString:string};
       setTextAreaValuePii(responseVerifica?.redactedString ?? "");
+      textNoteVerified.current = true;
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        if(err.response?.status === 404){
-          textNoteVerified.current = true;
-          setTextAreaValuePii(textAreaValue);
-        } 
+      const error = err as ManageErrorResponse; 
+      if(error.response?.status === 404){
+        textNoteVerified.current = true;
+        setTextAreaValuePii(textAreaValue);
+      }else if(error.response?.status === 401 || error.message === "Network Error"){
+        manageError(error,dispatchMainState);
+        setTextAreaValuePii("");
+        setTextAreaValue("");
+        setOpenModalInfo((prev)=> ({...prev,open:false}));
+        textNoteVerified.current = false;
+      }else{
+        managePresaInCarico('GENERICO_KO',dispatchMainState);
+        setTextAreaValuePii("");
+        setTextAreaValue("");
+        setOpenModalInfo((prev)=> ({...prev,open:false}));
+        textNoteVerified.current = false;
       }
     } finally {
       setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
-      textNoteVerified.current = true;
     }
   };
 

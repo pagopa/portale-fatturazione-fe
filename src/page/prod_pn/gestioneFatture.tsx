@@ -20,7 +20,7 @@ import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, TextFiel
 import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, gestioneFattureVerificaNotaPii, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate, isValidText2NotaPii, isValidTextNotaPii } from "../../reusableFunction/function";
-import axios from "axios";
+import { ManageErrorResponse } from "../../types/typesGeneral";
 
 export interface BodyLista {
   idEnti: string[]
@@ -466,16 +466,27 @@ const GestioneFatture : React.FC = () => {
       );
       const responseVerifica = response.data as {redactedString:string};
       setTextAreaValuePii(responseVerifica?.redactedString ?? "");
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        if(err.response?.status === 404){
-          textNoteVerified.current = true;
-          setTextAreaValuePii(textAreaValue);
-        } 
+      textNoteVerified.current = true;
+    }catch (err: unknown) {
+      const error = err as ManageErrorResponse; 
+      if(error.response?.status === 404){
+        textNoteVerified.current = true;
+        setTextAreaValuePii(textAreaValue);
+      }else if(error.response?.status === 401 || error.message === "Network Error"){
+        manageError(error,dispatchMainState);
+        setTextAreaValuePii("");
+        setTextAreaValue("");
+        setOpenModalInfo((prev)=> ({...prev,open:false}));
+        textNoteVerified.current = false;
+      }else{
+        managePresaInCarico('GENERICO_KO',dispatchMainState);
+        setTextAreaValuePii("");
+        setTextAreaValue("");
+        setOpenModalInfo((prev)=> ({...prev,open:false}));
+        textNoteVerified.current = false;
       }
     } finally {
       setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
-      textNoteVerified.current = true;
     }
   };
 
