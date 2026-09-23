@@ -495,7 +495,7 @@ export function isValidText2NotaPii(str: string): boolean {
   const trimmed = str.trim();
   if (!trimmed) return false;
 
-  const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
+  const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ*]+/g) || [];
   return words.length >= 3;
 }
 
