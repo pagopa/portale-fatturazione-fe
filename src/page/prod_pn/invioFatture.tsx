@@ -802,8 +802,13 @@ export const checkIfElementSelected = (arraySel, row) =>{
        el.statoInvio === row.statoInvio;});
 }; 
 
+interface ListItemData {
+  testo: string;
+  dataInvio: string;
+}
 
-const DilogContentList : React.FC<any> = ({ array = [] }) => { 
+
+const DilogContentList : React.FC<{array:ListItemData[]}> = ({ array = [] }) => { 
   return (
     <DialogContent dividers>
       {array.length === 0 ? (
@@ -811,9 +816,9 @@ const DilogContentList : React.FC<any> = ({ array = [] }) => {
           Nessuna DATA disponibile.
         </Typography>
       ) : (
-        <List  
-          disablePadding 
-          sx={{ 
+        <List
+          disablePadding
+          sx={{
             maxHeight: 400, 
             overflowY: 'auto' 
           }}>

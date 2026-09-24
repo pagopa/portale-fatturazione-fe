@@ -37,6 +37,7 @@ export const ElementToProcessComponent = <T,> ({
         justifyContent: 'space-between', 
         width: '100%'
       }}>
+        
         <div className="d-flex align-items-center justify-content-start" style={{ gap: 12 }}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             {title}
@@ -71,8 +72,17 @@ export const ElementToProcessComponent = <T,> ({
       </Box> : <Typography>{title}</Typography>}
       
       
-      <Box sx={{ backgroundColor: '#F8F8F8', padding: '10px', marginTop: '20px', width: '100%' }}>
-        <Table size="small">
+      <Box  sx={{ 
+        backgroundColor: '#F8F8F8', 
+        padding: '10px', 
+        marginTop: '20px', 
+        width: '100%',
+        ...(rows.length > 10 && {
+          maxHeight: 400,
+          overflowY: 'auto',
+        }),
+      }}>
+        <Table size="small" stickyHeader={rows.length > 10}>
           <TableHead>
             <TableRow sx={{ borderColor: "white", borderWidth: "thick" }}>
               {keyValueObj.map((el, i) => (

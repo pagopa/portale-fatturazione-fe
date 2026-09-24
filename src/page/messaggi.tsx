@@ -427,7 +427,10 @@ const Messaggi : React.FC = () => {
                         </Typography>
                         {item.stato && <Chip variant="outlined" size="small" label={statoMessaggio} color={colorMessaggio} />}
                         {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
-                          {`${item.categoriaDocumento} : ${item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale :item.tipologiaDocumento}`}
+                          {`${item.categoriaDocumento}`}
+                        </Typography>}
+                        {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
+                          {`Nome File: ${item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale :item.tipologiaDocumento}`}
                         </Typography>}
                         {item.anno && <Typography color="text.primary" variant="caption-semibold" component="div">
                           {`${month[item.mese-1]}/${item.anno}  - Primo Saldo - Numero Fatture Generate: 10 `}
