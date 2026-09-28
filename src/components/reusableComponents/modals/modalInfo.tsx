@@ -40,6 +40,10 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
     if (reason === 'backdropClick') return;
     setOpen({ open: false, sentence: '' });
     setTimeout(() => window.scrollTo(0, 0), 50);
+    //Attenzione , se viene effetuata la verifica SetTextAreaValue è una funzione.
+    //Nel ModalInfo che è stato usato in GestioneFatture abbimo effetuato il rollback sul PII detection
+    // Non è stato più richeisto
+    // Nonostante ciò il Modal è utilizzabile sia con PII detection che senza
     if(whereFunIsInvoked === "back"){
       if (setTextAreaValue) setTextAreaValue('',"back");
     }else{

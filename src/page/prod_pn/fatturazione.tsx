@@ -20,11 +20,9 @@ import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
-import { gestioneFattureInserisci, gestioneFattureVerificaNotaPii } from "../../api/apiPagoPa/gestioneFatturePA/api";
-import { formatDate, formatDateString, isValidText2NotaPii, isValidTextNotaPii } from "../../reusableFunction/function";
+import { gestioneFattureInserisci } from "../../api/apiPagoPa/gestioneFatturePA/api";
+import { formatDate, formatDateString } from "../../reusableFunction/function";
 import { ElementToProcessComponent, NotaTextField } from "./gestioneFatture";
-import { ManageErrorResponse } from "../../types/typesGeneral";
-
 
 const Fatturazione : React.FC = () =>{
   const mainState = useGlobalStore(state => state.mainState);
@@ -37,7 +35,7 @@ const Fatturazione : React.FC = () =>{
   const callAnnulla = useRef(false);
   const navigate = useNavigate();
   const profilePath = PathPf.FATTURAZIONE;
-  const textNoteVerified = useRef(false);
+  //const textNoteVerified = useRef(false);
 
   const [firstYearMonth, setFirstYearMonth] = useState<number[]>([]);
   const [gridData, setGridData] = useState<FattureObj[]>([]);
@@ -61,7 +59,7 @@ const Fatturazione : React.FC = () =>{
   const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
   const [textAreaValue, setTextAreaValue] = useState<string>('');
-  const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
+  //const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
 
 
   const [elementSelected, setElementSelected] = useState<FattureObj|null>(null);
@@ -550,7 +548,7 @@ const Fatturazione : React.FC = () =>{
         idEnte: elementSelected.istitutioID,
         nota: {
           data: formatDate(new Date()),
-          testo: textAreaValuePii
+          testo: textAreaValue//testo: textAreaValuePii
         }
       };
       
@@ -570,10 +568,10 @@ const Fatturazione : React.FC = () =>{
     } finally {
       setShowLoadingGrid(false);
       setTextAreaValue("");
-      setTextAreaValuePii("");
+      //setTextAreaValuePii("");
     }
   };
-
+  /*
   const verificaTestoNota = async (): Promise<void> => {
     setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:true,sentenceLoader:"Verifica della NOTA in corso ..."}));
     try {
@@ -620,7 +618,7 @@ const Fatturazione : React.FC = () =>{
       setTextAreaValue(e);
     }
   };
-    
+   */ 
   const statusAnnulla = (bodyFatturazione.idEnti.length !== 0 || 
      bodyFatturazione.tipologiaFattura.length !== 0 ||
      bodyFatturazione.cancellata === true ||
@@ -859,12 +857,12 @@ const Fatturazione : React.FC = () =>{
         setOpen={setOpenModalInfo}
         open={openModalInfo}
         width={800}
-        textAreaValue={textAreaValuePii ? textAreaValuePii : textAreaValue}
-        setTextAreaValue={setTextAreaValueClearPii}
-        externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
-        errorTextInput={!isValidText2NotaPii(textAreaValue) || !isValidTextNotaPii(textAreaValue)}
+        textAreaValue={textAreaValue}//textAreaValue={textAreaValuePii ? textAreaValuePii : textAreaValue}
+        setTextAreaValue={setTextAreaValue}//setTextAreaValue={setTextAreaValueClearPii}
+        externalActionButton={azioneApi}//externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
+        errorTextInput={false}//errorTextInput={!isValidText2NotaPii(textAreaValue) || !isValidTextNotaPii(textAreaValue)} //verifiedText={textNoteVerified.current}
         TextField={NotaTextField}
-        verifiedText={textNoteVerified.current}/>
+        verifiedText={true}/>
     </MainBoxStyled>   
   );
 };

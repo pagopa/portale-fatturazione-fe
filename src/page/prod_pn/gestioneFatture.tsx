@@ -1,4 +1,4 @@
-import {  useEffect, useRef, useState } from "react";
+import {  useEffect, useState } from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
 import { manageError, managePresaInCarico } from "../../api/api";
@@ -17,10 +17,10 @@ import { useGlobalStore } from "../../store/context/useGlobalStore";
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
-import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, gestioneFattureVerificaNotaPii, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
+import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
-import { formatDate, isValidText2NotaPii, isValidTextNotaPii } from "../../reusableFunction/function";
-import { ManageErrorResponse } from "../../types/typesGeneral";
+import { formatDate } from "../../reusableFunction/function";
+//import { ManageErrorResponse } from "../../types/typesGeneral";
 
 export interface BodyLista {
   idEnti: string[]
@@ -79,8 +79,8 @@ const GestioneFatture : React.FC = () => {
   const [notes, setNotes] = useState<{Testo:string,Data:Date,Azione:string}[]>([]);
   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void }>({open:false, sentence:''});
   const [textAreaValue, setTextAreaValue] = useState<string>('');
-  const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
-  const textNoteVerified = useRef(false);
+  //const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
+  //const textNoteVerified = useRef(false);
   const [elementSelected, setElementSelected] = useState<GestioneFatture|null>(null);
   const [actionCalled, setActionCalled] = useState<string>("");
 
@@ -142,8 +142,6 @@ const GestioneFatture : React.FC = () => {
           mesi: []
         });
       }  
-        
-      
       setGetListaLoading(false);
     }).catch((err)=>{
       setArrayYears([]);
@@ -434,7 +432,7 @@ const GestioneFatture : React.FC = () => {
         idEnte: elementSelected.ente,
         nota: {
           data: formatDate(new Date()),
-          testo: textAreaValuePii
+          testo: textAreaValue //testo: textAreaValuePii
         }
       };
       await gestioneFattureInserisci(
@@ -452,10 +450,10 @@ const GestioneFatture : React.FC = () => {
       setGetListaLoading(false);
       getLista((page+1), rowsPerPage, bodyGetLista);
       setTextAreaValue("");
-      setTextAreaValuePii("");
+      //setTextAreaValuePii("");
     }
   };
-
+  /*
   const verificaTestoNota = async (): Promise<void> => {
     setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:true,sentenceLoader:"Verifica della NOTA in corso ..."}));
     try {
@@ -502,7 +500,7 @@ const GestioneFatture : React.FC = () => {
       setTextAreaValue(e);
     }
   };
- 
+ */
   const buttonsTopHeader =  [
     {
       stringIcon:"Aggiungi",
@@ -522,7 +520,7 @@ const GestioneFatture : React.FC = () => {
 
   const noData = arrayYears.length === 0;
 
-  const noteToValdate = textAreaValuePii ? textAreaValuePii : textAreaValue;
+  //const noteToValdate = textAreaValuePii ? textAreaValuePii : textAreaValue;
   return (
     <MainBoxStyled title={"Gestione Fatture"}>
       <ResponsiveGridContainer >
@@ -714,12 +712,12 @@ const GestioneFatture : React.FC = () => {
         setOpen={setOpenModalInfo}
         open={openModalInfo}
         width={800}
-        textAreaValue={noteToValdate}
-        setTextAreaValue={setTextAreaValueClearPii}
-        externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
-        errorTextInput={!isValidText2NotaPii(noteToValdate) || !isValidTextNotaPii(noteToValdate)}
+        textAreaValue={textAreaValue}
+        setTextAreaValue={setTextAreaValue}//setTextAreaValue={setTextAreaValueClearPii}
+        externalActionButton={azioneApi} // externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
+        errorTextInput={false} //errorTextInput={!isValidText2NotaPii(noteToValdate) || !isValidTextNotaPii(noteToValdate)}
         TextField={NotaTextField}
-        verifiedText={textNoteVerified.current}/>
+        verifiedText={true}/> {/*verifiedText={textNoteVerified.current*/}
     </MainBoxStyled>     
   );
 };
