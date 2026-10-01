@@ -2,7 +2,7 @@ import { SingleFileInput } from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Box, BoxProps, Button, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useNavigate, useParams } from 'react-router';
-import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
+import TextKeyValue from '../../components/reusableComponents/textKeyValue';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalUploadPdf from '../../components/reusableComponents/modals/modalUploadPdf';
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
@@ -302,13 +302,13 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
         </div>
         <div className="pt-3 pb-3 ">
           <div className="container text-center">
-            <TextDettaglioPdf description='Soggetto Aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Tipo Contratto' value={idTipoContrattoBasedOnProfile === 1 ? 'PAC - PAL senza requisiti': 'PAC - PAL con requisiti'}></TextDettaglioPdf>
-            <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento||"--"}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Cup' value={mainObj.cup||"--"}></TextDettaglioPdf>
+            <TextKeyValue description='Soggetto Aderente' value={mainObj.ragioneSociale}></TextKeyValue>
+            <TextKeyValue description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextKeyValue>
+            <TextKeyValue description='Anno' value={mainObj.anno}></TextKeyValue>
+            <TextKeyValue description='Mese' value={month[Number(mainObj.mese) - 1]}></TextKeyValue>
+            <TextKeyValue description='Tipo Contratto' value={idTipoContrattoBasedOnProfile === 1 ? 'PAC - PAL senza requisiti': 'PAC - PAL con requisiti'}></TextKeyValue>
+            <TextKeyValue description='ID Documento' value={mainObj.idDocumento||"--"}></TextKeyValue>
+            <TextKeyValue description='Cup' value={mainObj.cup||"--"}></TextKeyValue>
           </div>
         </div>
       </CardBox>
@@ -319,9 +319,9 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
            </div>
            <div className="pt-3 pb-3 ">
              <div className="container text-center">
-               <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
-               <TextDettaglioPdf description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
-               <TextDettaglioPdf description='N. Totale Notifiche' value={Number(mainObj.totaleNotificheDigitali) + Number(mainObj.totaleNotificheAnalogiche) }></TextDettaglioPdf>
+               <TextKeyValue description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextKeyValue>
+               <TextKeyValue description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextKeyValue>
+               <TextKeyValue description='N. Totale Notifiche' value={Number(mainObj.totaleNotificheDigitali) + Number(mainObj.totaleNotificheAnalogiche) }></TextKeyValue>
              </div>
            </div>
          </CardBox>
@@ -332,24 +332,24 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
         </div>
         <div className="pt-3 pb-3 ">
           <div className="container text-center">
-            {storno_acconto_anticito_rel_IsVisible && <TextDettaglioPdf description='Storno Anticipo Digitale' value={Number(mainObj?.anticipo_StornoDigitale || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {storno_acconto_anticito_rel_IsVisible && <TextDettaglioPdf description='Storno Anticipo Analogico' value={Number(mainObj?.anticipo_StornoAnalogico || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {storno_acconto_anticito_rel_IsVisible && <TextDettaglioPdf description='Totale Storno Anticipo' value={Number(mainObj?.anticipo_StornoTotale || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {storno_acconto_anticito_rel_IsVisible && <TextDettaglioPdf description='Storno Acconto Digitale' value={Number(mainObj?.acconto_StornoDigitale || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {storno_acconto_anticito_rel_IsVisible && <TextDettaglioPdf description='Storno Acconto Analogico' value={Number(mainObj?.acconto_StornoAnalogico || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {storno_acconto_anticito_rel_IsVisible && <TextDettaglioPdf description='Totale Storno Acconto' value={Number(mainObj?.acconto_StornoTotale || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+            {storno_acconto_anticito_rel_IsVisible && <TextKeyValue description='Storno Anticipo Digitale' value={Number(mainObj?.anticipo_StornoDigitale || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {storno_acconto_anticito_rel_IsVisible && <TextKeyValue description='Storno Anticipo Analogico' value={Number(mainObj?.anticipo_StornoAnalogico || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {storno_acconto_anticito_rel_IsVisible && <TextKeyValue description='Totale Storno Anticipo' value={Number(mainObj?.anticipo_StornoTotale || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {storno_acconto_anticito_rel_IsVisible && <TextKeyValue description='Storno Acconto Digitale' value={Number(mainObj?.acconto_StornoDigitale || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {storno_acconto_anticito_rel_IsVisible && <TextKeyValue description='Storno Acconto Analogico' value={Number(mainObj?.acconto_StornoAnalogico || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {storno_acconto_anticito_rel_IsVisible && <TextKeyValue description='Totale Storno Acconto' value={Number(mainObj?.acconto_StornoTotale || 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
             
-            {storno_analogico_digitale_totale_storno_IsVisible &&<TextDettaglioPdf description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {storno_analogico_digitale_totale_storno_IsVisible &&<TextDettaglioPdf description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {storno_analogico_digitale_totale_storno_IsVisible && <TextDettaglioPdf description='Totale Storno' value={Number(totaleStornoCalculateByFE).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {imponibile_Ivato_IsVisible &&<TextDettaglioPdf description='Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {imponibile_Ivato_IsVisible && <TextDettaglioPdf description='Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {anticipo_analogico_digitale_IsVisible && <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {anticipo_analogico_digitale_IsVisible && <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {acconto_analogico_digitale_IsVisible && <TextDettaglioPdf description='Acconto Digitale' value={Number(mainObj.accontoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            {acconto_analogico_digitale_IsVisible && <TextDettaglioPdf description='Acconto Analogico' value={Number(mainObj.accontoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-            <TextDettaglioPdf description='Totale Imponibile' value={totaleImponibileCalcolatoByFront.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-            {imponibile_da_fatturare_IsVisible && <TextDettaglioPdf description='Imponibile da Fatturare' value={imponibileDaFatturareCalculateByFE.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+            {storno_analogico_digitale_totale_storno_IsVisible &&<TextKeyValue description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {storno_analogico_digitale_totale_storno_IsVisible &&<TextKeyValue description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {storno_analogico_digitale_totale_storno_IsVisible && <TextKeyValue description='Totale Storno' value={Number(totaleStornoCalculateByFE).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {imponibile_Ivato_IsVisible &&<TextKeyValue description='Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {imponibile_Ivato_IsVisible && <TextKeyValue description='Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {anticipo_analogico_digitale_IsVisible && <TextKeyValue description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {anticipo_analogico_digitale_IsVisible && <TextKeyValue description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {acconto_analogico_digitale_IsVisible && <TextKeyValue description='Acconto Digitale' value={Number(mainObj.accontoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            {acconto_analogico_digitale_IsVisible && <TextKeyValue description='Acconto Analogico' value={Number(mainObj.accontoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
+            <TextKeyValue description='Totale Imponibile' value={totaleImponibileCalcolatoByFront.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>
+            {imponibile_da_fatturare_IsVisible && <TextKeyValue description='Imponibile da Fatturare' value={imponibileDaFatturareCalculateByFE.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
           </div>
         </div>
       </CardBox>
@@ -359,55 +359,55 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
         </div>
         <div className="pt-3 pb-3">
           <div className="container text-center">
-            <TextDettaglioPdf description='IVA' value={mainObj.iva +' %'}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Ivato Digitale' value={digitaleIvatoCalcolatoByFront.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Ivato Analogico' value={analogicoIvatoCalcolatoByFront.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Totale Ivato' value={totaleIvatoCalcolatoByFront.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-            {ivato_da_fatturare_IsVisible && <TextDettaglioPdf description='Ivato da Fatturare' value={ivatoDaFatturareCalcolatoByFe.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+            <TextKeyValue description='IVA' value={mainObj.iva +' %'}></TextKeyValue>
+            <TextKeyValue description='Ivato Digitale' value={digitaleIvatoCalcolatoByFront.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>
+            <TextKeyValue description='Ivato Analogico' value={analogicoIvatoCalcolatoByFront.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>
+            <TextKeyValue description='Totale Ivato' value={totaleIvatoCalcolatoByFront.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>
+            {ivato_da_fatturare_IsVisible && <TextKeyValue description='Ivato da Fatturare' value={ivatoDaFatturareCalcolatoByFe.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextKeyValue>}
           </div>
         </div>
       </CardBox>
       {mainObj?.fattureSospese?.length > 0 &&
-                <CardBox>
-                  <div className="d-flex justify-content-center pt-3">
-                    <Typography variant="h4">Elenco Fatture Emesse</Typography>
+      <CardBox>
+        <div className="d-flex justify-content-center pt-3">
+          <Typography variant="h4">Elenco Fatture Emesse</Typography>
+        </div>
+        <div className="pt-3 pb-3 ">
+          <div className="container text-center">
+            <div className="row">
+              {mainObj.fattureSospese.map((fat)=>{
+                return (
+                  <div key={fat.idFattura} className="col-12">
+                    <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
+                      <Table size="small" aria-label="purchases">
+                        <TableHead>
+                          <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                            <TableCell align="center" sx={{ width:"300px"}} >Data Fattura</TableCell>
+                            <TableCell align="center" sx={{ width:"300px"}} >Tipo Documento</TableCell>
+                            <TableCell align="center" sx={{ width:"300px"}}>Metodo Pagamento</TableCell>
+                            <TableCell align="center" sx={{ width:"300px"}}>Totale Fattura Imponibile €</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
+                          <TableRow>
+                            <TableCell align="center" sx={{ width:"300px"}}>{fat.dataFattura  ? new Date(fat.dataFattura).toLocaleDateString('en-CA'):"--"}</TableCell>
+                            <TableCell align="center" sx={{ width:"300px"}}>{fat.tipoDocumento||"--"}</TableCell>
+                            <TableCell align="center" sx={{ width:"300px"}}>{fat.metodoPagamento||"--"}</TableCell>
+                            <TableCell align="center" sx={{ width:"300px"}}>{fat.totaleFatturaImponibile != null 
+                              ? Number(fat.totaleFatturaImponibile||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
+                              : '--'}
+                            </TableCell> 
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </Box>
                   </div>
-                  <div className="pt-3 pb-3 ">
-                    <div className="container text-center">
-                      <div className="row">
-                        {mainObj.fattureSospese.map((fat)=>{
-                          return (
-                            <div key={fat.idFattura} className="col-12">
-                              <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
-                                <Table size="small" aria-label="purchases">
-                                  <TableHead>
-                                    <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                      <TableCell align="center" sx={{ width:"300px"}} >Data Fattura</TableCell>
-                                      <TableCell align="center" sx={{ width:"300px"}} >Tipo Documento</TableCell>
-                                      <TableCell align="center" sx={{ width:"300px"}}>Metodo Pagamento</TableCell>
-                                      <TableCell align="center" sx={{ width:"300px"}}>Totale Fattura Imponibile €</TableCell>
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                    <TableRow>
-                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.dataFattura  ? new Date(fat.dataFattura).toLocaleDateString('en-CA'):"--"}</TableCell>
-                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.tipoDocumento||"--"}</TableCell>
-                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.metodoPagamento||"--"}</TableCell>
-                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.totaleFatturaImponibile != null 
-                                        ? Number(fat.totaleFatturaImponibile||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-                                        : '--'}
-                                      </TableCell> 
-                                    </TableRow>
-                                  </TableBody>
-                                </Table>
-                              </Box>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </CardBox>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </CardBox>
       }   
     </div>
   ); 

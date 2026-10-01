@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export enum Profilo {
     AZURE = 'PAGOPA',
     SELFCARE = 'PA',
@@ -61,7 +62,14 @@ export enum PathPf {
     DOCUMENTI_SOSPESI = "/ente/docsospesi",
 
     //REC CON
-    LISTA_NOTIFICHE_REC_CON = "/reccon/listanotifiche"
+    LISTA_NOTIFICHE_REC_CON = "/reccon/listanotifiche",
+
+
+     //APP IO 
+    ANAGRAFICAAPPIO = "/appio/anagraficapsp",
+    DOCUMENTICONTABILIAPPIO = "/appio/documenticontabilipagopa",
+    DETTAGLIO_DOC_CONTABILE_APPIO = "/appio/dettagliodoccontabile",
+    MESSAGGIAPPIO = "/appio/messaggi",
 }
 
 export enum PathRoutePf {
@@ -113,5 +121,9 @@ export enum PathRoutePf {
 
     GESTIONE_FATTURE = "gestionefatture",
 
+    //appio
+    ANAGRAFICAAPPIO = "anagraficapsp",
+    DOCUMENTICONTABILIAPPIO = "documenticontabilipagopa",
+    DETTAGLIO_DOC_CONTABILE_APPIO = "dettagliodoccontabile",
     
 }

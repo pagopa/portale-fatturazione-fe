@@ -88,7 +88,7 @@ export interface MainState{
     badgeContent:number,
     messaggioSelected:null|Messaggi
     prodotti:ProfiloObject[],
-    profilo:any,
+    profilo:ProfiloObject,
     docContabileSelected:{key:string},
     infoTrimestreComSelected:any,
     datiFatturazioneNotCompleted:boolean,

@@ -3,7 +3,7 @@ import { ButtonNaked} from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Button, Typography } from "@mui/material";
 import { Dispatch, useEffect, useState} from 'react';
-import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
+import TextKeyValue from '../components/reusableComponents/textKeyValue';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import SkeletonRelPdf from '../components/reusableComponents/skeletonRelPdf';
@@ -98,16 +98,14 @@ const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState}) =>{
       <div className="bg-white mb-5 me-5 ms-5">
         <div className="pt-5 pb-5 ">
           <div className="container text-center">
-            <TextDettaglioPdf description='Tipologia Documento' value={details.tipologiaDocumento}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Data Inserimento' value={details.data||''}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Anno' value={details.anno}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Mese' value={details.mese}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Stato' value={details.stato}></TextDettaglioPdf>
-                  
+            <TextKeyValue description='Tipologia Documento' value={details.tipologiaDocumento}></TextKeyValue>
+            <TextKeyValue description='Data Inserimento' value={details.data||''}></TextKeyValue>
+            <TextKeyValue description='Anno' value={details.anno}></TextKeyValue>
+            <TextKeyValue description='Mese' value={details.mese}></TextKeyValue>
+            <TextKeyValue description='Stato' value={details.stato}></TextKeyValue>
           </div>
         </div>
       </div>
-        
       <ModalLoading 
         open={showDownloading} 
         setOpen={setShowDownloading}

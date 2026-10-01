@@ -50,7 +50,7 @@ const getCssFirstColumRagioneSociale = (isClickable: boolean): SxProps<Theme> =>
   color: '#0D6EFD',
   fontWeight: 'bold',
   cursor: isClickable ? 'pointer' : 'default',
-  width:"350px"
+  //width:"350px"
 });
 
 const getCssFirstColumCustom = (isClickable: boolean,width?:string|undefined): SxProps<Theme> => ({
@@ -140,7 +140,7 @@ const GridCell = ({
             if (apiGet && headerNames[i]?.makeAction) apiGet(element);
           }}
           width={headerNames[i]?.width}
-          align={i === 0 ? "left" : "center"}
+          align={i === 0 && headerNames[i]?.makeAction ? "left" : "center"}
         >
           <Typography sx={headerNames[i]?.applyCss ? getCssFirstColumRagioneSociale(headerNames[i]?.makeAction||false) : null} variant={rowObject.variant||"body1"}>
             {isLong ? value?.toString().slice(0, 37) + "..." : value}

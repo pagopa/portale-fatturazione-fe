@@ -214,6 +214,12 @@ export const products:ProductEntity[] = [
     title:'Piattaforma pagoPA',
     productUrl:"",
     linkType:"external"
+  },
+  {
+    id: 'prod-appio',
+    title:'App IO',
+    productUrl:"",
+    linkType:"external"
   }
 ];
 

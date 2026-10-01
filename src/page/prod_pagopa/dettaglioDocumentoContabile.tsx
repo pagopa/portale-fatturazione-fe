@@ -6,27 +6,23 @@ import { getDetailsDocContabilePa } from "../../api/apiPagoPa/documentiContabili
 import { PathPf } from "../../types/enum";
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import TextDettaglioPdf from "../../components/commessaPdf/textDettaglioPdf";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { DocContabile } from "../../types/typeDocumentiContabili";
 import DownloadIcon from '@mui/icons-material/Download';
 import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import DetailsSection from "../../components/reusableComponents/detailSection";
+import { dettaglioDocContabile, dettaglioPSP } from "../../assets/configurations/conf_GridDocContabili_pagopa";
 
 
 const DettaglioDocContabile : React.FC = () =>{
 
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
-
- 
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
-    
   const navigate = useNavigate();
   
-
-   
   const [showDownloading, setShowDownloading] = useState(false);
   const [loadingDettaglio , setLoadingDettaglio] = useState(false);
   const [docContabile, setDocContabile]  = useState<DocContabile>({
@@ -81,10 +77,6 @@ const DettaglioDocContabile : React.FC = () =>{
     }
   });
     
-
-
-
-
   useEffect(()=>{
     if(mainState.docContabileSelected.key === ''){
       navigate(PathPf.DOCUMENTICONTABILI);
@@ -168,50 +160,22 @@ const DettaglioDocContabile : React.FC = () =>{
     );
   }
 
+  
+
   return (
     <div>
       <div>
-        <NavigatorHeader pageFrom={"Documenti contabili/"} pageIn={"Dettaglio"} backPath={PathPf.DOCUMENTICONTABILI} icon={<ManageSearchIcon  sx={{paddingBottom:"4px"}}  fontSize='small'></ManageSearchIcon>}></NavigatorHeader>
+        <NavigatorHeader pageFrom={"Documenti contabili/"} pageIn={"Dettaglio"} backPath={PathPf.DOCUMENTICONTABILI} icon={<ManageSearchIcon  sx={{paddingBottom:"4px"}}  fontSize='small'/>}></NavigatorHeader>
       </div>
       <div className='d-flex justify-content-between mt-4 me-5 ms-5'>
-        <Button disabled={docContabile.report.reports.length === 0 || docContabile.report.reports[0] === ''} onClick={()=> downloadFile(docContabile.report.reports[0],"Detailed Report")} >Download Detailed Report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
-        <Button disabled={docContabile.report.reports[1] === ''} onClick={()=> downloadFile(docContabile.report.reports[1],"Download Agent Quarter Report")} >Download Agent Quarter Report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+        <Button disabled={docContabile.report.reports.length === 0 || docContabile.report.reports[0] === ''} onClick={()=> downloadFile(docContabile.report.reports[0],"Detailed Report")} >Download Detailed Report <DownloadIcon sx={{marginLeft:'20px'}}/></Button>
+        <Button disabled={docContabile.report.reports[1] === ''} onClick={()=> downloadFile(docContabile.report.reports[1],"Download Agent Quarter Report")} >Download Agent Quarter Report <DownloadIcon sx={{marginLeft:'20px'}}/></Button>
       </div>
       <div className="bg-white mb-5 me-5 ms-5">
-        <div className="d-flex justify-content-center pt-3">
-          <Typography variant="h4">PSP</Typography>
-        </div>
-        <div className="pt-3 pb-3 ">
-          <div className="container text-center">
-            <TextDettaglioPdf description='Nome PSP' value={docContabile.psp.name}></TextDettaglioPdf>
-            <TextDettaglioPdf description='ID contratto' value={docContabile.psp.contractId}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Data' value={docContabile.psp.signedDate !== '' ? new Date(docContabile.psp.signedDate).toISOString().split('T')[0]:''}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Tipo contratto' value={docContabile.psp.contractType}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Codice ABI' value={docContabile.psp.abi}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Codice tributario' value={docContabile.psp.taxCode}></TextDettaglioPdf>
-            <TextDettaglioPdf description='P. IVA' value={docContabile.psp.vatCode}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Membership ID' value={docContabile.psp.membershipId}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Recipient ID' value={docContabile.psp.recipientId}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Ultimo aggiornamento' value={docContabile.psp.yearMonth}></TextDettaglioPdf>
-          </div>
-        </div>
+        <DetailsSection title={"PSP"} data={docContabile.psp} fields={dettaglioPSP}/>
       </div>
       <div className="bg-white mb-5 me-5 ms-5">
-        <div className="d-flex justify-content-center pt-3">
-          <Typography variant="h4">Documento contabile</Typography>
-        </div>
-        <div className="pt-3 pb-3 ">
-          <div className="container text-center">
-            <TextDettaglioPdf description='Trimestre' value={docContabile.report.yearQuarter}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Tipo documento' value={docContabile.report.tipoDoc}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Codice aggiuntivo' value={docContabile.report.codiceAggiuntivo}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Valuta' value={docContabile.report.valuta}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Numero' value={docContabile.report.numero}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Report data' value={docContabile.report.data !== '' ? new Date(docContabile.report.data).toISOString().split('T')[0]:''}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Bollo' value={docContabile.report.bollo}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Data di riferimento' value={(docContabile.report.riferimentoData !== '' && docContabile.report.riferimentoData !== "0001-01-01T00:00:00") ? new Date(docContabile.report.riferimentoData).toISOString().split('T')[0]:''}></TextDettaglioPdf>
-          </div>
-        </div>
+        <DetailsSection title={"Documento contabile"} data={docContabile.report} fields={dettaglioDocContabile}/>
       </div>
       <div className="bg-white mb-5 me-5 ms-5">
         <div className="d-flex justify-content-center pt-3">
@@ -250,7 +214,6 @@ const DettaglioDocContabile : React.FC = () =>{
           </div>
         </div>
       </div>
-          
       <ModalLoading 
         open={showDownloading} 
         setOpen={setShowDownloading}

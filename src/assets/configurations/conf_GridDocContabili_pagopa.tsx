@@ -2,7 +2,7 @@ import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridC
 
 export const headersDocContabiliPagopa : HeaderGridCustom[] = [
   { label: "", align: "center", width: "80px", keyValue: "collaps", typeColumn: "collaps" },
-  { label: "Nome PSP", align: "center", width: "200px", keyValue: "name", typeColumn: "ragionesociale", makeAction: true, applyCss: true },
+  { label: "Ente", align: "center", width: "200px", keyValue: "name", typeColumn: "ragionesociale", makeAction: true, applyCss: true },
   { label: "ID Contratto", align: "center", width: "200px", keyValue: "contractId", typeColumn: "string"},
   { label: "Numero", align: "center", width: "200px", keyValue: "numero", typeColumn: "string"},
   { label: "Trimestre", align: "center", width: "200px", keyValue: "yearQuarter", typeColumn: "string" },
@@ -18,4 +18,29 @@ export const headersDocContabiliPagopaCollapse: HeaderGridCustom[] = [
   { label: "Codice IVA", align: "center", width: "100px", keyValue: "codIva", typeColumn: "string" },
   { label: "Condizioni", align: "center", width: "100px", keyValue: "condizioni", typeColumn: "string" },
   { label: "Causale", align: "center", width: "100px", keyValue: "causale", typeColumn: "string" },
+];
+
+
+export const dettaglioPSP = [
+  {key: 'name',description: 'Nome PSP'},
+  {key: 'contractId',description: 'ID contratto'},
+  {key: 'signedDate',description: 'Data',formatter: (value) => value ? new Date(value).toISOString().split('T')[0] : ''},
+  {key: 'contractType',description: 'Tipo contratto'},
+  {key: 'abi',description: 'Codice ABI'},
+  {key: 'taxCode',description: 'Codice tributario'},
+  {key: 'vatCode',description: 'P. IVA'},
+  {key: 'membershipId',description: 'Membership ID'},
+  {key: 'recipientId',description: 'Recipient ID'},
+  {key: 'yearMonth',description: 'Ultimo aggiornamento'}
+];
+
+export const dettaglioDocContabile = [
+  { key: 'yearQuarter', description: 'Trimestre' },
+  { key: 'tipoDoc', description: 'Tipo documento' },
+  { key: 'codiceAggiuntivo', description: 'Codice aggiuntivo' },
+  { key: 'valuta', description: 'Valuta' },
+  { key: 'numero', description: 'Numero' },
+  { key: 'data', description: 'Report data', formatter: (value) => value ? new Date(value).toISOString().split('T')[0] : '' },
+  { key: 'bollo', description: 'Bollo' },
+  { key: 'riferimentoData', description: 'Data di riferimento', formatter: (value) => value && value !== '0001-01-01T00:00:00' ? new Date(value).toISOString().split('T')[0] : '' }
 ];

@@ -11,6 +11,7 @@ import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, Responsi
 import MainFilter from '../../components/reusableComponents/mainFilter';
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import { headerAnagraficaPsp } from "../../assets/configurations/conf_GridAnagraficaPsp";
+import { useLocation } from "react-router";
 
 
 const AnagraficaPsp:React.FC = () =>{
@@ -21,6 +22,7 @@ const AnagraficaPsp:React.FC = () =>{
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
 
+  const location = useLocation();
    
   const [gridData, setGridData] = useState<GridElementListaPsp[]>([]);
 
@@ -134,7 +136,11 @@ const AnagraficaPsp:React.FC = () =>{
     await getListaAnagraficaPsp(token, profilo.nonce, body,page,rowsPerPage)
       .then(async(res)=>{
         // ordino i dati in base all'header della grid
-        const orderDataCustom = res.data.psPs;
+        const orderDataCustom = res.data.psPs;/*.map((el,i) =>{
+          el.name = `Ente AppIO - ${i}`;
+          el.contractId = `con-app-io-${i}`; 
+          return el;
+        });*/
         await setGridData(orderDataCustom);
         await setTotalPsp(res.data.count);
         setGetListaLoading(false);
@@ -272,9 +278,11 @@ const AnagraficaPsp:React.FC = () =>{
     ? 'show'
     : 'hidden';
 
+  const isAppIo = location.pathname === "/appio/anagraficapsp";
+
   return(
   
-    <MainBoxStyled title={"Anagrafica PSP"}>
+    <MainBoxStyled title={isAppIo?"Anagrafica AppIO":"Anagrafica PSP"}>
       <ResponsiveGridContainer >
         <MainFilter 
           filterName={"select_value_nobody"}
@@ -314,7 +322,7 @@ const AnagraficaPsp:React.FC = () =>{
         ></MainFilter>
         <MainFilter 
           filterName={"multi_checkbox"}
-          inputLabel={"Nome PSP"}
+          inputLabel={"Ente"}
           clearOnChangeFilter={clearOnChangeFilter}
           setBody={setBodyGetLista}
           body={bodyGetLista}
@@ -326,37 +334,7 @@ const AnagraficaPsp:React.FC = () =>{
           keyDescription={"name"}
           keyValue={"contractId"}
           keyBody={"contractIds"}
-        ></MainFilter>
-        <MainFilter 
-          filterName={"input_text"}
-          inputLabel={"Membership ID"}
-          clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setBodyGetLista}
-          body={bodyGetLista}
-          keyValue={"membershipId"}
-          keyDescription={"membershipId"}
-          keyBody={"membershipId"}
-        ></MainFilter>
-        <MainFilter 
-          filterName={"input_text"}
-          inputLabel={"Recipient ID"}
-          clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setBodyGetLista}
-          body={bodyGetLista}
-          keyValue={"recipientId"}
-          keyDescription={"recipientId"}
-          keyBody={"recipientId"}
-        ></MainFilter>
-        <MainFilter 
-          filterName={"input_text"}
-          inputLabel={"Codice ABI"}
-          clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setBodyGetLista}
-          body={bodyGetLista}
-          keyValue={"abi"}
-          keyDescription={"abi"}
-          keyBody={"abi"}
-        ></MainFilter>                  
+        ></MainFilter>         
       </ResponsiveGridContainer>
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
@@ -368,7 +346,7 @@ const AnagraficaPsp:React.FC = () =>{
           onButtonClick: () => onDownloadButton(),
           variant: "outlined",
           label: "Download risultati",
-          icon:{name:"download" },
+          icon:{name:"download"},
           disabled:( gridData.length === 0 || getListaLoading )
         }]}
       />      

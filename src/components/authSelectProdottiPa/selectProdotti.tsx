@@ -28,13 +28,13 @@ export default function MultipleSelectProdotti({setProductSelected}) {
   React.useEffect(()=>{
     setOpenselect(true);
   },[]);
-  
-  
+
+
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    setProductSelected(mainState.prodotti.find((el:any) => el.prodotto === value));
+    setProductSelected(mainState.prodotti.find((el:ProfiloObject) => el.prodotto === value));
     setValueSelect(value);
   };
 
@@ -54,10 +54,12 @@ export default function MultipleSelectProdotti({setProductSelected}) {
         >
           {mainState.prodotti.map((el:ProfiloObject) => {
             let name = el?.prodotto;
-            if(el?.prodotto === 'prod-pagopa'){
-              name = 'Piattaforma pagoPA';
-            }else if(el?.prodotto === 'prod-pn'){
+            if(el?.prodotto === 'prod-pn'){
               name = 'SEND - Servizio Notifiche Digitali';
+            }else if(el?.prodotto === 'prod-pagopa'){
+              name = 'Piattaforma pagoPA';
+            }else if(el?.prodotto === 'prod-appio'){
+              name = 'AppIO';
             }
             return (
               <MenuItem key={el.jwt} value={el.prodotto}>
