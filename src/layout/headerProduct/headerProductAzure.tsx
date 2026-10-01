@@ -17,6 +17,7 @@ const HeaderProductAzure = () => {
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
   const setCountMessages = useGlobalStore(state => state.setCountMessages);
   const countMessages = useGlobalStore(state => state.countMessages);
+  const setLoadingProfilo = useGlobalStore(state => state.setLoadingProfilo);
 
   const token =  mainState.profilo?.jwt;
   const profilo =  mainState.profilo;
@@ -60,6 +61,7 @@ const HeaderProductAzure = () => {
   },[mainState.authenticated]);
 
   const getProfilo = async (jwt, productSelected) => { 
+    setLoadingProfilo(true);
     try { 
       const resp = await getAuthProfilo(jwt); 
       const storeProfilo = resp.data; 
@@ -79,7 +81,8 @@ const HeaderProductAzure = () => {
         ruolo: resp.data.ruolo,
         action: '',
         authenticated: true,
-        profilo: profiloDetails
+        profilo: profiloDetails,
+        //devo aggiungere qui un loading profilo
       }); 
       if (productSelected.prodotto === 'prod-pagopa') {
         navigate(PathPf.ANAGRAFICAPSP);
@@ -90,7 +93,11 @@ const HeaderProductAzure = () => {
       } } catch (error) { 
       console.error('Errore durante il recupero del profilo:', error);
       window.location.href = redirect; 
-    } };
+    }finally {
+      console.log("finally");
+      setLoadingProfilo(false);
+    }
+  };
 
   let conditionalPath =  PathPf.MESSAGGI; 
   if(profilo.auth === 'PAGOPA'  && mainState.profilo.prodotto === "prod-pn"){
@@ -112,8 +119,7 @@ const HeaderProductAzure = () => {
             productsList={products}
             onSelectedProduct={(e) => {
               const newProfilo:ProfiloObject|undefined = mainState.prodotti.find((el:ProfiloObject) => el.prodotto === e.id);
-              if(newProfilo) getProfilo(newProfilo.jwt,newProfilo);
-                      
+              if(newProfilo) getProfilo(newProfilo.jwt,newProfilo);  
             }}
             partyList={partyList}
           ></HeaderProduct>

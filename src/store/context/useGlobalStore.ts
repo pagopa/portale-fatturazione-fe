@@ -35,6 +35,9 @@ type GlobalStore = {
     statusQueryGetUri: string[];
     setStatusQueryGetUri: (v: string[]) => void;
 
+    loadingProfilo: boolean,
+    setLoadingProfilo: (v:boolean) => void,
+
     /* ---------- EXTRA DATA ---------- */
     mainData: {
         apiKeyPage: ApiKeyPage;
@@ -72,6 +75,9 @@ export const useGlobalStore = create(
 
       statusQueryGetUri: [],
       setStatusQueryGetUri: (v) => set({ statusQueryGetUri: v }),
+
+      loadingProfilo: false,
+      setLoadingProfilo: (v) => set({ loadingProfilo: v }),
 
       /* ===== EXTRA DATA ===== */
       mainData: {

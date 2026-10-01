@@ -20,7 +20,7 @@ const HeaderLogAzure = () => {
 
   const user: JwtUser = {
     id: '1',
-    name: mainState.profilo.nomeEnte,
+    name: mainState.profilo.nomeEnte||'',
     surname: "",
     email: "",
   };
@@ -71,13 +71,12 @@ const HeaderLogAzure = () => {
           localStorage.clear();
           navigate('/azureLogin');
         }}
-        onDocumentationClick={()=>onButtonClick()}
+        onDocumentationClick={() => onButtonClick()}
       />
       <ModalLoading 
         open={showDownloading} 
         setOpen={setShowDownloading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
+        sentence={'Downloading...'} />
     </div>
   );
 };

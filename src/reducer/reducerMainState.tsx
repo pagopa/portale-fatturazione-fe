@@ -20,7 +20,7 @@ export const initialState:MainState =  {
   badgeContent:0,
   messaggioSelected:null,
   prodotti:[],
-  profilo:{},
+  profilo:null,
   docContabileSelected:{key:''},
   infoTrimestreComSelected:{},
   contestazioneSelected:{ 
@@ -32,7 +32,6 @@ export const initialState:MainState =  {
     descrizioneStato:"",
     stato:0,
     reportId:0
-
   },
 };
 
