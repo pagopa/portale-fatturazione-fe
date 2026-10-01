@@ -781,13 +781,8 @@ export const NotaTextField: React.FC<NotaTextFieldProps> = ({
   helperText,
   disabled = false,
 }) => {
-  const currentLength = value?.length || 0;
 
-  const computedHelperText =
-    helperText ??
-    (currentLength > maxLength
-      ? `Inserisci una nota (max ${maxLength} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`
-      : `Inserisci una nota (min ${minLength} max ${maxLength} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`);
+  const computedHelperText = helperText ?? `Inserisci una nota (minimo 10 massimo 500 carratteri). Non inserire informazioni non necessarie, evitando di includere dati personali eccessivi o dettagli non pertinenti.`;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onChange?.(e.target.value);

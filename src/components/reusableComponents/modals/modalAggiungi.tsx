@@ -441,9 +441,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                   "testo": e
                 }}}));
               }}
-              helperText={(bodyAction.nota?.testo?.length||0) > 500 ?
-                `Inserisci una nota (max ${500} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`
-                : `Inserisci una nota (min ${10} max ${500} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`}
+              helperText={ `Inserisci una nota (minimo 10 massimo 500 carratteri). Non inserire informazioni non necessarie, evitando di includere dati personali eccessivi o dettagli non pertinenti.`}
               placeHolder={"Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici."}
             />
           </Box>
