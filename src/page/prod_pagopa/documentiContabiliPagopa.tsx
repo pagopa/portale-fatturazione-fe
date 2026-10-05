@@ -13,7 +13,7 @@ import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersDocContabiliPagopa, headersDocContabiliPagopaCollapse } from "../../assets/configurations/conf_GridDocContabili_pagopa";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 const DocumentiContabili:React.FC = () =>{
@@ -24,6 +24,7 @@ const DocumentiContabili:React.FC = () =>{
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [gridData, setGridData] = useState<DocContabili[]>([]);
 
@@ -89,7 +90,12 @@ const DocumentiContabili:React.FC = () =>{
     setGetListaLoading(true);
     await getListaDocumentiContabiliPa(token, profilo.nonce, body)
       .then((res)=>{
-        const data = res.data.financialReports;
+        
+        const data = res.data.financialReports;/*.map((el,i) =>{
+          el.name = `Ente AppIO - ${i}`;
+          el.contractId = `con-app-io-${i}`; 
+          return el;
+        });*/
         setGridData(data);
         setCount(data.length);
         if(isInitialRender.current && Object.keys(filters).length > 0){
@@ -313,6 +319,36 @@ const DocumentiContabili:React.FC = () =>{
   bodyGetLista.quarters.length > 0
     ? 'show'
     : 'hidden';
+
+  const isAppIo = location.pathname === "/appio/documenticontabilipagopa";
+
+  const mockButtons : {
+    onButtonClick: () => Promise<void>;
+    variant: "outlined" | "text" | "contained";
+    label: string;
+    icon: {
+        name: string;
+    };
+    disabled: boolean;
+}[] = (isAppIo ? [{
+  onButtonClick: () => onDownloadButton(),
+  variant: "outlined",
+  label: "Download risultati",
+  icon:{name:"download" },
+  disabled:( gridData.length === 0 || getListaLoading )
+}] : [{
+  onButtonClick: () => onDownloadButton(),
+  variant: "outlined",
+  label: "Download risultati",
+  icon:{name:"download" },
+  disabled:( gridData.length === 0 || getListaLoading )
+},{
+  onButtonClick: () => onDownloadReportButton(),
+  variant: "outlined",
+  label: "Download Financial Report",
+  icon:{name:"download" },
+  disabled:( gridData.length === 0 || getListaLoading )
+}]);
       
   return(
     <MainBoxStyled title={"Documenti contabili"}>
@@ -356,7 +392,7 @@ const DocumentiContabili:React.FC = () =>{
         ></MainFilter>
         <MainFilter 
           filterName={"multi_checkbox"}
-          inputLabel={"Nome PSP"}
+          inputLabel={"Ente"}
           clearOnChangeFilter={clearOnChangeFilter}
           setBody={setBodyGetLista}
           body={bodyGetLista}
@@ -368,38 +404,7 @@ const DocumentiContabili:React.FC = () =>{
           keyDescription={"name"}
           keyValue={"contractId"}
           keyBody={"contractIds"}
-        ></MainFilter>
-        <MainFilter 
-          filterName={"input_text"}
-          inputLabel={"Membership ID"}
-          clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setBodyGetLista}
-          body={bodyGetLista}
-          keyValue={"membershipId"}
-          keyDescription={"membershipId"}
-          keyBody={"membershipId"}
-        ></MainFilter>
-        <MainFilter 
-          filterName={"input_text"}
-          inputLabel={"Recipient ID"}
-          clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setBodyGetLista}
-          body={bodyGetLista}
-          keyValue={"recipientId"}
-          keyDescription={"recipientId"}
-          keyBody={"recipientId"}
-        ></MainFilter>
-        <MainFilter 
-          filterName={"input_text"}
-          inputLabel={"Codice ABI"}
-          clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setBodyGetLista}
-          body={bodyGetLista}
-          keyValue={"abi"}
-          keyDescription={"abi"}
-          keyBody={"abi"}
-        ></MainFilter>
-                               
+        ></MainFilter>           
       </ResponsiveGridContainer>
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
@@ -407,19 +412,7 @@ const DocumentiContabili:React.FC = () =>{
         statusAnnulla={statusAnnulla} 
       ></FilterActionButtons>
       <ActionTopGrid
-        actionButtonRight={[{
-          onButtonClick: () => onDownloadButton(),
-          variant: "outlined",
-          label: "Download risultati",
-          icon:{name:"download" },
-          disabled:( gridData.length === 0 || getListaLoading )
-        },{
-          onButtonClick: () => onDownloadReportButton(),
-          variant: "outlined",
-          label: "Download Financial Report",
-          icon:{name:"download" },
-          disabled:( gridData.length === 0 || getListaLoading )
-        }]}
+        actionButtonRight={mockButtons}
       />       
       <GridCustom
         nameParameterApi='xxxx'

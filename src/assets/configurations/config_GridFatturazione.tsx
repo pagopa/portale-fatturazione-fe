@@ -76,7 +76,7 @@ export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
 
 export const headersObjGridDocemessiSendCollapse: HeaderGridCustom[] = [
   { label: "Numero Linea", align: "center", width: "100px", keyValue: "numerolinea", typeColumn: "number" },
-  { label: "Codice Materiale", align: "center", width: "100px", keyValue: "codiceMateriale", typeColumn: "string" },
+  { label: "Codice Materiale", align: "center", width: "180px", keyValue: "codiceMateriale", typeColumn: "string" },
   { label: "Imponibile", align: "center", width: "100px", keyValue: "imponibile", typeColumn: "euro-number" },
   { label: "Periodo di Riferimento", align: "center", width: "100px", keyValue: "periodoRiferimento", typeColumn: "string" },
   { label: "Periodo di Fatturazione", align: "center", width: "100px", keyValue: "periodoFatturazione", typeColumn: "string" },

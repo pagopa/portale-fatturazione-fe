@@ -48,6 +48,7 @@ i18n.use(initReactI18next) // Passes i18n down to react-i18next
             'SAVE_DATIFATTURAZIONE_OK': "Dati di fatturazione inseriti ",
             "AZURE_LOGIN_ERROR": "Errore durante il login. Contattare l'assistenza",
             "GENERICO_KO": "L'operazione non è andata a buon fine. Contattare l'assistenza",
+            "SWITCH_PROFILO_ERROR": "Errore durante il cambio profilo. Contattare l'assistenza"
           }
         }
       }

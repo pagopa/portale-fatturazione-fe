@@ -3,7 +3,7 @@ import { useEffect, useState} from 'react';
 import {Typography, Button} from '@mui/material';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from "react-router";
-import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
+import TextKeyValue from '../../components/reusableComponents/textKeyValue';
 import { DataPdf } from "../../types/typeModuloCommessaInserimento";
 import { usePDF } from 'react-to-pdf';
 import { DatiModuloCommessaPdf, ResponseDownloadPdf } from "../../types/typeModuloCommessaInserimento";
@@ -239,15 +239,15 @@ const ModuloCommessaPdf : React.FC = () =>{
             <div style={{ position:'absolute',zIndex:-1}}  id='file_download' ref={targetRef}>
             </div>
             <div className="container text-center">
-              <TextDettaglioPdf description={'Soggetto aderente'} value={dataPdf.descrizione}></TextDettaglioPdf>
-              <TextDettaglioPdf description={'Sede Legale completa'} value={dataPdf.indirizzoCompleto}></TextDettaglioPdf>
-              <TextDettaglioPdf description={'Partita IVA/Codice Fiscale'} value={dataPdf.partitaIva}></TextDettaglioPdf>
-              <TextDettaglioPdf description={'Cup'} value={dataPdf.cup}></TextDettaglioPdf>
-              <TextDettaglioPdf description={'Cig'} value={dataPdf.cig}></TextDettaglioPdf>
-              <TextDettaglioPdf description={'Soggetto Split Payment'} value={dataPdf.splitPayment}></TextDettaglioPdf>
-              <TextDettaglioPdf description={'PEC'} value={dataPdf.pec}></TextDettaglioPdf>
-              <TextDettaglioPdf description={'Email riferimento contatti'} value={dataPdf?.contatti[0]?.email}></TextDettaglioPdf>
-              <TextDettaglioPdf description={'Data di compilazione'} value={createDateFromString(dataPdf.dataModifica)|| ''}></TextDettaglioPdf>
+              <TextKeyValue description={'Soggetto aderente'} value={dataPdf.descrizione}></TextKeyValue>
+              <TextKeyValue description={'Sede Legale completa'} value={dataPdf.indirizzoCompleto}></TextKeyValue>
+              <TextKeyValue description={'Partita IVA/Codice Fiscale'} value={dataPdf.partitaIva}></TextKeyValue>
+              <TextKeyValue description={'Cup'} value={dataPdf.cup}></TextKeyValue>
+              <TextKeyValue description={'Cig'} value={dataPdf.cig}></TextKeyValue>
+              <TextKeyValue description={'Soggetto Split Payment'} value={dataPdf.splitPayment}></TextKeyValue>
+              <TextKeyValue description={'PEC'} value={dataPdf.pec}></TextKeyValue>
+              <TextKeyValue description={'Email riferimento contatti'} value={dataPdf?.contatti[0]?.email}></TextKeyValue>
+              <TextKeyValue description={'Data di compilazione'} value={createDateFromString(dataPdf.dataModifica)|| ''}></TextKeyValue>
             </div>
           </div>
           <div className="mt-5">

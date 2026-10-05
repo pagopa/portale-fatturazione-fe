@@ -5,7 +5,7 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import SkeletonRelPdf from "../../components/reusableComponents/skeletonRelPdf";
 import { useEffect, useState } from "react";
 import { Box,FormControl,IconButton,InputLabel,MenuItem,Select,Table, TableBody, TableCell, TableHead, TableRow,Typography } from "@mui/material";
-import TextDettaglioPdf from "../../components/commessaPdf/textDettaglioPdf";
+import TextKeyValue from "../../components/reusableComponents/textKeyValue";
 import { getContestazioneExel, getDettaglioContestazione } from "../../api/apiPagoPa/notifichePA/api";
 import { manageError, manageErrorDownload } from "../../api/api";
 import { mesiGrid} from "../../reusableFunction/reusableArrayObj";
@@ -242,9 +242,9 @@ const DettaglioStoricoContestazione: React.FC = () => {
         </div>
         <div className="pt-3 pb-3 ">
           <div className="container text-center">
-            <TextDettaglioPdf description='Categoria documento' value={singleContest.categoriaDocumento}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Data inserimento' value={(singleContest.dataInserimento||'')?.replace("T", " ")?.substring(0, 19)}></TextDettaglioPdf>
-            <TextDettaglioPdf description='Stato' value={singleContest.descrizioneStato?.charAt(0)?.toUpperCase() + singleContest.descrizioneStato?.slice(1)||''}></TextDettaglioPdf>
+            <TextKeyValue description='Categoria documento' value={singleContest.categoriaDocumento}></TextKeyValue>
+            <TextKeyValue description='Data inserimento' value={(singleContest.dataInserimento||'')?.replace("T", " ")?.substring(0, 19)}></TextKeyValue>
+            <TextKeyValue description='Stato' value={singleContest.descrizioneStato?.charAt(0)?.toUpperCase() + singleContest.descrizioneStato?.slice(1)||''}></TextKeyValue>
             {(singleContest.stato === 3) && 
                         <>
                           <Box sx={{ margin: 5 , backgroundColor:'#F8F8F8', padding:'10px'}}>

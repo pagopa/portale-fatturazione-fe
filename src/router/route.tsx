@@ -54,10 +54,12 @@ import DocStorico from '../page/ente/docConStorico';
 import Messaggi from '../page/messaggi';
 //import EmailPsp from '../page/prod_pagopa/emailpsp';
 import { useEffect } from 'react';
-import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedProdPn, authVerifyIsLoggedSend, authVerifyIfEnteAllowRelSection, authVerifyPageProdotto } from '../loaderRoutes/loaderAuthVerify';
+import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedProdPn, authVerifyIsLoggedSend, authVerifyIfEnteAllowRelSection, authVerifyPageProdotto, authVerifyIsLoggedProdAppIo } from '../loaderRoutes/loaderAuthVerify';
 import DocSospesiSend from '../page/prod_pn/docSospesiSend';
 import DocStoricoSend from '../page/prod_pn/docStoricoSend';
 import GestioneFatture from '../page/prod_pn/gestioneFatture';
+import SideNavAppIo from '../layout/sideNavs/sideNavAppIo';
+import AnagraficaAppio from '../page/prod_appio/anagraficaappio';
 
 
 const RouteProfile = () => {
@@ -164,6 +166,18 @@ const router2 = createBrowserRouter([
         ],
       },
       {
+        path: "appio",
+        loader:authVerifyIsLoggedProdAppIo,
+        Component: () => <LayoutAzure sideNav={<SideNavAppIo />} />,
+        children: [
+          { index: true, element: <Navigate to={PathRoutePf.ANAGRAFICAAPPIO} replace /> },
+          { path:PathRoutePf.ANAGRAFICAAPPIO, Component: AnagraficaAppio },
+          { path:PathRoutePf.DOCUMENTICONTABILIAPPIO, Component: DocumentiContabili },
+          { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE_APPIO, Component: DettaglioDocContabile },
+          { path:PathRoutePf.MESSAGGI, Component: Messaggi }
+        ],
+      },
+      {
         path: "ente",
         loader:authVerifyIsLoggedEnte,
         Component: () => <LayoutEnte sideNav={<SideNavEnte />} />,
@@ -262,8 +276,7 @@ function RouteErrorBoundary() {
             <Typography fontSize={"1.15rem"} fontWeight={500} id="modal-modal-description" sx={{ mt: 2 }}>
             Contattare l'assistenza.
             </Typography>
-          </div>
-                   
+          </div>   
           <div className='container_buttons_modal d-flex justify-content-center'>
             <Button 
               sx={{marginRight:'20px'}} 
@@ -274,8 +287,7 @@ function RouteErrorBoundary() {
               sx={{marginRight:'20px'}} 
               variant='outlined'
               onClick={handleCopy}
-            >Copia Errore</Button>
-                      
+            >Copia Errore</Button>      
           </div>
         </Box>
       </Modal>

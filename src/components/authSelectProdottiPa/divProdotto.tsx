@@ -9,8 +9,10 @@ export default function DivProdotto({productSelected, setProductSelected}) {
     name = 'Piattaforma pagoPA';
   }else if(productSelected?.prodotto === 'prod-pn'){
     name = 'SEND - Servizio Notifiche Digitali';
+  }else if(productSelected?.prodotto === 'prod-appio'){
+    name = 'AppIO';
   }
-
+ 
   return (
     <div className='container_div_prodotto'>
       <div className="d-flex align-items-center justify-content-center">
@@ -21,7 +23,7 @@ export default function DivProdotto({productSelected, setProductSelected}) {
       <div className="d-flex align-items-center justify-content-center">
         <div>
           <div>
-            <Typography variant="overline">{name}</Typography>
+            <Typography fontWeight={"bold"}>{name}</Typography>
           </div>
           <Typography variant="caption">{productSelected?.descrizioneRuolo}</Typography>
         </div>

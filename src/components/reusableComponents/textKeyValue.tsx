@@ -1,7 +1,7 @@
 import {Typography} from '@mui/material';
 import { TextPdfProps } from '../../types/typeModuloCommessaInserimento';
 
-const TextDettaglioPdf : React.FC<TextPdfProps> = ({description, value}) =>{
+const TextKeyValue : React.FC<TextPdfProps> = ({description, value}) =>{
   return(
     <div className="row mt-3">
       <div className="col d-flex flex-row-reverse">
@@ -14,4 +14,4 @@ const TextDettaglioPdf : React.FC<TextPdfProps> = ({description, value}) =>{
   );
 };
 
-export default TextDettaglioPdf;
+export default TextKeyValue;

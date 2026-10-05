@@ -21,7 +21,7 @@ const style = {
   p: 4,
   borderRadius: '20px',
 };
-
+//TODO. applicare queto container a tutti i pop up
 const MainModalComponent: React.FC<MainModalComponentProps> = ({
   open,
   setOpen,

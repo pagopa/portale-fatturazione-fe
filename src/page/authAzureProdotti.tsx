@@ -34,47 +34,50 @@ const AuthAzureProdotti : React.FC = () => {
     });
   };
 
-  const getProfilo = async ()=>{
-        
-    if(productSelected?.jwt){
-      setLoading(true);
-      await getAuthProfilo(productSelected.jwt)
-        .then((resp) => {
-          const storeProfilo = resp.data;
-          const profiloDetails = {
-            auth:storeProfilo.auth,
-            nomeEnte:storeProfilo.nomeEnte,
-            descrizioneRuolo:storeProfilo.descrizioneRuolo,
-            ruolo:storeProfilo.ruolo,
-            dataUltimo:storeProfilo.dataUltimo,
-            dataPrimo:storeProfilo.dataPrimo,
-            prodotto:storeProfilo.prodotto,
-            jwt:productSelected.jwt,
-            nonce:storeProfilo.nonce
-                        
-          };
-          //const storeJwt = {token:productSelected.jwt};
-          //localStorage.setItem('token', JSON.stringify(storeJwt));
-          //eliminare il nonce
-          handleModifyMainState({
-            ruolo:resp.data.ruolo,
-            action:'LISTA_DATI_FATTURAZIONE',
-            authenticated:true,
-            profilo:profiloDetails
-          });
 
-          getCount(productSelected.jwt,storeProfilo.nonce);
-          if(productSelected.prodotto === 'prod-pagopa'){
-            navigate(PathPf.ANAGRAFICAPSP);
-          }else if(productSelected.prodotto === 'prod-pn'){
-            navigate("/send/listadatifatturazione");
-          }
-          setLoading(false);
-        }).catch(()=> {
-          setLoading(false);
-          window.location.href = redirect;
+  const getProfilo = async () => {
+    if (productSelected?.jwt) {
+      setLoading(true);
+
+      try {
+        const resp = await getAuthProfilo(productSelected.jwt);
+        const storeProfilo = resp.data;
+
+        const profiloDetails = {
+          auth: storeProfilo.auth,
+          nomeEnte: storeProfilo.nomeEnte,
+          descrizioneRuolo: storeProfilo.descrizioneRuolo,
+          ruolo: storeProfilo.ruolo,
+          dataUltimo: storeProfilo.dataUltimo,
+          dataPrimo: storeProfilo.dataPrimo,
+          prodotto: storeProfilo.prodotto,
+          jwt: productSelected.jwt,
+          nonce: storeProfilo.nonce
+        };
+
+        handleModifyMainState({
+          ruolo: resp.data.ruolo,
+          action: 'LISTA_DATI_FATTURAZIONE',
+          authenticated: true,
+          profilo: profiloDetails
         });
+
+        getCount(productSelected.jwt, storeProfilo.nonce);
+        if (productSelected.prodotto === 'prod-pagopa') {
+          navigate(PathPf.ANAGRAFICAPSP);
+        } else if (productSelected.prodotto === 'prod-pn') {
+          navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+        } else if (productSelected.prodotto === 'prod-appio') {
+          navigate(PathPf.ANAGRAFICAAPPIO);
+        }
+      } catch (error) {
+        console.error('Errore durante il recupero del profilo:', error);
+        window.location.href = redirect;
+      } finally {
+        setLoading(false);
+      }
     }
+    //todo:MANAGE THE ERROR IF TOKEN IS NOT PRESENT OR EXPIRED
   };
 
   return (
@@ -105,23 +108,23 @@ const AuthAzureProdotti : React.FC = () => {
           </div>
         </div>
         {productSelected && 
-                <div className="row mt-3">
+          <div className="row mt-3">
 
-                  <div className="col">
+            <div className="col">
+            </div>
+            <div className="col">
+              {!loading ? <div className=" d-flex align-items-center justify-content-center mt-5">
+                <Button variant="contained" onClick={()=> getProfilo()}>Accedi</Button>
+              </div>:
+                <div className="d-flex justify-content-center align-items-center mt-5">
+                  <div id='loader_on_gate_pages'>
+                    <Loader sentence={'Attendere...'}></Loader> 
                   </div>
-                  <div className="col">
-                    {!loading ? <div className=" d-flex align-items-center justify-content-center mt-5">
-                      <Button variant="contained" onClick={()=> getProfilo()}>Accedi</Button>
-                    </div>:
-                      <div className="d-flex justify-content-center align-items-center mt-5">
-                        <div id='loader_on_gate_pages'>
-                          <Loader sentence={'Attendere...'}></Loader> 
-                        </div>
-                      </div>}
-                  </div>
-                  <div className="col">
-                  </div>
-                </div>
+                </div>}
+            </div>
+            <div className="col">
+            </div>
+          </div>
         }
       </div>
     </>

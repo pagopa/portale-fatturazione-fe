@@ -6,8 +6,11 @@ import { redirect } from "../api/api";
 export function RoleBasedIndexRedirect() {
 
   const mainState = useGlobalStore(state => state?.mainState);
-
+ 
   if(mainState?.profilo?.prodotto && mainState?.profilo?.auth){
+    if (mainState.profilo.prodotto === "prod-appio") {
+      return <Navigate to={PathPf.ANAGRAFICAAPPIO} replace />;
+    }
     if (mainState.profilo.prodotto === "prod-pagopa") {
       return <Navigate to={PathPf.ANAGRAFICAPSP} replace />;
     }
