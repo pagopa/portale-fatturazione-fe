@@ -60,6 +60,7 @@ import DocStoricoSend from '../page/prod_pn/docStoricoSend';
 import GestioneFatture from '../page/prod_pn/gestioneFatture';
 import SideNavAppIo from '../layout/sideNavs/sideNavAppIo';
 import AnagraficaAppio from '../page/prod_appio/anagraficaappio';
+import DocumentiContabiliAppio from '../page/prod_appio/documentiContabiliappio';
 
 
 const RouteProfile = () => {
@@ -172,7 +173,7 @@ const router2 = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to={PathRoutePf.ANAGRAFICAAPPIO} replace /> },
           { path:PathRoutePf.ANAGRAFICAAPPIO, Component: AnagraficaAppio },
-          { path:PathRoutePf.DOCUMENTICONTABILIAPPIO, Component: DocumentiContabili },
+          { path:PathRoutePf.DOCUMENTICONTABILIAPPIO, Component: DocumentiContabiliAppio },
           { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE_APPIO, Component: DettaglioDocContabile },
           { path:PathRoutePf.MESSAGGI, Component: Messaggi }
         ],

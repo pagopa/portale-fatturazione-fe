@@ -67,7 +67,7 @@ export enum PathPf {
 
      //APP IO 
     ANAGRAFICAAPPIO = "/appio/anagraficaappio",
-    DOCUMENTICONTABILIAPPIO = "/appio/documenticontabilipagopa",
+    DOCUMENTICONTABILIAPPIO = "/appio/documenticontabiliappio",
     DETTAGLIO_DOC_CONTABILE_APPIO = "/appio/dettagliodoccontabile",
     MESSAGGIAPPIO = "/appio/messaggi",
 }
@@ -123,7 +123,7 @@ export enum PathRoutePf {
 
     //appio
     ANAGRAFICAAPPIO = "anagraficaappio",
-    DOCUMENTICONTABILIAPPIO = "documenticontabilipagopa",
+    DOCUMENTICONTABILIAPPIO = "documenticontabiliappio",
     DETTAGLIO_DOC_CONTABILE_APPIO = "dettagliodoccontabile",
     
 }
