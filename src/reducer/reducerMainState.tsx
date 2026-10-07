@@ -21,7 +21,6 @@ export const initialState:MainState =  {
   messaggioSelected:null,
   prodotti:[],
   profilo:null,
-  docContabileSelected:{key:''},
   infoTrimestreComSelected:{},
   contestazioneSelected:{ 
     ragioneSociale:"",

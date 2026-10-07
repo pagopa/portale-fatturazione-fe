@@ -26,7 +26,7 @@ const SideNavPagopa = () => {
           </ListItemIcon>
           <ListItemText primary="Anagrafica PSP" />
         </ListItemButton>
-        <ListItemButton selected={currentLocation === PathPf.DOCUMENTICONTABILI || currentLocation === PathPf.DETTAGLIO_DOC_CONTABILE} onClick={() => handleListItemClick(PathPf.DOCUMENTICONTABILI)}>
+        <ListItemButton selected={currentLocation === PathPf.DOCUMENTICONTABILI || currentLocation.includes(PathPf.DETTAGLIO_DOC_CONTABILE)} onClick={() => handleListItemClick(PathPf.DOCUMENTICONTABILI)}>
           <ListItemIcon>
             <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
           </ListItemIcon>

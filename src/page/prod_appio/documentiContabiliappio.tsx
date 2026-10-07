@@ -285,11 +285,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
 
 
   const handleGoToDetail = (row) => {  
-    dispatchMainState({
-      type:'MODIFY_MAIN_STATE',
-      value:{docContabileSelected:{key:`${row.contractId}|${row.yearQuarter}|${row.numero}`}}
-    });
-    navigate(PathPf.DETTAGLIO_DOC_CONTABILE);
+    navigate(`${PathPf.DETTAGLIO_DOC_CONTABILE}/${row.contractId}/${row.yearQuarter}/${row.numero}`);
   };
    
   const statusAnnulla =

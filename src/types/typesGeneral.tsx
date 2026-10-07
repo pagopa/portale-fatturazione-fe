@@ -89,7 +89,6 @@ export interface MainState{
     messaggioSelected:null|Messaggi
     prodotti:ProfiloObject[],
     profilo:any,
-    docContabileSelected:{key:string},//:TO DO spostare dal MAIN STATE
     infoTrimestreComSelected:any,
     datiFatturazioneNotCompleted:boolean,
     contestazioneSelected:{ //:TO DO spostare dal MAIN STATE

@@ -160,7 +160,7 @@ const router2 = createBrowserRouter([
           { index: true, element: <Navigate to={PathRoutePf.ANAGRAFICAPSP} replace /> },
           { path:PathRoutePf.ANAGRAFICAPSP, Component: AnagraficaPsp },
           { path:PathRoutePf.DOCUMENTICONTABILI, Component: DocumentiContabili },
-          { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE, Component: DettaglioDocContabile },
+          { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE+"/:contractId/:yearQuarter/:numero", Component: DettaglioDocContabile },
           { path:PathRoutePf.KPI, Component: KpiPagamenti },
           { path: PathRoutePf.MESSAGGI, Component: Messaggi },
           // { path: PathRoutePf.EMAIL_PSP, Component: EmailPsp }

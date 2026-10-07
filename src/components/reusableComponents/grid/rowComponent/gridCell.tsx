@@ -143,7 +143,7 @@ const GridCell = ({
           align={i === 0 && headerNames[i]?.makeAction ? "left" : "center"}
         >
           <Typography sx={headerNames[i]?.applyCss ? getCssFirstColumRagioneSociale(headerNames[i]?.makeAction||false) : null} variant={rowObject.variant||"body1"}>
-            {isLong ? value?.toString().slice(0, 37) + "..." : value}
+            {isLong ? value?.toString().slice(0, 37) + "..." : (value||"--")}
           </Typography>
         </TableCell>
       </Tooltip>

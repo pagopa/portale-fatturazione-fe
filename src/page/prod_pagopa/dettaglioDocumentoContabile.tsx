@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { manageError } from "../../api/api";
 import SkeletonRelPdf from "../../components/reusableComponents/skeletonRelPdf";
@@ -22,9 +22,10 @@ const DettaglioDocContabile : React.FC = () =>{
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
   const navigate = useNavigate();
+  const { contractId, yearQuarter, numero } = useParams();
   
   const [showDownloading, setShowDownloading] = useState(false);
-  const [loadingDettaglio , setLoadingDettaglio] = useState(false);
+  const [loadingDettaglio , setLoadingDettaglio] = useState(true);
   const [docContabile, setDocContabile]  = useState<DocContabile>({
     report: {
       name: "",
@@ -76,14 +77,15 @@ const DettaglioDocContabile : React.FC = () =>{
       yearMonth: ""
     }
   });
-    
+  const id = `${contractId}|${yearQuarter}|${numero}`;
   useEffect(()=>{
-    if(mainState.docContabileSelected.key === ''){
+    if(!id){
       navigate(PathPf.DOCUMENTICONTABILI);
     }else{
-      getDocContabile({key:mainState.docContabileSelected.key});
+      getDocContabile({key:id});
     }
-  },[]);
+  },[id]);
+
 
   /*
 
@@ -132,7 +134,6 @@ const DettaglioDocContabile : React.FC = () =>{
 
 
   const getDocContabile = async(obj) => {
-    setLoadingDettaglio(true);
     getDetailsDocContabilePa(token,profilo.nonce,obj).then((res) =>{
       setLoadingDettaglio(false);
       setDocContabile(res.data);

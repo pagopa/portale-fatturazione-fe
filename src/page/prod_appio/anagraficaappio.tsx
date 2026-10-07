@@ -9,10 +9,8 @@ import GridCustom from '../../components/reusableComponents/grid/gridCustom';
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from '../../components/reusableComponents/layout/mainComponent';
 import MainFilter from '../../components/reusableComponents/mainFilter';
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-import { headerAnagraficaPsp } from "../../assets/configurations/conf_GridAnagraficaPsp";
 import { downloadAppio, getListaAnagraficaAppio, getListaAnniAppio, getListaNameAppio, getListaQuarters } from "../../api/apiPagoPa/anagraficaAppio/api";
-
-
+import { headerAnagraficaAppio } from "../../assets/configurations/conf_GridAnagraficaAppio";
 export interface RequestBodyListaAnagraficaAppio{
     contractIds: string[],
     year?:string,
@@ -321,7 +319,7 @@ const AnagraficaAppio:React.FC = () =>{
         total={total}
         page={page}
         rows={rowsPerPage}
-        headerNames={headerAnagraficaPsp}
+        headerNames={headerAnagraficaAppio}
         disabled={getListaLoading}
         widthCustomSize="1800px"
         sentenseEmpty={"Nessun dato disponibile"}

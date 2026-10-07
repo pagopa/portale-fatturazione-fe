@@ -25,17 +25,7 @@ const DocumentiContabili:React.FC = () =>{
   const profilo =  mainState.profilo;
   const navigate = useNavigate();
 
-
   const [gridData, setGridData] = useState<DocContabili[]>([]);
-
-  const [filtersDownload, setFiltersDownload] = useState<RequestBodyListaDocContabiliPagopa>({
-    contractIds:[],
-    membershipId: '',
-    recipientId: '',
-    abi: '',
-    quarters:[],
-    year:''
-  });
 
   const [bodyGetLista, setBodyGetLista] = useState<RequestBodyListaDocContabiliPagopa>({
     contractIds:[],
@@ -90,12 +80,7 @@ const DocumentiContabili:React.FC = () =>{
     setGetListaLoading(true);
     await getListaDocumentiContabiliPa(token, profilo.nonce, body)
       .then((res)=>{
-        
-        const data = res.data.financialReports;/*.map((el,i) =>{
-          el.name = `Ente AppIO - ${i}`;
-          el.contractId = `con-app-io-${i}`; 
-          return el;
-        });*/
+        const data = res.data.financialReports;
         setGridData(data);
         setCount(data.length);
         if(isInitialRender.current && Object.keys(filters).length > 0){
@@ -139,7 +124,6 @@ const DocumentiContabili:React.FC = () =>{
         if(res.data.length > 0){
           if(isInitialRender.current && Object.keys(filters).length > 0){
             setBodyGetLista(filters.body);
-            setFiltersDownload(filters.body);
             setValueAutocomplete(filters.valueAutocomplete);
             setTextValue(filters.textValue);
             getListaDocGrid(filters.body);
@@ -150,7 +134,6 @@ const DocumentiContabili:React.FC = () =>{
                        
           }else{
             setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
-            setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
             getListaDocGrid({...bodyGetLista,...{year:res.data[0]}});
             getQuarters(res.data[0]);
                         
@@ -176,7 +159,7 @@ const DocumentiContabili:React.FC = () =>{
 
   const onDownloadButton = async() =>{
     setShowLoading(true);
-    await downloadDocContabili(token,profilo.nonce, filtersDownload).then(response =>{
+    await downloadDocContabili(token,profilo.nonce, bodyGetLista).then(response =>{
       if(response.status !== 200){
         setShowLoading(false);
         manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);
@@ -185,8 +168,8 @@ const DocumentiContabili:React.FC = () =>{
       }
     }).then((res) => {
       let fileName = '';
-      const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
-      if(filtersDownload.contractIds.length === 1){
+      const stringQuarterSelected = bodyGetLista.quarters.map(el => "Q" + el.slice(5)).join("_");
+      if(bodyGetLista.contractIds.length === 1){
         fileName = `Documenti contabili/${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
       }else{
         fileName = `Documenti contabili/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
@@ -201,7 +184,7 @@ const DocumentiContabili:React.FC = () =>{
 
   const onDownloadReportButton =  async() =>{
     setShowLoading(true);
-    await downloadFinancialReportDocContabili(token,profilo.nonce, filtersDownload).then((response) =>{
+    await downloadFinancialReportDocContabili(token,profilo.nonce, bodyGetLista).then((response) =>{
       if(response.status !== 200){
         setShowLoading(false);
         manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);
@@ -210,8 +193,8 @@ const DocumentiContabili:React.FC = () =>{
       }
     }).then((res) => {
       let fileName = '';
-      const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
-      if(filtersDownload.contractIds.length === 1){
+      const stringQuarterSelected = bodyGetLista.quarters.map(el => "Q" + el.slice(5)).join("_");
+      if(bodyGetLista.contractIds.length === 1){
         fileName = `Financial report PF/${gridData[0].name}/${gridData[0].yearQuarter.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
       }else{
         fileName = `Financial report PF/${gridData[0].yearQuarter.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
@@ -234,7 +217,6 @@ const DocumentiContabili:React.FC = () =>{
         page:0,
         rows:10
       });
-    setFiltersDownload(bodyGetLista);
     getListaDocGrid(bodyGetLista); 
     setPage(0);
     setRowsPerPage(10);
@@ -262,7 +244,6 @@ const DocumentiContabili:React.FC = () =>{
       year:yearOnSelect[0]};
     getListaDocGrid(newBody);
     setBodyGetLista(newBody);
-    setFiltersDownload(newBody);
     setDataSelect([]);
     setValueAutocomplete([]);
     setValueQuarters([]);
@@ -302,11 +283,7 @@ const DocumentiContabili:React.FC = () =>{
 
 
   const handleGoToDetail = (row) => {  
-    dispatchMainState({
-      type:'MODIFY_MAIN_STATE',
-      value:{docContabileSelected:{key:`${row.contractId}|${row.yearQuarter}|${row.numero}`}}
-    });
-    navigate(PathPf.DETTAGLIO_DOC_CONTABILE);
+    navigate(`${PathPf.DETTAGLIO_DOC_CONTABILE}/${row.contractId}/${row.yearQuarter}/${row.numero}`);
   };
    
 
@@ -319,11 +296,10 @@ const DocumentiContabili:React.FC = () =>{
   bodyGetLista.quarters.length > 0
     ? 'show'
     : 'hidden';
-
-
+      
   return(
     <MainBoxStyled title={"Documenti contabili"}>
-      <ResponsiveGridContainer >
+      <ResponsiveGridContainer>
         <MainFilter 
           filterName={"select_value_string"}
           inputLabel={"Anno"}
@@ -338,8 +314,7 @@ const DocumentiContabili:React.FC = () =>{
             setValueQuarters([]);
             setBodyGetLista((prev)=>({...prev,...{year:e,quarters:[]}}));
             getQuarters(bodyGetLista.year);
-          }}
-        ></MainFilter>
+          }}/>
         <MainFilter 
           filterName={"multi_checkbox"}
           inputLabel={"Trimestre"}
@@ -359,11 +334,10 @@ const DocumentiContabili:React.FC = () =>{
             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
             setValueQuarters(value);
           }}
-          iconMaterial={RenderIcon("date",true)}
-        ></MainFilter>
+          iconMaterial={RenderIcon("date",true)}/>
         <MainFilter 
           filterName={"multi_checkbox"}
-          inputLabel={"Ente"}
+          inputLabel={"Nome PSP"}
           clearOnChangeFilter={clearOnChangeFilter}
           setBody={setBodyGetLista}
           body={bodyGetLista}
@@ -374,14 +348,39 @@ const DocumentiContabili:React.FC = () =>{
           setValueAutocomplete={setValueAutocomplete}
           keyDescription={"name"}
           keyValue={"contractId"}
-          keyBody={"contractIds"}
-        ></MainFilter>           
+          keyBody={"contractIds"}/>
+        <MainFilter 
+          filterName={"input_text"}
+          inputLabel={"Membership ID"}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyGetLista}
+          body={bodyGetLista}
+          keyValue={"membershipId"}
+          keyDescription={"membershipId"}
+          keyBody={"membershipId"}/>
+        <MainFilter 
+          filterName={"input_text"}
+          inputLabel={"Recipient ID"}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyGetLista}
+          body={bodyGetLista}
+          keyValue={"recipientId"}
+          keyDescription={"recipientId"}
+          keyBody={"recipientId"}/>
+        <MainFilter 
+          filterName={"input_text"}
+          inputLabel={"Codice ABI"}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyGetLista}
+          body={bodyGetLista}
+          keyValue={"abi"}
+          keyDescription={"abi"}
+          keyBody={"abi"}/>                         
       </ResponsiveGridContainer>
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onButtonAnnulla} 
-        statusAnnulla={statusAnnulla} 
-      ></FilterActionButtons>
+        statusAnnulla={statusAnnulla}/>
       <ActionTopGrid
         actionButtonRight={[{
           onButtonClick: () => onDownloadButton(),
