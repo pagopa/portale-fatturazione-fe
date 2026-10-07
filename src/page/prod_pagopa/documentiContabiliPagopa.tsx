@@ -13,7 +13,7 @@ import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersDocContabiliPagopa, headersDocContabiliPagopaCollapse } from "../../assets/configurations/conf_GridDocContabili_pagopa";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 const DocumentiContabili:React.FC = () =>{
@@ -24,7 +24,7 @@ const DocumentiContabili:React.FC = () =>{
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
   const navigate = useNavigate();
-  const location = useLocation();
+
 
   const [gridData, setGridData] = useState<DocContabili[]>([]);
 
@@ -320,36 +320,7 @@ const DocumentiContabili:React.FC = () =>{
     ? 'show'
     : 'hidden';
 
-  const isAppIo = location.pathname === "/appio/documenticontabilipagopa";
 
-  const mockButtons : {
-    onButtonClick: () => Promise<void>;
-    variant: "outlined" | "text" | "contained";
-    label: string;
-    icon: {
-        name: string;
-    };
-    disabled: boolean;
-}[] = (isAppIo ? [{
-  onButtonClick: () => onDownloadButton(),
-  variant: "outlined",
-  label: "Download risultati",
-  icon:{name:"download" },
-  disabled:( gridData.length === 0 || getListaLoading )
-}] : [{
-  onButtonClick: () => onDownloadButton(),
-  variant: "outlined",
-  label: "Download risultati",
-  icon:{name:"download" },
-  disabled:( gridData.length === 0 || getListaLoading )
-},{
-  onButtonClick: () => onDownloadReportButton(),
-  variant: "outlined",
-  label: "Download Financial Report",
-  icon:{name:"download" },
-  disabled:( gridData.length === 0 || getListaLoading )
-}]);
-      
   return(
     <MainBoxStyled title={"Documenti contabili"}>
       <ResponsiveGridContainer >
@@ -412,7 +383,19 @@ const DocumentiContabili:React.FC = () =>{
         statusAnnulla={statusAnnulla} 
       ></FilterActionButtons>
       <ActionTopGrid
-        actionButtonRight={mockButtons}
+        actionButtonRight={[{
+          onButtonClick: () => onDownloadButton(),
+          variant: "outlined",
+          label: "Download risultati",
+          icon:{name:"download" },
+          disabled:( gridData.length === 0 || getListaLoading )
+        },{
+          onButtonClick: () => onDownloadReportButton(),
+          variant: "outlined",
+          label: "Download Financial Report",
+          icon:{name:"download" },
+          disabled:( gridData.length === 0 || getListaLoading )
+        }]}
       />       
       <GridCustom
         nameParameterApi='xxxx'

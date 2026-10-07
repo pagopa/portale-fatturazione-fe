@@ -4,16 +4,21 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import { manageError } from "../../api/api";
 import { AutocompleteMultiselect, OptionMultiselectCheckboxQarter, OptionMultiselectCheckboxPsp, } from "../../types/typeAngraficaPsp";
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
-import { DocContabili, RequestBodyListaDocContabiliPagopa } from "../../types/typeDocumentiContabili";
-import { downloadDocContabili, downloadFinancialReportDocContabili, getListaDocumentiContabiliPa, getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
 import { PathPf } from "../../types/enum";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
-import { headersDocContabiliPagopa, headersDocContabiliPagopaCollapse } from "../../assets/configurations/conf_GridDocContabili_pagopa";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { downloadDocContabiliAppio, getListaDocumentiContabiliAppio, getQuartersDocContabiliAppio, getYearsDocContabiliAppio } from "../../api/apiPagoPa/documentiemessiAppio/api";
+import { headersDocContabiliAppio, headersDocContabiliAppioCollapse } from "../../assets/configurations/conf_GridDocContabiliAppio";
+
+export interface BodyDocContabiliAppiio {
+  contractIds:string[],
+    quarters:string[],
+    year:string
+}
 
 
 const DocumentiContabiliAppio:React.FC = () =>{
@@ -24,28 +29,15 @@ const DocumentiContabiliAppio:React.FC = () =>{
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const [gridData, setGridData] = useState<DocContabili[]>([]);
+  const [gridData, setGridData] = useState<any[]>([]);
 
-  const [filtersDownload, setFiltersDownload] = useState<RequestBodyListaDocContabiliPagopa>({
+  const [bodyGetLista, setBodyGetLista] = useState<BodyDocContabiliAppiio>({
     contractIds:[],
-    membershipId: '',
-    recipientId: '',
-    abi: '',
     quarters:[],
     year:''
   });
 
-  const [bodyGetLista, setBodyGetLista] = useState<RequestBodyListaDocContabiliPagopa>({
-    contractIds:[],
-    membershipId: '',
-    recipientId: '',
-    abi: '',
-    quarters:[],
-    year:''
-  });
-   
   const [getListaLoading, setGetListaLoading] = useState(false);
   const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
   const [dataSelectQuarter, setDataSelectQuarter] = useState<OptionMultiselectCheckboxQarter[]>([]);
@@ -57,13 +49,13 @@ const DocumentiContabiliAppio:React.FC = () =>{
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
-  const [dataPaginated,setDataPaginated] = useState<DocContabili[]>([]);
+  const [dataPaginated,setDataPaginated] = useState<any[]>([]);
   const { 
     filters,
     updateFilters,
     resetFilters,
     isInitialRender
-  } = useSavedFilters(PathPf.DOCUMENTICONTABILI,{});
+  } = useSavedFilters(PathPf.DOCUMENTICONTABILIAPPIO,{});
     
   useEffect(()=>{
     getYears();
@@ -86,9 +78,9 @@ const DocumentiContabiliAppio:React.FC = () =>{
     return () => clearTimeout(timer);
   },[textValue]);
 
-  const getListaDocGrid = async(body:RequestBodyListaDocContabiliPagopa) =>{
+  const getListaDocGrid = async(body:BodyDocContabiliAppiio) =>{
     setGetListaLoading(true);
-    await getListaDocumentiContabiliPa(token, profilo.nonce, body)
+    await getListaDocumentiContabiliAppio(token, profilo.nonce, body)
       .then((res)=>{
         
         const data = res.data.financialReports;/*.map((el,i) =>{
@@ -133,13 +125,12 @@ const DocumentiContabiliAppio:React.FC = () =>{
   };
 
   const getYears = async () =>{
-    await getYearsDocContabiliPa(token, profilo.nonce)
+    await getYearsDocContabiliAppio(token, profilo.nonce)
       .then((res)=>{
         setYearOnSelect(res.data);
         if(res.data.length > 0){
           if(isInitialRender.current && Object.keys(filters).length > 0){
             setBodyGetLista(filters.body);
-            setFiltersDownload(filters.body);
             setValueAutocomplete(filters.valueAutocomplete);
             setTextValue(filters.textValue);
             getListaDocGrid(filters.body);
@@ -150,7 +141,6 @@ const DocumentiContabiliAppio:React.FC = () =>{
                        
           }else{
             setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
-            setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
             getListaDocGrid({...bodyGetLista,...{year:res.data[0]}});
             getQuarters(res.data[0]);
                         
@@ -162,21 +152,19 @@ const DocumentiContabiliAppio:React.FC = () =>{
   };
 
   const getQuarters = async (y) =>{
-    await getQuartersDocContabiliPa(token, profilo.nonce,{year:y})
-      .then((res)=>{
-        setDataSelectQuarter(res.data);
-       
-      }).catch(((err)=>{
-        setValueQuarters([]);
-        setDataSelectQuarter([]);
-        manageError(err,dispatchMainState); 
-      }));
+    await getQuartersDocContabiliAppio(token, profilo.nonce,{year:y}).then((res)=>{
+      setDataSelectQuarter(res.data);
+    }).catch(((err)=>{
+      setValueQuarters([]);
+      setDataSelectQuarter([]);
+      manageError(err,dispatchMainState); 
+    }));
   };
 
 
   const onDownloadButton = async() =>{
     setShowLoading(true);
-    await downloadDocContabili(token,profilo.nonce, filtersDownload).then(response =>{
+    await downloadDocContabiliAppio(token,profilo.nonce, bodyGetLista).then(response =>{
       if(response.status !== 200){
         setShowLoading(false);
         manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);
@@ -185,8 +173,8 @@ const DocumentiContabiliAppio:React.FC = () =>{
       }
     }).then((res) => {
       let fileName = '';
-      const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
-      if(filtersDownload.contractIds.length === 1){
+      const stringQuarterSelected = bodyGetLista.quarters.map(el => "Q" + el.slice(5)).join("_");
+      if(bodyGetLista.contractIds.length === 1){
         fileName = `Documenti contabili/${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
       }else{
         fileName = `Documenti contabili/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
@@ -198,10 +186,10 @@ const DocumentiContabiliAppio:React.FC = () =>{
       manageError(err,dispatchMainState);
     });
   };
-
+  /* :TODO da eliminare
   const onDownloadReportButton =  async() =>{
     setShowLoading(true);
-    await downloadFinancialReportDocContabili(token,profilo.nonce, filtersDownload).then((response) =>{
+    await downloadFinancialReportDocContabiliAppio(token,profilo.nonce, bodyGetLista).then((response) =>{
       if(response.status !== 200){
         setShowLoading(false);
         manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);
@@ -210,8 +198,8 @@ const DocumentiContabiliAppio:React.FC = () =>{
       }
     }).then((res) => {
       let fileName = '';
-      const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
-      if(filtersDownload.contractIds.length === 1){
+      const stringQuarterSelected = bodyGetLista.quarters.map(el => "Q" + el.slice(5)).join("_");
+      if(bodyGetLista.contractIds.length === 1){
         fileName = `Financial report PF/${gridData[0].name}/${gridData[0].yearQuarter.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
       }else{
         fileName = `Financial report PF/${gridData[0].yearQuarter.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
@@ -222,7 +210,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
       manageError(err,dispatchMainState);
     });
   };
-
+*/
   const onButtonFiltra = () =>{
     updateFilters(
       {
@@ -234,7 +222,6 @@ const DocumentiContabiliAppio:React.FC = () =>{
         page:0,
         rows:10
       });
-    setFiltersDownload(bodyGetLista);
     getListaDocGrid(bodyGetLista); 
     setPage(0);
     setRowsPerPage(10);
@@ -244,7 +231,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
     updateFilters({
       page:page,
       rows:rows,
-      pathPage:PathPf.DOCUMENTICONTABILI,
+      pathPage:PathPf.DOCUMENTICONTABILIAPPIO,
       body:bodyGetLista,
       textValue:textValue,
       valueAutocomplete:valueAutocomplete,
@@ -255,14 +242,10 @@ const DocumentiContabiliAppio:React.FC = () =>{
   const onButtonAnnulla = () => {
     const newBody = {
       contractIds:[],
-      membershipId: '',
-      recipientId: '',
-      abi: '',
       quarters:[],
       year:yearOnSelect[0]};
     getListaDocGrid(newBody);
     setBodyGetLista(newBody);
-    setFiltersDownload(newBody);
     setDataSelect([]);
     setValueAutocomplete([]);
     setValueQuarters([]);
@@ -309,47 +292,12 @@ const DocumentiContabiliAppio:React.FC = () =>{
     navigate(PathPf.DETTAGLIO_DOC_CONTABILE);
   };
    
-
-
   const statusAnnulla =
   bodyGetLista.contractIds.length !== 0 ||
-  bodyGetLista.membershipId !== '' ||
-  bodyGetLista.recipientId !== '' ||
-  bodyGetLista.abi !== '' ||
   bodyGetLista.quarters.length > 0
     ? 'show'
     : 'hidden';
 
-  const isAppIo = location.pathname === "/appio/documenticontabilipagopa";
-
-  const mockButtons : {
-    onButtonClick: () => Promise<void>;
-    variant: "outlined" | "text" | "contained";
-    label: string;
-    icon: {
-        name: string;
-    };
-    disabled: boolean;
-}[] = (isAppIo ? [{
-  onButtonClick: () => onDownloadButton(),
-  variant: "outlined",
-  label: "Download risultati",
-  icon:{name:"download" },
-  disabled:( gridData.length === 0 || getListaLoading )
-}] : [{
-  onButtonClick: () => onDownloadButton(),
-  variant: "outlined",
-  label: "Download risultati",
-  icon:{name:"download" },
-  disabled:( gridData.length === 0 || getListaLoading )
-},{
-  onButtonClick: () => onDownloadReportButton(),
-  variant: "outlined",
-  label: "Download Financial Report",
-  icon:{name:"download" },
-  disabled:( gridData.length === 0 || getListaLoading )
-}]);
-      
   return(
     <MainBoxStyled title={"Documenti contabili"}>
       <ResponsiveGridContainer >
@@ -367,8 +315,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
             setValueQuarters([]);
             setBodyGetLista((prev)=>({...prev,...{year:e,quarters:[]}}));
             getQuarters(bodyGetLista.year);
-          }}
-        ></MainFilter>
+          }}/>
         <MainFilter 
           filterName={"multi_checkbox"}
           inputLabel={"Trimestre"}
@@ -388,8 +335,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
             setValueQuarters(value);
           }}
-          iconMaterial={RenderIcon("date",true)}
-        ></MainFilter>
+          iconMaterial={RenderIcon("date",true)}/>
         <MainFilter 
           filterName={"multi_checkbox"}
           inputLabel={"Ente"}
@@ -403,17 +349,20 @@ const DocumentiContabiliAppio:React.FC = () =>{
           setValueAutocomplete={setValueAutocomplete}
           keyDescription={"name"}
           keyValue={"contractId"}
-          keyBody={"contractIds"}
-        ></MainFilter>           
+          keyBody={"contractIds"}/>         
       </ResponsiveGridContainer>
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onButtonAnnulla} 
-        statusAnnulla={statusAnnulla} 
-      ></FilterActionButtons>
+        statusAnnulla={statusAnnulla} />
       <ActionTopGrid
-        actionButtonRight={mockButtons}
-      />       
+        actionButtonRight={ [{
+          onButtonClick: () => onDownloadButton(),
+          variant: "outlined",
+          label: "Download risultati",
+          icon:{name:"download" },
+          disabled:( gridData.length === 0 || getListaLoading )
+        }] }/>       
       <GridCustom
         nameParameterApi='xxxx'
         elements={dataPaginated}
@@ -423,18 +372,17 @@ const DocumentiContabiliAppio:React.FC = () =>{
         total={count}
         page={page}
         rows={rowsPerPage}
-        headerNames={headersDocContabiliPagopa}
-        headerNamesCollapse={headersDocContabiliPagopaCollapse}
+        headerNames={headersDocContabiliAppio}
+        headerNamesCollapse={headersDocContabiliAppioCollapse}
         disabled={getListaLoading}
         widthCustomSize="800px"
         sentenseEmpty={"Nessun dato disponibile"}
         keyCollapse={"posizioni"}
-        titleRowCollapse={"Posizioni"}
-      /> 
+        titleRowCollapse={"Posizioni"}/> 
       <ModalLoading 
         open={showLoading} 
         setOpen={setShowLoading}
-        sentence={'Downloading...'} />
+        sentence={'Downloading...'}/>
       <ModalLoading 
         open={getListaLoading} 
         setOpen={setGetListaLoading}
