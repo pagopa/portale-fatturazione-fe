@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { saveAs } from "file-saver";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { manageError } from "../../api/api";
 import { AutocompleteMultiselect, OptionMultiselectCheckboxQarter, OptionMultiselectCheckboxPsp, } from "../../types/typeAngraficaPsp";
-import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import { PathPf } from "../../types/enum";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
@@ -13,6 +12,7 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { useNavigate } from "react-router-dom";
 import { downloadDocContabiliAppio, getListaDocumentiContabiliAppio, getQuartersDocContabiliAppio, getYearsDocContabiliAppio } from "../../api/apiPagoPa/documentiemessiAppio/api";
 import { headersDocContabiliAppio, headersDocContabiliAppioCollapse } from "../../assets/configurations/conf_GridDocContabiliAppio";
+import { getListaNameAppio } from "../../api/apiPagoPa/anagraficaAppio/api";
 
 export interface BodyDocContabiliAppiio {
   contractIds:string[],
@@ -30,6 +30,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
   const profilo =  mainState.profilo;
   const navigate = useNavigate();
 
+  const  firstYear = useRef("");
   const [gridData, setGridData] = useState<any[]>([]);
 
   const [bodyGetLista, setBodyGetLista] = useState<BodyDocContabiliAppiio>({
@@ -116,7 +117,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
 
   // servizio che popola la select con la checkbox
   const listaNamePspOnSelect = async () =>{
-    await getListaNamePsp(token, profilo.nonce, {name:textValue} )
+    await getListaNameAppio(token, profilo.nonce, {name:textValue} )
       .then((res)=>{
         setDataSelect(res.data);
       }).catch(((err)=>{
@@ -128,6 +129,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
     await getYearsDocContabiliAppio(token, profilo.nonce)
       .then((res)=>{
         setYearOnSelect(res.data);
+        firstYear.current = res.data[0];
         if(res.data.length > 0){
           if(isInitialRender.current && Object.keys(filters).length > 0){
             setBodyGetLista(filters.body);
@@ -215,7 +217,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
     updateFilters(
       {
         body:bodyGetLista,
-        pathPage:PathPf.DOCUMENTICONTABILI,
+        pathPage:PathPf.DOCUMENTICONTABILIAPPIO,
         textValue:textValue,
         valueAutocomplete:valueAutocomplete,
         valueQuarters:valueQuarters,

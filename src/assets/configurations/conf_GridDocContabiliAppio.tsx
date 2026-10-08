@@ -2,7 +2,7 @@ import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridC
 
 export const headersDocContabiliAppio : HeaderGridCustom[] = [
   { label: "", align: "center", width: "80px", keyValue: "collaps", typeColumn: "collaps" },
-  { label: "Nome PSP", align: "center", width: "200px", keyValue: "name", typeColumn: "ragionesociale", makeAction: true, applyCss: true },
+  { label: "Ente", align: "center", width: "200px", keyValue: "name", typeColumn: "ragionesociale", makeAction: true, applyCss: true },
   { label: "ID Contratto", align: "center", width: "200px", keyValue: "contractId", typeColumn: "string"},
   { label: "Numero", align: "center", width: "200px", keyValue: "numero", typeColumn: "string"},
   { label: "Trimestre", align: "center", width: "200px", keyValue: "yearQuarter", typeColumn: "string" },

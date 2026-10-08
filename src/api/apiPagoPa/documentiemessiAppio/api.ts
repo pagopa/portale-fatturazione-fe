@@ -75,3 +75,4 @@ export const getDetailsDocContabileAppio = async (token:string, nonce:string , b
   return response;
 };
 
+

@@ -19,8 +19,7 @@ export const getListaNameAppio = async (token:string, nonce:string , body:{name:
     body,
     { headers: {
       Authorization: 'Bearer ' + token
-    }
-    }
+    }}
   );
   return response;
 };

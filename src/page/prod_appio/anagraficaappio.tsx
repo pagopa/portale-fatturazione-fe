@@ -1,4 +1,4 @@
-import { useEffect,  useState } from "react";
+import { useEffect,  useRef,  useState } from "react";
 import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter } from "../../types/typeAngraficaPsp";
 import { manageError } from "../../api/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
@@ -33,7 +33,6 @@ const AnagraficaAppio:React.FC = () =>{
     quarters:[]
   });
    
-
   const [getListaLoading, setGetListaLoading] = useState(false);
   const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
   const [page, setPage] = useState(0);
@@ -43,7 +42,6 @@ const AnagraficaAppio:React.FC = () =>{
   const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
   const [showLoading,setShowLoading] = useState(false);
   const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
-  const [year,setYear] = useState<string>('');
   const [dataSelectQuarter, setDataSelectQuarter] = useState<OptionMultiselectCheckboxQarter[]>([]);
   const [valueQuarters, setValueQuarters] = useState<OptionMultiselectCheckboxQarter[]>([]);
 
@@ -66,20 +64,18 @@ const AnagraficaAppio:React.FC = () =>{
     }, 800);
     return () => clearTimeout(timer);
   },[textValue]);
-    
+
   const getYears = async () =>{
     setGetListaLoading(true);
 
     await getListaAnniAppio(token, profilo.nonce).then((res)=>{
       setYearOnSelect(res.data);
-      
+      setBodyGetLista((prev)=>({...prev,...{year:res.data[0]}}));
       if(res.data.length > 0){
         if(isInitialRender.current && Object.keys(filters).length > 0){
-          setYear(filters.year);
           getListaAnagraficaAppioGrid(filters.body,filters.page+1,filters.rows);
           getQuarters(filters.year);
         }else{
-          setYear(res.data[0]);
           getListaAnagraficaAppioGrid(bodyGetLista,page+1,rowsPerPage);
           getQuarters(res.data[0]);
         }
@@ -170,7 +166,6 @@ const AnagraficaAppio:React.FC = () =>{
         textValue,
         valueAutocomplete,
         valueQuarters,
-        year,
         page:0,
         rows:10
       });
@@ -179,7 +174,7 @@ const AnagraficaAppio:React.FC = () =>{
   const onButtonAnnulla = () => {
     const newBody = {
       contractIds:[],
-      year:year,
+      year:yearOnSelect[0],
       quarters:[]};
     getListaAnagraficaAppioGrid(newBody,1,10);
     setBodyGetLista(newBody);
@@ -211,7 +206,6 @@ const AnagraficaAppio:React.FC = () =>{
       textValue,
       valueAutocomplete,
       valueQuarters,
-      year,
       page:newPage,
       rows:rowsPerPage
     });
@@ -230,7 +224,6 @@ const AnagraficaAppio:React.FC = () =>{
       textValue,
       valueAutocomplete,
       valueQuarters,
-      year,
       page:realPage,
       rows:parseInt(event.target.value, 10)
     });
@@ -238,7 +231,8 @@ const AnagraficaAppio:React.FC = () =>{
 
   const statusAnnulla =
   bodyGetLista.contractIds.length !== 0 ||
-  bodyGetLista.quarters.length !== 0
+  bodyGetLista.quarters.length !== 0 ||
+  bodyGetLista.year !== yearOnSelect[0] 
     ? 'show'
     : 'hidden';
 
@@ -247,21 +241,19 @@ const AnagraficaAppio:React.FC = () =>{
     <MainBoxStyled title={"Anagrafica AppIO"}>
       <ResponsiveGridContainer>
         <MainFilter 
-          filterName={"select_value_nobody"}
+          filterName={"select_value_string"}
           inputLabel={"Anno"}
           clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setYear}
-          body={year}
-          keyDescription={"anno"}
-          keyValue={"anno"}
-          keyBody={"anno"}
+          setBody={setBodyGetLista}
+          body={bodyGetLista}
+          keyDescription={"year"}
+          keyValue={"year"}
+          keyBody={"year"}
           arrayValues={yearOnSelect}
-          defaultValue={year}
           extraCodeOnChange={(e)=>{
-            setYear(e);
             setValueQuarters([]);
-            setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
-            getQuarters(year);
+            setBodyGetLista((prev)=>({...prev,...{year:e,quarters:[]}}));
+            getQuarters(bodyGetLista.year);
           }}/>
         <MainFilter 
           filterName={"multi_checkbox"}
@@ -309,8 +301,7 @@ const AnagraficaAppio:React.FC = () =>{
           label: "Download risultati",
           icon:{name:"download"},
           disabled:( gridData.length === 0 || getListaLoading )
-        }]}
-      />      
+        }]}/>      
       <GridCustom
         nameParameterApi='contractId'
         elements={gridData}
