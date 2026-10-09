@@ -49,7 +49,7 @@ const MainModalComponent: React.FC<MainModalComponentProps> = ({
         {/*TODO portare entrame le text fild come unica prop */}
         <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
           <TextField
-            label={"N. Document di Storno"}
+            label={"N. Di documento di storno"}
             fullWidth={true}
             value={""}
             placeholder={"Inserisci il numero del documento di storno"}
