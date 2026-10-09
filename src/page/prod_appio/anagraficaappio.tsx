@@ -127,7 +127,7 @@ const AnagraficaAppio:React.FC = () =>{
   };
 
   const listaNamePspOnSelect = async () =>{
-    await getListaNameAppio(token, profilo.nonce, {name:textValue} ).then((res)=>{
+    await getListaNameAppio(token, profilo.nonce, {name:textValue,quarters:bodyGetLista.quarters} ).then((res)=>{
       setDataSelect(res.data);
     }).catch(((err)=>{
       manageError(err,dispatchMainState); 

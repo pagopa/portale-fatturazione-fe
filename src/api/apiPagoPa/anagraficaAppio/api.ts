@@ -14,7 +14,7 @@ export const getListaAnagraficaAppio = async (token:string, nonce:string , body:
   return response;
 };
 
-export const getListaNameAppio = async (token:string, nonce:string , body:{name:string}) => {
+export const getListaNameAppio = async (token:string, nonce:string , body:{name:string, quarters:string[]}) => {
   const response =  await axios.post(`${url}/api/appio/contracts/name?nonce=${nonce}`,
     body,
     { headers: {
