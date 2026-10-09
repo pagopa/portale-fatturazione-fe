@@ -777,7 +777,7 @@ const InvioFatture : React.FC = () => {
           setOpen={setOpenModalFatture}
           showCounter={true}
         />}
-        TextField={NotaTextField}
+        TextFieldComponent={NotaTextField}
       />
       <DialogInfo 
         open={showPopUpDateInvio}
