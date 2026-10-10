@@ -1,4 +1,4 @@
-import { useEffect,  useRef,  useState } from "react";
+import { useEffect, useState } from "react";
 import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter } from "../../types/typeAngraficaPsp";
 import { manageError } from "../../api/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
@@ -13,7 +13,7 @@ import { downloadAppio, getListaAnagraficaAppio, getListaAnniAppio, getListaName
 import { headerAnagraficaAppio } from "../../assets/configurations/conf_GridAnagraficaAppio";
 export interface RequestBodyListaAnagraficaAppio{
     contractIds: string[],
-    year?:string,
+    year:string,
     quarters:string[]
 }
 
@@ -59,7 +59,7 @@ const AnagraficaAppio:React.FC = () =>{
   useEffect(()=>{
     const timer = setTimeout(() => {
       if(textValue.length >= 3){ 
-        listaNamePspOnSelect();
+        listaNameAppioOnSelect();
       }
     }, 800);
     return () => clearTimeout(timer);
@@ -70,13 +70,14 @@ const AnagraficaAppio:React.FC = () =>{
 
     await getListaAnniAppio(token, profilo.nonce).then((res)=>{
       setYearOnSelect(res.data);
-      setBodyGetLista((prev)=>({...prev,...{year:res.data[0]}}));
+      setBodyGetLista((prev)=>({...prev,year:res.data[0]}));
       if(res.data.length > 0){
         if(isInitialRender.current && Object.keys(filters).length > 0){
           getListaAnagraficaAppioGrid(filters.body,filters.page+1,filters.rows);
           getQuarters(filters.year);
         }else{
-          getListaAnagraficaAppioGrid(bodyGetLista,page+1,rowsPerPage);
+          console.log({bodyGetLista,page,rowsPerPage});
+          getListaAnagraficaAppioGrid({...bodyGetLista,year:res.data[0]},page+1,rowsPerPage);
           getQuarters(res.data[0]);
         }
       }
@@ -111,12 +112,12 @@ const AnagraficaAppio:React.FC = () =>{
 
   const getListaAnagraficaAppioGrid = async(body:RequestBodyListaAnagraficaAppio, page:number,rowsPerPage:number) =>{
     setGetListaLoading(true);
-    const {year,...newBody} = body;
-    await getListaAnagraficaAppio(token, profilo.nonce, newBody,page,rowsPerPage).then(async(res)=>{
+    
+    await getListaAnagraficaAppio(token, profilo.nonce, body,page,rowsPerPage).then(async(res)=>{
       // ordino i dati in base all'header della grid
       const orderDataCustom = res.data.contratti;
-      await setGridData(orderDataCustom);
-      await setTotal(res.data.count);
+      setGridData(orderDataCustom);
+      setTotal(res.data.count);
       setGetListaLoading(false);
     }).catch(((err)=>{
       setGridData([]);
@@ -126,8 +127,8 @@ const AnagraficaAppio:React.FC = () =>{
     })); 
   };
 
-  const listaNamePspOnSelect = async () =>{
-    await getListaNameAppio(token, profilo.nonce, {name:textValue,quarters:bodyGetLista.quarters} ).then((res)=>{
+  const listaNameAppioOnSelect = async () =>{
+    await getListaNameAppio(token, profilo.nonce, {name:textValue,quarters:bodyGetLista.quarters,year:bodyGetLista.year} ).then((res)=>{
       setDataSelect(res.data);
     }).catch(((err)=>{
       manageError(err,dispatchMainState); 
@@ -136,8 +137,8 @@ const AnagraficaAppio:React.FC = () =>{
 
   const onDownloadButton = async() =>{
     setShowLoading(true);
-    const {year,...newBody} = bodyGetLista;
-    await downloadAppio(token,profilo.nonce, newBody).then(response => response.blob()).then((res) => {
+   
+    await downloadAppio(token,profilo.nonce, bodyGetLista).then(response => response.blob()).then((res) => {
       let fileName = '';
       const stringQuarterSelected = bodyGetLista.quarters.map(el => "Q" + el.slice(5)).join("_");
       const yearSelected = gridData[0].yearQuarter?.slice(0,4);
@@ -159,16 +160,15 @@ const AnagraficaAppio:React.FC = () =>{
     setPage(0);
     setRowsPerPage(10);
     getListaAnagraficaAppioGrid(bodyGetLista,1,10); 
-    updateFilters(
-      {
-        body:bodyGetLista,
-        pathPage:PathPf.ANAGRAFICAAPPIO,
-        textValue,
-        valueAutocomplete,
-        valueQuarters,
-        page:0,
-        rows:10
-      });
+    updateFilters({
+      body:bodyGetLista,
+      pathPage:PathPf.ANAGRAFICAAPPIO,
+      textValue,
+      valueAutocomplete,
+      valueQuarters,
+      page:0,
+      rows:10
+    });
   };
 
   const onButtonAnnulla = () => {

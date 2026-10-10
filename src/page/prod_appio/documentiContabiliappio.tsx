@@ -117,7 +117,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
 
   // servizio che popola la select con la checkbox
   const listaNamePspOnSelect = async () =>{
-    await getListaNameAppio(token, profilo.nonce, {name:textValue} )
+    await getListaNameAppio(token, profilo.nonce, {name:textValue,quarters:bodyGetLista.quarters,year:bodyGetLista.year} )
       .then((res)=>{
         setDataSelect(res.data);
       }).catch(((err)=>{
@@ -292,7 +292,8 @@ const DocumentiContabiliAppio:React.FC = () =>{
    
   const statusAnnulla =
   bodyGetLista.contractIds.length !== 0 ||
-  bodyGetLista.quarters.length > 0
+  bodyGetLista.quarters.length > 0 ||
+  bodyGetLista.year !== yearOnSelect[0]
     ? 'show'
     : 'hidden';
 
