@@ -55,7 +55,7 @@ const AsyncDocumenti : React.FC = () => {
   const [openModalRedirect, setOpenModalRedirect] = useState(false);
 
   const disableListaCompletaButton = bodyGetLista.init !== null || bodyGetLista.end !== null;
-   
+ 
   useEffect(()=>{
     if(mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted){
       setOpenModalRedirect(true);
@@ -224,6 +224,7 @@ const AsyncDocumenti : React.FC = () => {
         ></MainFilter>
       </ResponsiveGridContainer>
       <FilterActionButtons 
+        disabled={error}
         onButtonFiltra={handleFiltra} 
         onButtonAnnulla={handleAnnullaButton} 
         statusAnnulla={!disableListaCompletaButton? "hidden":"show"} 
