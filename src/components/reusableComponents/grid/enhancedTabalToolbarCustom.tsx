@@ -1,6 +1,6 @@
 import { Button, Toolbar, Tooltip, Typography } from "@mui/material";
 import { SetStateAction } from "react";
-import { SelectedJsonSap } from "../../../../page/prod_pn/invioFatture";
+import { SelectedJsonSap } from "../../../page/prod_pn/invioFatture";
 
 
 interface EnhancedTable {
@@ -18,7 +18,7 @@ interface EnhancedTable {
 const EnhancedTableCustom = (props: EnhancedTable) =>{
   const { setOpenModal, buttons,selected, setOpenModalAdd  } = props;
   
-  const bgColor = '#EDEFF1'
+  const bgColor = '#EDEFF1';
   
   return (
     <Toolbar

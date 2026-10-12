@@ -98,7 +98,6 @@ const DocumentiContabili:React.FC = () =>{
           const start = page * rows;
           const end = start + rows;
           setDataPaginated(data.slice(start, end));
-          console.log({page:filters.page, row:filters.rows,data:data.slice(filters.page, filters.rows)});
           isInitialRender.current = false;
         }else{
           setDataPaginated(data.slice(0, 10));
