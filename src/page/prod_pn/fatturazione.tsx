@@ -175,7 +175,7 @@ const Fatturazione : React.FC = () =>{
         getTipologieFatturazione(Number(year),Number(mesiCamelCase[0]?.mese),false);
         setValueMultiselectTipologie([]);
         if(callLista.current){
-          getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:mesiCamelCase[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null}});
+          getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:mesiCamelCase[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null,inviata:null}});
         } 
                
       }
@@ -423,7 +423,7 @@ const Fatturazione : React.FC = () =>{
     callAnnulla.current = true;
     callLista.current = true;
     resetFilters();
-    getAnni();
+    
     setBodyFatturazione({
       anno:arrayYears[0],
       mese:0,
@@ -445,6 +445,8 @@ const Fatturazione : React.FC = () =>{
     setDataSelect([]);
     setValueMultiselectTipologie([]);
     setValueAutocomplete([]);
+        
+    getAnni();
   };
     
   const upadateOnSelctedChange = (page,rowsPerPage) =>{
