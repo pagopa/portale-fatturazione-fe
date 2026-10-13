@@ -8,7 +8,7 @@ test.describe("Persistenza filtri e navigazione", () => {
     await page.goto("/ente/docemessi");
     await expect(
       page.getByRole("heading", { name: "Documenti contabili emessi" }),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 15_000 }); // il primo caricamento dipende dal backend dev e a volte supera 5s
 
     // Paginatore e griglia delle fatture emesse (la prima tabella; la seconda e' quella delle contestate)
     const paginator = page.locator(".MuiTablePagination-root").first();
