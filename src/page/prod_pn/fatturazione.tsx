@@ -22,16 +22,12 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { gestioneFattureInserisci } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { formatDate, formatDateString } from "../../reusableFunction/function";
-import { ElementToProcessComponent } from "./gestioneFatture";
-
-
-
+import { ElementToProcessComponent, NotaTextField } from "./gestioneFatture";
 
 const Fatturazione : React.FC = () =>{
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
   const setCountMessages = useGlobalStore(state => state.setCountMessages);
-
 
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
@@ -39,7 +35,7 @@ const Fatturazione : React.FC = () =>{
   const callAnnulla = useRef(false);
   const navigate = useNavigate();
   const profilePath = PathPf.FATTURAZIONE;
-
+  //const textNoteVerified = useRef(false);
 
   const [firstYearMonth, setFirstYearMonth] = useState<number[]>([]);
   const [gridData, setGridData] = useState<FattureObj[]>([]);
@@ -53,7 +49,6 @@ const Fatturazione : React.FC = () =>{
   const [tipologie, setTipologie] = useState<string[]>([]);
   const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
   const [disableButtonSap, setDisableButtonSap] = useState<boolean>(true);
-  const [disableButtonReset, setDisableButtonReset] = useState<boolean>(true);
   const [openSapModal, setOpenSapModal] = useState<{who:number,show:boolean}>({who:0,show:false});
   const [openConfermaModal,setOpenConfermaModal] = useState(false);
   const [openResetFilterModal,setOpenResetFilterModal] = useState(false);
@@ -64,6 +59,7 @@ const Fatturazione : React.FC = () =>{
   const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
   const [textAreaValue, setTextAreaValue] = useState<string>('');
+  //const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
 
 
   const [elementSelected, setElementSelected] = useState<FattureObj|null>(null);
@@ -107,8 +103,6 @@ const Fatturazione : React.FC = () =>{
     getContratti(); 
   },[]);
 
-   
-   
   useEffect(()=>{
     const timer = setTimeout(() => {
       if(textValue.length >= 3){
@@ -181,7 +175,7 @@ const Fatturazione : React.FC = () =>{
         getTipologieFatturazione(Number(year),Number(mesiCamelCase[0]?.mese),false);
         setValueMultiselectTipologie([]);
         if(callLista.current){
-          getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:mesiCamelCase[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null}});
+          getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:mesiCamelCase[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null,inviata:null}});
         } 
                
       }
@@ -255,6 +249,19 @@ const Fatturazione : React.FC = () =>{
       }else{
         data = res.data.map(el => el?.fattura).filter(obj => dataString.includes(obj.dataFattura));
       } 
+    
+      //  TODO: chiedere il valore al back 
+      if(body.cancellata === true){
+        data = data.map(el =>{
+          el.cancellata = true;
+          return el;
+        });
+      }else{
+        data = data.map(el =>{
+          el.cancellata = false;
+          return el;
+        });
+      }
     
       const customObjData : FattureObj[] = data;
     
@@ -387,21 +394,14 @@ const Fatturazione : React.FC = () =>{
   const getTipologieFattureInvioSap = async(anno,mese) =>{
     await fattureTipologiaSapPa(token, profilo.nonce, {anno,mese} ).then((res)=>{
       const anableInvioSap = res.data?.filter((el)=> el.azione === 0).length;
-      const anableReset = res.data?.filter((el)=> el.azione === 1).length;
       if(anableInvioSap > 0){
         setDisableButtonSap(false);
       }else{
         setDisableButtonSap(true);
       }
-      if(anableReset > 0){
-        setDisableButtonReset(false);
-      }else{
-        setDisableButtonReset(true);
-      }
       setResponseTipologieSap(res.data);
     }).catch((()=>{
       setDisableButtonSap(true);
-      setDisableButtonReset(true);
       setResponseTipologieSap([]);
     }));
   };
@@ -414,7 +414,6 @@ const Fatturazione : React.FC = () =>{
     setGridData([]);
     setFattureSelected([]);  
     setDisableButtonSap(true);
-    setDisableButtonReset(true); 
   };
 
   const onButtonFiltra = () => {
@@ -437,7 +436,7 @@ const Fatturazione : React.FC = () =>{
     callAnnulla.current = true;
     callLista.current = true;
     resetFilters();
-    getAnni();
+    
     setBodyFatturazione({
       anno:arrayYears[0],
       mese:0,
@@ -460,6 +459,7 @@ const Fatturazione : React.FC = () =>{
     setValueMultiselectTipologie([]);
     setValueAutocomplete([]);
         
+    getAnni();
   };
     
   const upadateOnSelctedChange = (page,rowsPerPage) =>{
@@ -498,10 +498,8 @@ const Fatturazione : React.FC = () =>{
           
     const start = newPage * rowsPerPage;
     const end = start + rowsPerPage;
-       
     const elementsToShow = gridData.slice(start, end);
     setShowedData(elementsToShow);
-  
     upadateOnSelctedChange(newPage,rowsPerPage);
   };
                           
@@ -509,16 +507,13 @@ const Fatturazione : React.FC = () =>{
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const newRows = parseInt(event.target.value, 10);
-  
     setRowsPerPage(newRows);
     setPage(0);
-  
     const elementsToShow = gridData.slice(0, newRows);
     setShowedData(elementsToShow);
     upadateOnSelctedChange(0,newRows);
   };
 
-    
   const keyValueObjModalInfo = [
     {
       key:"ragionesociale",
@@ -535,25 +530,20 @@ const Fatturazione : React.FC = () =>{
   ];
     
   const showPopUpAction = (obj, action) => { 
-    
-    obj.dataFattura = formatDateString(obj);
-    setElementSelected(obj);
+    const newObj = { ...obj };
+    newObj.dataFattura = formatDateString(newObj);
+    setElementSelected(newObj);
     setActionCalled(action);
     if(action === "posticipa"){
-      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Posticipare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Posticipare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
     }else if(action === "eliminazione"){
-      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={obj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
+      setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
     }
   };
 
-  
-
-
   const azioneApi = async () => {
     setShowLoadingGrid(true);
-
     try {
-   
       let actionToApi = "";
       if (actionCalled === "posticipa") {
         actionToApi = "posticipa";
@@ -563,8 +553,7 @@ const Fatturazione : React.FC = () =>{
 
       if (!elementSelected) return;
       const [month, year] = elementSelected.identificativo.split("/");
-      
-      
+    
       const bodyApi = {
         mese: parseInt(month, 10).toString(),
         anno: year.toString(),
@@ -574,7 +563,7 @@ const Fatturazione : React.FC = () =>{
         idEnte: elementSelected.istitutioID,
         nota: {
           data: formatDate(new Date()),
-          testo: textAreaValue
+          testo: textAreaValue//testo: textAreaValuePii
         }
       };
       
@@ -585,34 +574,66 @@ const Fatturazione : React.FC = () =>{
       );
 
       await getlistaFatturazione(bodyFatturazione);
-
       managePresaInCarico(
         "INSER_DELETE_WHITE_LIST",
         dispatchMainState
       );
-
     } catch{
       managePresaInCarico('GENERICO_KO',dispatchMainState);
     } finally {
       setShowLoadingGrid(false);
+      setTextAreaValue("");
+      //setTextAreaValuePii("");
+    }
+  };
+  /*
+  const verificaTestoNota = async (): Promise<void> => {
+    setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:true,sentenceLoader:"Verifica della NOTA in corso ..."}));
+    try {
+      const response = await gestioneFattureVerificaNotaPii(
+        token,
+        profilo.nonce,
+        { testo: textAreaValue }
+      );
+      const responseVerifica = response.data as {redactedString:string};
+      setTextAreaValuePii(responseVerifica?.redactedString ?? "");
+      textNoteVerified.current = true;
+    } catch (err: unknown) {
+      const error = err as ManageErrorResponse; 
+      if(error.response?.status === 404){
+        textNoteVerified.current = true;
+        setTextAreaValuePii(textAreaValue);
+      }else if(error.response?.status === 401 || error.message === "Network Error"){
+        manageError(error,dispatchMainState);
+        setTextAreaValuePii("");
+        setTextAreaValue("");
+        setOpenModalInfo((prev)=> ({...prev,open:false}));
+        textNoteVerified.current = false;
+      }else{
+        managePresaInCarico('GENERICO_KO',dispatchMainState);
+        setTextAreaValuePii("");
+        setTextAreaValue("");
+        setOpenModalInfo((prev)=> ({...prev,open:false}));
+        textNoteVerified.current = false;
+      }
+    } finally {
+      setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
     }
   };
 
-  const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
-
-  function isValidText(str) {
-    return regex.test(str.trim());
-  }
-
-  function isValidText2(str: string): boolean {
-    const trimmed = str.trim();
-    if (!trimmed) return false;
-
-    const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
-    return words.length >= 3;
-  }
-    
-
+  const setTextAreaValueClearPii = (e:string,onAction:string|undefined):void => {
+    if(textNoteVerified.current && !onAction){
+      textNoteVerified.current = false;
+      setTextAreaValuePii("");
+    }else if(onAction === "back"){
+      setTextAreaValuePii("");
+      setTextAreaValue("");
+      textNoteVerified.current = false;
+    }else{
+      setTextAreaValue(e);
+    }
+  };
+   */ 
   const statusAnnulla = (bodyFatturazione.idEnti.length !== 0 || 
      bodyFatturazione.tipologiaFattura.length !== 0 ||
      bodyFatturazione.cancellata === true ||
@@ -620,7 +641,6 @@ const Fatturazione : React.FC = () =>{
      bodyFatturazione.anno !== firstYearMonth[0] ||
      Number(bodyFatturazione.mese) !== firstYearMonth[1] ||
      bodyFatturazione.inviata !== 3)  ? "show" :"hidden";
-
 
   return (
     <MainBoxStyled title={"Documenti contabili emessi"}>
@@ -801,7 +821,6 @@ const Fatturazione : React.FC = () =>{
           icon:{name:"download"},
           disabled:(gridData.length === 0)
         }]}/>
-
       <GridCustom
         nameParameterApi='docEmessiSend'
         elements={showedData}
@@ -852,11 +871,12 @@ const Fatturazione : React.FC = () =>{
         setOpen={setOpenModalInfo}
         open={openModalInfo}
         width={800}
-        textAreaValue={textAreaValue}
-        setTextAreaValue={setTextAreaValue}
-        externalActionButton={azioneApi}
-        errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
-      />
+        textAreaValue={textAreaValue}//textAreaValue={textAreaValuePii ? textAreaValuePii : textAreaValue}
+        setTextAreaValue={setTextAreaValue}//setTextAreaValue={setTextAreaValueClearPii}
+        externalActionButton={azioneApi}//externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
+        errorTextInput={false}//errorTextInput={!isValidText2NotaPii(textAreaValue) || !isValidTextNotaPii(textAreaValue)} //verifiedText={textNoteVerified.current}
+        TextField={NotaTextField}
+        verifiedText={true}/>
     </MainBoxStyled>   
   );
 };

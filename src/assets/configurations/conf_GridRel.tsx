@@ -25,7 +25,7 @@ export const headerRelAdmin: HeaderGridCustom[] = [
   { label: "Anno", align: "center", width: "100px", keyValue: "anno", typeColumn:"string" },
   { label: "Mese", align: "center", width: "100px", keyValue: "mese" ,typeColumn:"mese-number"},
   { label: "Tot. Analogico", align: "center", width: "150px", keyValue: "totaleAnalogico",typeColumn:"euro" },
-  { label: "Tot. Digitale", align: "center", width: "150px", keyValue: "tottaleDigitale",typeColumn:"euro"},
+  { label: "Tot. Digitale", align: "center", width: "150px", keyValue: "totaleDigitale",typeColumn:"euro"},
   { label: "Tot. Not. Analogico", align: "center", width: "150px", keyValue: "totaleNotificheAnalogiche",typeColumn:"number" },
   { label: "Tot. Not. Digitali", align: "center", width: "150px", keyValue: "totaleNotificheDigitali",typeColumn:"number" },
   { label: "Totale", align: "center", width: "150px", keyValue: "totale",typeColumn:"euro" },
