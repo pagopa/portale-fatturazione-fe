@@ -133,16 +133,24 @@ const GridCell = ({
     </TableCell>;
   case "ragionesociale": {
     const isLong = value?.toString().length > 40;
+    let makeActionCustom = false;
+   
+    if(headerNames[i]?.makeActionFun && headerNames[i]?.makeActionFun(element)){
+      makeActionCustom = true;
+      
+    }else{
+      makeActionCustom = headerNames[i]?.makeAction||false;
+    }
     return (
       <Tooltip key={`${i}-${value}`} title={isLong ? value : null}>
         <TableCell
           onClick={() => {
-            if (apiGet && headerNames[i]?.makeAction) apiGet(element);
+            if (apiGet && makeActionCustom) apiGet(element);
           }}
           width={headerNames[i]?.width}
           align={i === 0 ? "left" : "center"}
-        >
-          <Typography sx={headerNames[i]?.applyCss ? getCssFirstColumRagioneSociale(headerNames[i]?.makeAction||false) : null} variant={rowObject.variant||"body1"}>
+        > {/*TODO: togliere il porkaround cancellata */}
+          <Typography sx={headerNames[i]?.applyCss ? getCssFirstColumRagioneSociale(makeActionCustom ||false) : null} variant={rowObject.variant||"body1"}>
             {isLong ? value?.toString().slice(0, 37) + "..." : value}
           </Typography>
         </TableCell>
@@ -338,19 +346,26 @@ const GridCell = ({
         </IconButton>
       </TableCell>
     );
-  case "arrow":
+  case "arrow":{
+
+    let makeActionCustom = true;
+    if(headerNames[i]?.makeActionFun && !headerNames[i]?.makeActionFun(element)){
+      makeActionCustom = false;
+    }
     return (
       <TableCell width={headerNames[i]?.width} key={`${i}-arrow`} align="center">
         <IconButton
+          disabled={!makeActionCustom}
           size="medium"
           onClick={() => {
-            if (apiGet) apiGet(element);
+            if (apiGet && makeActionCustom ) apiGet(element);
           }}
         >
-          <ArrowForwardIcon sx={{ color: "#1976D2", cursor: "pointer" }} />
+          <ArrowForwardIcon sx={(headerNames[i]?.makeActionFun && !headerNames[i]?.makeActionFun(element)) ? null :{ color: "#1976D2", cursor: "pointer" }} />
         </IconButton>
       </TableCell>
     );
+  }
   default:
     return null;
   }
