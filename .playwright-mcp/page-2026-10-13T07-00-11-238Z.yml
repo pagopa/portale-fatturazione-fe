@@ -1,0 +1,207 @@
+- generic [ref=f2e3]:
+  - generic [ref=f2e4]:
+    - generic [ref=f2e5]:
+      - generic [ref=f2e8]:
+        - 'link "Link: vai al sito di PagoPA S.p.A." [ref=f2e1392] [cursor=pointer]':
+          - /url: https://www.pagopa.it/
+          - text: PagoPA S.p.A.
+        - generic [ref=f2e10]:
+          - button [ref=f2e1393] [cursor=pointer]
+          - button [ref=f2e1394] [cursor=pointer]
+          - button "Esci" [ref=f2e1395] [cursor=pointer]
+      - generic [ref=f2e24]:
+        - text: "Gentile Aderente, si informa che, in deroga al calendario standard, le attività di fatturazione relative a SEND subiranno le seguenti variazioni nelle modalità operative:"
+        - list [ref=f2e25]:
+          - listitem [ref=f2e26]: la fattura di saldo relativa al mese di giugno 2026 sarà emessa con data 31/08/2026;
+          - listitem [ref=f2e27]: la fattura di anticipo relativa alla commessa del mese di settembre 2026 sarà emessa con data 31/08/2026.
+        - text: PagoPA S.p.A.
+    - generic [ref=f2e28]:
+      - generic [ref=f2e33]:
+        - paragraph [ref=f2e36]: SEND - Servizio Notifiche Digitali
+        - heading "Comune di San Mauro Torinese" [level=6] [ref=f2e1396]
+      - button [ref=f2e48] [cursor=pointer]
+    - generic [ref=f2e51]:
+      - generic [ref=f2e53]:
+        - navigation [ref=f2e54]:
+          - button "Dati di fatturazione" [ref=f2e1397] [cursor=pointer]
+          - button "Modulo commessa" [ref=f2e1398] [cursor=pointer]
+          - button "Notifiche" [ref=f2e1399] [cursor=pointer]
+          - button "Documenti contabili" [ref=f2e1400] [cursor=pointer]:
+            - button [ref=f2e80]
+          - generic [ref=f2e85]:
+            - button "Documenti contabili sospesi" [ref=f2e1401] [cursor=pointer]
+            - button "Documenti contabili emessi" [ref=f2e1402] [cursor=pointer]
+          - button "Download documenti" [ref=f2e1403] [cursor=pointer]
+        - separator [ref=f2e106]
+      - generic [ref=f2e108]:
+        - heading "Documenti contabili emessi" [level=4] [ref=f2e1404]
+        - generic [ref=f2e114]:
+          - generic [ref=f2e116]:
+            - generic [ref=f2e117]: Anno
+            - generic [ref=f2e118]:
+              - combobox [ref=f2e119] [cursor=pointer]: Tutti
+              - textbox: "9999"
+              - group:
+                - generic: Anno
+          - generic [ref=f2e121]:
+            - generic [ref=f2e122]: Mese
+            - generic [ref=f2e123]:
+              - combobox [disabled] [ref=f2e124]: Tutti
+              - textbox [disabled]: "9999"
+              - group:
+                - generic: Mese
+          - generic [ref=f2e127]:
+            - generic: Tipologia Fattura
+            - generic [ref=f2e128]:
+              - combobox "Tipologia Fattura" [ref=f2e1405]
+              - button "Open" [ref=f2e1406] [cursor=pointer]
+              - group:
+                - generic: Tipologia Fattura
+          - generic [ref=f2e136]:
+            - generic: Data Fattura
+            - generic [ref=f2e137]:
+              - combobox "Data Fattura" [disabled] [ref=f2e1407]
+              - generic [ref=f2e139]:
+                - button "Open" [disabled]
+              - group:
+                - generic: Data Fattura
+        - button "Filtra" [ref=f2e1408] [cursor=pointer]
+        - generic [ref=f2e146]:
+          - paragraph [ref=f2e147]: Totale fatturato
+          - heading "25.374,90 €" [level=6] [ref=f2e1409]
+        - button [ref=f2e1410] [cursor=pointer]
+        - generic [ref=f2e158]:
+          - table [ref=f2e161]:
+            - rowgroup [ref=f2e162]:
+              - row [ref=f2e1411]:
+                - columnheader [ref=f2e164]
+                - columnheader [ref=f2e1412]:
+                  - text: Data Fattura
+                  - generic "Sort" [ref=f2e1413]:
+                    - button [ref=f2e167] [cursor=pointer]
+                - columnheader "Stato" [ref=f2e1414]
+                - columnheader "T. Fattura" [ref=f2e1415]
+                - columnheader [ref=f2e1416]:
+                  - text: Ident.
+                  - generic "Sort" [ref=f2e1417]:
+                    - button [ref=f2e174] [cursor=pointer]
+                - columnheader "Tipo Contratto" [ref=f2e1418]
+                - columnheader [ref=f2e1419]:
+                  - text: Tot.
+                  - generic "Sort" [ref=f2e1420]:
+                    - button [ref=f2e180] [cursor=pointer]
+                - columnheader [ref=f2e1421]:
+                  - text: N. Fattura
+                  - generic "Sort" [ref=f2e1422]:
+                    - button [ref=f2e185] [cursor=pointer]
+                - columnheader [ref=f2e1423]:
+                  - text: Tipo Documento
+                  - generic "Sort" [ref=f2e1424]:
+                    - button [ref=f2e190] [cursor=pointer]
+                - columnheader "Divisa" [ref=f2e1425]
+                - columnheader "M. Pagamento" [ref=f2e1426]
+                - columnheader "Split" [ref=f2e1427]
+                - columnheader [ref=f2e196]
+            - rowgroup [ref=f2e197]:
+              - row [ref=f2e2208]:
+                - cell [ref=f2e2209]:
+                  - button "expand row" [ref=f2e2210] [cursor=pointer]
+                - cell "20/11/2024" [ref=f2e2213] [cursor=pointer]
+                - cell "Emessa" [ref=f2e2214]
+                - cell "ANTICIPO" [ref=f2e2215]
+                - cell [ref=f2e2216]:
+                  - paragraph [ref=f2e2217]: 12/2024
+                - cell "PAC - PAL con requisiti" [ref=f2e2218]:
+                  - paragraph [ref=f2e2219]: PAC - PAL ...
+                - cell [ref=f2e2220]:
+                  - paragraph [ref=f2e2221]: 2.673,00 €
+                - cell [ref=f2e2222]:
+                  - paragraph [ref=f2e2223]: "7782"
+                - cell [ref=f2e2224]:
+                  - paragraph [ref=f2e2225]: TD01
+                - cell [ref=f2e2226]:
+                  - paragraph [ref=f2e2227]: EUR
+                - cell [ref=f2e2228]:
+                  - paragraph [ref=f2e2229]: B30
+                - cell [ref=f2e2230]:
+                  - paragraph [ref=f2e2231]: Si
+                - cell [ref=f2e2232]:
+                  - button [ref=f2e2233] [cursor=pointer]
+              - row [ref=f2e2236]:
+                - cell [ref=f2e2237]
+          - generic [ref=f2e500]:
+            - generic [ref=f2e501]:
+              - 'combobox "Rows per page: 25" [ref=f2e2178] [cursor=pointer]': "25"
+              - textbox: "25"
+            - paragraph [ref=f2e503]: 26–26 of 26
+            - generic [ref=f2e504]:
+              - button "Go to previous page" [ref=f2e2238] [cursor=pointer]
+              - button "Go to next page" [disabled]
+        - heading "Fatture Contestate" [level=5] [ref=f2e2180]
+        - generic [ref=f2e515]:
+          - button "Download risultati contestate" [disabled]
+        - generic [ref=f2e516]:
+          - table [ref=f2e519]:
+            - rowgroup [ref=f2e520]:
+              - row [ref=f2e2181]:
+                - columnheader [ref=f2e2182]:
+                  - text: Data Fattura
+                  - generic "Sort" [ref=f2e2183]:
+                    - button [disabled]
+                - columnheader "Stato" [ref=f2e2184]
+                - columnheader "T. Fattura" [ref=f2e2185]
+                - columnheader [ref=f2e2186]:
+                  - text: Ident.
+                  - generic "Sort" [ref=f2e2187]:
+                    - button [disabled]
+                - columnheader "Tipo Contratto" [ref=f2e2188]
+                - columnheader [ref=f2e2189]:
+                  - text: Tot.
+                  - generic "Sort" [ref=f2e2190]:
+                    - button [disabled]
+                - columnheader [ref=f2e2191]:
+                  - text: N. Fattura
+                  - generic "Sort" [ref=f2e2192]:
+                    - button [disabled]
+                - columnheader [ref=f2e2193]:
+                  - text: Tipo Documento
+                  - generic "Sort" [ref=f2e2194]:
+                    - button [disabled]
+                - columnheader "Divisa" [ref=f2e2195]
+                - columnheader "M. Pagamento" [ref=f2e2196]
+                - columnheader "Split" [ref=f2e2197]
+            - rowgroup [ref=f2e538]:
+              - row [ref=f2e2198]:
+                - cell [ref=f2e2199]:
+                  - paragraph [ref=f2e541]: Non sono presenti fatture contestate
+          - generic [ref=f2e544]:
+            - generic [ref=f2e545]:
+              - 'combobox "Rows per page: 10" [ref=f2e2200] [cursor=pointer]': "10"
+              - textbox: "10"
+            - paragraph [ref=f2e547]: 0–0 of 0
+            - generic [ref=f2e548]:
+              - button "Go to previous page" [disabled]
+              - button "Go to next page" [disabled]
+  - contentinfo [ref=f2e550]:
+    - generic [ref=f2e553]:
+      - 'link "Link: vai al sito di PagoPA S.p.A." [ref=f2e2201] [cursor=pointer]':
+        - /url: https://www.pagopa.it/
+        - img "PagoPA" [ref=f2e2202]
+      - generic [ref=f2e559]:
+        - 'link "Vai al link: Informativa Privacy" [ref=f2e2203] [cursor=pointer]':
+          - /url: https://www.pagopa.it/it/informativa-privacy-area-riservata/
+          - text: Informativa Privacy
+        - 'link "Vai al link: Diritto alla protezione dei dati personali" [ref=f2e2204] [cursor=pointer]':
+          - /url: https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8
+          - text: Diritto alla protezione dei dati personali
+        - 'link "Vai al link: Termini e condizioni" [ref=f2e2205] [cursor=pointer]':
+          - /url: https://www.pagopa.it/it/termini-condizioni-area-riservata/
+          - text: Termini e condizioni
+        - 'link "Vai al link: Accessibilità" [ref=f2e2206] [cursor=pointer]':
+          - /url: https://form.agid.gov.it/view/7aa810f2-bc15-40d1-b996-6eaa658439c3
+          - text: Accessibilità
+        - 'button "Seleziona lingua: Italiano" [ref=f2e2207] [cursor=pointer]':
+          - generic [ref=f2e566]: Italiano
+    - paragraph [ref=f2e571]:
+      - strong [ref=f2e572]: PagoPA S.p.A.
+      - text: — società per azioni con socio unico - capitale sociale di euro 1,000,000 interamente versato - sede legale in Roma, Piazza Colonna 370,CAP 00187 - n. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009 - V.0.0.9.1

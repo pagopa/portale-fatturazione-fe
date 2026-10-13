@@ -1,0 +1,444 @@
+- generic [ref=f2e3]:
+  - generic [ref=f2e4]:
+    - generic [ref=f2e5]:
+      - generic [ref=f2e8]:
+        - 'link "Link: vai al sito di PagoPA S.p.A." [ref=f2e866] [cursor=pointer]':
+          - /url: https://www.pagopa.it/
+          - text: PagoPA S.p.A.
+        - generic [ref=f2e10]:
+          - button [ref=f2e867] [cursor=pointer]
+          - button [ref=f2e868] [cursor=pointer]
+          - button "Esci" [ref=f2e869] [cursor=pointer]
+      - generic [ref=f2e24]:
+        - text: "Gentile Aderente, si informa che, in deroga al calendario standard, le attività di fatturazione relative a SEND subiranno le seguenti variazioni nelle modalità operative:"
+        - list [ref=f2e25]:
+          - listitem [ref=f2e26]: la fattura di saldo relativa al mese di giugno 2026 sarà emessa con data 31/08/2026;
+          - listitem [ref=f2e27]: la fattura di anticipo relativa alla commessa del mese di settembre 2026 sarà emessa con data 31/08/2026.
+        - text: PagoPA S.p.A.
+    - generic [ref=f2e28]:
+      - generic [ref=f2e33]:
+        - paragraph [ref=f2e36]: SEND - Servizio Notifiche Digitali
+        - heading "Comune di San Mauro Torinese" [level=6] [ref=f2e870]
+      - button [ref=f2e48] [cursor=pointer]
+    - generic [ref=f2e51]:
+      - generic [ref=f2e53]:
+        - navigation [ref=f2e54]:
+          - button "Dati di fatturazione" [ref=f2e871] [cursor=pointer]
+          - button "Modulo commessa" [ref=f2e872] [cursor=pointer]
+          - button "Notifiche" [ref=f2e873] [cursor=pointer]
+          - button "Documenti contabili" [ref=f2e874] [cursor=pointer]:
+            - button [ref=f2e80]
+          - generic [ref=f2e85]:
+            - button "Documenti contabili sospesi" [ref=f2e875] [cursor=pointer]
+            - button "Documenti contabili emessi" [ref=f2e876] [cursor=pointer]
+          - button "Download documenti" [ref=f2e877] [cursor=pointer]
+        - separator [ref=f2e106]
+      - generic [ref=f2e108]:
+        - heading "Documenti contabili emessi" [level=4] [ref=f2e878]
+        - generic [ref=f2e114]:
+          - generic [ref=f2e116]:
+            - generic [ref=f2e117]: Anno
+            - generic [ref=f2e118]:
+              - combobox [ref=f2e119] [cursor=pointer]: "2025"
+              - textbox: "2025"
+              - group:
+                - generic: Anno
+          - generic [ref=f2e121]:
+            - generic [ref=f2e122]: Mese
+            - generic [ref=f2e123]:
+              - combobox [ref=f2e124] [cursor=pointer]: Tutti
+              - textbox: "9999"
+              - group:
+                - generic: Mese
+          - generic [ref=f2e127]:
+            - generic [ref=f2e934]: Tipologia Fattura
+            - generic [ref=f2e128]:
+              - button "ANTICIPO" [ref=f2e958]:
+                - img [ref=f2e962] [cursor=pointer]
+              - combobox "Tipologia Fattura" [ref=f2e879]
+              - button "Open" [ref=f2e972] [cursor=pointer]
+              - group:
+                - generic: Tipologia Fattura
+          - generic [ref=f2e136]:
+            - generic: Data Fattura
+            - generic [ref=f2e137]:
+              - combobox "Data Fattura" [ref=f2e881]
+              - button "Open" [ref=f2e969] [cursor=pointer]
+              - group:
+                - generic: Data Fattura
+        - generic [ref=f2e144]:
+          - button "Filtra" [active] [ref=f2e882] [cursor=pointer]
+          - button "Annulla filtri" [ref=f2e883] [cursor=pointer]
+        - generic [ref=f2e146]:
+          - paragraph [ref=f2e147]: Totale fatturato
+          - heading "16.144,75 €" [level=6] [ref=f2e973]
+        - button [ref=f2e974] [cursor=pointer]
+        - generic [ref=f2e154]:
+          - table [ref=f2e157]:
+            - rowgroup [ref=f2e158]:
+              - row [ref=f2e885]:
+                - columnheader [ref=f2e160]
+                - columnheader [ref=f2e886]:
+                  - text: Data Fattura
+                  - generic "Sort" [ref=f2e887]:
+                    - button [ref=f2e293] [cursor=pointer]
+                - columnheader "Stato" [ref=f2e888]
+                - columnheader "T. Fattura" [ref=f2e889]
+                - columnheader [ref=f2e890]:
+                  - text: Ident.
+                  - generic "Sort" [ref=f2e891]:
+                    - button [ref=f2e300] [cursor=pointer]
+                - columnheader "Tipo Contratto" [ref=f2e892]
+                - columnheader [ref=f2e893]:
+                  - text: Tot.
+                  - generic "Sort" [ref=f2e894]:
+                    - button [ref=f2e306] [cursor=pointer]
+                - columnheader [ref=f2e895]:
+                  - text: N. Fattura
+                  - generic "Sort" [ref=f2e896]:
+                    - button [ref=f2e311] [cursor=pointer]
+                - columnheader [ref=f2e897]:
+                  - text: Tipo Documento
+                  - generic "Sort" [ref=f2e898]:
+                    - button [ref=f2e316] [cursor=pointer]
+                - columnheader "Divisa" [ref=f2e899]
+                - columnheader "M. Pagamento" [ref=f2e900]
+                - columnheader "Split" [ref=f2e901]
+                - columnheader [ref=f2e177]
+            - rowgroup [ref=f2e178]:
+              - row [ref=f2e975]:
+                - cell [ref=f2e976]:
+                  - button "expand row" [ref=f2e977] [cursor=pointer]
+                - cell "20/12/2024" [ref=f2e980] [cursor=pointer]
+                - cell "Emessa" [ref=f2e981]
+                - cell "ANTICIPO" [ref=f2e982]
+                - cell [ref=f2e983]:
+                  - paragraph [ref=f2e984]: 01/2025
+                - cell "PAC - PAL con requisiti" [ref=f2e985]:
+                  - paragraph [ref=f2e986]: PAC - PAL ...
+                - cell [ref=f2e987]:
+                  - paragraph [ref=f2e988]: 2.122,00 €
+                - cell [ref=f2e989]:
+                  - paragraph [ref=f2e990]: "906"
+                - cell [ref=f2e991]:
+                  - paragraph [ref=f2e992]: TD01
+                - cell [ref=f2e993]:
+                  - paragraph [ref=f2e994]: EUR
+                - cell [ref=f2e995]:
+                  - paragraph [ref=f2e996]: B30
+                - cell [ref=f2e997]:
+                  - paragraph [ref=f2e998]: Si
+                - cell [ref=f2e999]:
+                  - button [ref=f2e1000] [cursor=pointer]
+              - row [ref=f2e1003]:
+                - cell [ref=f2e1004]
+              - row [ref=f2e1005]:
+                - cell [ref=f2e1006]:
+                  - button "expand row" [ref=f2e1007] [cursor=pointer]
+                - cell "20/01/2025" [ref=f2e1010] [cursor=pointer]
+                - cell "Emessa" [ref=f2e1011]
+                - cell "ANTICIPO" [ref=f2e1012]
+                - cell [ref=f2e1013]:
+                  - paragraph [ref=f2e1014]: 02/2025
+                - cell "PAC - PAL con requisiti" [ref=f2e1015]:
+                  - paragraph [ref=f2e1016]: PAC - PAL ...
+                - cell [ref=f2e1017]:
+                  - paragraph [ref=f2e1018]: 1.616,50 €
+                - cell [ref=f2e1019]:
+                  - paragraph [ref=f2e1020]: "1962"
+                - cell [ref=f2e1021]:
+                  - paragraph [ref=f2e1022]: TD01
+                - cell [ref=f2e1023]:
+                  - paragraph [ref=f2e1024]: EUR
+                - cell [ref=f2e1025]:
+                  - paragraph [ref=f2e1026]: B30
+                - cell [ref=f2e1027]:
+                  - paragraph [ref=f2e1028]: Si
+                - cell [ref=f2e1029]:
+                  - button [ref=f2e1030] [cursor=pointer]
+              - row [ref=f2e1033]:
+                - cell [ref=f2e1034]
+              - row [ref=f2e1035]:
+                - cell [ref=f2e1036]:
+                  - button "expand row" [ref=f2e1037] [cursor=pointer]
+                - cell "20/02/2025" [ref=f2e1040] [cursor=pointer]
+                - cell "Emessa" [ref=f2e1041]
+                - cell "ANTICIPO" [ref=f2e1042]
+                - cell [ref=f2e1043]:
+                  - paragraph [ref=f2e1044]: 03/2025
+                - cell "PAC - PAL con requisiti" [ref=f2e1045]:
+                  - paragraph [ref=f2e1046]: PAC - PAL ...
+                - cell [ref=f2e1047]:
+                  - paragraph [ref=f2e1048]: 1.338,75 €
+                - cell [ref=f2e1049]:
+                  - paragraph [ref=f2e1050]: "3078"
+                - cell [ref=f2e1051]:
+                  - paragraph [ref=f2e1052]: TD01
+                - cell [ref=f2e1053]:
+                  - paragraph [ref=f2e1054]: EUR
+                - cell [ref=f2e1055]:
+                  - paragraph [ref=f2e1056]: B30
+                - cell [ref=f2e1057]:
+                  - paragraph [ref=f2e1058]: Si
+                - cell [ref=f2e1059]:
+                  - button [ref=f2e1060] [cursor=pointer]
+              - row [ref=f2e1063]:
+                - cell [ref=f2e1064]
+              - row [ref=f2e1065]:
+                - cell [ref=f2e1066]:
+                  - button "expand row" [ref=f2e1067] [cursor=pointer]
+                - cell "20/03/2025" [ref=f2e1070] [cursor=pointer]
+                - cell "Emessa" [ref=f2e1071]
+                - cell "ANTICIPO" [ref=f2e1072]
+                - cell [ref=f2e1073]:
+                  - paragraph [ref=f2e1074]: 04/2025
+                - cell "PAC - PAL con requisiti" [ref=f2e1075]:
+                  - paragraph [ref=f2e1076]: PAC - PAL ...
+                - cell [ref=f2e1077]:
+                  - paragraph [ref=f2e1078]: 1.075,00 €
+                - cell [ref=f2e1079]:
+                  - paragraph [ref=f2e1080]: "5629"
+                - cell [ref=f2e1081]:
+                  - paragraph [ref=f2e1082]: TD01
+                - cell [ref=f2e1083]:
+                  - paragraph [ref=f2e1084]: EUR
+                - cell [ref=f2e1085]:
+                  - paragraph [ref=f2e1086]: B30
+                - cell [ref=f2e1087]:
+                  - paragraph [ref=f2e1088]: Si
+                - cell [ref=f2e1089]:
+                  - button [ref=f2e1090] [cursor=pointer]
+              - row [ref=f2e1093]:
+                - cell [ref=f2e1094]
+              - row [ref=f2e1095]:
+                - cell [ref=f2e1096]:
+                  - button "expand row" [ref=f2e1097] [cursor=pointer]
+                - cell "20/04/2025" [ref=f2e1100] [cursor=pointer]
+                - cell "Emessa" [ref=f2e1101]
+                - cell "ANTICIPO" [ref=f2e1102]
+                - cell [ref=f2e1103]:
+                  - paragraph [ref=f2e1104]: 05/2025
+                - cell "PAC - PAL con requisiti" [ref=f2e1105]:
+                  - paragraph [ref=f2e1106]: PAC - PAL ...
+                - cell [ref=f2e1107]:
+                  - paragraph [ref=f2e1108]: 904,25 €
+                - cell [ref=f2e1109]:
+                  - paragraph [ref=f2e1110]: "8581"
+                - cell [ref=f2e1111]:
+                  - paragraph [ref=f2e1112]: TD01
+                - cell [ref=f2e1113]:
+                  - paragraph [ref=f2e1114]: EUR
+                - cell [ref=f2e1115]:
+                  - paragraph [ref=f2e1116]: B30
+                - cell [ref=f2e1117]:
+                  - paragraph [ref=f2e1118]: Si
+                - cell [ref=f2e1119]:
+                  - button [ref=f2e1120] [cursor=pointer]
+              - row [ref=f2e1123]:
+                - cell [ref=f2e1124]
+              - row [ref=f2e1125]:
+                - cell [ref=f2e1126]:
+                  - button "expand row" [ref=f2e1127] [cursor=pointer]
+                - cell "20/05/2025" [ref=f2e1130] [cursor=pointer]
+                - cell "Emessa" [ref=f2e1131]
+                - cell "ANTICIPO" [ref=f2e1132]
+                - cell [ref=f2e1133]:
+                  - paragraph [ref=f2e1134]: 06/2025
+                - cell "PAC - PAL con requisiti" [ref=f2e1135]:
+                  - paragraph [ref=f2e1136]: PAC - PAL ...
+                - cell [ref=f2e1137]:
+                  - paragraph [ref=f2e1138]: 1.139,00 €
+                - cell [ref=f2e1139]:
+                  - paragraph [ref=f2e1140]: "11741"
+                - cell [ref=f2e1141]:
+                  - paragraph [ref=f2e1142]: TD01
+                - cell [ref=f2e1143]:
+                  - paragraph [ref=f2e1144]: EUR
+                - cell [ref=f2e1145]:
+                  - paragraph [ref=f2e1146]: B30
+                - cell [ref=f2e1147]:
+                  - paragraph [ref=f2e1148]: Si
+                - cell [ref=f2e1149]:
+                  - button [ref=f2e1150] [cursor=pointer]
+              - row [ref=f2e1153]:
+                - cell [ref=f2e1154]
+              - row [ref=f2e1155]:
+                - cell [ref=f2e1156]:
+                  - button "expand row" [ref=f2e1157] [cursor=pointer]
+                - cell "20/06/2025" [ref=f2e1160] [cursor=pointer]
+                - cell "Emessa" [ref=f2e1161]
+                - cell "ANTICIPO" [ref=f2e1162]
+                - cell [ref=f2e1163]:
+                  - paragraph [ref=f2e1164]: 07/2025
+                - cell "PAC - PAL con requisiti" [ref=f2e1165]:
+                  - paragraph [ref=f2e1166]: PAC - PAL ...
+                - cell [ref=f2e1167]:
+                  - paragraph [ref=f2e1168]: 1.943,25 €
+                - cell [ref=f2e1169]:
+                  - paragraph [ref=f2e1170]: "16705"
+                - cell [ref=f2e1171]:
+                  - paragraph [ref=f2e1172]: TD01
+                - cell [ref=f2e1173]:
+                  - paragraph [ref=f2e1174]: EUR
+                - cell [ref=f2e1175]:
+                  - paragraph [ref=f2e1176]: B30
+                - cell [ref=f2e1177]:
+                  - paragraph [ref=f2e1178]: Si
+                - cell [ref=f2e1179]:
+                  - button [ref=f2e1180] [cursor=pointer]
+              - row [ref=f2e1183]:
+                - cell [ref=f2e1184]
+              - row [ref=f2e1185]:
+                - cell [ref=f2e1186]:
+                  - button "expand row" [ref=f2e1187] [cursor=pointer]
+                - cell "20/07/2025" [ref=f2e1190] [cursor=pointer]
+                - cell "Emessa" [ref=f2e1191]
+                - cell "ANTICIPO" [ref=f2e1192]
+                - cell [ref=f2e1193]:
+                  - paragraph [ref=f2e1194]: 08/2025
+                - cell "PAC - PAL con requisiti" [ref=f2e1195]:
+                  - paragraph [ref=f2e1196]: PAC - PAL ...
+                - cell [ref=f2e1197]:
+                  - paragraph [ref=f2e1198]: 1.898,50 €
+                - cell [ref=f2e1199]:
+                  - paragraph [ref=f2e1200]: "19849"
+                - cell [ref=f2e1201]:
+                  - paragraph [ref=f2e1202]: TD01
+                - cell [ref=f2e1203]:
+                  - paragraph [ref=f2e1204]: EUR
+                - cell [ref=f2e1205]:
+                  - paragraph [ref=f2e1206]: B30
+                - cell [ref=f2e1207]:
+                  - paragraph [ref=f2e1208]: Si
+                - cell [ref=f2e1209]:
+                  - button [ref=f2e1210] [cursor=pointer]
+              - row [ref=f2e1213]:
+                - cell [ref=f2e1214]
+              - row [ref=f2e1215]:
+                - cell [ref=f2e1216]:
+                  - button "expand row" [ref=f2e1217] [cursor=pointer]
+                - cell "20/08/2025" [ref=f2e1220] [cursor=pointer]
+                - cell "Emessa" [ref=f2e1221]
+                - cell "ANTICIPO" [ref=f2e1222]
+                - cell [ref=f2e1223]:
+                  - paragraph [ref=f2e1224]: 09/2025
+                - cell "PAC - PAL con requisiti" [ref=f2e1225]:
+                  - paragraph [ref=f2e1226]: PAC - PAL ...
+                - cell [ref=f2e1227]:
+                  - paragraph [ref=f2e1228]: 1.638,00 €
+                - cell [ref=f2e1229]:
+                  - paragraph [ref=f2e1230]: "21372"
+                - cell [ref=f2e1231]:
+                  - paragraph [ref=f2e1232]: TD01
+                - cell [ref=f2e1233]:
+                  - paragraph [ref=f2e1234]: EUR
+                - cell [ref=f2e1235]:
+                  - paragraph [ref=f2e1236]: B30
+                - cell [ref=f2e1237]:
+                  - paragraph [ref=f2e1238]: Si
+                - cell [ref=f2e1239]:
+                  - button [ref=f2e1240] [cursor=pointer]
+              - row [ref=f2e1243]:
+                - cell [ref=f2e1244]
+              - row [ref=f2e1245]:
+                - cell [ref=f2e1246]:
+                  - button "expand row" [ref=f2e1247] [cursor=pointer]
+                - cell "20/09/2025" [ref=f2e1250] [cursor=pointer]
+                - cell "Emessa" [ref=f2e1251]
+                - cell "ANTICIPO" [ref=f2e1252]
+                - cell [ref=f2e1253]:
+                  - paragraph [ref=f2e1254]: 10/2025
+                - cell "PAC - PAL con requisiti" [ref=f2e1255]:
+                  - paragraph [ref=f2e1256]: PAC - PAL ...
+                - cell [ref=f2e1257]:
+                  - paragraph [ref=f2e1258]: 2.469,50 €
+                - cell [ref=f2e1259]:
+                  - paragraph [ref=f2e1260]: "28420"
+                - cell [ref=f2e1261]:
+                  - paragraph [ref=f2e1262]: TD01
+                - cell [ref=f2e1263]:
+                  - paragraph [ref=f2e1264]: EUR
+                - cell [ref=f2e1265]:
+                  - paragraph [ref=f2e1266]: B30
+                - cell [ref=f2e1267]:
+                  - paragraph [ref=f2e1268]: Si
+                - cell [ref=f2e1269]:
+                  - button [ref=f2e1270] [cursor=pointer]
+              - row [ref=f2e1273]:
+                - cell [ref=f2e1274]
+          - generic [ref=f2e184]:
+            - generic [ref=f2e185]:
+              - 'combobox "Rows per page: 10" [ref=f2e905] [cursor=pointer]': "10"
+              - textbox: "10"
+            - paragraph [ref=f2e187]: 1–10 of 10
+            - generic [ref=f2e188]:
+              - button "Go to previous page" [disabled]
+              - button "Go to next page" [disabled]
+        - heading "Fatture Contestate" [level=5] [ref=f2e906]
+        - generic [ref=f2e196]:
+          - button "Download risultati contestate" [disabled]
+        - generic [ref=f2e197]:
+          - table [ref=f2e200]:
+            - rowgroup [ref=f2e201]:
+              - row [ref=f2e907]:
+                - columnheader [ref=f2e908]:
+                  - text: Data Fattura
+                  - generic "Sort" [ref=f2e909]:
+                    - button [disabled]
+                - columnheader "Stato" [ref=f2e910]
+                - columnheader "T. Fattura" [ref=f2e911]
+                - columnheader [ref=f2e912]:
+                  - text: Ident.
+                  - generic "Sort" [ref=f2e913]:
+                    - button [disabled]
+                - columnheader "Tipo Contratto" [ref=f2e914]
+                - columnheader [ref=f2e915]:
+                  - text: Tot.
+                  - generic "Sort" [ref=f2e916]:
+                    - button [disabled]
+                - columnheader [ref=f2e917]:
+                  - text: N. Fattura
+                  - generic "Sort" [ref=f2e918]:
+                    - button [disabled]
+                - columnheader [ref=f2e919]:
+                  - text: Tipo Documento
+                  - generic "Sort" [ref=f2e920]:
+                    - button [disabled]
+                - columnheader "Divisa" [ref=f2e921]
+                - columnheader "M. Pagamento" [ref=f2e922]
+                - columnheader "Split" [ref=f2e923]
+            - rowgroup [ref=f2e219]:
+              - row [ref=f2e924]:
+                - cell [ref=f2e925]:
+                  - paragraph [ref=f2e222]: Non sono presenti fatture contestate
+          - generic [ref=f2e225]:
+            - generic [ref=f2e226]:
+              - 'combobox "Rows per page: 10" [ref=f2e926] [cursor=pointer]': "10"
+              - textbox: "10"
+            - paragraph [ref=f2e228]: 0–0 of 0
+            - generic [ref=f2e229]:
+              - button "Go to previous page" [disabled]
+              - button "Go to next page" [disabled]
+  - contentinfo [ref=f2e231]:
+    - generic [ref=f2e234]:
+      - 'link "Link: vai al sito di PagoPA S.p.A." [ref=f2e927] [cursor=pointer]':
+        - /url: https://www.pagopa.it/
+        - img "PagoPA" [ref=f2e928]
+      - generic [ref=f2e240]:
+        - 'link "Vai al link: Informativa Privacy" [ref=f2e929] [cursor=pointer]':
+          - /url: https://www.pagopa.it/it/informativa-privacy-area-riservata/
+          - text: Informativa Privacy
+        - 'link "Vai al link: Diritto alla protezione dei dati personali" [ref=f2e930] [cursor=pointer]':
+          - /url: https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8
+          - text: Diritto alla protezione dei dati personali
+        - 'link "Vai al link: Termini e condizioni" [ref=f2e931] [cursor=pointer]':
+          - /url: https://www.pagopa.it/it/termini-condizioni-area-riservata/
+          - text: Termini e condizioni
+        - 'link "Vai al link: Accessibilità" [ref=f2e932] [cursor=pointer]':
+          - /url: https://form.agid.gov.it/view/7aa810f2-bc15-40d1-b996-6eaa658439c3
+          - text: Accessibilità
+        - 'button "Seleziona lingua: Italiano" [ref=f2e933] [cursor=pointer]':
+          - generic [ref=f2e247]: Italiano
+    - paragraph [ref=f2e252]:
+      - strong [ref=f2e253]: PagoPA S.p.A.
+      - text: — società per azioni con socio unico - capitale sociale di euro 1,000,000 interamente versato - sede legale in Roma, Piazza Colonna 370,CAP 00187 - n. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009 - V.0.0.9.1

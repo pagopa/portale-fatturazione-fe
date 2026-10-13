@@ -1,0 +1,8 @@
+- generic [active] [ref=f4e3]:
+  - generic [ref=f4e4]:
+    - heading "ERRORE!" [level=2] [ref=f4e5]
+    - paragraph [ref=f4e6]: docemessi V.0.0.9.1
+    - paragraph [ref=f4e7]: Contattare l'assistenza.
+  - generic [ref=f4e8]:
+    - button "Login" [ref=f4e9] [cursor=pointer]
+    - button "Copia Errore" [ref=f4e10] [cursor=pointer]

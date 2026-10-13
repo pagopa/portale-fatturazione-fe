@@ -1,0 +1,92 @@
+[     751ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:21608
+[    1054ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4408
+[    2297ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ https://api.dev.portalefatturazione.pagopa.it/api/apikey?nonce=kPFiZEpw-8YEE6mzjNN00IMnn8s7GlUd3IOWOFuy1GdhMDI2YMVdjXlBBKk3nb17PIgTXsDVxKenZrQYaRfm-NCNky-p5SRTd6ipTStjJ_bsrYOyTEMgjY_QU_xCjdOrNbvDXyYa-xdz0MlxDuimgTYdSaH9dT-lpkuWjEGMDW0:0
+[   15968ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:21608
+[   16099ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4408
+[   16467ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ https://api.dev.portalefatturazione.pagopa.it/api/apikey?nonce=kPFiZEpw-8YEE6mzjNN00IMnn8s7GlUd3IOWOFuy1GdhMDI2YMVdjXlBBKk3nb17PIgTXsDVxKenZrQYaRfm-NCNky-p5SRTd6ipTStjJ_bsrYOyTEMgjY_QU_xCjdOrNbvDXyYa-xdz0MlxDuimgTYdSaH9dT-lpkuWjEGMDW0:0
+[   17143ms] [WARNING] MUI: You have provided an out-of-range value `1999` for the select component.
+Consider providing a value that matches one of the available options or ''.
+The available values are `9999`, `2025`, `2024`. @ http://localhost:3000/node_modules/.vite/deps/chunk-P3J4A3GK.js?v=b8ecd9ea:2051
+[   17575ms] [WARNING] MUI: You have provided an out-of-range value `1999` for the select component.
+Consider providing a value that matches one of the available options or ''.
+The available values are `9999`, `2025`, `2024`. @ http://localhost:3000/node_modules/.vite/deps/chunk-P3J4A3GK.js?v=b8ecd9ea:2051
+[   17846ms] [WARNING] MUI: You have provided an out-of-range value `1999` for the select component.
+Consider providing a value that matches one of the available options or ''.
+The available values are `9999`, `2025`, `2024`. @ http://localhost:3000/node_modules/.vite/deps/chunk-P3J4A3GK.js?v=b8ecd9ea:2051
+[   47693ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:21608
+[   47998ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4408
+[   48529ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ https://api.dev.portalefatturazione.pagopa.it/api/apikey?nonce=kPFiZEpw-8YEE6mzjNN00IMnn8s7GlUd3IOWOFuy1GdhMDI2YMVdjXlBBKk3nb17PIgTXsDVxKenZrQYaRfm-NCNky-p5SRTd6ipTStjJ_bsrYOyTEMgjY_QU_xCjdOrNbvDXyYa-xdz0MlxDuimgTYdSaH9dT-lpkuWjEGMDW0:0
+[   48573ms] SyntaxError: Expected property name or '}' in JSON at position 38 (line 1 column 39)
+    at JSON.parse (<anonymous>)
+    at http://localhost:3000/src/hooks/useSaveFiltersLocalStorage.ts:6:32
+    at mountState (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:12053:28)
+    at Object.useState (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:12593:24)
+    at useState (http://localhost:3000/node_modules/.vite/deps/chunk-5UNF2M6Z.js?v=b8ecd9ea:1066:29)
+    at useSavedFilters (http://localhost:3000/src/hooks/useSaveFiltersLocalStorage.ts:4:33)
+    at DocEm (http://localhost:3000/src/page/ente/docConEme.tsx?t=1791871947490:33:7)
+    at renderWithHooks (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:11596:26)
+    at mountIndeterminateComponent (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:14974:21)
+    at beginWork (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:15962:22)
+[   48606ms] SyntaxError: Expected property name or '}' in JSON at position 38 (line 1 column 39)
+    at JSON.parse (<anonymous>)
+    at http://localhost:3000/src/hooks/useSaveFiltersLocalStorage.ts:6:32
+    at mountState (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:12053:28)
+    at Object.useState (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:12593:24)
+    at useState (http://localhost:3000/node_modules/.vite/deps/chunk-5UNF2M6Z.js?v=b8ecd9ea:1066:29)
+    at useSavedFilters (http://localhost:3000/src/hooks/useSaveFiltersLocalStorage.ts:4:33)
+    at DocEm (http://localhost:3000/src/page/ente/docConEme.tsx?t=1791871947490:33:7)
+    at renderWithHooks (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:11596:26)
+    at mountIndeterminateComponent (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:14974:21)
+    at beginWork (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:15962:22)
+[   48612ms] [ERROR] The above error occurred in the <DocEm> component:
+
+    at DocEm (http://localhost:3000/src/page/ente/docConEme.tsx?t=1791871947490:23:21)
+    at RenderedRoute (http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4104:5)
+    at Outlet (http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4581:26)
+    at div
+    at http://localhost:3000/node_modules/.vite/deps/chunk-GHOUJFKQ.js?v=b8ecd9ea:1861:49
+    at Grid2 (http://localhost:3000/node_modules/.vite/deps/chunk-NLVQPQDG.js?v=b8ecd9ea:5112:26)
+    at div
+    at http://localhost:3000/node_modules/.vite/deps/chunk-GHOUJFKQ.js?v=b8ecd9ea:1861:49
+    at Grid2 (http://localhost:3000/node_modules/.vite/deps/chunk-NLVQPQDG.js?v=b8ecd9ea:5112:26)
+    at LayoutEnte (http://localhost:3000/src/layout/layOutLoggedInEnte.tsx?t=1791871947476:7:23)
+    at Component
+    at RenderedRoute (http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4104:5)
+    at Outlet (http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4581:26)
+    at div
+    at http://localhost:3000/node_modules/.vite/deps/chunk-GHOUJFKQ.js?v=b8ecd9ea:1861:49
+    at Grid2 (http://localhost:3000/node_modules/.vite/deps/chunk-NLVQPQDG.js?v=b8ecd9ea:5112:26)
+    at LayoutLoggedOut
+    at RenderedRoute (http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4104:5)
+    at RenderErrorBoundary (http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4064:5)
+    at DataRoutes (http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4502:5)
+    at Router (http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4588:15)
+    at RouterProvider (http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4439:5)
+    at div
+    at DefaultPropsProvider (http://localhost:3000/node_modules/.vite/deps/chunk-GHOUJFKQ.js?v=b8ecd9ea:5507:3)
+    at RtlProvider (http://localhost:3000/node_modules/.vite/deps/chunk-4RWCK7GU.js?v=b8ecd9ea:1293:5)
+    at ThemeProvider (http://localhost:3000/node_modules/.vite/deps/chunk-4RWCK7GU.js?v=b8ecd9ea:1224:5)
+    at ThemeProvider2 (http://localhost:3000/node_modules/.vite/deps/chunk-4RWCK7GU.js?v=b8ecd9ea:1397:5)
+    at ThemeProvider (http://localhost:3000/node_modules/.vite/deps/chunk-JQ6QUX7U.js?v=b8ecd9ea:334:12)
+    at RouteProfile (http://localhost:3000/src/router/route.tsx?t=1791871947505:64:21)
+    at MsalProvider (http://localhost:3000/node_modules/.vite/deps/@azure_msal-react.js?v=b8ecd9ea:127:25)
+    at App (http://localhost:3000/src/App.tsx?t=1791871947505:4:16)
+    at SnackbarProvider2 (http://localhost:3000/node_modules/.vite/deps/notistack.js?v=b8ecd9ea:1232:24)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, RenderErrorBoundary. @ http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:14079
+[   48612ms] [ERROR] React Router caught the following error during render SyntaxError: Expected property name or '}' in JSON at position 38 (line 1 column 39)
+    at JSON.parse (<anonymous>)
+    at http://localhost:3000/src/hooks/useSaveFiltersLocalStorage.ts:6:32
+    at mountState (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:12053:28)
+    at Object.useState (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:12593:24)
+    at useState (http://localhost:3000/node_modules/.vite/deps/chunk-5UNF2M6Z.js?v=b8ecd9ea:1066:29)
+    at useSavedFilters (http://localhost:3000/src/hooks/useSaveFiltersLocalStorage.ts:4:33)
+    at DocEm (http://localhost:3000/src/page/ente/docConEme.tsx?t=1791871947490:33:7)
+    at renderWithHooks (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:11596:26)
+    at mountIndeterminateComponent (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:14974:21)
+    at beginWork (http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:15962:22) {componentStack: 
+    at DocEm (http://localhost:3000/src/page/ente…dules/.vite/deps/notistack.js?v=b8ecd9ea:1232:24)} @ http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4090
+[   67217ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-HVMYID7F.js?v=b8ecd9ea:21608
+[   67398ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/chunk-A3IJY3UG.js?v=b8ecd9ea:4408
+[   73401ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ https://api.dev.portalefatturazione.pagopa.it/api/apikey?nonce=kPFiZEpw-8YEE6mzjNN00IMnn8s7GlUd3IOWOFuy1GdhMDI2YMVdjXlBBKk3nb17PIgTXsDVxKenZrQYaRfm-NCNky-p5SRTd6ipTStjJ_bsrYOyTEMgjY_QU_xCjdOrNbvDXyYa-xdz0MlxDuimgTYdSaH9dT-lpkuWjEGMDW0:0
+[   73905ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://api.dev.portalefatturazione.pagopa.it/api/fatture/ente/periodo/sospeso?nonce=kPFiZEpw-8YEE6mzjNN00IMnn8s7GlUd3IOWOFuy1GdhMDI2YMVdjXlBBKk3nb17PIgTXsDVxKenZrQYaRfm-NCNky-p5SRTd6ipTStjJ_bsrYOyTEMgjY_QU_xCjdOrNbvDXyYa-xdz0MlxDuimgTYdSaH9dT-lpkuWjEGMDW0:0
