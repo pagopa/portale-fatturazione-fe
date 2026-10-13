@@ -250,6 +250,19 @@ const Fatturazione : React.FC = () =>{
         data = res.data.map(el => el?.fattura).filter(obj => dataString.includes(obj.dataFattura));
       } 
     
+      //  TODO: chiedere il valore al back 
+      if(body.cancellata === true){
+        data = data.map(el =>{
+          el.cancellata = true;
+          return el;
+        });
+      }else{
+        data = data.map(el =>{
+          el.cancellata = false;
+          return el;
+        });
+      }
+    
       const customObjData : FattureObj[] = data;
     
       setCount(customObjData?.length || 0);
@@ -808,7 +821,6 @@ const Fatturazione : React.FC = () =>{
           icon:{name:"download"},
           disabled:(gridData.length === 0)
         }]}/>
-
       <GridCustom
         nameParameterApi='docEmessiSend'
         elements={showedData}
