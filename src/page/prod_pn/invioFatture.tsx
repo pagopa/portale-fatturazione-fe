@@ -15,8 +15,9 @@ import { headerNamesInvioFatture, headerNamesInvioFattureCollapse, keyValueObjMo
 import MainModalComponent from "../../components/reusableComponents/modals/mainModalComponent";
 import { ElementToProcessComponent } from "../../components/reusableComponents/tableViewData";
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
-import { Box, DialogContent, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
+import { Box, DialogContent, Divider, List, ListItem, ListItemText, Stack, TextField, Typography } from "@mui/material";
 import { NotaTextField } from "./gestioneFatture";
+import FiltersCollapseInvioFatture from "../../components/invioFatture/filtersCollapseInvioFatture";
 
 
 interface ListaFatture {
@@ -351,6 +352,8 @@ const InvioFatture : React.FC = () => {
   const [infoReinvio, setInforeInvio] = useState<{dataInvio:string}[]>([]);
 
   const [showPopUpDateInvio, setShowPopUpdateInvio] = useState(false);
+  const [numeroDocStorno, setNumeroDocStorno] = useState("");
+  const [nota, setNota] = useState("");
 
 
   const [elementsSelected,setElementSelected] = useState<Record<string, any>[]>([]);
@@ -598,6 +601,7 @@ const InvioFatture : React.FC = () => {
             getTipologieFatturazione(bodyFatturazione.anno,value,bodyFatturazione.cancellata);
             setValueMultiselectTipologie([]); */           
           }}/>
+        {/*TODO da eliminare
         <MainFilter 
           filterName={"select_key_value"}
           inputLabel={"Stato"}
@@ -612,10 +616,10 @@ const InvioFatture : React.FC = () => {
           extraCodeOnChange={(e)=>{
                                   
             const value = Number(e) === 1 ? false : true;
-          /*  setBodyFatturazione((prev)=>({...prev,...{cancellata:value,tipologiaFattura:[]}}));
+           setBodyFatturazione((prev)=>({...prev,...{cancellata:value,tipologiaFattura:[]}}));
             getTipologieFatturazione(bodyFatturazione.anno,bodyFatturazione.mese,value);
-            setValueMultiselectTipologie([]);    */   
-          }}/>
+            setValueMultiselectTipologie([]);   
+          }}/> */}
         <MainFilter 
           filterName={"multi_checkbox"}
           inputLabel={"Tipologia Fattura"}
@@ -687,7 +691,14 @@ const InvioFatture : React.FC = () => {
           //setAction={showPopUpAction}
           manageCheckbox={manageCheckbox}
           manageCheckboxCollapse={manageCheckboxCollapse}
-          filterOnCollapse={true}
+          filterOnCollapse={(row) => (
+            <FiltersCollapseInvioFatture
+              element={row}
+              selectedRows={elementsSelected}
+              manageStateCheckbox={manageStateCheckbox}
+              onGenerate={()=>setOpenModalFatture(true)}
+            />
+          )}
           getAsyncDetails={handleGetDetailsRowCollapsed}
           collapseDataLoading={collapseDataLoading}
           selectedRows={elementsSelected}
@@ -701,59 +712,9 @@ const InvioFatture : React.FC = () => {
           sentenseEmpty={"Nessuna fattura disponibile"}
           keyCollapse={"fatture"}
           titleRowCollapse={"Dettaglio Fatture"}
-          colSpanCollaps={12}
+          colSpanCollaps={8}
           setAction={showPopUpAction}
         />
-        {/*  <DataGrid
-          sx={{
-            height:'400px',
-            '& .MuiDataGrid-virtualScroller': {
-              backgroundColor: 'white',
-            },
-            "& .MuiDataGrid-row": {
-              borderTop: "4px solid #F2F2F2",
-              borderBottom: "2px solid #F2F2F2",
-            }
-          }}
-          rowHeight={70}
-          getRowId={(row) => row.id}
-          rows={listaFatture}
-          columns={configGridJsonSap(statoFattura)}
-          pageSizeOptions={[10, 25, 50,100]}
-          checkboxSelection
-          isRowSelectable={(params) => {
-            if(params.row.statoInvio === 2){
-              return params.row.disableCheckbox;
-            }else{
-              return !params.row.statoInvio;
-            }
-          }}
-          onRowClick={handleEvent}
-          onCellClick={handleOnCellClick}
-          rowSelectionModel={rowSelectionModel}
-          onRowSelectionModelChange={(newRowSelectionModel) => {
-            const createObjectToSend = newRowSelectionModel.reduce((acc:any,singleEl) => {
-              const getElementWithSameId = listaFatture.filter((el:ListaFatture) => el?.id === singleEl);  
-              return [...acc,...getElementWithSameId];
-            },[]).map(el => ({
-              annoRiferimento: el.annoRiferimento,
-              meseRiferimento: el.meseRiferimento,
-              tipologiaFattura: el.tipologiaFattura
-            }));
-            setRowSelectionModel(newRowSelectionModel);
-            setSelected(createObjectToSend);
-            updateFilters({
-              pathPage:"/inviofatture",
-              tipologiaInvio:tipologia,
-              selectedInvio:createObjectToSend,
-              rowSelectionModelInvio:newRowSelectionModel,
-              infoPageInvio:infoPage
-            });
-          }}
-          paginationModel={infoPage}
-          onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
-        />
-        */}
       </div>
       <ModalLoading 
         open={showLoader} 
@@ -767,26 +728,23 @@ const InvioFatture : React.FC = () => {
         width={"900px"}
         open={openModalFatture}
         setOpen={setOpenModalFatture}
-        //TODO : unire tutti  i sotto componenti come un unico children
-        children={<ElementToProcessComponent 
-          closeIcon={true}
-          title={"Fatture Selezionate"}
-          obj={elementsSelected}
-          keyValueObj={keyValueObjModalInfo}
-          showButton={false}
+      >
+        <ModalContentFattureSelezionate
+          elementsSelected={elementsSelected}
           setOpen={setOpenModalFatture}
-          showCounter={true}
-        />}
-        TextFieldComponent={NotaTextField}
-      />
+          numeroDocStorno={numeroDocStorno}
+          setNumeroDocStorno={setNumeroDocStorno}
+          nota={nota}
+          setNota={setNota}
+        />
+      </MainModalComponent>
       <DialogInfo 
         open={showPopUpDateInvio}
         onClose={setShowPopUpdateInvio}
-        clearAction={() => { setInforeInvio([]); } }
+        clearAction={() => { setInforeInvio([]);}}
         array={infoReinvio}
         title="Storico Invio"
         ContentComponent={DilogContentList}/>
-       
     </MainBoxStyled>
   );
 };
@@ -801,6 +759,49 @@ export const checkIfElementSelected = (arraySel, row) =>{
        el.tipologiaFattura === row.tipologiaFattura &&
        el.statoInvio === row.statoInvio;});
 }; 
+
+interface ModalContentFattureSelezionateProps {
+  elementsSelected: Record<string, any>[];
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  numeroDocStorno: string;
+  setNumeroDocStorno: (value: string) => void;
+  nota: string;
+  setNota: (value: string) => void;
+}
+
+const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionateProps> = ({
+  elementsSelected,
+  setOpen,
+  numeroDocStorno,
+  setNumeroDocStorno,
+  nota,
+  setNota
+}) => {
+  return (
+    <>
+      <ElementToProcessComponent
+        closeIcon={true}
+        title={"Fatture Selezionate"}
+        obj={elementsSelected}
+        keyValueObj={keyValueObjModalInfo}
+        showButton={false}
+        setOpen={setOpen}
+        showCounter={true}
+      />
+      <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+        {(elementsSelected[0].statoInvio === 3 || elementsSelected[0].statoInvio === 4) &&
+        <TextField
+          label={"N. Di documento di storno"}
+          fullWidth={true}
+          value={numeroDocStorno}
+          onChange={(e) => setNumeroDocStorno(e.target.value)}
+          placeholder={"Inserisci il numero del documento di storno"}
+        />}
+        <NotaTextField value={nota} onChange={setNota}/>
+      </Box>
+    </>
+  );
+};
 
 interface ListItemData {
   testo: string;
@@ -849,74 +850,3 @@ const DilogContentList : React.FC<{array:ListItemData[]}> = ({ array = [] }) => 
     </DialogContent>
   );
 };
-
-/*
-
-  <FormControl fullWidth size="medium">
-                  <InputLabel> Tipologia Fattura</InputLabel>
-                  <Select label='Tipologia Fattura' onChange={(e) => {
-                    setTipologia(e.target.value);
-                   
-                    updateFilters({
-                      pathPage:"/inviofatture",
-                      tipologiaInvio:e.target.value,
-                      selectedInvio:selected,
-                      rowSelectionModelInvio:rowSelectionModel,
-                      infoPageInvio:infoPage
-                    });
-                  } }
-                  value={tipologia||''}>
-                    {tipologieFatture.map((el) =>{ 
-                      return (            
-                        <MenuItem key={Math.random()} value={el}>
-                          {el}
-                        </MenuItem>              
-                      );
-                    } )}
-                  </Select>
-                </FormControl>
-
-                /////////////////////
-
- <div className="mx-5 mb-5">
-        <div className="mt-5">
-          <div className="row">
-            <div className="col-3">
-              <Box>
-              
-              </Box>   
-            </div>
-            <div className="col-2 text-center">
-              <div className="d-flex justify-content-center align-items-center" style={{height:'59px'}}>
-                <Button variant='outlined'disabled={selected?.length < 1} onClick={onButtonInvia}>
-                                    Invia
-                </Button>
-              </div>
-            </div>
-            <div className="row mt-5">
-              <div className="col-12">
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Box>
-                    { selected?.length > 0 ? 
-                      <Toolbar sx={{bgcolor:"rgba(23, 50, 77, 0.08)"}}>
-                        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1"component="div">
-                          {`${selected?.length}  Selezionate`} 
-                        </Typography>
-                      </Toolbar>
-                      :
-                      <Typography sx={{ flex: '1 1 100%', visibility: 'hidden', height:'64px' }} variant="subtitle1" component="div">
-                                        Placeholder
-                      </Typography>
-                    }
-                  </Box>
-                 
-                </Box>
-                     </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-                //////////////////////////
- */

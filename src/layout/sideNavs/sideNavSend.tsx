@@ -44,6 +44,7 @@ const SideNavSend : React.FC = () => {
   const [openSezioneFatturazione, setOpenSezioneFatturazione] = useState(false);
   const [openContestazioni, setOpenContestazioni] = useState(false);
   const [openModPrevisonale, setOpenModPrevisonale] = useState(false);
+  const [openGestioneFatture, setOpenGestioneFatture] = useState(false);
 
 
   useEffect(()=>{
@@ -59,6 +60,9 @@ const SideNavSend : React.FC = () => {
        currentLocation.includes("send/fatturapdf/documentiemessi")||
        currentLocation.includes("send/fatturapdf/rel")){
       setOpenSezioneFatturazione(true);
+      if(currentLocation === PathPf.JSON_TO_SAP || currentLocation === PathPf.JSON_TO_SAP_DETAILS){
+        setOpenGestioneFatture(true);
+      }
     }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST || currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI){
       setOpenContestazioni(true);
     }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA || currentLocation === PathPf.MODULOCOMMESSA || currentLocation === PathPf.PDF_COMMESSA){
@@ -269,17 +273,32 @@ const SideNavSend : React.FC = () => {
                 <FormatListBulletedIcon fontSize="inherit" />
               </ListItemIcon>
               <ListItemText primary="Gestione Fatture" />
+              {openGestioneFatture ?
+                <IconButton onClick={(e)=>{
+                  e.stopPropagation();
+                  setOpenGestioneFatture(false);
+                } }  size="small">
+                  <ExpandLess fontSize="inherit" />
+                </IconButton>  :
+                <IconButton  onClick={(e)=>{
+                  e.stopPropagation();
+                  setOpenGestioneFatture(true);
+                } }  size="small">
+                  <ExpandMore fontSize="inherit"/>
+                </IconButton>}
             </ListItemButton>
           </List>
-          <List component="div" disablePadding>
-            <ListItemButton selected={currentLocation === PathPf.JSON_TO_SAP} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.JSON_TO_SAP)}>
-              <ListItemIcon>
-                <SendIcon fontSize="inherit" />
-              </ListItemIcon>
-              <ListItemText primary="Invio a SAP" />
-            </ListItemButton>
-          </List>
-        </Collapse> 
+          <Collapse in={openGestioneFatture} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton selected={currentLocation === PathPf.JSON_TO_SAP || currentLocation === PathPf.JSON_TO_SAP_DETAILS} sx={{ pl: 8 }} onClick={() => handleListItemClick(PathPf.JSON_TO_SAP)}>
+                <ListItemIcon>
+                  <SendIcon fontSize="inherit" />
+                </ListItemIcon>
+                <ListItemText primary="Invio a SAP" />
+              </ListItemButton>
+            </List>
+          </Collapse>
+        </Collapse>
         <ListItemButton selected={currentLocation === "/send/accertamenti"} onClick={() => handleListItemClick("/send/accertamenti")}>
           <ListItemIcon>
             <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>

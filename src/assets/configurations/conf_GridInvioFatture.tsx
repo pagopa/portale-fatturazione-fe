@@ -71,8 +71,8 @@ export const headerNamesInvioFattureCollapse: HeaderGridCustom[] = [
   { label: "Importo", align: "center", width: "150px", keyValue: "importo", typeColumn: 'euro' },
   { label: "FK ID Doc.", align: "center", width: "150px", keyValue: "", typeColumn: 'string' },
   { label: "D. Fat.", align: "center", width: "180px", keyValue: "dataFattura", typeColumn: 'data' },
-  { label: "D. Ultima Gen.", align: "center", width: "200px", keyValue: "dataGenerazione", typeColumn: 'data-ora' },
-  { label: "File JSON", align: "center", width: "150px", keyValue: "fileJson", typeColumn:"snackbar",icon:"file_invio_sap",sentenceSnackbar:"Nome del file copiato!" },
+  { label: "D. Ultima Gen.", align: "center", width: "250px", keyValue: "dataGenerazione", typeColumn: 'data-ora' },
+  { label: "File JSON", align: "center", width: "30px", keyValue: "fileJson", typeColumn:"snackbar",icon:"file_invio_sap",sentenceSnackbar:"Nome del file copiato!" },
   { label: 'Date Invio', align: 'center', width: '150px', keyValue: 'note', typeColumn: "action",funToManipulateValue:showNoteGestioneFatture },
 ];
 

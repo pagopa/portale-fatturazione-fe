@@ -10,11 +10,11 @@ const LayoutAzure = ({sideNav}) => {
       <HeaderLogAzure/>
       <HeaderProductAzure/>
       <ScrollToTop></ScrollToTop>
-      <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
-        <Grid item xs={2}>
+      <Grid sx={{ flex: 1, minHeight: 0, flexWrap: 'nowrap', marginTop: 0, '& > .MuiGrid-item': { paddingTop: 0 } }} container spacing={2} columns={12}>
+        <Grid item xs={2} sx={{ overflowY: 'auto' }}>
           {sideNav}
-        </Grid> 
-        <Grid item xs={10}>
+        </Grid>
+        <Grid item xs={10} id="outlet-scroll" sx={{ overflowY: 'auto' }}>
           <Outlet />
         </Grid>
       </Grid>

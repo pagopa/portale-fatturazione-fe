@@ -234,7 +234,7 @@ export const FilterActionButtons = ({
 };
 
 
-export const ActionTopGrid = ({actionButtonRight,actionButtonLeft,counter}:{
+export const ActionTopGrid = ({actionButtonRight,actionButtonLeft,counter=0}:{
     counter?:number,
     actionButtonRight?:{
         onButtonClick:()=> void,
@@ -266,6 +266,17 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft,counter}:{
                     
           }}
         >
+          {actionButtonLeft?.map((action, index) => (
+            <CustomButton
+              key={index}
+              onClick={action.onButtonClick}
+              startIcon={action.icon && RenderIcon(action.icon.name)}
+              disabled={action.disabled}
+              variant={action.variant}
+            >
+              {action.label}
+            </CustomButton>
+          ))}
           {/* Left Buttons */}
           <Box
             sx={{
@@ -274,7 +285,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft,counter}:{
               gap: 1,
               flexWrap: "wrap",
             }}
-          >  {(counter > 0) && <Box>
+          >  {<Box>
               { counter > 0 ? 
                 <Toolbar sx={{bgcolor:"rgba(23, 50, 77, 0.08)"}}>
                   <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1"component="div">
@@ -287,17 +298,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft,counter}:{
                 </Typography>
               }
             </Box>}
-            {actionButtonLeft?.map((action, index) => (
-              <CustomButton
-                key={index}
-                onClick={action.onButtonClick}
-                startIcon={action.icon && RenderIcon(action.icon.name)}
-                disabled={action.disabled}
-                variant={action.variant}
-              >
-                {action.label}
-              </CustomButton>
-            ))}
+           
           </Box>
 
           {/* Right Buttons */}

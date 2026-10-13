@@ -42,7 +42,6 @@ export const ElementToProcessComponent = <T,> ({
           <Typography id="modal-modal-title" variant="h6" component="h2">
             {title}
           </Typography>
-
           {showCounter && (
             <Box
               sx={{
@@ -70,7 +69,6 @@ export const ElementToProcessComponent = <T,> ({
           </div>
         </div>
       </Box> : <Typography>{title}</Typography>}
-      
       
       <Box  sx={{ 
         backgroundColor: '#F8F8F8', 

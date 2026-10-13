@@ -1,9 +1,8 @@
-import { Box, Button, Collapse, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Collapse, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { HeaderGridCustom } from "../gridCustom";
 import GridCell from "./gridCell";
 import { useState, useMemo } from 'react';
 import Loader from "../../loader";
-import MainFilter from "../../mainFilter";
 import CustomTablePagination from "../pagination";
 
 
@@ -18,7 +17,7 @@ interface GridRowsRendererProps<T ,K>{
   bgColorRowFunction?: (element:any) => string;
   manageCheckbox?: ( currentRow:Record<string, any>) => Record<string, any>;
   manageCheckboxCollapse?:(currentRow:Record<string, any>) => Record<string, any>,
-  filterOnCollapse:boolean,
+  filterOnCollapse?:(element:any) => React.ReactNode,
   getAsyncDetails?:(currentRow:Record<string, any>,val:boolean) => void,
   collapseDataLoading?:boolean,
   selectedRows:K[],
@@ -135,7 +134,7 @@ const GridRowDesignByConfigFile=<T,K>({
         <TableRow key={`tableRow-position-${element.id}`} >
           <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={colSpanCollaps}>
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 2, backgroundColor: '#F8F8F8', padding: '10px' }}>
+              <Box sx={{ margin: 2, backgroundColor: '#F8F8F8', padding: '10px', width: 0, minWidth: 'calc(100% - 16px)', overflowX: 'auto' }}>
                 <Stack
                   direction="row"
                   gap={4}
@@ -145,54 +144,10 @@ const GridRowDesignByConfigFile=<T,K>({
                   <Typography sx={{ marginLeft: "6px" }} variant="h6" gutterBottom component="div">
                     {titleRowCollapse}
                   </Typography>
-                  {filterOnCollapse &&
-               <>
-                 <MainFilter 
-                   sizeHeight={"small"}
-                   filterName={"multi_checkbox"}
-                   inputLabel={"Rag. Soc. Ente"}
-                   clearOnChangeFilter={()=> null}
-                   setBody={() => null}
-                   body={{}}
-                   keyCompare={""}
-                   dataSelect={[]}
-                   setTextValue={() => null}
-                   textValue={""}
-                   valueAutocomplete={[]}
-                   setValueAutocomplete={() => null}
-                   keyDescription={"descrizione"}
-                   keyValue={"idEnte"}
-                   keyOption='descrizione'
-                   keyBody={"idEnti"} />
-                 <MainFilter 
-                   sizeHeight={"small"}
-                   filterName={"input_text"}
-                   inputLabel={"Numero Fattura"}
-                   clearOnChangeFilter={() => null}
-                   setBody={() => null}
-                   body={{}}
-                   keyDescription='iun'
-                   keyBody={"iun"}
-                   keyValue={"iun"}/>
-                 
-                 <MainFilter 
-                   sizeHeight={"small"}
-                   filterName={"date_from_to"}
-                   inputLabel={"Data Fattura"}
-                   clearOnChangeFilter={() => null}
-                   setBody={() => null}
-                   body={{}}
-                   keyValue={"init"}
-                   keyDescription="start"
-                   keyBody="init"
-                   keyCompare="il nulla"
-                   error={false}
-                 />
-                 <Button disabled={manageStateCheckbox && manageStateCheckbox(element,"",selectedRows)?.disabled || selectedRows.length === 0} onClick={apiGet} size={"small"} variant="outlined">Generazione Json</Button>
-               </> }
+                  {filterOnCollapse && filterOnCollapse(element)}
                 </Stack>
                 <>
-                  <Table size="small" aria-label="purchases">
+                  <Table  size="small" aria-label="purchases">
                     <TableHead>
                       <TableRow sx={{ borderColor: "white", borderWidth: "thick" }}>
                         {Object.values(headerNamesCollapse)?.map((value: any, i: number) => (
