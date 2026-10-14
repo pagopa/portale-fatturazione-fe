@@ -6,13 +6,15 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 ## Test Scenarios
 
+Organizzazione (CLAUDE.md): un file di test per area in `tests/ente/docemessi/`, mock in `tests/utils/docemessi/` (condivisi con docsospesi in `tests/utils/ente/`), `test`/`expect` importati da `tests/fixtures.ts`, sessione ente fittizia scritta da `tests/auth.setup.ts` senza chiamate al backend.
+
 ### 1. Accesso, sessione e controllo ruolo
 
 **Seed:** `tests/auth.setup.ts`
 
 #### 1.1. Caricamento pagina con sessione valida
 
-**File:** `tests/ente/docemessi/accesso.spec.ts`
+**File:** `tests/ente/docemessi/titolo.spec.ts`
 
 **Steps:**
   1. Con storageState di tests/playwright/.auth/user.json aprire /ente/docemessi
@@ -28,7 +30,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 1.2. Accesso senza autenticazione
 
-**File:** `tests/ente/docemessi/accesso.spec.ts`
+**File:** `tests/ente/docemessi/titolo.spec.ts`
 
 **Steps:**
   1. In contesto senza storageState (localStorage vuoto) aprire /ente/docemessi
@@ -37,7 +39,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 1.3. Dati di fatturazione mancanti: modale di redirect
 
-**File:** `tests/ente/docemessi/accesso.spec.ts`
+**File:** `tests/ente/docemessi/titolo.spec.ts`
 
 **Steps:**
   1. Impostare in globalStatePF mainState.datiFatturazione=false (oppure datiFatturazioneNotCompleted=true) e aprire la pagina
@@ -47,21 +49,22 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 1.4. Profilo non ente (ruolo diverso) sulla stessa rotta
 
-**File:** `tests/ente/docemessi/accesso.spec.ts`
+**File:** `tests/ente/docemessi/titolo.spec.ts`
 
 **Steps:**
   1. Con profilo di altro ruolo (es. PagoPA/Recapitista) navigare direttamente a /ente/docemessi
-    - expect: La rotta non espone dati dell'ente (redirect o errore) - comportamento da definire con il team, non verificato
+    - expect: utente PagoPA: redirect alla pagina /azureLogin
+  2. Con profilo Recapitista (profilo.profilo='REC') e token scaduto (API in 401) navigare a /ente/docemessi
+    - expect: alert 'Utente non autenticato. Effettuare nuovamente l'accesso', logout (globalStatePF rimosso) e redirect a Selfcare
 
 #### 1.5. Token scaduto / 401 sulle API
 
-**File:** `tests/ente/docemessi/accesso.spec.ts`
+**File:** `tests/ente/docemessi/titolo.spec.ts`
 
 **Steps:**
   1. Mockare con page.route le API periodo ed emesse con status 401 e aprire la pagina
-    - expect: manageError gestisce l'errore (redirect a pagina errore/login o messaggio)
-    - expect: Il loading si chiude e non resta bloccato
-    - expect: Griglia vuota
+    - expect: manageError gestisce l'errore (viene mostrato l'alert con messaggio "Utente non autenticato. Effettuare nuovamente l'accesso)
+    - Dopo aver visualizzato l'alert viene effettuato il redirect to selfcare 
 
 ### 2. Presenza e logica dei filtri
 
@@ -193,7 +196,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 3.1. Struttura colonne e formattazione
 
-**File:** `tests/ente/docemessi/griglia.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Mock con almeno una fattura e osservare la tabella #docEmessiEnte
@@ -203,7 +206,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 3.2. Espansione riga: Posizioni
 
-**File:** `tests/ente/docemessi/griglia.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Cliccare il pulsante 'expand row' di una riga con posizioni
@@ -214,7 +217,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 3.3. Ordinamento colonne (3 stati)
 
-**File:** `tests/ente/docemessi/griglia.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Per ciascuna colonna ordinabile (Data Fattura, Ident., Tot., N. Fattura, Tipo Documento) cliccare l'icona Sort una, due e tre volte
@@ -224,7 +227,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 3.4. Ordinamento disabilitato durante modifica filtri
 
-**File:** `tests/ente/docemessi/griglia.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Cambiare un filtro senza cliccare Filtra
@@ -232,7 +235,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 3.5. Click su riga apre il dettaglio
 
-**File:** `tests/ente/docemessi/griglia.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Cliccare sulla cella Data Fattura (cursore pointer) di una riga
@@ -350,7 +353,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 6.1. Stato vuoto contestate
 
-**File:** `tests/ente/docemessi/contestate.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Aprire la pagina con 'eliminate' = dettagli []
@@ -358,7 +361,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 6.2. Contestate con dati: righe evidenziate e ordinamento
 
-**File:** `tests/ente/docemessi/contestate.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Mockare 'eliminate' con 3 fatture
@@ -367,7 +370,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 6.3. Le contestate non cambiano con Filtra
 
-**File:** `tests/ente/docemessi/contestate.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Con contestate popolate applicare un filtro
@@ -379,7 +382,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 7.1. Nessun risultato per filtro
 
-**File:** `tests/ente/docemessi/errori.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Mockare periodo/emesse con dettagli [] e importo 0 dopo Filtra
@@ -390,7 +393,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 7.2. Periodo senza dati
 
-**File:** `tests/ente/docemessi/errori.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Mockare GET periodo con data []
@@ -398,7 +401,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 7.3. Errore 500 su periodo
 
-**File:** `tests/ente/docemessi/errori.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Mockare periodo con 500
@@ -406,7 +409,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 7.4. Errore 500 su lista emesse
 
-**File:** `tests/ente/docemessi/errori.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Mockare periodo/emesse con 500
@@ -416,7 +419,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 7.5. Errore su lista contestate
 
-**File:** `tests/ente/docemessi/errori.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Mockare 'eliminate' con 500
@@ -424,7 +427,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 7.6. Totale negativo
 
-**File:** `tests/ente/docemessi/errori.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Mockare importo negativo
@@ -432,7 +435,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 7.7. Risposta lenta / loading
 
-**File:** `tests/ente/docemessi/errori.spec.ts`
+**File:** `tests/ente/docemessi/grid.spec.ts`
 
 **Steps:**
   1. Ritardare le risposte API di 3s
@@ -444,7 +447,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 8.1. Persistenza dei filtri dopo reload
 
-**File:** `tests/ente/docemessi/persistenza.spec.ts`
+**File:** `tests/ente/docemessi/persistenza-filtri.spec.ts`
 
 **Steps:**
   1. Selezionare Anno 2025 + tipologia, cliccare Filtra e ricaricare la pagina
@@ -453,7 +456,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 8.2. Persistenza di pagina, righe e ordinamento
 
-**File:** `tests/ente/docemessi/persistenza.spec.ts`
+**File:** `tests/ente/docemessi/persistenza-filtri.spec.ts`
 
 **Steps:**
   1. Ordinare per Tot., andare a pagina 2, cambiare righe e ricaricare
@@ -461,7 +464,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 8.3. Persistenza navigando in altra pagina e tornando
 
-**File:** `tests/ente/docemessi/persistenza.spec.ts`
+**File:** `tests/ente/docemessi/persistenza-filtri.spec.ts`
 
 **Steps:**
   1. Applicare un filtro, aprire 'Documenti contabili sospesi' dal menu e tornare a 'Documenti contabili emessi'
@@ -469,7 +472,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 8.4. Annulla filtri pulisce la persistenza
 
-**File:** `tests/ente/docemessi/persistenza.spec.ts`
+**File:** `tests/ente/docemessi/persistenza-filtri.spec.ts`
 
 **Steps:**
   1. Applicare filtro, cliccare Annulla filtri e ricaricare
@@ -477,7 +480,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 8.5. Filtri salvati non piu' validi
 
-**File:** `tests/ente/docemessi/persistenza.spec.ts`
+**File:** `tests/ente/docemessi/persistenza-filtri.spec.ts`
 
 **Steps:**
   1. Impostare in localStorage 'filters' un anno non presente nel periodo (es. 1999) o JSON malformato e aprire la pagina
@@ -489,7 +492,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 9.1. Navigazione dal menu laterale
 
-**File:** `tests/ente/docemessi/navigazione.spec.ts`
+**File:** `tests/ente/docemessi/titolo.spec.ts`
 
 **Steps:**
   1. Da un'altra pagina ente aprire 'Documenti contabili' e poi 'Documenti contabili emessi'
@@ -499,7 +502,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 9.2. Pulsante Esci
 
-**File:** `tests/ente/docemessi/navigazione.spec.ts`
+**File:** `tests/ente/docemessi/titolo.spec.ts`
 
 **Steps:**
   1. Cliccare 'Esci' nell'header
@@ -507,7 +510,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 9.3. Banner informativo
 
-**File:** `tests/ente/docemessi/navigazione.spec.ts`
+**File:** `tests/ente/docemessi/titolo.spec.ts`
 
 **Steps:**
   1. Aprire la pagina con GET /api/info-banner che ritorna testo
@@ -515,7 +518,7 @@ Piano di test per la pagina "Documenti contabili emessi" dell'area ente di porta
 
 #### 9.4. Accessibilita' di base
 
-**File:** `tests/ente/docemessi/navigazione.spec.ts`
+**File:** `tests/ente/docemessi/titolo.spec.ts`
 
 **Steps:**
   1. Navigare con Tab su filtri, Filtra, Sort, paginatore
