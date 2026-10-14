@@ -140,60 +140,47 @@ const Messaggi : React.FC = () => {
       handleModifyMainState({contestazioneSelected:{reportId:item.idReport}});
       readMessage(item.idMessaggio);
       navigate(PathPf.STORICO_DETTAGLIO_CONTEST);
-    }else if(contentType === "text/csv" || contentType === "application/json"){
-      setShowDownloading(true);
-      await downloadMessaggioPagoPaCsv(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then((res)=>{
-        if(contentType === "application/json"){
-          res.data = JSON.stringify(res.data);
-        }
-        const blob = new Blob([res.data], { type: contentType});
+      return;
+    }
+
+    const isCsvOrJson = contentType === "text/csv" || contentType === "application/json";
+    const isZipOrExcel = contentType === "application/zip" || contentType === "application/vnd.ms-excel";
+    const isJson = contentType === "application/json";
+    if(!isCsvOrJson && !isZipOrExcel){
+      //nome da cambiare quando sistemiamo la logica dell'errore
+      managePresaInCarico(400,dispatchMainState);
+      return;
+    }
+
+    const fileName = (!isJson && item.categoriaDocumento === "ACCERTAMENTO") ? 
+      item.linkDocumento.split("/").pop():
+      `${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}`;
+      
+    setShowDownloading(true);
+    try{
+      if(isCsvOrJson){
+        const res = await downloadMessaggioPagoPaCsv(token,profilo.nonce, {idMessaggio:item.idMessaggio});
+        const data = contentType === "application/json" ? JSON.stringify(res.data) : res.data;
+        const blob = new Blob([data], { type: contentType});
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.setAttribute('hidden', '');
         a.setAttribute('href', url);
-        if(contentType === "text/csv"){
-          a.setAttribute('download',`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.csv`);
-        }
-        if(contentType === "application/json"){
-          a.setAttribute('download',`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.json`);
-        }
-                
+        a.setAttribute('download',`${fileName}.${contentType === "text/csv" ? "csv" : "json"}`);
         document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);   
-        setShowDownloading(false);
-        readMessage(item.idMessaggio);
-      }).catch(((err)=>{
-        setShowDownloading(false);
-        manageError(err,dispatchMainState);
-        getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra); 
-      }));
-    }else if(contentType === "application/zip"){
-      setShowDownloading(true);
-      await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then(response => response.blob())
-        .then((res)=>{
-          saveAs(res,`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.zip`);
-          setShowDownloading(false);
-          readMessage(item.idMessaggio);
-        }).catch(((err)=>{
-          setShowDownloading(false);
-          manageError(err,dispatchMainState);
-          getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
-        }));
-    }else if(contentType ==="application/vnd.ms-excel"){
-      setShowDownloading(true);
-      await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then(response => response.blob()).then((res)=>{
-        saveAs( res,`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.xlsx` );
-        setShowDownloading(false);
-        readMessage(item.idMessaggio);
-      }).catch((err)=>{
-        manageError(err,dispatchMainState);
-        setShowDownloading(false);
-        getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
-      }); 
-    }else{
-      //nome da cambiare quando sistemiamo la logica dell'errore
+        document.body.removeChild(a);
+      }else{
+        const response = await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:item.idMessaggio});
+        const blob = await response.blob();
+        saveAs(blob,`${fileName}.${contentType === "application/zip" ? "zip" : "xlsx"}`);
+      }
+      readMessage(item.idMessaggio);
+    }catch{
       managePresaInCarico(400,dispatchMainState);
+      getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
+    }finally{
+      setShowDownloading(false);
     }
   };
 
