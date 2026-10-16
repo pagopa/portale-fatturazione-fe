@@ -175,7 +175,7 @@ const MainInserimentoModuloCommessa = ({
                           onChange={(e) => handleChangeTotale_Ar_890_regione(e, "totaleAnalogicoARNaz", element)}
                           size="small"
                           value={element.ar === 0 ? 0 : element.ar || ""}
-                          InputProps={{ inputProps: { min: 0, style: { textAlign: "center" } } }}
+                          InputProps={{ inputProps: { min: 0, style: { textAlign: "center" }, "data-testid": `regione-ar-${element.istatRegione}` } }}
                         /></Grid>
                       <Grid
                         sx={ { display: "flex", justifyContent: "center", alignItems: "center" }}
@@ -190,7 +190,7 @@ const MainInserimentoModuloCommessa = ({
                           onChange={(e) => handleChangeTotale_Ar_890_regione(e, "totaleAnalogico890Naz", element)}
                           size="small"
                           value={element[890] === 0 ? 0 : element[890] || ""}
-                          InputProps={{ inputProps: { min: 0, style: { textAlign: "center" } } }}
+                          InputProps={{ inputProps: { min: 0, style: { textAlign: "center" }, "data-testid": `regione-890-${element.istatRegione}` } }}
                         /></Grid>
                       <Grid
                         sx={ { display: "flex", justifyContent: "center", alignItems: "center" }}
@@ -251,14 +251,14 @@ const MainInserimentoModuloCommessa = ({
                     disabled={true}
                     size="small"
                     value={dataModuli.length > 1 ? (dataModuli[activeStep]?.totaleNotificheAnalogicoARNaz||0):(dataModuli[0]?.totaleNotificheAnalogicoARNaz||0)}
-                    InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                    InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }, "data-testid": "totale-ar" } }}
                   />,
                   <TextField
                     sx={{ backgroundColor: '#ffffff', width: '100px'}}
                     disabled={true}
                     size="small"
                     value={dataModuli.length > 1 ?  (dataModuli[activeStep]?.totaleNotificheAnalogico890Naz||0) : (dataModuli[0]?.totaleNotificheAnalogico890Naz||0)}
-                    InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                    InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }, "data-testid": "totale-890" } }}
                   />
                 ]} styles={[
                   {
@@ -290,7 +290,7 @@ const MainInserimentoModuloCommessa = ({
                         size="small"
                         error={(coperturaAr||0) > 100}
                         value={ activeCommessa?.source === "archiviato" ? (coperturaArInseritaManualmente ? coperturaArInseritaManualmente + "%" : 0+ "%"):coperturaAr ? coperturaAr + "%" : 0+ "%"}
-                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }, "data-testid": "copertura-ar" } }}
                       />,
                       <TextField
                         sx={{ backgroundColor: '#ffffff', width: '100px'}}
@@ -298,7 +298,7 @@ const MainInserimentoModuloCommessa = ({
                         size="small"
                         error={(copertura890||0) > 100}
                         value={activeCommessa?.source === "archiviato" ? (copertura890InseritaManualmente ? copertura890InseritaManualmente + "%" : 0+ "%"): copertura890 ? copertura890 + "%" : 0+ "%"}
-                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }, "data-testid": "copertura-890" } }}
                       />
                     ]}
                     styles={[{
@@ -329,14 +329,14 @@ const MainInserimentoModuloCommessa = ({
                              disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
                              size="small"
                              value={100 - (coperturaArInseritaManualmente||0) + "%"}
-                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }, "data-testid": "copertura-sistema-ar" } }}
                            />,
                            <TextField
                              sx={{ backgroundColor: '#ffffff', width: '100px'}}
                              disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
                              size="small"
                              value={100 - (copertura890InseritaManualmente||0) + "%"}
-                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }, "data-testid": "copertura-sistema-890" } }}
                            />
                          ]}
                          styles={[{

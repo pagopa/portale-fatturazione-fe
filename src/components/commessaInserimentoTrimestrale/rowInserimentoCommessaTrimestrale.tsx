@@ -42,7 +42,7 @@ const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = 
           size="small"
           error={errorAnyValueIsEqualNull && values[0] === null }
           value={values?.[0] ?? ""}
-          InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+          InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }, "data-testid": `modulo-${keys[0]}` } }}
           onChange={(e)=>setValue(e,keys[0])}
         />
       </Grid>
@@ -58,7 +58,7 @@ const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = 
                           size="small"
                           value={values?.[1] ?? ""}
                           error={errorAnyValueIsEqualNull && values[1] === null }
-                          InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                          InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }, "data-testid": `modulo-${keys[1]}` } }}
                           onChange={(e)=>setValue(e,keys[1])}
                         />
         }
