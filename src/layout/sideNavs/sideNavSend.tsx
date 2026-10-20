@@ -242,16 +242,12 @@ const SideNavSend : React.FC = () => {
         </ListItemButton> 
         <Collapse in={openSezioneFatturazione} timeout="auto" unmountOnExit>
           <ListItemButton sx={{ pl: 4 }} 
-            selected={
-              currentLocation === PathPf.DOCUMENTI_SOSPESI_SEND || currentLocation.includes("send/fatturapdf/documentisospesi")
-            } 
+            selected={currentLocation === PathPf.DOCUMENTI_SOSPESI_SEND || currentLocation.includes("send/fatturapdf/documentisospesi")} 
             onClick={()=> handleListItemClick(PathPf.DOCUMENTI_SOSPESI_SEND)}>
             <ListItemIcon>
               <FileCopyIcon fontSize="inherit" />
             </ListItemIcon>
-            <Box className="ms-3" display="flex" flexDirection="column">
-              <ListItemText primary="Documenti contabili sospesi" />
-            </Box>
+            <ListItemText primary="Documenti contabili sospesi" />
           </ListItemButton>
           <ListItemButton sx={{ pl: 4 }} 
             selected={
@@ -263,9 +259,9 @@ const SideNavSend : React.FC = () => {
             <ListItemIcon>
               <DescriptionIcon fontSize="inherit" />
             </ListItemIcon>
-            <Box className="ms-3" display="flex" flexDirection="column">
-              <ListItemText primary="Documenti contabili emessi" />
-            </Box>
+           
+            <ListItemText primary="Documenti contabili emessi" />
+            
           </ListItemButton>
           <List component="div" disablePadding>
             <ListItemButton selected={currentLocation === PathPf.GESTIONE_FATTURE} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.GESTIONE_FATTURE)}>

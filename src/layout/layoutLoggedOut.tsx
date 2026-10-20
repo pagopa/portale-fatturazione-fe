@@ -12,11 +12,14 @@ const LayoutLoggedOut = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-      <BasicAlerts></BasicAlerts>
-      <Grid sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-        <Outlet />
+      <BasicAlerts/>
+      {/* footer dentro lo scroll: visibile solo a fine contenuto */}
+      <Grid id="outlet-scroll" sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+        <Box sx={{ flex: '1 0 auto', display: 'flex', flexDirection: 'column' }}>
+          <Outlet />
+        </Box>
+        {!contentOnly && <FooterComponent/>}
       </Grid>
-      {!contentOnly && <FooterComponent></FooterComponent>}
     </Box>
   );
 };
