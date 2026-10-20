@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "date +%s > \"$CLAUDE_PROJECT_DIR/.claude/.prompt_start\""
+          }
+        ]
+      }
+    ]
+  }
+}

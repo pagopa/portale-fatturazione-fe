@@ -19,7 +19,7 @@
 .env.uat
 
  authConfig.js
- CLAUDE.md
+ 
 
 npm-debug.log*
 yarn-debug.log*
@@ -29,7 +29,9 @@ yarn-error.log*
 .vs/
 .vscode/
 .playwright-mcp
-.claude
+.claude/instructions/
+.claude/metrics/
+.playwright-mcp/
 
 # Playwright
 node_modules/
@@ -38,4 +40,3 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
-specs/
