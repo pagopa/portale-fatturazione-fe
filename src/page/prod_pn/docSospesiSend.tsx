@@ -622,7 +622,7 @@ const DocSospesiSend : React.FC = () =>{
         actionButtonLeft={[
           {
             onButtonClick:downloadReportCreditoSospeso,
-            variant: "outlined",
+            variant: "text",
             label: "Download Report Sospesi Credito Aderente",
             icon:{name:"download"},
             disabled:(false)

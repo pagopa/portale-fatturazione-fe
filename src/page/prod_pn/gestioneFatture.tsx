@@ -16,7 +16,7 @@ import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import DialogInfo, { DialogInfoProps } from "../../components/reusableComponents/modals/dialogInfo";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
-import { Box, Button, Chip, DialogContent, Divider, List, ListItem, ListItemText, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Chip, DialogContent, Divider, List, ListItem, ListItemText, Stack, SxProps, Table, TableBody, TableCell, TableHead, TableRow, TextField, Theme, Toolbar, Tooltip, Typography } from "@mui/material";
 import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, gestioneFattureVerificaNotaPii, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate } from "../../reusableFunction/function";
@@ -769,6 +769,8 @@ interface NotaTextFieldProps {
   multiline?: boolean;
   helperText?: string;
   disabled?: boolean;
+  size?:"small"|"medium",
+  sx?:SxProps<Theme>
 }
 
 export const NotaTextField: React.FC<NotaTextFieldProps> = ({
@@ -784,6 +786,8 @@ export const NotaTextField: React.FC<NotaTextFieldProps> = ({
   multiline = true,
   helperText,
   disabled = false,
+  size = 'medium',
+  sx
 }) => {
   const currentLength = value?.length || 0;
 
@@ -799,6 +803,7 @@ export const NotaTextField: React.FC<NotaTextFieldProps> = ({
 
   return (
     <TextField
+      size={size}
       label={label}
       multiline={multiline}
       minRows={minRows}
@@ -809,6 +814,7 @@ export const NotaTextField: React.FC<NotaTextFieldProps> = ({
       disabled={disabled}
       placeholder={placeholder}
       helperText={computedHelperText}
+      sx={sx ? sx : undefined }
     />
   );
 };

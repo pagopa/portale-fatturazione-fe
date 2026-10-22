@@ -269,31 +269,9 @@ const SideNavSend : React.FC = () => {
                 <FormatListBulletedIcon fontSize="inherit" />
               </ListItemIcon>
               <ListItemText primary="Gestione Fatture" />
-              {openGestioneFatture ?
-                <IconButton onClick={(e)=>{
-                  e.stopPropagation();
-                  setOpenGestioneFatture(false);
-                } }  size="small">
-                  <ExpandLess fontSize="inherit" />
-                </IconButton>  :
-                <IconButton  onClick={(e)=>{
-                  e.stopPropagation();
-                  setOpenGestioneFatture(true);
-                } }  size="small">
-                  <ExpandMore fontSize="inherit"/>
-                </IconButton>}
             </ListItemButton>
           </List>
-          <Collapse in={openGestioneFatture} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItemButton selected={currentLocation === PathPf.JSON_TO_SAP || currentLocation === PathPf.JSON_TO_SAP_DETAILS} sx={{ pl: 8 }} onClick={() => handleListItemClick(PathPf.JSON_TO_SAP)}>
-                <ListItemIcon>
-                  <SendIcon fontSize="inherit" />
-                </ListItemIcon>
-                <ListItemText primary="Invio a SAP" />
-              </ListItemButton>
-            </List>
-          </Collapse>
+          
         </Collapse>
         <ListItemButton selected={currentLocation === "/send/accertamenti"} onClick={() => handleListItemClick("/send/accertamenti")}>
           <ListItemIcon>
@@ -313,3 +291,30 @@ const SideNavSend : React.FC = () => {
   );
 };
 export default SideNavSend;
+
+/*
+<Collapse in={openGestioneFatture} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton selected={currentLocation === PathPf.JSON_TO_SAP || currentLocation === PathPf.JSON_TO_SAP_DETAILS} sx={{ pl: 8 }} onClick={() => handleListItemClick(PathPf.JSON_TO_SAP)}>
+                <ListItemIcon>
+                  <SendIcon fontSize="inherit" />
+                </ListItemIcon>
+                <ListItemText primary="Invio a SAP" />
+              </ListItemButton>
+            </List>
+          </Collapse>
+
+           {openGestioneFatture ?
+                <IconButton onClick={(e)=>{
+                  e.stopPropagation();
+                  setOpenGestioneFatture(false);
+                } }  size="small">
+                  <ExpandLess fontSize="inherit" />
+                </IconButton>  :
+                <IconButton  onClick={(e)=>{
+                  e.stopPropagation();
+                  setOpenGestioneFatture(true);
+                } }  size="small">
+                  <ExpandMore fontSize="inherit"/>
+                </IconButton>}
+ */

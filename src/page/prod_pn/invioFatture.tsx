@@ -18,7 +18,8 @@ import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import { Box, DialogContent, Divider, List, ListItem, ListItemText, Stack, TextField, Typography } from "@mui/material";
 import { NotaTextField } from "./gestioneFatture";
 import FiltersCollapseInvioFatture from "../../components/invioFatture/filtersCollapseInvioFatture";
-
+import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
+import DescriptionIcon from '@mui/icons-material/Description';
 
 interface ListaFatture {
   tipologiaFattura: string,
@@ -564,44 +565,47 @@ const InvioFatture : React.FC = () => {
   
   };
   return(
-
-    <MainBoxStyled title={"Invio a SAP"}>
-      <ResponsiveGridContainer >
-        <MainFilter 
-          filterName={"select_value_string"}
-          inputLabel={"Anno"}
-          clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setBodyFatturazione}
-          body={bodyFatturazione}
-          keyDescription={"anno"}
-          keyValue={"anno"}
-          keyBody={"anno"}
-          arrayValues={arrayYears}
-          extraCodeOnChange={(e)=>{
-            callLista.current = false; 
+    <>
+      <div>
+        <NavigatorHeader pageFrom={"Documenti Contabili Emessi/"} pageIn={"Invio a SAP"} backPath={PathPf.FATTURAZIONE} icon={<DescriptionIcon sx={{padding:"3px"}}  fontSize='small'/>}/>
+      </div>
+      <MainBoxStyled >
+        <ResponsiveGridContainer >
+          <MainFilter 
+            filterName={"select_value_string"}
+            inputLabel={"Anno"}
+            clearOnChangeFilter={clearOnChangeFilter}
+            setBody={setBodyFatturazione}
+            body={bodyFatturazione}
+            keyDescription={"anno"}
+            keyValue={"anno"}
+            keyBody={"anno"}
+            arrayValues={arrayYears}
+            extraCodeOnChange={(e)=>{
+              callLista.current = false; 
             /* getMesi(e.toString());
             setDataSelect([]);
             setValueMultiselectTipologie([]);
             setValueAutocomplete([]);*/
-          }}/>
-        <MainFilter 
-          filterName={"select_key_value"}
-          inputLabel={"Mese"}
-          clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setBodyFatturazione}
-          body={bodyFatturazione}
-          keyValue={"mese"}
-          keyDescription='descrizione'
-          keyBody={"mese"}
-          defaultValue={""}
-          arrayValues={arrayMonths}
-          extraCodeOnChange={(e)=>{
-            const value = Number(e);
+            }}/>
+          <MainFilter 
+            filterName={"select_key_value"}
+            inputLabel={"Mese"}
+            clearOnChangeFilter={clearOnChangeFilter}
+            setBody={setBodyFatturazione}
+            body={bodyFatturazione}
+            keyValue={"mese"}
+            keyDescription='descrizione'
+            keyBody={"mese"}
+            defaultValue={""}
+            arrayValues={arrayMonths}
+            extraCodeOnChange={(e)=>{
+              const value = Number(e);
             /* setBodyFatturazione((prev)=> ({...prev, ...{mese:value,tipologiaFattura:[]}}));
             getTipologieFatturazione(bodyFatturazione.anno,value,bodyFatturazione.cancellata);
             setValueMultiselectTipologie([]); */           
-          }}/>
-        {/*TODO da eliminare
+            }}/>
+          {/*TODO da eliminare
         <MainFilter 
           filterName={"select_key_value"}
           inputLabel={"Stato"}
@@ -620,132 +624,133 @@ const InvioFatture : React.FC = () => {
             getTipologieFatturazione(bodyFatturazione.anno,bodyFatturazione.mese,value);
             setValueMultiselectTipologie([]);   
           }}/> */}
-        <MainFilter 
-          filterName={"multi_checkbox"}
-          inputLabel={"Tipologia Fattura"}
-          clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setBodyFatturazione}
-          body={bodyFatturazione}
-          dataSelect={tipologieFatture}
-          valueAutocomplete={valueMulitselectTipologie}
-          setValueAutocomplete={setValueMultiselectTipologie}
-          keyDescription={"tipologiaFattura"}
-          keyValue={"tipologiaFattura"}
-          keyBody={"tipologiaFattura"}
-          extraCodeOnChangeArray={(e)=>{
-            setValueMultiselectTipologie(e);
-            setBodyFatturazione((prev) => ({...prev,...{tipologiaFattura:e}}));
-          }}
-          iconMaterial={RenderIcon("invoice",true)}/>
-        <MainFilter
-          filterName={"select_key_value"}
-          inputLabel="Tipologia Invio"
-          arrayValues={[
-            { id: 3, descrizione: "Tutte" },
-            { id: 1, descrizione: "Re-inviate" }
-          ]}
-          keyValue="id"
-          keyDescription="descrizione"
-          keyBody="tipoInvio"
-          body={bodyFatturazione}
-          setBody={setBodyFatturazione}
-          clearOnChangeFilter={() => {}}
+          <MainFilter 
+            filterName={"multi_checkbox"}
+            inputLabel={"Tipologia Fattura"}
+            clearOnChangeFilter={clearOnChangeFilter}
+            setBody={setBodyFatturazione}
+            body={bodyFatturazione}
+            dataSelect={tipologieFatture}
+            valueAutocomplete={valueMulitselectTipologie}
+            setValueAutocomplete={setValueMultiselectTipologie}
+            keyDescription={"tipologiaFattura"}
+            keyValue={"tipologiaFattura"}
+            keyBody={"tipologiaFattura"}
+            extraCodeOnChangeArray={(e)=>{
+              setValueMultiselectTipologie(e);
+              setBodyFatturazione((prev) => ({...prev,...{tipologiaFattura:e}}));
+            }}
+            iconMaterial={RenderIcon("invoice",true)}/>
+          <MainFilter
+            filterName={"select_key_value"}
+            inputLabel="Tipologia Invio"
+            arrayValues={[
+              { id: 3, descrizione: "Tutte" },
+              { id: 1, descrizione: "Re-inviate" }
+            ]}
+            keyValue="id"
+            keyDescription="descrizione"
+            keyBody="tipoInvio"
+            body={bodyFatturazione}
+            setBody={setBodyFatturazione}
+            clearOnChangeFilter={() => {}}
+          />
+        </ResponsiveGridContainer>
+        <FilterActionButtons 
+          onButtonFiltra={onButtonFiltra} 
+          onButtonAnnulla={onButtonAnnulla} 
+          statusAnnulla={statusAnnulla} 
         />
-      </ResponsiveGridContainer>
-      <FilterActionButtons 
-        onButtonFiltra={onButtonFiltra} 
-        onButtonAnnulla={onButtonAnnulla} 
-        statusAnnulla={statusAnnulla} 
-      />
-      <ActionTopGrid
-        counter={elementsSelected.length}
-        actionButtonRight={[
-          {
-            onButtonClick:downloadReport,
-            variant: "outlined",
-            label: "Download Fatture Re-inviate",
-            icon:{name:"download"},
-            disabled:(bodyFatturazione.tipoInvio === 3)
-          },
-          {
-            onButtonClick:downloadReport,
-            variant: "outlined",
-            label: "Download Risultati",
-            icon:{name:"download"},
-            disabled:(listaFatture?.length === 0)
-          }]}/>
-      <div className="mt-1 mb-5" style={{ width: '100%'}}> 
-        <GridCustom
-          nameParameterApi='invioFatture'
-          elements={listaFatture}
-          changePage={onChangePageOrRowGrid}
-          changeRow={onChangePageOrRowGrid} 
-          total={count}
-          page={page}
-          rows={rowsPerPage}
-          headerNames={headerNamesInvioFatture}
-          headerNamesCollapse={headerNamesInvioFattureCollapse}
-          apiGet={()=>setOpenModalFatture(true)}
-          disabled={false}
-          widthCustomSize="1600px"
-          //setAction={showPopUpAction}
-          manageCheckbox={manageCheckbox}
-          manageCheckboxCollapse={manageCheckboxCollapse}
-          filterOnCollapse={(row) => (
-            <FiltersCollapseInvioFatture
-              element={row}
-              selectedRows={elementsSelected}
-              manageStateCheckbox={manageStateCheckbox}
-              onGenerate={()=>setOpenModalFatture(true)}
-            />
-          )}
-          getAsyncDetails={handleGetDetailsRowCollapsed}
-          collapseDataLoading={collapseDataLoading}
-          selectedRows={elementsSelected}
-          headerActionSort={headerAction}
-          setGridData={setGridData}
-          gridType={true}
-          setObjectSort={setObjectSort}
-          objectSort={objectSort}
-          manageStateCheckbox={manageStateCheckbox}
-          listaResponse={listaResponse}
-          sentenseEmpty={"Nessuna fattura disponibile"}
-          keyCollapse={"fatture"}
-          titleRowCollapse={"Dettaglio Fatture"}
-          colSpanCollaps={8}
-          setAction={showPopUpAction}
-        />
-      </div>
-      <ModalLoading 
-        open={showLoader} 
-        setOpen={setShowLoader}
-        sentence={'Loading...'} />
-      <ModalLoading 
-        open={showDownloading} 
-        setOpen={setShowDownloading}
-        sentence={'Downloading...'} />
-      <MainModalComponent 
-        width={"900px"}
-        open={openModalFatture}
-        setOpen={setOpenModalFatture}
-      >
-        <ModalContentFattureSelezionate
-          elementsSelected={elementsSelected}
+        <ActionTopGrid
+          counter={elementsSelected.length}
+          actionButtonRight={[
+            {
+              onButtonClick:downloadReport,
+              variant: "outlined",
+              label: "Download Fatture Re-inviate",
+              icon:{name:"download"},
+              disabled:(bodyFatturazione.tipoInvio === 3)
+            },
+            {
+              onButtonClick:downloadReport,
+              variant: "outlined",
+              label: "Download Risultati",
+              icon:{name:"download"},
+              disabled:(listaFatture?.length === 0)
+            }]}/>
+        <div className="mt-1 mb-5" style={{ width: '100%'}}> 
+          <GridCustom
+            nameParameterApi='invioFatture'
+            elements={listaFatture}
+            changePage={onChangePageOrRowGrid}
+            changeRow={onChangePageOrRowGrid} 
+            total={count}
+            page={page}
+            rows={rowsPerPage}
+            headerNames={headerNamesInvioFatture}
+            headerNamesCollapse={headerNamesInvioFattureCollapse}
+            apiGet={()=>setOpenModalFatture(true)}
+            disabled={false}
+            widthCustomSize="1600px"
+            //setAction={showPopUpAction}
+            manageCheckbox={manageCheckbox}
+            manageCheckboxCollapse={manageCheckboxCollapse}
+            filterOnCollapse={(row) => (
+              <FiltersCollapseInvioFatture
+                element={row}
+                selectedRows={elementsSelected}
+                manageStateCheckbox={manageStateCheckbox}
+                onGenerate={()=>setOpenModalFatture(true)}
+              />
+            )}
+            getAsyncDetails={handleGetDetailsRowCollapsed}
+            collapseDataLoading={collapseDataLoading}
+            selectedRows={elementsSelected}
+            headerActionSort={headerAction}
+            setGridData={setGridData}
+            gridType={true}
+            setObjectSort={setObjectSort}
+            objectSort={objectSort}
+            manageStateCheckbox={manageStateCheckbox}
+            listaResponse={listaResponse}
+            sentenseEmpty={"Nessuna fattura disponibile"}
+            keyCollapse={"fatture"}
+            titleRowCollapse={"Dettaglio Fatture"}
+            colSpanCollaps={8}
+            setAction={showPopUpAction}
+          />
+        </div>
+        <ModalLoading 
+          open={showLoader} 
+          setOpen={setShowLoader}
+          sentence={'Loading...'} />
+        <ModalLoading 
+          open={showDownloading} 
+          setOpen={setShowDownloading}
+          sentence={'Downloading...'} />
+        <MainModalComponent 
+          width={"1200px"}
+          open={openModalFatture}
           setOpen={setOpenModalFatture}
-          numeroDocStorno={numeroDocStorno}
-          setNumeroDocStorno={setNumeroDocStorno}
-          nota={nota}
-          setNota={setNota}
-        />
-      </MainModalComponent>
-      <DialogInfo 
-        open={showPopUpDateInvio}
-        onClose={setShowPopUpdateInvio}
-        clearAction={() => { setInforeInvio([]);}}
-        array={infoReinvio}
-        title="Storico Invio"
-        ContentComponent={DilogContentList}/>
-    </MainBoxStyled>
+        >
+          <ModalContentFattureSelezionate
+            elementsSelected={elementsSelected}
+            setOpen={setOpenModalFatture}
+            numeroDocStorno={numeroDocStorno}
+            setNumeroDocStorno={setNumeroDocStorno}
+            nota={nota}
+            setNota={setNota}
+          />
+        </MainModalComponent>
+        <DialogInfo 
+          open={showPopUpDateInvio}
+          onClose={setShowPopUpdateInvio}
+          clearAction={() => { setInforeInvio([]);}}
+          array={infoReinvio}
+          title="Storico Invio"
+          ContentComponent={DilogContentList}/>
+      </MainBoxStyled>
+    </>
   );
 };
 export default InvioFatture;
@@ -778,28 +783,15 @@ const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionatePr
   setNota
 }) => {
   return (
-    <>
-      <ElementToProcessComponent
-        closeIcon={true}
-        title={"Fatture Selezionate"}
-        obj={elementsSelected}
-        keyValueObj={keyValueObjModalInfo}
-        showButton={false}
-        setOpen={setOpen}
-        showCounter={true}
-      />
-      <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-        {(elementsSelected[0].statoInvio === 3 || elementsSelected[0].statoInvio === 4) &&
-        <TextField
-          label={"N. Di documento di storno"}
-          fullWidth={true}
-          value={numeroDocStorno}
-          onChange={(e) => setNumeroDocStorno(e.target.value)}
-          placeholder={"Inserisci il numero del documento di storno"}
-        />}
-        <NotaTextField value={nota} onChange={setNota}/>
-      </Box>
-    </>
+    <ElementToProcessComponent
+      closeIcon={true}
+      title={"Fatture Selezionate"}
+      obj={elementsSelected}
+      keyValueObj={keyValueObjModalInfo}
+      showButton={false}
+      setOpen={setOpen}
+      showCounter={true}
+    />
   );
 };
 

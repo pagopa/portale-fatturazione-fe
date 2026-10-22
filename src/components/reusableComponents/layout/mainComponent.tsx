@@ -19,13 +19,14 @@ import PersonIcon from '@mui/icons-material/Person';
 import MarkChatUnreadIcon from '@mui/icons-material/MarkChatUnread';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import SendIcon from '@mui/icons-material/Send';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 
 const MainBox = styled(Box)({
   marginLeft: "1.25rem",  
   marginRight: "1.25rem",
   padding: "1rem",
-  backgroundColor: "#f3f4f6",
+  backgroundColor: "#f2f2f2",
   borderRadius: "8px",
   minHeight: "80vh"
 });
@@ -36,7 +37,7 @@ export  const MainBoxStyled = ({
   actionButton
 }:{
     children?: React.ReactNode,
-    title:string,
+    title?:string,
     actionButton?:{
         onButtonClick:()=> void,
         variant:"text" | "outlined" | "contained",
@@ -53,15 +54,14 @@ export  const MainBoxStyled = ({
       sx={{ alignItems: "center",mt:1 }}
     >
       {/* Typography — 9 columns */}
-      <Grid item xs={12} md={9}>
+      {title && <Grid item xs={12} md={9}>
         <Typography
           variant="h4"
           sx={{ textAlign: { xs: "center", md: "left" } }}
         >
           {title}
         </Typography>
-      </Grid>
-
+      </Grid>}
       {/* Buttons — 3 columns */}
       <Grid 
         item 
@@ -394,5 +394,7 @@ export const RenderIcon = (iconName,sx = true) => {
     return <NoteAddIcon fontSize={sx ? "small":"medium"}/>;
   case "send":
     return <SendIcon fontSize={sx ? "small":"medium"}/>;
+  case "upload-file":
+    return <UploadFileIcon fontSize={sx ? "small":"medium"}/>;
   }
 };

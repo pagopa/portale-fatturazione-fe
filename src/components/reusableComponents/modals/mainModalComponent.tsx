@@ -45,7 +45,7 @@ const MainModalComponent: React.FC<MainModalComponentProps> = ({
       <Box sx={{ ...style, width }}>
         {children}
         <div className='container_buttons_modal d-flex justify-content-center mt-5'>
-          <Button  variant='contained' onClick={()=> "ciao"} >Prosegui</Button>
+          <Button disabled={true} variant='contained' onClick={()=> "ciao"} >Prosegui</Button>
         </div>
       </Box>
     </Modal>

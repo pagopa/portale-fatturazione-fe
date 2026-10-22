@@ -1,7 +1,9 @@
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton, TextField, Tooltip } from "@mui/material";
 import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { NotaTextField } from "../../page/prod_pn/gestioneFatture";
+import { useState } from "react";
 
 const getChipElaborazione = (row) =>{
   let tooltipObj:any = {label:'',title:''};
@@ -96,6 +98,87 @@ export const keyValueObjModalInfo = [
   {
     key:"statoInvio",
     label:"N. Invio"
+  },
+  {
+    key:"idStorno-component",
+    label:"N. Doc. Di Storno",
+    component:(setNumeroDocStorno, value)=> {
+      const [focused, setFocused] = useState(false);
+      return (
+        <Box  sx={{
+          position: 'relative',
+          width: 130,
+          height: 40,
+          ml: 'auto',            // centers the Box itself inside its container (e.g. a table cell)
+        }}>
+          <TextField
+            multiline
+            minRows={1}
+            maxRows={focused ? undefined : 1}   // focused: grows with content; otherwise: one line
+            size="small"
+            label="N. documento di storno"
+            value={value}
+            onChange={(e) => setNumeroDocStorno(e.target.value)}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') e.preventDefault();
+            }}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: 100,
+              bgcolor: 'background.paper',
+              borderRadius: 1,
+              zIndex: focused ? 10 : 1,
+              boxShadow: focused ? 3 : 0,
+              '& .MuiInputLabel-root': { fontSize: 10 },
+              '& .MuiInputBase-root': { fontSize: 10 },
+            }}
+          />
+        </Box>
+
+      );
+    } 
+  },
+  {
+    key:"nota-component",
+    label:"Nota",
+    component:(setNota, value) =>  {
+
+      const [focused, setFocused] = useState(false);
+      return (
+        <Box sx={{ position: 'relative', width: 130, height: 40, ml: 'auto' }}>
+          <TextField
+            multiline
+            minRows={1}
+            maxRows={focused ? undefined : 1}   // focused: grows with content; otherwise: one line
+            size="small"
+            label="Nota"
+            value={value}
+            onChange={(e) => setNota(e.target.value)}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') e.preventDefault();
+            }}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: 100,
+              bgcolor: 'background.paper',
+              borderRadius: 1,
+              zIndex: focused ? 10 : 1,
+              boxShadow: focused ? 3 : 0,
+              '& .MuiInputLabel-root': { fontSize: 10 },
+              '& .MuiInputBase-root': { fontSize: 10 },
+            }}
+          />
+        </Box>
+      );
+    }
   }
 ];
 

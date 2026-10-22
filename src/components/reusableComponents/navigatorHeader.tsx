@@ -29,7 +29,7 @@ const NavigatorHeader:React.FC<NavigationHeaderProps> = ({pageFrom,pageIn, backP
         >
             Indietro
         </ButtonNaked>
-        <Typography sx={{marginLeft:'20px'}} variant="caption">
+        <Typography sx={{marginLeft:'20px', display:'inline-flex', alignItems:'center', verticalAlign:'middle', gap:'4px'}} variant="caption">
           {icon}
           {pageFrom}
         </Typography>

@@ -395,8 +395,8 @@ const Fatturazione : React.FC = () =>{
     }));
   };
 
-  const onButtonSap = (who) => {
-    setOpenSapModal((prev)=>({...prev,...{show:true,who}}));
+  const onButtonSap = () => {
+    navigate(PathPf.JSON_TO_SAP);
   };
 
   const clearOnChangeFilter = () => {
@@ -787,16 +787,16 @@ const Fatturazione : React.FC = () =>{
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onButtonAnnulla} 
         statusAnnulla={statusAnnulla} 
-        /* actionButton={[
+        actionButton={[
           {
-            onButtonClick: () => onButtonSap(0),
+            onButtonClick: () => onButtonSap(),
             variant: "outlined",
-            icon:{name:"preview" },
-            disabled:disableButtonSap,
-            tooltipMessage:"Invia a SAP",
+            icon:{name:"upload-file"},
+            disabled:false,
+            tooltipMessage:"Invio a SAP",
             withText:false
           }    
-        ]}*/
+        ]}
       />
       <ActionTopGrid
         actionButtonRight={[{
@@ -869,7 +869,7 @@ const Fatturazione : React.FC = () =>{
         errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
         TextField={NotaTextField}
         verifiedText={textNoteVerified.current}/>
-    </MainBoxStyled>   
+    </MainBoxStyled> 
   );
 };
 
