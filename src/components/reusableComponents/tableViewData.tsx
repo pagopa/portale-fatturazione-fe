@@ -82,9 +82,14 @@ export const ElementToProcessComponent = <T,> ({
       </Box> : <Typography>{title}</Typography>}
       <Box  sx={{ 
         backgroundColor: '#F8F8F8', 
-        padding: '10px', 
-        marginTop: '20px', 
-        width: '100%',
+        // niente padding in alto: con lo scroll lo stickyHeader deve aderire al bordo superiore
+        padding: '0 10px 10px 10px',
+        // bordo bianco attorno alla tabella: sta fuori dall'area di scroll, quindi non lascia vedere le righe
+        border: '5px solid white',
+        // secondo strato grigio esterno; width ridotta di 10px perché l'outline non occupa spazio nel layout
+        outline: '5px solid #F8F8F8',
+        marginTop: '20px',
+        width: 'calc(100% - 10px)',
         ...(rows.length > 10 && {
           maxHeight: 400,
           overflowY: 'auto',
@@ -94,7 +99,7 @@ export const ElementToProcessComponent = <T,> ({
           <TableHead>
             <TableRow sx={{ borderColor: "white", borderWidth: "thick" }}>
               {keyValueObj.map((el, i) => (
-                <TableCell key={i} align="center" sx={{ marginLeft: "16px", backgroundColor: '#F8F8F8' }}>
+                <TableCell key={i} align="center" sx={{ marginLeft: "16px", backgroundColor: '#F8F8F8', borderBottom: '5px solid white' }}>
                   {el.label}
                 </TableCell>
               ))}
