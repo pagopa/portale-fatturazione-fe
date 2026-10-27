@@ -783,6 +783,7 @@ const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionatePr
   setNota
 }) => {
   return (
+    <Box>
     <ElementToProcessComponent
       closeIcon={true}
       title={"Fatture Selezionate"}
@@ -792,6 +793,8 @@ const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionatePr
       setOpen={setOpen}
       showCounter={true}
     />
+    <NotaTextField value={""}/>
+    </Box>
   );
 };
 
