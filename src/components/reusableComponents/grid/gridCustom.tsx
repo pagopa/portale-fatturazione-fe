@@ -3,7 +3,6 @@ import React, { SetStateAction } from "react";
 import HeaderGridCustom from "./headerGrid/headerGridCustom";
 import EmptyRow from "./emptyRow";
 import GridRowDesignByConfigFile from "./rowComponent/gridRowDesignByConfigFile";
-
 interface GridCustomProps<T,K> {
   elements:  T[],
   changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -17,7 +16,7 @@ interface GridCustomProps<T,K> {
   apiGet?:(el: T)=> void 
   disabled:boolean
   widthCustomSize:string
-  setAction?:(obj:T,action:string) => void
+  setAction?:(obj:T,action:string) => voi
   buttons?:{
     stringIcon:string
     icon:React.ReactNode
@@ -68,7 +67,8 @@ export interface HeaderGridCustom {
   keyToManipulateData?:string,
   variant?: "caption-semibold" | "caption" | "body1" | "body2" | "subtitle1" | "subtitle2" | "h6" | "h5" | "h4" | "h3" | "h2" | "h1"; 
   icon?:string,
-  sentenceSnackbar?:string
+  sentenceSnackbar?:string,
+  makeActionFun?:(obj:any)=> boolean
 }
 
 
