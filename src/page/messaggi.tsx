@@ -20,35 +20,35 @@ import { get2FinancialYear } from "../reusableFunction/function";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 
 export interface Messaggio {
-    idMessaggio:number,
-    idEnte: null|string|number,
-    idUtente: string,
-    json: string,
-    anno: number,
-    mese: number,
-    prodotto: string,
-    gruppoRuolo: string,
-    auth: string,
-    stato: string,
-    dataInserimento: string,
-    dataStepCorrente: null|string|number,
-    linkDocumento: string,
-    tipologiaDocumento: string,
-    categoriaDocumento: string,
-    lettura: true,
-    hash: string,
-    rhash: string,
-    contentType: string,
-    contentLanguage: string,
-    idReport: number,
-    ragioneSociale?:string
+  idMessaggio:number,
+  idEnte: null|string|number,
+  idUtente: string,
+  json: string,
+  anno: number,
+  mese: number,
+  prodotto: string,
+  gruppoRuolo: string,
+  auth: string,
+  stato: string,
+  dataInserimento: string,
+  dataStepCorrente: null|string|number,
+  linkDocumento: string,
+  tipologiaDocumento: string,
+  categoriaDocumento: string,
+  lettura: true,
+  hash: string,
+  rhash: string,
+  contentType: string,
+  contentLanguage: string,
+  idReport: number,
+  ragioneSociale?:string
 }
 
 interface FilterMessaggi{
-    anno:number|null,
-    mese:null|number,
-    tipologiaDocumento:string[]|[],
-    letto:null|boolean
+  anno:number|null,
+  mese:null|number,
+  tipologiaDocumento:string[]|[],
+  letto:null|boolean
 }
 
 
@@ -135,6 +135,12 @@ const Messaggi : React.FC = () => {
     });
   };
 
+  function getFileName(path) {
+    const file = path.split(/[\\/]/).pop();  
+    const dot = file.lastIndexOf('.');         
+    return dot > 0 ? file.slice(0, dot) : file;
+  }
+
   const downloadMessaggio = async (item, contentType) => {
     if(item.categoriaDocumento.toLowerCase().includes("contestazione")){
       handleModifyMainState({contestazioneSelected:{reportId:item.idReport}});
@@ -153,7 +159,7 @@ const Messaggi : React.FC = () => {
     }
 
     const fileName = (!isJson && item.categoriaDocumento === "ACCERTAMENTO") ? 
-      item.linkDocumento.split("/").pop():
+      getFileName(item.linkDocumento):
       `${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}`;
       
     setShowDownloading(true);
