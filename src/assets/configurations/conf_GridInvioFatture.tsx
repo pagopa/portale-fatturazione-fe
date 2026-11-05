@@ -99,10 +99,6 @@ export const keyValueObjModalInfo = [
     key:"statoInvio",
     label:"N. Invio"
   },
-
-];
-
-/*
   {
     key:"idStorno-component",
     label:"N. Doc. Di Storno",
@@ -183,4 +179,9 @@ export const keyValueObjModalInfo = [
         </Box>
       );
     }
-  } */
+  } 
+
+];
+
+
+  

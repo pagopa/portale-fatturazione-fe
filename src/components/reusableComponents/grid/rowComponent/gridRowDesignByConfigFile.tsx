@@ -1,7 +1,7 @@
 import { Box, Collapse, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { HeaderGridCustom } from "../gridCustom";
 import GridCell from "./gridCell";
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Loader from "../../loader";
 import CustomTablePagination from "../pagination";
 
@@ -59,7 +59,21 @@ const GridRowDesignByConfigFile=<T,K>({
 
   //_________________________________________________________________
 
- 
+  // Paginazione lato client del dettaglio (collapse)
+  const [pageCollapse, setPageCollapse] = useState(0);
+  const [rowsCollapse, setRowsCollapse] = useState(10);
+  const totalCollapse = dataInsideCollapse.length;
+
+  // se i dati cambiano (es. filtri) e la pagina corrente non esiste più, torno alla prima
+  useEffect(() => {
+    if (pageCollapse * rowsCollapse >= totalCollapse) setPageCollapse(0);
+  }, [totalCollapse]);
+
+  const dataInsideCollapsePaginated = dataInsideCollapse.slice(
+    pageCollapse * rowsCollapse,
+    pageCollapse * rowsCollapse + rowsCollapse
+  );
+
 
   // Dentro il componente, prima del return
   const [filtroAnno, setFiltroAnno] = useState<string>('tutti');
@@ -92,13 +106,6 @@ const GridRowDesignByConfigFile=<T,K>({
     });
   }, [dataInsideCollapse, filtroAnno, filtroMese, filtroTipologia]);
 
-  // Mappa numero mese -> nome (se ti serve una label leggibile)
-  const nomiMesi = [
-    'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
-    'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
-  ];
-
-  //________________________________________________________________
 
   return (
     <>
@@ -172,7 +179,7 @@ const GridRowDesignByConfigFile=<T,K>({
                       </TableBody>
                     ) : (
                       <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
-                        {dataInsideCollapse?.map((el: any, rowIndex: number) => (
+                        {dataInsideCollapsePaginated?.map((el: any, rowIndex: number) => (
                           <TableRow key={`row-${rowIndex}`}>
                             {Object.values(headerNamesCollapse).map(
                               (rowObjectCollapsed: HeaderGridCustom, colIndex: number) => (
@@ -195,15 +202,16 @@ const GridRowDesignByConfigFile=<T,K>({
                       </TableBody>
                     )}
                   </Table>
-
-                  {/* ✅ ora è FUORI dalla Table, come sibling */}
                   {!collapseDataLoading && (
                     <CustomTablePagination
-                      total={0}
-                      page={1}
-                      rows={10}
-                      changePage={() => null}
-                      changeRow={() => null}
+                      total={totalCollapse}
+                      page={pageCollapse}
+                      rows={rowsCollapse}
+                      changePage={(_e, newPage) => setPageCollapse(newPage)}
+                      changeRow={(e) => {
+                        setRowsCollapse(parseInt(e.target.value, 10));
+                        setPageCollapse(0);
+                      }}
                     />
                   )}
                 </>

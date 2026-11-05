@@ -17,7 +17,7 @@ import { ElementToProcessComponent } from "../../components/reusableComponents/t
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import { Box, DialogContent, Divider, List, ListItem, ListItemText, Stack, TextField, Typography } from "@mui/material";
 import { NotaTextField } from "./gestioneFatture";
-import FiltersCollapseInvioFatture from "../../components/invioFatture/filtersCollapseInvioFatture";
+import FiltersCollapseInvioFatture, { FiltriCollapseInvioFatture } from "../../components/invioFatture/filtersCollapseInvioFatture";
 import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
 import DescriptionIcon from '@mui/icons-material/Description';
 
@@ -214,7 +214,7 @@ const InvioFatture : React.FC = () => {
       setListaFatture([...addMockInviate,...res.data.filter(el => el.annoRiferimento === 2026)].slice(0,10));
       
       const array = res.data.map( el => el.tipologiaFattura);
-      const ORDER = ["Anticipo", "Acconto", "Primo Saldo", "Secondo Saldo", "Var. Semestrale"];
+      const ORDER = ["Anticipo", "Acconto", "Primo Saldo", "Secondo Saldo", "Var. Semestrale", "Sem. Sospesi"];
 
       const toTitleCase = (str: string) =>
         str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
@@ -480,10 +480,47 @@ const InvioFatture : React.FC = () => {
         setElementSelected(resCollapseDetails);
       }
     
+      originalFattureRef.current[getRowKey(el)] = addStatoInvioInsideCollapse;
       return resCollapseDetails;
     }else{
+      // riga mock: alla riapertura ripristino le fatture originali (i filtri del collapse vengono resettati)
+      const original = originalFattureRef.current[getRowKey(el)];
+      if(original){
+        setListaFatture((prev) => prev.map((item) => getRowKey(item) === getRowKey(el) ? { ...item, fatture: original } : item));
+      }
       setCollapseDataLoading(false);
     }
+  };
+
+  // ______________ Filtri dentro il collapse (applicati solo alla riga corrente) ______________
+  // copia delle fatture originali (response iniziale) per ogni riga, usata per ripristinare i dati al reset dei filtri
+  const originalFattureRef = useRef<Record<string, any[]>>({});
+
+  const getRowKey = (row: Record<string, any>) =>
+    `${row.annoRiferimento}-${row.meseRiferimento}-${row.tipologiaFattura}-${row.statoInvio}`;
+
+  const applyFiltersCollapse = (row: Record<string, any>, filtri: FiltriCollapseInvioFatture) => {
+    const key = getRowKey(row);
+    setListaFatture((prev) =>
+      prev.map((item) => {
+        if (getRowKey(item) !== key) return item;
+        if (!originalFattureRef.current[key]) {
+          originalFattureRef.current[key] = item.fatture || [];
+        }
+        const original = originalFattureRef.current[key];
+        const ragioneSociale = filtri.ragioneSociale?.trim().toLowerCase() || "";
+        const idFattura = filtri.idFattura?.trim() || "";
+        const dataFattura = filtri.dataFattura ? new Date(filtri.dataFattura).toDateString() : "";
+
+        const filtered = original.filter((f) => {
+          const matchRagione = !ragioneSociale || (f.ragioneSociale || "").toLowerCase().includes(ragioneSociale);
+          const matchId = !idFattura || String(f.idFattura ?? "").includes(idFattura);
+          const matchData = !dataFattura || (f.dataFattura && new Date(f.dataFattura).toDateString() === dataFattura);
+          return matchRagione && matchId && matchData;
+        });
+        return { ...item, fatture: filtered };
+      })
+    );
   };
 
   const headerAction = (
@@ -701,6 +738,8 @@ const InvioFatture : React.FC = () => {
                 selectedRows={elementsSelected}
                 manageStateCheckbox={manageStateCheckbox}
                 onGenerate={()=>setOpenModalFatture(true)}
+                onFilter={(filtri) => applyFiltersCollapse(row, filtri)}
+                onLoading={setCollapseDataLoading}
               />
             )}
             getAsyncDetails={handleGetDetailsRowCollapsed}
@@ -782,13 +821,19 @@ const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionatePr
   nota,
   setNota
 }) => {
+  // "idStorno-component" e "nota-component" visibili solo se le fatture selezionate non sono "Da inviare" (statoInvio !== 0)
+  const showStornoNota = elementsSelected.some(el => el.statoInvio !== 0);
+  const keyValueObjFiltered = showStornoNota
+    ? keyValueObjModalInfo
+    : keyValueObjModalInfo.filter(el => el.key !== "idStorno-component" && el.key !== "nota-component");
+
   return (
     <Box>
     <ElementToProcessComponent
       closeIcon={true}
       title={"Fatture Selezionate"}
       obj={elementsSelected}
-      keyValueObj={keyValueObjModalInfo}
+      keyValueObj={keyValueObjFiltered}
       showButton={false}
       setOpen={setOpen}
       showCounter={true}
