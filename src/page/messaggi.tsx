@@ -20,35 +20,35 @@ import { get2FinancialYear } from "../reusableFunction/function";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 
 export interface Messaggio {
-    idMessaggio:number,
-    idEnte: null|string|number,
-    idUtente: string,
-    json: string,
-    anno: number,
-    mese: number,
-    prodotto: string,
-    gruppoRuolo: string,
-    auth: string,
-    stato: string,
-    dataInserimento: string,
-    dataStepCorrente: null|string|number,
-    linkDocumento: string,
-    tipologiaDocumento: string,
-    categoriaDocumento: string,
-    lettura: true,
-    hash: string,
-    rhash: string,
-    contentType: string,
-    contentLanguage: string,
-    idReport: number,
-    ragioneSociale?:string
+  idMessaggio:number,
+  idEnte: null|string|number,
+  idUtente: string,
+  json: string,
+  anno: number,
+  mese: number,
+  prodotto: string,
+  gruppoRuolo: string,
+  auth: string,
+  stato: string,
+  dataInserimento: string,
+  dataStepCorrente: null|string|number,
+  linkDocumento: string,
+  tipologiaDocumento: string,
+  categoriaDocumento: string,
+  lettura: true,
+  hash: string,
+  rhash: string,
+  contentType: string,
+  contentLanguage: string,
+  idReport: number,
+  ragioneSociale?:string
 }
 
 interface FilterMessaggi{
-    anno:number|null,
-    mese:null|number,
-    tipologiaDocumento:string[]|[],
-    letto:null|boolean
+  anno:number|null,
+  mese:null|number,
+  tipologiaDocumento:string[]|[],
+  letto:null|boolean
 }
 
 
@@ -159,65 +159,58 @@ const Messaggi : React.FC = () => {
     });
   };
 
+  function getFileName(path) {
+    const file = path.split(/[\\/]/).pop();  
+    const dot = file.lastIndexOf('.');         
+    return dot > 0 ? file.slice(0, dot) : file;
+  }
+
   const downloadMessaggio = async (item, contentType) => {
     if(item.categoriaDocumento.toLowerCase().includes("contestazione")){
       handleModifyMainState({contestazioneSelected:{reportId:item.idReport}});
       readMessage(item.idMessaggio);
       navigate(PathPf.STORICO_DETTAGLIO_CONTEST);
-    }else if(contentType === "text/csv" || contentType === "application/json"){
-      setShowDownloading(true);
-      await downloadMessaggioPagoPaCsv(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then((res)=>{
-        if(contentType === "application/json"){
-          res.data = JSON.stringify(res.data);
-        }
-        const blob = new Blob([res.data], { type: contentType});
+      return;
+    }
+
+    const isCsvOrJson = contentType === "text/csv" || contentType === "application/json";
+    const isZipOrExcel = contentType === "application/zip" || contentType === "application/vnd.ms-excel";
+    const isJson = contentType === "application/json";
+    if(!isCsvOrJson && !isZipOrExcel){
+      //nome da cambiare quando sistemiamo la logica dell'errore
+      managePresaInCarico(400,dispatchMainState);
+      return;
+    }
+
+    const fileName = (!isJson && item.categoriaDocumento === "ACCERTAMENTO") ? 
+      getFileName(item.linkDocumento):
+      `${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}`;
+      
+    setShowDownloading(true);
+    try{
+      if(isCsvOrJson){
+        const res = await downloadMessaggioPagoPaCsv(token,profilo.nonce, {idMessaggio:item.idMessaggio});
+        const data = contentType === "application/json" ? JSON.stringify(res.data) : res.data;
+        const blob = new Blob([data], { type: contentType});
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.setAttribute('hidden', '');
         a.setAttribute('href', url);
-        if(contentType === "text/csv"){
-          a.setAttribute('download',`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.csv`);
-        }
-        if(contentType === "application/json"){
-          a.setAttribute('download',`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.json`);
-        }
-                
+        a.setAttribute('download',`${fileName}.${contentType === "text/csv" ? "csv" : "json"}`);
         document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);   
-        setShowDownloading(false);
-        readMessage(item.idMessaggio);
-      }).catch(((err)=>{
-        setShowDownloading(false);
-        manageError(err,dispatchMainState);
-        getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra); 
-      }));
-    }else if(contentType === "application/zip"){
-      setShowDownloading(true);
-      await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then(response => response.blob())
-        .then((res)=>{
-          saveAs(res,`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.zip`);
-          setShowDownloading(false);
-          readMessage(item.idMessaggio);
-        }).catch(((err)=>{
-          setShowDownloading(false);
-          manageError(err,dispatchMainState);
-          getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
-        }));
-    }else if(contentType ==="application/vnd.ms-excel"){
-      setShowDownloading(true);
-      await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then(response => response.blob()).then((res)=>{
-        saveAs( res,`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.xlsx` );
-        setShowDownloading(false);
-        readMessage(item.idMessaggio);
-      }).catch((err)=>{
-        manageError(err,dispatchMainState);
-        setShowDownloading(false);
-        getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
-      }); 
-    }else{
-      //nome da cambiare quando sistemiamo la logica dell'errore
+        document.body.removeChild(a);
+      }else{
+        const response = await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:item.idMessaggio});
+        const blob = await response.blob();
+        saveAs(blob,`${fileName}.${contentType === "application/zip" ? "zip" : "xlsx"}`);
+      }
+      readMessage(item.idMessaggio);
+    }catch{
       managePresaInCarico(400,dispatchMainState);
+      getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
+    }finally{
+      setShowDownloading(false);
     }
   };
 
@@ -312,8 +305,6 @@ const Messaggi : React.FC = () => {
       bodyCentroMessaggi.letto !== null
   ) ? "show" : "hidden";
 
-  console.log({gridData});
-
   return (
 
     <MainBoxStyled title={"Messaggi"}>
@@ -403,84 +394,45 @@ const Messaggi : React.FC = () => {
                 colorMessaggio = "error";
                 disableDownload = true;
               }
-              if(item.categoriaDocumento === "Invio JSON a SAP"){
-                return (
-                  <div key={item.idMessaggio} id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
-                    <TimelineNotificationItem 
-                      key={item.idMessaggio}>
-                      <TimelineNotificationOppositeContent >
-                        <Typography>
-                          {getDay(item.dataInserimento)}
-                        </Typography>
-                        <Typography color="text.secondary" variant="caption" component="div">
-                          {getMonthString(item.dataInserimento)}
-                        </Typography>
-                      </TimelineNotificationOppositeContent>
-                      <TimelineNotificationSeparator>
-                        <TimelineConnector />
-                        <TimelineNotificationDot  variant={item.lettura ? undefined : "outlined"} size="default"/>
-                        <TimelineConnector />
-                      </TimelineNotificationSeparator>
-                      <TimelineNotificationContent>
-                        <Typography variant="caption" color="text.secondary" component="div">
-                          {getTime(item.dataInserimento)}
-                        </Typography>
-                        {item.stato && <Chip variant="outlined" size="small" label={statoMessaggio} color={colorMessaggio} />}
-                        {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
-                          {`${item.categoriaDocumento}`}
-                        </Typography>}
-                        {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
-                          {`Nome File: ${item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale :item.tipologiaDocumento}`}
-                        </Typography>}
-                        {item.anno && <Typography color="text.primary" variant="caption-semibold" component="div">
-                          {`${month[item.mese-1]}/${item.anno}  - Primo Saldo - Numero Fatture Generate: 10 `}
-                        </Typography>}
-                      </TimelineNotificationContent>
-                    </TimelineNotificationItem>
-                  </div> 
-                );
-              }else{
-                return (
-                  <div key={item.idMessaggio} id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
-                    <TimelineNotificationItem 
-                      key={item.idMessaggio}>
-                      <TimelineNotificationOppositeContent >
-                        <Typography>
-                          {getDay(item.dataInserimento)}
-                        </Typography>
-                        <Typography color="text.secondary" variant="caption" component="div">
-                          {getMonthString(item.dataInserimento)}
-                        </Typography>
-                      </TimelineNotificationOppositeContent>
-                      <TimelineNotificationSeparator>
-                        <TimelineConnector />
-                        <TimelineNotificationDot  variant={item.lettura ? undefined : "outlined"} size="default"/>
-                        <TimelineConnector />
-                      </TimelineNotificationSeparator>
-                      <TimelineNotificationContent>
-                        <Typography variant="caption" color="text.secondary" component="div">
-                          {getTime(item.dataInserimento)}
-                        </Typography>
-                        {item.stato && <Chip variant="outlined" size="small" label={statoMessaggio} color={colorMessaggio} />}
-                        {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
-                          {`${item.categoriaDocumento} : ${item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale :item.tipologiaDocumento}`}
-                        </Typography>}
-                        {item.anno && <Typography color="text.primary" variant="caption-semibold" component="div">
-                          {`${month[item.mese-1]}/${item.anno}  `}
-                        </Typography>}
-                        <Typography color="text.primary" variant="overline" component="div">
-                          {`Letto  `}
-                          {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon> }              
-                        </Typography>                
-                        {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={item.categoriaDocumento.toLowerCase().includes("contestazione") ? <PreviewIcon/>:<AttachFileIcon />}>
-                          {item.categoriaDocumento.toLowerCase().includes("contestazione") ? 'Visualizza documento' : 'Download documento'}
-                        </ButtonNaked>}
-                      </TimelineNotificationContent>
-                    </TimelineNotificationItem>
-                  </div> 
-                );
-              }
-              
+              return (
+                <div key={item.idMessaggio} id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
+                  <TimelineNotificationItem 
+                    key={item.idMessaggio}>
+                    <TimelineNotificationOppositeContent >
+                      <Typography>
+                        {getDay(item.dataInserimento)}
+                      </Typography>
+                      <Typography color="text.secondary" variant="caption" component="div">
+                        {getMonthString(item.dataInserimento)}
+                      </Typography>
+                    </TimelineNotificationOppositeContent>
+                    <TimelineNotificationSeparator>
+                      <TimelineConnector />
+                      <TimelineNotificationDot  variant={item.lettura ? undefined : "outlined"} size="default"/>
+                      <TimelineConnector />
+                    </TimelineNotificationSeparator>
+                    <TimelineNotificationContent>
+                      <Typography variant="caption" color="text.secondary" component="div">
+                        {getTime(item.dataInserimento)}
+                      </Typography>
+                      {item.stato && <Chip variant="outlined" size="small" label={statoMessaggio} color={colorMessaggio} />}
+                      {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
+                        {`${item.categoriaDocumento} : ${item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale :item.tipologiaDocumento}`}
+                      </Typography>}
+                      {item.anno && <Typography color="text.primary" variant="caption-semibold" component="div">
+                        {`${month[item.mese-1]}/${item.anno}  `}
+                      </Typography>}
+                      <Typography color="text.primary" variant="overline" component="div">
+                        {`Letto  `}
+                        {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon> }              
+                      </Typography>                
+                      {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={item.categoriaDocumento.toLowerCase().includes("contestazione") ? <PreviewIcon/>:<AttachFileIcon />}>
+                        {item.categoriaDocumento.toLowerCase().includes("contestazione") ? 'Visualizza documento' : 'Download documento'}
+                      </ButtonNaked>}
+                    </TimelineNotificationContent>
+                  </TimelineNotificationItem>
+                </div> 
+              );
             })}
           </TimelineNotification>
         </Box>

@@ -20,10 +20,9 @@ import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
-import { gestioneFattureInserisci, gestioneFattureVerificaNotaPii } from "../../api/apiPagoPa/gestioneFatturePA/api";
+import { gestioneFattureInserisci } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { formatDate, formatDateString } from "../../reusableFunction/function";
 import { ElementToProcessComponent, NotaTextField } from "./gestioneFatture";
-
 
 const Fatturazione : React.FC = () =>{
   const mainState = useGlobalStore(state => state.mainState);
@@ -36,7 +35,7 @@ const Fatturazione : React.FC = () =>{
   const callAnnulla = useRef(false);
   const navigate = useNavigate();
   const profilePath = PathPf.FATTURAZIONE;
-  const textNoteVerified = useRef(false);
+  //const textNoteVerified = useRef(false);
 
   const [firstYearMonth, setFirstYearMonth] = useState<number[]>([]);
   const [gridData, setGridData] = useState<FattureObj[]>([]);
@@ -60,7 +59,7 @@ const Fatturazione : React.FC = () =>{
   const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
   const [textAreaValue, setTextAreaValue] = useState<string>('');
-  const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
+  //const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
 
 
   const [elementSelected, setElementSelected] = useState<FattureObj|null>(null);
@@ -251,6 +250,19 @@ const Fatturazione : React.FC = () =>{
         data = res.data.map(el => el?.fattura).filter(obj => dataString.includes(obj.dataFattura));
       } 
     
+      //  TODO: chiedere il valore al back 
+      if(body.cancellata === true){
+        data = data.map(el =>{
+          el.cancellata = true;
+          return el;
+        });
+      }else{
+        data = data.map(el =>{
+          el.cancellata = false;
+          return el;
+        });
+      }
+    
       const customObjData : FattureObj[] = data;
     
       setCount(customObjData?.length || 0);
@@ -387,7 +399,6 @@ const Fatturazione : React.FC = () =>{
       }else{
         setDisableButtonSap(true);
       }
-    
       setResponseTipologieSap(res.data);
     }).catch((()=>{
       setDisableButtonSap(true);
@@ -487,10 +498,8 @@ const Fatturazione : React.FC = () =>{
           
     const start = newPage * rowsPerPage;
     const end = start + rowsPerPage;
-       
     const elementsToShow = gridData.slice(start, end);
     setShowedData(elementsToShow);
-  
     upadateOnSelctedChange(newPage,rowsPerPage);
   };
                           
@@ -498,16 +507,13 @@ const Fatturazione : React.FC = () =>{
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const newRows = parseInt(event.target.value, 10);
-  
     setRowsPerPage(newRows);
     setPage(0);
-  
     const elementsToShow = gridData.slice(0, newRows);
     setShowedData(elementsToShow);
     upadateOnSelctedChange(0,newRows);
   };
 
-    
   const keyValueObjModalInfo = [
     {
       key:"ragionesociale",
@@ -525,9 +531,7 @@ const Fatturazione : React.FC = () =>{
     
   const showPopUpAction = (obj, action) => { 
     const newObj = { ...obj };
-    
     newObj.dataFattura = formatDateString(newObj);
-
     setElementSelected(newObj);
     setActionCalled(action);
     if(action === "posticipa"){
@@ -536,10 +540,6 @@ const Fatturazione : React.FC = () =>{
       setOpenModalInfo({open:true, sentence: <ElementToProcessComponent obj={newObj} keyValueObj={keyValueObjModalInfo} title={<>Sei sicuro di voler <strong>Eliminare</strong> la seguente fattura?</>} />,buttonIsVisible:true,labelButton:"Prosegui"});
     }
   };
-
-
-  
-
 
   const azioneApi = async () => {
     setShowLoadingGrid(true);
@@ -563,7 +563,7 @@ const Fatturazione : React.FC = () =>{
         idEnte: elementSelected.istitutioID,
         nota: {
           data: formatDate(new Date()),
-          testo: textAreaValuePii
+          testo: textAreaValue//testo: textAreaValuePii
         }
       };
       
@@ -578,28 +578,15 @@ const Fatturazione : React.FC = () =>{
         "INSER_DELETE_WHITE_LIST",
         dispatchMainState
       );
-
     } catch{
       managePresaInCarico('GENERICO_KO',dispatchMainState);
     } finally {
       setShowLoadingGrid(false);
+      setTextAreaValue("");
+      //setTextAreaValuePii("");
     }
   };
-
-  const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
-
-  function isValidText(str) {
-    return regex.test(str.trim());
-  }
-
-  function isValidText2(str: string): boolean {
-    const trimmed = str.trim();
-    if (!trimmed) return false;
-
-    const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
-    return words.length >= 3;
-  }
-
+  /*
   const verificaTestoNota = async (): Promise<void> => {
     setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:true,sentenceLoader:"Verifica della NOTA in corso ..."}));
     try {
@@ -610,18 +597,32 @@ const Fatturazione : React.FC = () =>{
       );
       const responseVerifica = response.data as {redactedString:string};
       setTextAreaValuePii(responseVerifica?.redactedString ?? "");
+      textNoteVerified.current = true;
     } catch (err: unknown) {
-      //TODO: manage error
-      console.log({ err });
+      const error = err as ManageErrorResponse; 
+      if(error.response?.status === 404){
+        textNoteVerified.current = true;
+        setTextAreaValuePii(textAreaValue);
+      }else if(error.response?.status === 401 || error.message === "Network Error"){
+        manageError(error,dispatchMainState);
+        setTextAreaValuePii("");
+        setTextAreaValue("");
+        setOpenModalInfo((prev)=> ({...prev,open:false}));
+        textNoteVerified.current = false;
+      }else{
+        managePresaInCarico('GENERICO_KO',dispatchMainState);
+        setTextAreaValuePii("");
+        setTextAreaValue("");
+        setOpenModalInfo((prev)=> ({...prev,open:false}));
+        textNoteVerified.current = false;
+      }
     } finally {
       setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
-      console.log("ciao");
-      textNoteVerified.current = true;
     }
   };
 
   const setTextAreaValueClearPii = (e:string,onAction:string|undefined):void => {
-    if(textNoteVerified.current && onAction === null){
+    if(textNoteVerified.current && !onAction){
       textNoteVerified.current = false;
       setTextAreaValuePii("");
     }else if(onAction === "back"){
@@ -632,7 +633,7 @@ const Fatturazione : React.FC = () =>{
       setTextAreaValue(e);
     }
   };
-    
+   */ 
   const statusAnnulla = (bodyFatturazione.idEnti.length !== 0 || 
      bodyFatturazione.tipologiaFattura.length !== 0 ||
      bodyFatturazione.cancellata === true ||
@@ -812,7 +813,6 @@ const Fatturazione : React.FC = () =>{
           icon: { name: "download" },
           disabled: (gridData.length === 0)
         }]}/>
-
       <GridCustom
         nameParameterApi='docEmessiSend'
         elements={showedData}
@@ -863,13 +863,13 @@ const Fatturazione : React.FC = () =>{
         setOpen={setOpenModalInfo}
         open={openModalInfo}
         width={800}
-        textAreaValue={textAreaValuePii ? textAreaValuePii : textAreaValue}
-        setTextAreaValue={setTextAreaValueClearPii}
-        externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
-        errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
+        textAreaValue={textAreaValue}//textAreaValue={textAreaValuePii ? textAreaValuePii : textAreaValue}
+        setTextAreaValue={setTextAreaValue}//setTextAreaValue={setTextAreaValueClearPii}
+        externalActionButton={azioneApi}//externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
+        errorTextInput={false}//errorTextInput={!isValidText2NotaPii(textAreaValue) || !isValidTextNotaPii(textAreaValue)} //verifiedText={textNoteVerified.current}
         TextField={NotaTextField}
-        verifiedText={textNoteVerified.current}/>
-    </MainBoxStyled> 
+        verifiedText={true}/>
+    </MainBoxStyled>   
   );
 };
 

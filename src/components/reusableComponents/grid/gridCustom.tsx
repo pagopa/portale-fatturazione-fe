@@ -3,71 +3,72 @@ import React, { SetStateAction } from "react";
 import HeaderGridCustom from "./headerGrid/headerGridCustom";
 import EmptyRow from "./emptyRow";
 import GridRowDesignByConfigFile from "./rowComponent/gridRowDesignByConfigFile";
+
 interface GridCustomProps<T,K> {
-    elements:  T[],
-    changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
-    changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
-    page:number,
-    total:number,
-    rows:number,
-    headerNames:HeaderGridCustom[],
-    headerNamesCollapse?:HeaderGridCustom[],
-    nameParameterApi:string 
-    apiGet?:(el: T)=> void 
-    disabled:boolean
-    widthCustomSize:string
-    setAction?:(obj:T,action:string) => voi
-    buttons?:{
-        stringIcon:string
-        icon:React.ReactNode
-        action:string
-    }[],
-    headerAction?:(val:number) =>void,
-    body?: T,
-    paginationVisibile?:boolean,
-    objectSort?:{[key:string]:number},
-    sentenseEmpty?:string,
-    headerActionSort?:(val:string, setGridData:React.Dispatch<SetStateAction<Record<string, unknown>[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number,listaResponse: Record<string, unknown>[]) =>void,
-    setGridData?:React.Dispatch<SetStateAction<T[]>>
-    gridType?:boolean,
-    setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
-    listaResponse?: Record<string, unknown>[],
-    headerActionSortServerSide?:(label:string) => void,
-    titleRowCollapse?:string,
-    keyCollapse?:string,
-    bgColorRowFunction?:(element:T) => string,
-    manageCheckbox?:(currentRow:Record<string, any>) => Record<string, any>,
-    manageCheckboxCollapse?:(currentRow:Record<string, any>) => Record<string, any>,
-    filterOnCollapse?:(element:any) => React.ReactNode,
-    getAsyncDetails?:(currentRow:Record<string, any>,val:boolean) => void,
-    collapseDataLoading?:boolean,
-    selectedRows?:K[],
-    manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
-    colSpanCollaps?:number
+  elements:  T[],
+  changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
+  changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  page:number,
+  total:number,
+  rows:number,
+  headerNames:HeaderGridCustom[],
+  headerNamesCollapse?:HeaderGridCustom[],
+  nameParameterApi:string 
+  apiGet?:(el: T)=> void 
+  disabled:boolean
+  widthCustomSize:string
+  setAction?:(obj:T,action:string) => void
+  buttons?:{
+    stringIcon:string
+    icon:React.ReactNode
+    action:string
+  }[],
+  headerAction?:(val:number) =>void,
+  body?: T,
+  paginationVisibile?:boolean,
+  objectSort?:{[key:string]:number},
+  sentenseEmpty?:string,
+  headerActionSort?:(val:string, setGridData:React.Dispatch<SetStateAction<Record<string, unknown>[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number,listaResponse: Record<string, unknown>[]) =>void,
+  setGridData?:React.Dispatch<SetStateAction<T[]>>
+  gridType?:boolean,
+  setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
+  listaResponse?: Record<string, unknown>[],
+  headerActionSortServerSide?:(label:string) => void,
+  titleRowCollapse?:string,
+  keyCollapse?:string,
+  bgColorRowFunction?:(element:T) => string,
+  manageCheckbox?:(currentRow:Record<string, any>) => Record<string, any>,
+  manageCheckboxCollapse?:(currentRow:Record<string, any>) => Record<string, any>,
+  filterOnCollapse?:(element:any) => React.ReactNode,
+  getAsyncDetails?:(currentRow:Record<string, any>,val:boolean) => void,
+  collapseDataLoading?:boolean,
+  selectedRows?:K[],
+  manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
+  colSpanCollaps?:number
 }
 
 export interface HeaderGridCustom {
-    label:string,
-    align:TableCellProps['align'],
-    width:string|undefined,
-    headerAction?:boolean,
-    headerTooltip?: (title: string, label: string, color: string) => JSX.Element,
-    headerChip?: (title: string, label: string, color: string) => JSX.Element,
-    gridAction?:(fun:(obj:T,action:string) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
-    gridOpenDetail?:(disabled:boolean,open?:boolean,setOpen?:(val)=>void) => JSX.Element,
-    headerActionSort?:boolean,
-    keyValue:string,
-    typeColumn?:string,
-    hideColumn?:boolean,
-    switchValue?:{keySwitch:number, valueSwitch:string}[],
-    chip?:boolean,
-    funToManipulateValue?: (val: any, fun?: any) => any;
-    makeAction?:boolean,
-    applyCss?:boolean,
-    keyToManipulateData?:string,
-    variant?: "caption-semibold" | "caption" | "body1" | "body2" | "subtitle1" | "subtitle2" | "h6" | "h5" | "h4" | "h3" | "h2" | "h1"; 
-    icon?:string,
-    sentenceSnackbar?:string
+  label:string,
+  align:TableCellProps['align'],
+  width:string|undefined,
+  headerAction?:boolean,
+  headerTooltip?: (title: string, label: string, color: string) => JSX.Element,
+  headerChip?: (title: string, label: string, color: string) => JSX.Element,
+  gridAction?:(fun:(obj:T,action:string) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
+  gridOpenDetail?:(disabled:boolean,open?:boolean,setOpen?:(val)=>void) => JSX.Element,
+  headerActionSort?:boolean,
+  keyValue:string,
+  typeColumn?:string,
+  hideColumn?:boolean,
+  switchValue?:{keySwitch:number, valueSwitch:string}[],
+  chip?:boolean,
+  funToManipulateValue?: (val: any, fun?: any) => any;
+  makeAction?:boolean,
+  applyCss?:boolean,
+  keyToManipulateData?:string,
+  variant?: "caption-semibold" | "caption" | "body1" | "body2" | "subtitle1" | "subtitle2" | "h6" | "h5" | "h4" | "h3" | "h2" | "h1"; 
+  icon?:string,
+  sentenceSnackbar?:string
 }
 
 

@@ -138,32 +138,32 @@ export const getIdByTipo = (string:string, array:ArrayTipologieCommesse[]) =>{
 
 export const findStatoContestazioni = (code:number) => {
   switch (code) {
-  case 0:
-    return "Caricamento file";
-  case 1:
-    return "Inelaborazione";
-  case 2:
-    return "Notifiche inesistenti";
-  case 3:
-    return "Notifiche non associate all'Ente xxx";
-  case 4:
-    return "Notifiche dell'Ente con contratto diverso da: {idContratto}";
-  case 5:   
-    return "Notifiche non nello stesso periodo di riferimento: {anno} {mese}";
-  case 6:
-    return "Notifiche già fatturate o asseverate";
-  case 7:
-    return "Notifiche che non si possono annullare";
-  case 8:
-    return "Notifiche che non si possono contestare";
-  case 9:
-    return "Notifiche che non si possono accettare";
-  case 10:
-    return "Notifiche che non si possono rifiutare";
-  case 11:
-    return "Processo completato";
-  default:
-    return "Caricamento file";
+    case 0:
+      return "Caricamento file";
+    case 1:
+      return "Inelaborazione";
+    case 2:
+      return "Notifiche inesistenti";
+    case 3:
+      return "Notifiche non associate all'Ente xxx";
+    case 4:
+      return "Notifiche dell'Ente con contratto diverso da: {idContratto}";
+    case 5:   
+      return "Notifiche non nello stesso periodo di riferimento: {anno} {mese}";
+    case 6:
+      return "Notifiche già fatturate o asseverate";
+    case 7:
+      return "Notifiche che non si possono annullare";
+    case 8:
+      return "Notifiche che non si possono contestare";
+    case 9:
+      return "Notifiche che non si possono accettare";
+    case 10:
+      return "Notifiche che non si possono rifiutare";
+    case 11:
+      return "Processo completato";
+    default:
+      return "Caricamento file";
             
   }
 };
@@ -483,3 +483,32 @@ export function formatDateString(el: { dataFattura: string }) {
   const [year, month, day] = datePart.split("-");
   return `${day}/${month}/${year}`;
 }
+
+
+const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
+
+export function isValidTextNotaPii(str) {
+  return regex.test(str.trim());
+}
+
+export function isValidText2NotaPii(str: string): boolean {
+  const trimmed = str.trim();
+  if (!trimmed) return false;
+
+  const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ*]+/g) || [];
+  return words.length >= 3;
+}
+
+/* se vogliamo implementare l'errore anche solo con gli asterischi
+function isValidText(str: string): boolean {
+  const trimmed = str.trim();
+
+  // deve rispettare lunghezza/numero minimo di "parole"
+  if (!regex.test(trimmed)) return false;
+
+  // deve contenere almeno un carattere che NON sia asterisco o spazio
+  const hasRealContent = /[^\s*]/.test(trimmed);
+  if (!hasRealContent) return false;
+
+  return true;
+} */

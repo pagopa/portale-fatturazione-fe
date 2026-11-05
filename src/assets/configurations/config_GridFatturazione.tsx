@@ -54,10 +54,15 @@ const getStatoFattura = (obj) =>{
   return "Emessa";
 };
 
+const makeActionFun = (obj) => {
+  if(obj.cancellata === true) return false;
+  return true;
+};
+
 
 export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
   { label: "", align: "center", width: "30px", keyValue: "collaps", typeColumn: "collaps" },
-  { label: "Ragione sociale", align: "center", width: "200px", keyValue: "ragionesociale", typeColumn: "ragionesociale", makeAction: true, applyCss: true },
+  { label: "Ragione sociale", align: "center", width: "200px", keyValue: "ragionesociale", typeColumn: "ragionesociale", applyCss: true,makeActionFun:makeActionFun},
   { label:"Azioni",align:"center",width:"100px",keyValue: "azione", typeColumn: "action",funToManipulateValue:getActionDocumentiEmessiSend, keyToManipulateData:"azione"},
   { label: "Data Fattura", align: "center", width: "180px", keyValue: "dataFattura", typeColumn: "data-exeption",funToManipulateValue:formatDateString },
   { label: "Elaborazione", align: "center", width: "160px", keyValue: "eleborazione", typeColumn: "chip-tooltip" ,funToManipulateValue:getChipElaborazione, keyToManipulateData:"inviata"},
@@ -71,7 +76,7 @@ export const headersObjGridDocemessiSend : HeaderGridCustom[] = [
   { label: "Divisa", align: "center", width: "100px", keyValue: "divisa", typeColumn: "string" },
   { label: "M. Pagamento", align: "center", width: "180px", keyValue: "metodoPagamento", typeColumn: "string" },
   { label: "Split", align: "center", width: "100px", keyValue: "split", typeColumn: "boolean" },
-  {label:"", align:"center", width:"80px", keyValue:"arrow", typeColumn:"arrow"}
+  {label:"", align:"center", width:"80px", keyValue:"arrow", typeColumn:"arrow",makeActionFun:makeActionFun}
 ];
 
 export const headersObjGridDocemessiSendCollapse: HeaderGridCustom[] = [

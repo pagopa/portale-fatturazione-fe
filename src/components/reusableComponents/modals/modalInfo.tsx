@@ -6,27 +6,27 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Button, CircularProgress } from '@mui/material';
 
 export interface ModalInfoProps <T>{
-    setOpen:(v: { open: boolean; sentence: React.ReactNode|string }) => void,
-    open:{
+  setOpen:(v: { open: boolean; sentence: React.ReactNode|string }) => void,
+  open:{
     open:boolean,
     sentence:React.ReactNode|string,
     buttonIsVisible?:boolean|null,
     loaderIsVisible?:boolean,
     sentenceLoader?:string,
     labelButton?:string,
-      actionButton?:()=>void,icon?:React.ElementType
-    },
-    width?:number,
-    textAreaValue?:string,
-    setTextAreaValue?:(v:string,s?:string)=>void,
-    externalActionButton?:(obj?:T )=>void,
-    errorTextInput?:boolean,
-    TextField:React.ComponentType<{
-        value: string;
-        onChange?: (v: string) => void;
-        error?: boolean;
-    }>,
-    verifiedText?:boolean
+    actionButton?:()=>void,icon?:React.ElementType
+  },
+  width?:number,
+  textAreaValue?:string,
+  setTextAreaValue?:(v:string,s?:string)=>void,
+  externalActionButton?:(obj?:T )=>void,
+  errorTextInput?:boolean,
+  TextField:React.ComponentType<{
+    value: string;
+    onChange?: (v: string) => void;
+    error?: boolean;
+  }>,
+  verifiedText?:boolean
 }
 
 const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,externalActionButton,errorTextInput,TextField,verifiedText}: ModalInfoProps<T>) => {
@@ -38,9 +38,12 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
   ) => {
   // ignora la chiusura se il motivo è click fuori dal modal
     if (reason === 'backdropClick') return;
-
     setOpen({ open: false, sentence: '' });
     setTimeout(() => window.scrollTo(0, 0), 50);
+    //Attenzione , se viene effetuata la verifica SetTextAreaValue è una funzione.
+    //Nel ModalInfo che è stato usato in GestioneFatture abbimo effetuato il rollback sul PII detection
+    // Non è stato più richeisto
+    // Nonostante ciò il Modal è utilizzabile sia con PII detection che senza
     if(whereFunIsInvoked === "back"){
       if (setTextAreaValue) setTextAreaValue('',"back");
     }else{
@@ -100,7 +103,7 @@ const ModalInfo = <T,>({setOpen, open,width,textAreaValue,setTextAreaValue,exter
               onClick={()=> handleClose(undefined,undefined,"back")}
               sx={{ width: 120, flexShrink: 0 }}
             > 
-            Annulla
+              Annulla
             </Button>
             <Button 
               startIcon={open?.loaderIsVisible ? <CircularProgress size={16} color="inherit" /> : null}

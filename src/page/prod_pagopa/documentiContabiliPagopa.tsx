@@ -98,7 +98,6 @@ const DocumentiContabili:React.FC = () =>{
           const start = page * rows;
           const end = start + rows;
           setDataPaginated(data.slice(start, end));
-          console.log({page:filters.page, row:filters.rows,data:data.slice(filters.page, filters.rows)});
           isInitialRender.current = false;
         }else{
           setDataPaginated(data.slice(0, 10));
@@ -307,13 +306,13 @@ const DocumentiContabili:React.FC = () =>{
 
 
   const statusAnnulla =
-  bodyGetLista.contractIds.length !== 0 ||
+    bodyGetLista.contractIds.length !== 0 ||
   bodyGetLista.membershipId !== '' ||
   bodyGetLista.recipientId !== '' ||
   bodyGetLista.abi !== '' ||
   bodyGetLista.quarters.length > 0
-    ? 'show'
-    : 'hidden';
+      ? 'show'
+      : 'hidden';
       
   return(
     <MainBoxStyled title={"Documenti contabili"}>

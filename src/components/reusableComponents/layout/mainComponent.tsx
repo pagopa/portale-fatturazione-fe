@@ -36,16 +36,16 @@ export  const MainBoxStyled = ({
   title,
   actionButton
 }:{
-    children?: React.ReactNode,
-    title?:string,
-    actionButton?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string,
-        icon?:{name:string, sx:any},
-        withText?:boolean,
-        tooltipMessage?:string
-    }[]
+  children?: React.ReactNode,
+  title?:string,
+  actionButton?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string,
+    icon?:{name:string, sx:any},
+    withText?:boolean,
+    tooltipMessage?:string
+  }[]
 }) =>  {
   return <MainBox>
     <Grid
@@ -130,29 +130,29 @@ export const FilterActionButtons = ({
   actionButton,
   annullaButtonOptional
 }:{
-    onButtonFiltra:()=> void,
-    onButtonAnnulla:() => void,
-    statusAnnulla:string,
-    disabled?:boolean
-    annullaButtonOptional?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string},
-        disabled?:boolean,
-        tooltipMessage?:string,
-        withText?:boolean
-    },
-    actionButton?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string},
-        disabled?:boolean,
-        tooltipMessage?:string,
-        withText?:boolean,
-        colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
-    }[]
+  onButtonFiltra:()=> void,
+  onButtonAnnulla:() => void,
+  statusAnnulla:string,
+  disabled?:boolean
+  annullaButtonOptional?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string},
+    disabled?:boolean,
+    tooltipMessage?:string,
+    withText?:boolean
+  },
+  actionButton?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string},
+    disabled?:boolean,
+    tooltipMessage?:string,
+    withText?:boolean,
+    colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
+  }[]
 }) =>  {
 
   
@@ -179,11 +179,11 @@ export const FilterActionButtons = ({
             }}
           >
             <CustomButton onClick={onButtonFiltra} variant="contained" disabled={disabled}>
-          Filtra
+              Filtra
             </CustomButton>
             {statusAnnulla !== "hidden" && !annullaButtonOptional && (
               <CustomButton onClick={onButtonAnnulla} variant="text" disabled={disabled}>
-            Annulla filtri
+                Annulla filtri
               </CustomButton>
             )}
             {statusAnnulla !== "hidden" && annullaButtonOptional && (
@@ -235,21 +235,21 @@ export const FilterActionButtons = ({
 
 
 export const ActionTopGrid = ({actionButtonRight,actionButtonLeft,counter=0}:{
-    counter?:number,
-    actionButtonRight?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string},
-        disabled?:boolean
-    }[],
-    actionButtonLeft?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string}
-        disabled?:boolean
-    }[]
+  counter?:number,
+  actionButtonRight?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string},
+    disabled?:boolean
+  }[],
+  actionButtonLeft?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string}
+    disabled?:boolean
+  }[]
 }) => {
 
   return (
@@ -294,7 +294,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft,counter=0}:{
                 </Toolbar>
                 :
                 <Typography sx={{ flex: '1 1 100%', visibility: 'hidden', height:'64px' }} variant="subtitle1" component="div">
-                                                    Placeholder
+                  Placeholder
                 </Typography>
               }
             </Box>}
@@ -333,8 +333,8 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft,counter=0}:{
 };
 
 interface CustomButtonProps extends ButtonProps {
-    withText?: boolean;
-    colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
+  withText?: boolean;
+  colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
 }
 
 export const CustomButton = styled(Button, {
@@ -358,43 +358,43 @@ export const CustomButton = styled(Button, {
 
 export const RenderIcon = (iconName,sx = true) => {
   switch (iconName) {
-  case "download":
-    return <DownloadIcon sx={{
-      marginRight:sx ? '10px':null    
-    }}/>;
-  case "event_note":
-    return <EventNoteIcon/>;
-  case "circle_arrow_icon":
-    return  <ArrowCircleDownIcon/>;
-  case "iso_share":
-    return <IosShareIcon/>;
-  case "preview":
-    return <PreviewIcon/>;
-  case "restart":
-    return <RestartAltIcon/>;
-  case "list":
-    return <ListIcon/>;
-  case "invoice":
-    return <DescriptionIcon/>;
-  case "contract":
-    return <GavelIcon/>;
-  case "date":
-    return <DateRangeIcon fontSize={sx ? "small":"medium"}/>;
-  case "status":
-    return <AutorenewIcon fontSize={sx ? "small":"medium"}/>;
-  case "typology":
-    return <InboxIcon fontSize={sx ? "small":"medium"}/>;
-  case "fase":
-    return <HourglassBottomIcon fontSize={sx ? "small":"medium"}/>;
-  case "person":
-    return <PersonIcon fontSize={sx ? "small":"medium"}/>;
-  case "type-not":
-    return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}/>;
-  case "add-action":
-    return <NoteAddIcon fontSize={sx ? "small":"medium"}/>;
-  case "send":
-    return <SendIcon fontSize={sx ? "small":"medium"}/>;
-  case "upload-file":
-    return <UploadFileIcon fontSize={sx ? "small":"medium"}/>;
+    case "download":
+      return <DownloadIcon sx={{
+        marginRight:sx ? '10px':null    
+      }}/>;
+    case "event_note":
+      return <EventNoteIcon/>;
+    case "circle_arrow_icon":
+      return  <ArrowCircleDownIcon/>;
+    case "iso_share":
+      return <IosShareIcon/>;
+    case "preview":
+      return <PreviewIcon/>;
+    case "restart":
+      return <RestartAltIcon/>;
+    case "list":
+      return <ListIcon/>;
+    case "invoice":
+      return <DescriptionIcon/>;
+    case "contract":
+      return <GavelIcon/>;
+    case "date":
+      return <DateRangeIcon fontSize={sx ? "small":"medium"}/>;
+    case "status":
+      return <AutorenewIcon fontSize={sx ? "small":"medium"}/>;
+    case "typology":
+      return <InboxIcon fontSize={sx ? "small":"medium"}/>;
+    case "fase":
+      return <HourglassBottomIcon fontSize={sx ? "small":"medium"}/>;
+    case "person":
+      return <PersonIcon fontSize={sx ? "small":"medium"}/>;
+    case "type-not":
+      return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}/>;
+    case "add-action":
+      return <NoteAddIcon fontSize={sx ? "small":"medium"}/>;
+    case "send":
+      return <SendIcon fontSize={sx ? "small":"medium"}/>;
+    case "upload-file":
+      return <UploadFileIcon fontSize={sx ? "small":"medium"}/>;
   }
 };

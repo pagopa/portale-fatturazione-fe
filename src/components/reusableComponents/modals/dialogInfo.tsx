@@ -4,14 +4,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Dialog, DialogTitle } from '@mui/material';
 import { Dispatch } from 'react';
 export interface DialogInfoProps<T = any>  {
-    onClose:Dispatch<React.SetStateAction<boolean>>,
-    open:boolean,
-    array:T[],
-    title:string,
-    clearAction?:() => void,
-    ContentComponent:React.ComponentType<{
-            array:T
-        }>,
+  onClose:Dispatch<React.SetStateAction<boolean>>,
+  open:boolean,
+  array:T[],
+  title:string,
+  clearAction?:() => void,
+  ContentComponent:React.ComponentType<{
+    array:T
+  }>,
 }
 
 const DialogInfo : React.FC<DialogInfoProps> = ({ open, onClose, array = [], title,clearAction, ContentComponent })=> {

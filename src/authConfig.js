@@ -2,9 +2,9 @@ import { LogLevel } from '@azure/msal-browser';
 export const msalConfig = {
   auth: {
         
-    // eslint-disable-next-line no-undef
+     
     clientId: import.meta.env.VITE_APP_CLIENT_ID, // This is the ONLY mandatory field that you need to supply.
-    // eslint-disable-next-line no-undef
+     
     authority: `https://login.microsoftonline.com/${import.meta.env.VITE_APP_TENANT_ID}`, // Replace the placeholder with your tenant subdomain 
     redirectUri: '/auth/azure', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
     postLogoutRedirectUri: '/azureLogin', // Indicates the page to navigate after logout.
@@ -21,20 +21,20 @@ export const msalConfig = {
           return;
         }
         switch (level) {
-        case LogLevel.Error:
-          console.error(message);
-          return;
-        case LogLevel.Info:
+          case LogLevel.Error:
+            console.error(message);
+            return;
+          case LogLevel.Info:
           //console.info(message);
-          return;
-        case LogLevel.Verbose:
-          console.debug(message);
-          return;
-        case LogLevel.Warning:
-          console.warn(message);
-          return;
-        default:
-          return;
+            return;
+          case LogLevel.Verbose:
+            console.debug(message);
+            return;
+          case LogLevel.Warning:
+            console.warn(message);
+            return;
+          default:
+            return;
         }
       },
     },

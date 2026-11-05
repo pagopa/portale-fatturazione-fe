@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { Button, CircularProgress } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { SetStateAction, useEffect, useRef, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { ElementMultiSelect } from '../../../types/typeReportDettaglio';
 import { listaEntiNotifichePage } from '../../../api/apiSelfcare/notificheSE/api';
@@ -11,9 +11,10 @@ import { manageError, managePresaInCarico } from '../../../api/api';
 import Loader from '../loader';
 import { useGlobalStore } from '../../../store/context/useGlobalStore';
 import MainFilter from '../mainFilter';
-import { gestioneFattureInserisci, gestioneFattureVerificaNotaPii, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../../api/apiPagoPa/gestioneFatturePA/api';
-import { formatDate } from '../../../reusableFunction/function';
+import { gestioneFattureInserisci, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../../api/apiPagoPa/gestioneFatturePA/api';
+import { formatDate, isValidText2NotaPii, isValidTextNotaPii } from '../../../reusableFunction/function';
 import { month as NOMI_MESI} from '../../../reusableFunction/reusableArrayObj';
+
 
 const style = {
   position: 'absolute' as const,
@@ -29,14 +30,14 @@ const style = {
 
 export interface ModalAggiungiProps {
   open:{
-      open:boolean,
-      sentence:React.ReactNode|string,
-      buttonIsVisible?:boolean|null,
-      loaderIsVisible?:boolean,
-      sentenceLoader?:string,
-      labelButton?:string,
-      actionButton?:()=>void,icon?:React.ElementType
-      },
+    open:boolean,
+    sentence:React.ReactNode|string,
+    buttonIsVisible?:boolean|null,
+    loaderIsVisible?:boolean,
+    sentenceLoader?:string,
+    labelButton?:string,
+    actionButton?:()=>void,icon?:React.ElementType
+  },
   setOpen:React.Dispatch<SetStateAction<any>>,
   getLista:any
 }
@@ -79,8 +80,8 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
   const [arrayYears,setArrayYears] = useState<number[]>([]);
   const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [showLoader, setShowLoader] = useState(false);
-  const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
-  const textNoteVerified = useRef(false);
+  //const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
+  //const textNoteVerified = useRef(false);
 
   const azioni = ["Posticipa","Elimina"];
   
@@ -177,16 +178,16 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
       setOpen(false);
       getLista(body.anno);
       clearPopUp();
-      textNoteVerified.current = false;
+      //textNoteVerified.current = false;
     }).catch((err)=>{
       setShowLoader(false);
       setOpen(false);
       manageError(err,dispatchMainState);
       clearPopUp();
-      textNoteVerified.current = false;
+      //textNoteVerified.current = false;
     });
   };
-
+  /*
   const verificaTestoNota = async (): Promise<void> => {
     setOpen((prev)=> ({...prev,loaderIsVisible:true,sentenceLoader:"Verifica della NOTA in corso ..."}));
     try {
@@ -199,16 +200,29 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
 
       setBodyAction((prev)=>({...prev,nota:{ testo:responseVerifica?.redactedString||'',data:formatDate(new Date())}}));
       setTextAreaValuePii(bodyAction.nota?.testo||"");
-      
+      textNoteVerified.current = true;
     } catch (err: unknown) {
-      console.log({ err });
+      const error = err as ManageErrorResponse; 
+      if(error.response?.status === 404){
+        setTextAreaValuePii(bodyAction.nota?.testo||"");
+        setBodyAction((prev)=>({...prev,nota:{ testo:prev.nota?.testo||'',data:formatDate(new Date())}}));
+        textNoteVerified.current = true;
+      }else if(error.response?.status === 401 || error.message === "Network Error"){
+        manageError(error,dispatchMainState);
+        setTextAreaValuePii("");
+        setBodyAction((prev)=>({...prev,nota:null}));
+        textNoteVerified.current = false;
+      }else{
+        managePresaInCarico('GENERICO_KO',dispatchMainState);
+        setTextAreaValuePii("");
+        setBodyAction((prev)=>({...prev,nota:null}));
+        textNoteVerified.current = false;
+      }
     } finally {
       setOpen((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
-      console.log("ciao");
-      textNoteVerified.current = true;
     }
   };
-  
+*/
   const clearPopUp = () => {
     setBodyAction({
       mese: [],
@@ -223,25 +237,10 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     setArrayMonths([]);
     setDataSelect([]);
     setTextValue('');
-    setTextAreaValuePii("");
-    textNoteVerified.current = false;
+    //setTextAreaValuePii("");
+    //textNoteVerified.current = false;
   };
-
-  const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
-
-  function isValidText(str) {
-    return regex.test(str.trim());
-  }
-
-  function isValidText2(str: string): boolean {
-    const trimmed = str.trim();
-    if (!trimmed) return false;
-
-    const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
-    return words.length >= 3;
-  }
-
-
+  /*
   const setTextAreaValueClearPii = (e) => {
     if(textNoteVerified.current){
       textNoteVerified.current = false;
@@ -254,14 +253,14 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
         "testo": e
       }}}));  
     }
-  };
+  };*/
   
   const disableBotton = (bodyAction.anno === null 
   || bodyAction.mese.length === 0 
   || bodyAction.tipologiaFattura === null
   ||(bodyAction.nota?.testo && bodyAction.nota.testo.length < 10)
   || bodyAction.nota === null 
-  || !isValidText(bodyAction.nota.testo||"") 
+  || !isValidTextNotaPii(bodyAction.nota.testo||"") 
   || open.loaderIsVisible )? true : false;
 
   return (
@@ -271,7 +270,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
           <div className='d-flex justify-content-between'>
             <div className='d-flex align-items-center justify-content-start'>
               <Typography  id="modal-modal-title" variant="h6" component="h2">
-    Inserisci gli enti nella lista
+                Inserisci gli enti nella lista
               </Typography>
             </div>
             <div className="d-flex align-items-center justify-content-end">
@@ -434,13 +433,15 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               keyValue={"nota"}
               keyDescription={"nota"}
               keyBody={"nota"}
-              error={(!isValidText2(bodyAction.nota?.testo||"") || !isValidText(bodyAction.nota?.testo||""))&& bodyAction.mese.length !== 0}
+              error={(!isValidText2NotaPii(bodyAction.nota?.testo||"") || !isValidTextNotaPii(bodyAction.nota?.testo||""))&& bodyAction.mese.length !== 0}
               extraCodeOnChange={(e)=>{
-                setTextAreaValueClearPii(e);
+                //setTextAreaValueClearPii(e);
+                setBodyAction((prev)=> ({...prev, ...{nota:{
+                  "data": formatDate(new Date()),
+                  "testo": e
+                }}}));
               }}
-              helperText={(bodyAction.nota?.testo?.length||0) > 500 ?
-                `Inserisci una nota (max ${500} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`
-                : `Inserisci una nota (min ${10} max ${500} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`}
+              helperText={ `Inserisci una nota (minimo 10 massimo 500 carratteri). Non inserire informazioni non necessarie, evitando di includere dati personali eccessivi o dettagli non pertinenti.`}
               placeHolder={"Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici."}
             />
           </Box>
@@ -460,14 +461,15 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 }}
                 onClick={() => {
                   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-                  textNoteVerified.current ? actionInserisci(bodyAction): verificaTestoNota();
+                  actionInserisci(bodyAction);
+                  //textNoteVerified.current ? actionInserisci(bodyAction): verificaTestoNota();
                 }}
               >
                 {open.sentenceLoader ? open.sentenceLoader : "Inserisci"}
               </Button> 
             </div>:
             <div id='loader_on_modal' className='container_buttons_modal d-flex justify-content-center mt-5'>
-              <Loader sentence={textNoteVerified.current ?'Attendere':'Verifica della nota in corso'}></Loader> 
+              <Loader sentence={'Attendere'}/> {/*sentence={textNoteVerified.current ?'Attendere':'Verifica della nota in corso'} */}
             </div>}
         </Box>
       </Modal>

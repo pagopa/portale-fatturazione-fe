@@ -1,5 +1,3 @@
-import { DataGridCommessa } from "./typeModuloCommessaElenco";
-import { Contestazione } from "./typeReportDettaglio";
 
 export interface ModalProps {
     setOpen : any,
@@ -57,9 +55,6 @@ export type TokenObject = {
     idToken?:string,
 }
 
-export type AuthAzureProps = {
-    //dispatchMainState:any,
-}
 
 export type BodyListaDatiFatturazione = {
     idEnti:string[],
@@ -208,7 +203,8 @@ type RequestError = {
 }
 
 interface ResponseError {
-    request:RequestError
+    request:RequestError,
+    status:number
 }
 
 export interface ManageErrorResponse{

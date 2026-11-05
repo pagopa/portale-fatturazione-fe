@@ -1,4 +1,4 @@
-import {  useEffect, useRef, useState } from "react";
+import {  useEffect, useState } from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
 import { manageError, managePresaInCarico } from "../../api/api";
@@ -17,7 +17,7 @@ import { useGlobalStore } from "../../store/context/useGlobalStore";
 import DialogInfo, { DialogInfoProps } from "../../components/reusableComponents/modals/dialogInfo";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { Box, Button, Chip, DialogContent, Divider, List, ListItem, ListItemText, Stack, SxProps, Table, TableBody, TableCell, TableHead, TableRow, TextField, Theme, Toolbar, Tooltip, Typography } from "@mui/material";
-import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, gestioneFattureVerificaNotaPii, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
+import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate } from "../../reusableFunction/function";
 
@@ -45,14 +45,14 @@ export interface GestioneFatture {
 }
 
 type OpenModalAggiungi = {
-    open:boolean,
-    sentence:React.ReactNode|string,
-    buttonIsVisible?:boolean|null,
-    loaderIsVisible?:boolean,
-    sentenceLoader?:string,
-    labelButton?:string,
-    actionButton?:()=>void,icon?:React.ElementType
-}
+  open:boolean,
+  sentence:React.ReactNode|string,
+  buttonIsVisible?:boolean|null,
+  loaderIsVisible?:boolean,
+  sentenceLoader?:string,
+  labelButton?:string,
+  actionButton?:()=>void,icon?:React.ElementType
+};
 
 type DialogContentProps<T = any> = Pick<
   DialogInfoProps<T>,
@@ -83,8 +83,8 @@ const GestioneFatture : React.FC = () => {
   const [notes, setNotes] = useState<{Testo:string,Data:Date,Azione:string}[]>([]);
   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void }>({open:false, sentence:''});
   const [textAreaValue, setTextAreaValue] = useState<string>('');
-  const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
-  const textNoteVerified = useRef(false);
+  //const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
+  //const textNoteVerified = useRef(false);
   const [elementSelected, setElementSelected] = useState<GestioneFatture|null>(null);
   const [actionCalled, setActionCalled] = useState<string>("");
 
@@ -307,7 +307,7 @@ const GestioneFatture : React.FC = () => {
         }
 
         const fileName = `${parts.join("/")}.xlsx`;
-          
+        
         setShowLoading(true);
         saveAs(response,fileName);
         setShowLoading(false);
@@ -440,7 +440,7 @@ const GestioneFatture : React.FC = () => {
         idEnte: elementSelected.ente,
         nota: {
           data: formatDate(new Date()),
-          testo: textAreaValuePii
+          testo: textAreaValue //testo: textAreaValuePii
         }
       };
       await gestioneFattureInserisci(
@@ -458,10 +458,10 @@ const GestioneFatture : React.FC = () => {
       setGetListaLoading(false);
       getLista((page+1), rowsPerPage, bodyGetLista);
       setTextAreaValue("");
-      setTextAreaValuePii("");
+      //setTextAreaValuePii("");
     }
   };
-
+  /*
   const verificaTestoNota = async (): Promise<void> => {
     setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:true,sentenceLoader:"Verifica della NOTA in corso ..."}));
     try {
@@ -472,17 +472,32 @@ const GestioneFatture : React.FC = () => {
       );
       const responseVerifica = response.data as {redactedString:string};
       setTextAreaValuePii(responseVerifica?.redactedString ?? "");
-    } catch (err: unknown) {
-      //TODO aggiungere manage error
-      console.log({ err });
+      textNoteVerified.current = true;
+    }catch (err: unknown) {
+      const error = err as ManageErrorResponse; 
+      if(error.response?.status === 404){
+        textNoteVerified.current = true;
+        setTextAreaValuePii(textAreaValue);
+      }else if(error.response?.status === 401 || error.message === "Network Error"){
+        manageError(error,dispatchMainState);
+        setTextAreaValuePii("");
+        setTextAreaValue("");
+        setOpenModalInfo((prev)=> ({...prev,open:false}));
+        textNoteVerified.current = false;
+      }else{
+        managePresaInCarico('GENERICO_KO',dispatchMainState);
+        setTextAreaValuePii("");
+        setTextAreaValue("");
+        setOpenModalInfo((prev)=> ({...prev,open:false}));
+        textNoteVerified.current = false;
+      }
     } finally {
       setOpenModalInfo((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
-      textNoteVerified.current = true;
     }
   };
 
   const setTextAreaValueClearPii = (e:string,onAction:string|undefined):void => {
-    if(textNoteVerified.current && onAction === null){
+    if(textNoteVerified.current && !onAction){
       textNoteVerified.current = false;
       setTextAreaValuePii("");
     }else if(onAction === "back"){
@@ -493,7 +508,7 @@ const GestioneFatture : React.FC = () => {
       setTextAreaValue(e);
     }
   };
- 
+ */
   const buttonsTopHeader =  [
     {
       stringIcon:"Aggiungi",
@@ -501,19 +516,6 @@ const GestioneFatture : React.FC = () => {
       action:"Add"
     }];
 
-  const regex = /^(?=.{15,500}$)(\S+\s+){2,}\S+$/;
-
-  function isValidText(str) {
-    return regex.test(str.trim());
-  }
-
-  function isValidText2(str: string): boolean {
-    const trimmed = str.trim();
-    if (!trimmed) return false;
-
-    const words = trimmed.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g) || [];
-    return words.length >= 3;
-  }
 
   const statusAnnulla = (
     bodyGetLista.anno !== null ||
@@ -525,6 +527,8 @@ const GestioneFatture : React.FC = () => {
   ) ? 'show' : 'hidden';
 
   const noData = arrayYears.length === 0;
+
+  //const noteToValdate = textAreaValuePii ? textAreaValuePii : textAreaValue;
   return (
     <MainBoxStyled title={"Gestione Fatture"}>
       <ResponsiveGridContainer >
@@ -635,7 +639,7 @@ const GestioneFatture : React.FC = () => {
         ></MainFilter>
         <MainFilter 
           filterName={"select_value_with_tutti"}
-          inputLabel={"Azioni"}
+          inputLabel={"Stato"}
           clearOnChangeFilter={clearOnChangeFilter}
           setBody={setBodyGetLista}
           body={bodyGetLista}
@@ -716,12 +720,12 @@ const GestioneFatture : React.FC = () => {
         setOpen={setOpenModalInfo}
         open={openModalInfo}
         width={800}
-        textAreaValue={textAreaValuePii ? textAreaValuePii : textAreaValue}
-        setTextAreaValue={setTextAreaValueClearPii}
-        externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
-        errorTextInput={!isValidText2(textAreaValue) || !isValidText(textAreaValue)}
+        textAreaValue={textAreaValue}
+        setTextAreaValue={setTextAreaValue}//setTextAreaValue={setTextAreaValueClearPii}
+        externalActionButton={azioneApi} // externalActionButton={textNoteVerified.current ? azioneApi  :verificaTestoNota}
+        errorTextInput={false} //errorTextInput={!isValidText2NotaPii(noteToValdate) || !isValidTextNotaPii(noteToValdate)}
         TextField={NotaTextField}
-        verifiedText={textNoteVerified.current}/>
+        verifiedText={true}/> {/*verifiedText={textNoteVerified.current*/}
     </MainBoxStyled>     
   );
 };
@@ -866,7 +870,7 @@ const DilogContentList : React.FC<DialogContentProps> = ({ array = [] }) => {
                           component="span"
                           variant="body2"
                           color="text.secondary">
-                            - Azione :
+                          - Azione :
                         </Typography>
                         <Chip variant="outlined" size="small" label={nota?.Azione} 
                           sx={{
