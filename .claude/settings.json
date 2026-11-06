@@ -5,7 +5,27 @@
         "hooks": [
           {
             "type": "command",
-            "command": "date +%s > \"$CLAUDE_PROJECT_DIR/.claude/.prompt_start\""
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/log-metrics.js\" prompt"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/log-metrics.js\" stop"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/log-metrics.js\" end"
           }
         ]
       }

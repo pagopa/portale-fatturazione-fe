@@ -360,14 +360,20 @@ const InvioFatture : React.FC = () => {
   const [elementsSelected,setElementSelected] = useState<Record<string, any>[]>([]);
   const [arrayCollapseSelected,setArrayCollapseSelected] = useState<SelectedJsonSap[]>([]);
 
+  // fatture complete della riga (ignorando i filtri del collapse): se la riga è stata filtrata uso la copia originale
+  const getFattureCompleteRiga = (row: Record<string, any>): any[] => {
+    const original = originalFattureRef.current[getRowKey(row)];
+    if (original) return original;
+    return listaFatture.find((el) =>
+      el.annoRiferimento === row.annoRiferimento &&
+      el.meseRiferimento === row.meseRiferimento &&
+      el.tipologiaFattura === row.tipologiaFattura
+    )?.fatture || [];
+  };
+
   const manageCheckbox = (currentRow: Record<string, any>):Record<string, any>=> {
 
-    const checkLengthOfCollapse = listaFatture.find((el) =>{
-      return el.annoRiferimento === currentRow.annoRiferimento &&
-       el.meseRiferimento === currentRow.meseRiferimento && 
-       el.tipologiaFattura === currentRow.tipologiaFattura &&
-       el.statoInvio === currentRow.statoInvio;
-    } )?.fatture.length;
+    const checkLengthOfCollapse = getFattureCompleteRiga(currentRow).length;
 
     const verifyIfSelected = (!!elementsSelected.find((el) =>{
       return el.annoRiferimento === currentRow.annoRiferimento &&
@@ -385,12 +391,7 @@ const InvioFatture : React.FC = () => {
     }else{
       //prendo tutti i sotto elementi
    
-      const elementsSelected = listaFatture.find((el) =>{
-        return el.annoRiferimento === currentRow.annoRiferimento &&
-       el.meseRiferimento === currentRow.meseRiferimento && 
-       el.tipologiaFattura === currentRow.tipologiaFattura;
-      } )?.fatture||[];
-      setElementSelected(elementsSelected);
+      setElementSelected(getFattureCompleteRiga(currentRow));
       return {
         checkboxStatus:true,
         key:"idFattura"
@@ -542,11 +543,8 @@ const InvioFatture : React.FC = () => {
     let disabled = false;
    
     if(isMainCheck === "main-row"){
-      const elementsInsideCollapse = listaFatture.find((el) =>{
-        return el.annoRiferimento === row.annoRiferimento &&
-       el.meseRiferimento === row.meseRiferimento && 
-       el.tipologiaFattura === row.tipologiaFattura;
-      } )?.fatture;
+      // confronto con tutte le fatture della riga, non con quelle filtrate nel collapse
+      const elementsInsideCollapse = getFattureCompleteRiga(row);
 
       verifyIfSelected = (!!elementsSel.find((el) =>{
         return el.annoRiferimento === row.annoRiferimento &&
