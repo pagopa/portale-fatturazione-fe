@@ -516,7 +516,6 @@ const GestioneFatture : React.FC = () => {
       action:"Add"
     }];
 
-
   const statusAnnulla = (
     bodyGetLista.anno !== null ||
     bodyGetLista.idEnti.length !== 0 ||

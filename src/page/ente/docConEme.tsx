@@ -57,7 +57,7 @@ export type Posizione = {
     periodoRiferimento: string; // MM/YYYY
 };
 
- type ResponsePeriodo = {
+ export type ResponsePeriodo = {
      anno: number,
      tipologiaFattura: string,
      dataFattura: string,
@@ -755,9 +755,7 @@ const DocEm : React.FC = () =>{
                 .map(el => el.dataFattura)));
               setArrayDataFatturaFiltered(arrayDataFattura);
             }
-            setValueMultiselectDate([]);
-                        
-                     
+            setValueMultiselectDate([]);     
             setBodyFatturazione((prev) => ({...prev,...{tipologiaFattura:e}}));
           }}
           iconMaterial={RenderIcon("invoice",true)}

@@ -318,7 +318,6 @@ const ModuloCommessaPdf : React.FC = () =>{
                   </div>
                 );
               })}
-                    
             </div>
           </div>
         </div>

@@ -1,0 +1,70 @@
+{
+  "cup": "",
+  "codCommessa": "10_2025",
+  "dataDocumento": "2025-09-09T20:40:15",
+  "splitPayment": "SI",
+  "idDocumento": "1042 del 20/12/2024",
+  "map": null,
+  "tipoCommessa": "Ordine",
+  "prodotto": "SEND",
+  "pec": "protocollo@cert.comune.sanmaurotorinese.to.it",
+  "dataModifica": "2025-05-16T13:45:43.613+00:00",
+  "meseAttivita": "GENNAIO/2026",
+  "contatti": [
+    {
+      "idDatiFatturazione": 803,
+      "email": "concettaimmacolata.camillo@comune.sanmaurotorinese.to.it"
+    },
+    {
+      "idDatiFatturazione": 803,
+      "email": "ufficio.verbali@comune.sanmaurotorinese.to.it"
+    }
+  ],
+  "descrizione": "Comune di San Mauro Torinese",
+  "partitaIva": "01113180010",
+  "indirizzoCompleto": "Via Martiri Della Liberta', 150, 10099 SAN MAURO TORINESE (TO) - IT",
+  "datiModuloCommessa": [
+    {
+      "totaleNotifiche": 0,
+      "numeroNotificheNazionali": 0,
+      "numeroNotificheInternazionali": 0,
+      "tipo": "Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R in GENNAIO/2026",
+      "idTipoSpedizione": 1
+    },
+    {
+      "totaleNotifiche": 200,
+      "numeroNotificheNazionali": 200,
+      "numeroNotificheInternazionali": 0,
+      "tipo": "Numero complessivo delle notifiche da processare in via analogica del tipo notifica ex L. 890/1982 in GENNAIO/2026",
+      "idTipoSpedizione": 2
+    },
+    {
+      "totaleNotifiche": 200,
+      "numeroNotificheNazionali": 200,
+      "numeroNotificheInternazionali": 0,
+      "tipo": "Numero complessivo delle notifiche da processare in via digitale in GENNAIO/2026",
+      "idTipoSpedizione": 3
+    },
+    {
+      "totaleNotifiche": 400,
+      "numeroNotificheNazionali": 400,
+      "numeroNotificheInternazionali": 0,
+      "tipo": "Totale notifiche da processare",
+      "idTipoSpedizione": 0
+    }
+  ],
+  "datiModuloCommessaCosti": [
+    {
+      "Totale": "200,00 €",
+      "descrizione": "Notifiche Digitali: Art. 2 comma 6 Anticipo pari al 50% per le notifiche oggetto della commessa di GENNAIO/2026"
+    },
+    {
+      "Totale": "939,00 €",
+      "descrizione": "Notifiche Analogiche: Art. 2 comma 6 Anticipo pari al 50% per le notifiche analogiche oggetto della commessa di GENNAIO/2026"
+    },
+    {
+      "Totale": "1139,00 €",
+      "descrizione": "TOTALE MODULO COMMESSA NETTO IVA"
+    }
+  ]
+}

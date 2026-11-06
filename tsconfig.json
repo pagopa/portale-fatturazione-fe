@@ -16,14 +16,17 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["node", "vite/client"]  // ← add "vite/client" for import.meta.env types
   },
   "include": [
-    "src"
+    "src",
+    "tests",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.jsx"
   ]
 }

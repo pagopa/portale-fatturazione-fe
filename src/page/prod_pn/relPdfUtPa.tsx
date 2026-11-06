@@ -169,62 +169,62 @@ const RelPdfPage : React.FC = () =>{
         <NavigatorHeader pageFrom={headerNavigationFrom} pageIn={"Dettaglio"} backPath={profilePath} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
       </div>
       {showButtonDownloadReport &&
-                <div className='d-flex justify-content-end mt-2 me-5'>
-                  <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadReportDettaglio()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
-                </div>
+        <div className='d-flex justify-content-end mt-2 me-5'>
+          <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadReportDettaglio()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+        </div>
       }
       <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath} idTipoContrattoBasedOnProfile={idTipoContrattoBasedOnProfile} ></MainComponentBasedOnUrl>
       <div className='d-flex justify-content-between ms-5 me-5'>
         {showComponentPdfAdmin &&
-                <div>
-                  <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
-                </div>}
+         <div>
+           <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+         </div>}
         {(profilo.auth === 'PAGOPA' && rel?.caricata === 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) && location.pathname.includes("/rel/") &&
-                    <div>
-                      <div>
-                        <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
-                      </div>
-                      {lastUpdateDocFirmato !== '' &&
-                    <div className='text-center mt-2'>
-                      <Typography variant="overline" >{createDateFromString(lastUpdateDocFirmato)}</Typography>
-                    </div>
-                      }
-                    </div>
+          <div>
+            <div>
+              <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+            </div>
+            {lastUpdateDocFirmato !== '' &&
+            <div className='text-center mt-2'>
+              <Typography variant="overline" >{createDateFromString(lastUpdateDocFirmato)}</Typography>
+            </div>
+            }
+          </div>
         }
       </div>
       <div className="ms-5 me-5 mb-3">
         {showComponentActionOnBottomEnte  &&
-            <Box sx={{display:"flex",justifyContent:"space-between"}}>
-              <div>
-                <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+        <Box sx={{display:"flex",justifyContent:"space-between"}}>
+          <div>
+            <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+          </div>
+          <div id='singleInput' style={{minWidth: '300px', height:'40px'}}>
+            <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e) => uploadPdf(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 || rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato' : "Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" dropzoneButton=""></SingleFileInput>
+          </div> 
+          {showDownloadPdfRELEnteFirmato &&
+          <div>
+            <div>
+              <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+            </div>
+            {lastUpdateDocFirmato !== '' &&
+              <div className='text-center mt-2'>
+                <Typography variant="overline" >{createDateFromString(lastUpdateDocFirmato)}</Typography>
               </div>
-              <div id='singleInput' style={{minWidth: '300px', height:'40px'}}>
-                <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e) => uploadPdf(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 || rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato' : "Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" dropzoneButton=""></SingleFileInput>
-              </div> 
-              {showDownloadPdfRELEnteFirmato &&
-                <div>
-                  <div>
-                    <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
-                  </div>
-                  {lastUpdateDocFirmato !== '' &&
-                      <div className='text-center mt-2'>
-                        <Typography variant="overline" >{createDateFromString(lastUpdateDocFirmato)}</Typography>
-                      </div>
-                  }
-                </div>
-              }
-            </Box> 
+            }
+          </div>
+          }
+        </Box> 
         }
         {showDownloadPdfDocEmessiSospesiEnte &&
-                    <Box>
-                      <div className="">
-                        <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
-                      </div>
-                    </Box>
+         <Box>
+           <div className="">
+             <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+           </div>
+         </Box>
         }
       </div>
       {openModalConfirmUploadPdf &&
-            <ModalUploadPdf setOpen={setOpenModalConfirmUploadPdf} open={openModalConfirmUploadPdf}/>
+       <ModalUploadPdf setOpen={setOpenModalConfirmUploadPdf} open={openModalConfirmUploadPdf}/>
       } 
       <ModalLoading 
         open={showDownloading} 

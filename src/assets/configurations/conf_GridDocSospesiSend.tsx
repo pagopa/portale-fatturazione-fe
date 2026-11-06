@@ -1,8 +1,5 @@
 import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 
-const getStatoFattura = (obj) =>{
-  return "Sospesa";
-};
 
 export const headersDocumentiSospesiiSend : HeaderGridCustom[] = [
   { label: "", align: "center", width: "30px", keyValue: "collaps", typeColumn: "collaps" },
