@@ -4,25 +4,26 @@ import { PathPf } from "../../types/enum";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from "react-router";
 interface NavigationHeaderProps {
-    pageFrom:string,
-    pageIn:string,
-    backPath:PathPf,
-    icon:any
+  pageFrom:string,
+  pageIn:string,
+  backPath:PathPf,
+  icon:any,
+  margin?:boolean
 }
 
-const NavigatorHeader:React.FC<NavigationHeaderProps> = ({pageFrom,pageIn, backPath,icon}) => {
+const NavigatorHeader:React.FC<NavigationHeaderProps> = ({pageFrom,pageIn, backPath,icon,margin=true}) => {
   const navigate = useNavigate();
 
   return (
-    <div className='marginTop24'>
-      <div className='ms-5'>
+    <div className={margin ? 'marginTop24' : undefined}>
+      <div className={margin ? 'ms-5' : undefined} >
         <ButtonNaked
           color="primary"
           size="small"
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate(backPath)}
         >
-            Indietro
+          Indietro
         </ButtonNaked>
         <Typography sx={{marginLeft:'20px', display:'inline-flex', alignItems:'center', verticalAlign:'middle', gap:'4px'}} variant="caption">
           {icon}

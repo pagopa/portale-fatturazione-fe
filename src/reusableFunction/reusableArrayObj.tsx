@@ -12,9 +12,16 @@ export const objMesiWithZero = {
   '07':'Lug','08':'Ago','09':'Set','10':'Ott','11':'Nov','12':'Dic'
 };
 
-export  const mesiFix = [
+export  const mesiFix  = [
   {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
   {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'}];
+
+export function toMesi(mesiArray: number[]): { mese: number; descrizione: string }[] {
+  return mesiArray.map((m) => {
+    const found = mesi.find((obj) => m in obj) as Record<number, string> | undefined;
+    return { mese: m, descrizione: found?.[m] ?? '' };
+  });
+}
 
 export  const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 

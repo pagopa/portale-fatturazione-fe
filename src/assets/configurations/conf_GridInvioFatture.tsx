@@ -7,13 +7,13 @@ import { useState } from "react";
 
 const getChipElaborazione = (row) =>{
   let tooltipObj:any = {label:'',title:''};
-  if(row.statoInvio === 0){
+  if(row.statoInvio === "DA_INVIARE"){
     tooltipObj = {label:'Da inviare',title:'Da inviare',color:'#86E1FD'};
-  }else if(row.statoInvio === 2){
+  }else if(row.statoInvio === "IN_ELABORAZIONE"){
     tooltipObj = {label:'Elaborazione',title:'La fatture sono in elaborazione',color:"#FFE5A3"};
-  }else if(row.statoInvio === 3){
+  }else if(row.statoInvio === "INVIATE"){
     tooltipObj = {label:'Inviate',title:'La fattura sono state inviate',color:'#B5E2B4'};
-  }else if(row.statoInvio === 4){
+  }else if(row.statoInvio === "RE_INVIATE"){
     tooltipObj = {label:'Re-Inviata',title:'La fattura sono state re-inviate',color:'#B5E2B4'};
   }
   return tooltipObj;
@@ -60,7 +60,7 @@ export const headerNamesInvioFatture: HeaderGridCustom[] = [
   { label: "Numero Fatture", align: "center", width: "150px", keyValue: "numeroFatture", typeColumn: 'number' },
   { label: "Anno Riferimento", align: "center", width: "150px", keyValue: "annoRiferimento", typeColumn: 'string',headerActionSort:true, },
   { label: "Mese Riferimento", align: "center", width: "150px", keyValue: "meseRiferimento", typeColumn: 'mese-number',headerActionSort:true },
-  { label: "Importo", align: "center", width: "150px", keyValue: "importo", typeColumn: 'euro' },
+  { label: "Importo", align: "center", width: "150px", keyValue: "importoTotale", typeColumn: 'euro' },
   // {label:"", align:"center", width:"80px", keyValue:"arrow", typeColumn:"arrow"}
 ];
 
