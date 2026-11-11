@@ -64,14 +64,36 @@ export const downloadFinancialReportDocContabiliAppio = async (token:string, non
 };
 
 
+export const getCodFiscaleAppio = async (token:string,nonce:string) => {
+  const response =  await axios.get(`${url}/api/appio/financialreports/codfiscale?nonce=${nonce}`,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    },}
+  );
+  return response;
+}; 
+
 export const getDetailsDocContabileAppio = async (token:string, nonce:string , body:{key:string}) => {
-  const response =  await axios.post(`${url}/api/appio/financialreports/dettaglio?nonce=${nonce}`,
+  const response =  await axios.post(`${url}/api/appio/financialreports/detail?nonce=${nonce}`,
     body,
     { headers: {
       Authorization: 'Bearer ' + token
     }
     }
   );
+  return response;
+};
+
+export const downloadDettaglioDocCotabiliAppio = async (token:string, nonce:string , body:{ "contractId":string, "yearQuarter": string }) => {
+  const response =  await fetch(`${url}/api/appio/financialreports/detail/download?nonce=${nonce}`,
+    {
+      headers: {
+        Authorization: 'Bearer '+token,
+        'Content-type':'application/json'
+      },
+      method: 'POST',
+      body:JSON.stringify(body),
+    });
   return response;
 };
 

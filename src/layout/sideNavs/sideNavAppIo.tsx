@@ -25,7 +25,7 @@ const SideNavAppIo = () => {
           </ListItemIcon>
           <ListItemText primary="Anagrafica App IO" />
         </ListItemButton>
-        <ListItemButton selected={currentLocation === PathPf.DOCUMENTICONTABILIAPPIO || currentLocation === PathPf.DETTAGLIO_DOC_CONTABILE_APPIO} onClick={() => handleListItemClick(PathPf.DOCUMENTICONTABILIAPPIO)}>
+        <ListItemButton selected={currentLocation === PathPf.DOCUMENTICONTABILIAPPIO || currentLocation.includes(PathPf.DETTAGLIO_DOC_CONTABILE_APPIO)} onClick={() => handleListItemClick(PathPf.DOCUMENTICONTABILIAPPIO)}>
           <ListItemIcon>
             <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
           </ListItemIcon>

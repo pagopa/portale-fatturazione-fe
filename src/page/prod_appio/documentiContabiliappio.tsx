@@ -10,14 +10,25 @@ import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { useNavigate } from "react-router-dom";
-import { downloadDocContabiliAppio, getListaDocumentiContabiliAppio, getQuartersDocContabiliAppio, getYearsDocContabiliAppio } from "../../api/apiPagoPa/documentiemessiAppio/api";
+import { downloadDocContabiliAppio, getCodFiscaleAppio, getListaDocumentiContabiliAppio, getQuartersDocContabiliAppio, getYearsDocContabiliAppio } from "../../api/apiPagoPa/documentiemessiAppio/api";
 import { headersDocContabiliAppio, headersDocContabiliAppioCollapse } from "../../assets/configurations/conf_GridDocContabiliAppio";
 import { getListaNameAppio } from "../../api/apiPagoPa/anagraficaAppio/api";
 
 export interface BodyDocContabiliAppiio {
-  contractIds:string[],
-    quarters:string[],
-    year:string
+  institutionIds: string[],
+  codiciFiscali: string[],
+  quarters:string[],
+  year: string
+}
+
+export interface RequestBodyListaDocAppio{
+  institutionIds: string[],
+  tipiEnte:string[]
+}
+
+interface OptionMultiselectCheckboxTipoEnte{
+  id: string,
+  name:string
 }
 
 
@@ -34,7 +45,8 @@ const DocumentiContabiliAppio:React.FC = () =>{
   const [gridData, setGridData] = useState<any[]>([]);
 
   const [bodyGetLista, setBodyGetLista] = useState<BodyDocContabiliAppiio>({
-    contractIds:[],
+    institutionIds:[],
+    codiciFiscali:[],
     quarters:[],
     year:''
   });
@@ -51,6 +63,9 @@ const DocumentiContabiliAppio:React.FC = () =>{
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
   const [dataPaginated,setDataPaginated] = useState<any[]>([]);
+
+  const [valueCodFiscale, setValueCodFiscale] = useState<OptionMultiselectCheckboxTipoEnte[]>([]);
+  const [dataSelectCodFiscale, setDataSelectCodFiscale] = useState<OptionMultiselectCheckboxTipoEnte[]>([]);
   const { 
     filters,
     updateFilters,
@@ -60,6 +75,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
     
   useEffect(()=>{
     getYears();
+    getCodFiscale();
   }, []);
    
    
@@ -79,16 +95,22 @@ const DocumentiContabiliAppio:React.FC = () =>{
     return () => clearTimeout(timer);
   },[textValue]);
 
+  const getCodFiscale = async () => {
+    try{
+      const result = await getCodFiscaleAppio(token, profilo.nonce);
+      const data = result.data.map(el => ({id:el,name:el}));
+      setDataSelectCodFiscale(data);
+    }catch{
+      setDataSelectCodFiscale([]);
+    }
+  };
+
   const getListaDocGrid = async(body:BodyDocContabiliAppiio) =>{
     setGetListaLoading(true);
     await getListaDocumentiContabiliAppio(token, profilo.nonce, body)
       .then((res)=>{
         
-        const data = res.data.financialReports;/*.map((el,i) =>{
-          el.name = `Ente AppIO - ${i}`;
-          el.contractId = `con-app-io-${i}`; 
-          return el;
-        });*/
+        const data = res.data.financialReports;
         setGridData(data);
         setCount(data.length);
         if(isInitialRender.current && Object.keys(filters).length > 0){
@@ -117,7 +139,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
 
   // servizio che popola la select con la checkbox
   const listaNamePspOnSelect = async () =>{
-    await getListaNameAppio(token, profilo.nonce, {name:textValue,quarters:bodyGetLista.quarters,year:bodyGetLista.year} )
+    await getListaNameAppio(token, profilo.nonce, {name:textValue} )
       .then((res)=>{
         setDataSelect(res.data);
       }).catch(((err)=>{
@@ -126,6 +148,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
   };
 
   const getYears = async () =>{
+    setGetListaLoading(true);
     await getYearsDocContabiliAppio(token, profilo.nonce)
       .then((res)=>{
         setYearOnSelect(res.data);
@@ -150,6 +173,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
         }
       }).catch(((err)=>{
         manageError(err,dispatchMainState); 
+        setGetListaLoading(false);
       }));
   };
 
@@ -163,24 +187,16 @@ const DocumentiContabiliAppio:React.FC = () =>{
     }));
   };
 
-
   const onDownloadButton = async() =>{
     setShowLoading(true);
-    await downloadDocContabiliAppio(token,profilo.nonce, bodyGetLista).then(response =>{
-      if(response.status !== 200){
-        setShowLoading(false);
-        manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);
-      }else{
-        return response.blob();
-      }
-    }).then((res) => {
-      let fileName = '';
-      const stringQuarterSelected = bodyGetLista.quarters.map(el => "Q" + el.slice(5)).join("_");
-      if(bodyGetLista.contractIds.length === 1){
-        fileName = `Documenti contabili/${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
-      }else{
-        fileName = `Documenti contabili/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
-      }
+    await downloadDocContabiliAppio(token,profilo.nonce, bodyGetLista).then(response => response.blob()).then((res) => {
+      
+      const stringQuarterSelected = bodyGetLista.quarters;
+   
+      console.log({res,stringQuarterSelected});
+      const fileName = gridData.length === 1
+        ? `Documenti contabili AppIO/${gridData[0].name}/${gridData[0].yearQuarter}.xlsx`
+        : `Documenti contabili AppIO/${bodyGetLista.year}.xlsx`;
       saveAs( res,fileName );
       setShowLoading(false);
     }).catch(err => {
@@ -188,31 +204,8 @@ const DocumentiContabiliAppio:React.FC = () =>{
       manageError(err,dispatchMainState);
     });
   };
-  /* :TODO da eliminare
-  const onDownloadReportButton =  async() =>{
-    setShowLoading(true);
-    await downloadFinancialReportDocContabiliAppio(token,profilo.nonce, bodyGetLista).then((response) =>{
-      if(response.status !== 200){
-        setShowLoading(false);
-        manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);
-      }else{
-        return response.blob();
-      }
-    }).then((res) => {
-      let fileName = '';
-      const stringQuarterSelected = bodyGetLista.quarters.map(el => "Q" + el.slice(5)).join("_");
-      if(bodyGetLista.contractIds.length === 1){
-        fileName = `Financial report PF/${gridData[0].name}/${gridData[0].yearQuarter.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
-      }else{
-        fileName = `Financial report PF/${gridData[0].yearQuarter.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
-      }
-      saveAs( res,fileName );
-      setShowLoading(false);
-    }).catch(err => {
-      manageError(err,dispatchMainState);
-    });
-  };
-*/
+
+ 
   const onButtonFiltra = () =>{
     updateFilters(
       {
@@ -221,6 +214,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
         textValue:textValue,
         valueAutocomplete:valueAutocomplete,
         valueQuarters:valueQuarters,
+        valueCodFiscale:valueCodFiscale,
         page:0,
         rows:10
       });
@@ -238,12 +232,14 @@ const DocumentiContabiliAppio:React.FC = () =>{
       textValue:textValue,
       valueAutocomplete:valueAutocomplete,
       valueQuarters:valueQuarters,
+      valueCodFiscale:valueCodFiscale
     });
   };
 
   const onButtonAnnulla = () => {
     const newBody = {
-      contractIds:[],
+      institutionIds:[],
+      codiciFiscali:[],
       quarters:[],
       year:yearOnSelect[0]};
     getListaDocGrid(newBody);
@@ -287,15 +283,16 @@ const DocumentiContabiliAppio:React.FC = () =>{
 
 
   const handleGoToDetail = (row) => {  
-    navigate(`${PathPf.DETTAGLIO_DOC_CONTABILE}/${row.contractId}/${row.yearQuarter}/${row.numero}`);
+    navigate(`${PathPf.DETTAGLIO_DOC_CONTABILE_APPIO}/${row.contractId}/${row.yearQuarter}`);
   };
    
   const statusAnnulla =
-  bodyGetLista.contractIds.length !== 0 ||
-  bodyGetLista.quarters.length > 0 ||
-  bodyGetLista.year !== yearOnSelect[0]
-    ? 'show'
-    : 'hidden';
+    (bodyGetLista.institutionIds.length !== 0 ||
+   bodyGetLista.quarters.length > 0 ||
+   bodyGetLista.year !== yearOnSelect[0]||
+   bodyGetLista.codiciFiscali.length !== 0)
+      ? 'show'
+      : 'hidden';
 
   return(
     <MainBoxStyled title={"Documenti contabili"}>
@@ -337,6 +334,26 @@ const DocumentiContabiliAppio:React.FC = () =>{
           iconMaterial={RenderIcon("date",true)}/>
         <MainFilter 
           filterName={"multi_checkbox"}
+          inputLabel={"Codice Fisacle"}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyGetLista}
+          body={bodyGetLista}
+          dataSelect={dataSelectCodFiscale}
+          setTextValue={setTextValue}
+          textValue={textValue}
+          valueAutocomplete={valueCodFiscale}
+          setValueAutocomplete={setValueCodFiscale}
+          keyValue={"id"}
+          keyDescription='name'
+          keyBody={"institutionIds"}
+          extraCodeOnChangeArray={(value)=>{
+            const arrayId = value.map(el => el.id);
+            setBodyGetLista((prev) => ({...prev,...{codiciFiscali:arrayId}}));
+            setValueCodFiscale(value);
+          }}
+          iconMaterial={RenderIcon("person",true)}/>
+        <MainFilter 
+          filterName={"multi_checkbox"}
           inputLabel={"Ente"}
           clearOnChangeFilter={clearOnChangeFilter}
           setBody={setBodyGetLista}
@@ -347,8 +364,8 @@ const DocumentiContabiliAppio:React.FC = () =>{
           valueAutocomplete={valueAutocomplete}
           setValueAutocomplete={setValueAutocomplete}
           keyDescription={"name"}
-          keyValue={"contractId"}
-          keyBody={"contractIds"}/>         
+          keyValue={"institutionId"}
+          keyBody={"institutionIds"}/>         
       </ResponsiveGridContainer>
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 

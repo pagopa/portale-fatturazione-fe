@@ -61,6 +61,8 @@ import GestioneFatture from '../page/prod_pn/gestioneFatture';
 import SideNavAppIo from '../layout/sideNavs/sideNavAppIo';
 import AnagraficaAppio from '../page/prod_appio/anagraficaappio';
 import DocumentiContabiliAppio from '../page/prod_appio/documentiContabiliappio';
+import DettaglioDocContabileAppIo from '../page/prod_appio/dettaglioDocContabileAppio';
+
 
 
 const RouteProfile = () => {
@@ -174,7 +176,7 @@ const router2 = createBrowserRouter([
           { index: true, element: <Navigate to={PathRoutePf.ANAGRAFICAAPPIO} replace /> },
           { path:PathRoutePf.ANAGRAFICAAPPIO, Component: AnagraficaAppio },
           { path:PathRoutePf.DOCUMENTICONTABILIAPPIO, Component: DocumentiContabiliAppio },
-          { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE_APPIO, Component: DettaglioDocContabile },
+          { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE_APPIO+"/:contractId/:yearQuarter", Component: DettaglioDocContabileAppIo },
           { path:PathRoutePf.MESSAGGI, Component: Messaggi }
         ],
       },
@@ -268,14 +270,14 @@ function RouteErrorBoundary() {
         <Box sx={style}>
           <div className='text-center'>
             <Typography fontSize={"2.2rem"} fontWeight={900} id="modal-modal-title" variant="h4" component="h2">
-            ERRORE!
+              ERRORE!
             </Typography>
             <Typography fontSize={"1.15rem"} fontWeight={500}   id="modal-modal-description" sx={{ mt: 2 }}>
               {`${location.pathname.split("/")?.filter(Boolean)?.pop() } V.${import.meta.env.VITE_APP_VERSION}`||`Generic V.${import.meta.env.VITE_APP_VERSION}`}
             </Typography>
                         
             <Typography fontSize={"1.15rem"} fontWeight={500} id="modal-modal-description" sx={{ mt: 2 }}>
-            Contattare l'assistenza.
+              Contattare l'assistenza.
             </Typography>
           </div>   
           <div className='container_buttons_modal d-flex justify-content-center'>
