@@ -145,6 +145,7 @@ const AnagraficaAppio:React.FC = () =>{
     setRowsPerPage(10);
     setPage(0);
     setValueAutocomplete([]);
+    setValueProfili([]);
     resetFilters();
   };
 
@@ -191,7 +192,8 @@ const AnagraficaAppio:React.FC = () =>{
 
   const statusAnnulla =
     ( bodyGetLista.institutionIds.length !== 0 ||
-      bodyGetLista.tipiEnte.length !== 0 )
+      bodyGetLista.tipiEnte.length !== 0
+    )
       ? 'show'
       : 'hidden';
 
