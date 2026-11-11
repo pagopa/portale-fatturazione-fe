@@ -80,279 +80,294 @@ const GridCell = ({
   const value = element[rowObject.keyValue];
 
   switch (rowObject.typeColumn) {
-  case "string": {
-    const isLong = value?.toString().length > 24;
-    return (
-      <Tooltip key={`${i}-${value}`} title={isLong ? value : null}>
-        <TableCell
-          onClick={() => {if (apiGet && headerNames[i]?.makeAction) apiGet(element); }}
-          align="center"
-          width={headerNames[i]?.width}
-        >
-          <Typography sx={headerNames[i]?.makeAction ? cssFirstColum : null} variant={rowObject.variant||"body1"}>
-            {value
-              ? isLong
-                ? value.toString().slice(0, 10) + "..."
-                : value
-              : "--"}
+    case "string": {
+      const isLong = value?.toString().length > 24;
+      return (
+        <Tooltip key={`${i}-${value}`} title={isLong ? value : null}>
+          <TableCell
+            onClick={() => {if (apiGet && headerNames[i]?.makeAction) apiGet(element); }}
+            align="center"
+            width={headerNames[i]?.width}
+          >
+            <Typography sx={headerNames[i]?.makeAction ? cssFirstColum : null} variant={rowObject.variant||"body1"}>
+              {value
+                ? isLong
+                  ? value.toString().slice(0, 10) + "..."
+                  : value
+                : "--"}
+            </Typography>
+          </TableCell>
+        </Tooltip>
+      );
+    }
+    case "data-exeption": {
+      return (  
+        <TableCell  width={headerNames[i]?.width} key={`${i}-${value}`} align="center">
+          <Typography variant={rowObject.variant||"body1"}>
+            {rowObject.funToManipulateValue ? rowObject.funToManipulateValue(element):"--"}
           </Typography>
         </TableCell>
-      </Tooltip>
-    );
-  }
-  case "data-exeption": {
-    return (  
-      <TableCell  width={headerNames[i]?.width} key={`${i}-${value}`} align="center">
-        <Typography variant={rowObject.variant||"body1"}>
-          {rowObject.funToManipulateValue ? rowObject.funToManipulateValue(element):"--"}
-        </Typography>
-      </TableCell>
-    );
-  }
-  case "number":
-    return (
-      <TableCell  width={headerNames[i]?.width} align="center">
-        <Typography variant={rowObject.variant||"body1"}>
-          {value === null ? "--" : value}
-        </Typography>
-      </TableCell>
-    );
-  case "boolean":
-    return (
-      <TableCell width={headerNames[i]?.width} align="center">
-        <Typography variant={rowObject.variant||"body1"}>
-          {value === null ? "--" : value === true ? "Si" : "No"}
-        </Typography>
-      </TableCell>
-    );
-  case "mese-number":
-    return <TableCell width={headerNames[i]?.width} align="center">
-      <Typography variant={rowObject.variant||"body1"}>
-        {mesiGrid[value] || "--"}
-      </Typography>
-    </TableCell>;
-  case "ragionesociale": {
-    const isLong = value?.toString().length > 40;
-    return (
-      <Tooltip key={`${i}-${value}`} title={isLong ? value : null}>
-        <TableCell
-          onClick={() => {
-            if (apiGet && headerNames[i]?.makeAction) apiGet(element);
-          }}
-          width={headerNames[i]?.width}
-          align={i === 0 && headerNames[i]?.makeAction ? "left" : "center"}
-        >
-          <Typography sx={headerNames[i]?.applyCss ? getCssFirstColumRagioneSociale(headerNames[i]?.makeAction||false) : null} variant={rowObject.variant||"body1"}>
-            {isLong ? value?.toString().slice(0, 37) + "..." : (value||"--")}
+      );
+    }
+    case "number":
+      return (
+        <TableCell  width={headerNames[i]?.width} align="center">
+          <Typography variant={rowObject.variant||"body1"}>
+            {value === null ? "--" : value}
           </Typography>
         </TableCell>
-      </Tooltip>
-    );
-  }
+      );
+    case "boolean":
+      return (
+        <TableCell width={headerNames[i]?.width} align="center">
+          <Typography variant={rowObject.variant||"body1"}>
+            {value === null ? "--" : value === true ? "Si" : "No"}
+          </Typography>
+        </TableCell>
+      );
+    case "mese-number":
+      return <TableCell width={headerNames[i]?.width} align="center">
+        <Typography variant={rowObject.variant||"body1"}>
+          {mesiGrid[value] || "--"}
+        </Typography>
+      </TableCell>;
+    case "ragionesociale": {
+      const isLong = value?.toString().length > 40;
+      let makeActionCustom = false;
+   
+      if(headerNames[i]?.makeActionFun && headerNames[i]?.makeActionFun(element)){
+        makeActionCustom = true;
+      
+      }else{
+        makeActionCustom = headerNames[i]?.makeAction||false;
+      }
+      return (
+        <Tooltip key={`${i}-${value}`} title={isLong ? value : null}>
+          <TableCell
+            onClick={() => {
+              if (apiGet && makeActionCustom) apiGet(element);
+            }}
+            width={headerNames[i]?.width}
+            align={i === 0 ? "left" : "center"}
+          > {/*TODO: togliere il porkaround cancellata */}
+            <Typography sx={headerNames[i]?.applyCss ? getCssFirstColumRagioneSociale(makeActionCustom ||false) : null} variant={rowObject.variant||"body1"}>
+              {isLong ? value?.toString().slice(0, 37) + "..." : value}
+            </Typography>
+          </TableCell>
+        </Tooltip>
+      );
+    }
 
-  case "data": {
-    let valueData = value !== null ? transformDateTimeWithNameMonth(value) : "--";
-    if (rowObject.keyValue === "dataChiusura") {
-      valueData =
+    case "data": {
+      let valueData = value !== null ? transformDateTimeWithNameMonth(value) : "--";
+      if (rowObject.keyValue === "dataChiusura") {
+        valueData =
           element.source === "archiviato"
             ? "--"
             : element.source === "facoltativo"
               ? "TBD"
               : transformDateTimeWithNameMonth(element.dataChiusura);
+      }
+      return (
+        <TableCell key={`${i}-${value}`}  width={headerNames[i]?.width} align="center">
+          <Typography variant={rowObject.variant||"body1"}>
+            {valueData || "--"}
+          </Typography>
+        </TableCell>
+      );
     }
-    return (
-      <TableCell key={`${i}-${value}`}  width={headerNames[i]?.width} align="center">
-        <Typography variant={rowObject.variant||"body1"}>
-          {valueData || "--"}
-        </Typography>
-      </TableCell>
-    );
-  }
-  case "string-tipocontratto":
-    return (
-      <Tooltip key={`${i}-${value}`} title={ value === null ? null : value === 'PAL' ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}>
+    case "string-tipocontratto":
+      return (
+        <Tooltip key={`${i}-${value}`} title={ value === null ? null : value === 'PAL' ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}>
+          <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
+            <Typography variant={rowObject.variant||"body1"}>
+              { value === null ? "--" : value === 'PAL' ? ('PAC - PAL senza requisiti').slice(0, 10) + "..." : ('PAC - PAL con requisiti').slice(0, 10) + "..."}
+            </Typography>
+          </TableCell>
+        </Tooltip>
+      );
+    case "number-tipocontratto":
+      return (
+        <Tooltip key={`${i}-${value}`} title={ Number(value) === null ? null : Number(value) === 1 ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}>
+          <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
+            <Typography variant={rowObject.variant||"body1"}>
+              { Number(value)  === null ? "--" : Number(value)  === 1 ? ('PAC - PAL senza requisiti').slice(0, 10) + "..." : ('PAC - PAL con requisiti').slice(0, 10) + "..."}
+            </Typography>
+          </TableCell>
+        </Tooltip>
+      );
+    case "data-ora": {
+      const valueData = value ? transformDateTime019(value) : "";
+      return (
         <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
           <Typography variant={rowObject.variant||"body1"}>
-            { value === null ? "--" : value === 'PAL' ? ('PAC - PAL senza requisiti').slice(0, 10) + "..." : ('PAC - PAL con requisiti').slice(0, 10) + "..."}
+            {valueData || "--"}
           </Typography>
         </TableCell>
-      </Tooltip>
-    );
-  case "number-tipocontratto":
-    return (
-      <Tooltip key={`${i}-${value}`} title={ Number(value) === null ? null : Number(value) === 1 ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}>
+      );
+    }
+    case "euro-centesimi":
+      return (
+        <TableCell key={`${i}-${value}`}  width={headerNames[i]?.width} align="center">
+          <Typography variant={rowObject.variant||"body1"}>
+            {(value !== null && value !== 0)
+              ? (Number(value) / 100).toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })
+              : "--"}
+          </Typography>
+        </TableCell>
+      );
+    case "euro":
+      return (
         <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
           <Typography variant={rowObject.variant||"body1"}>
-            { Number(value)  === null ? "--" : Number(value)  === 1 ? ('PAC - PAL senza requisiti').slice(0, 10) + "..." : ('PAC - PAL con requisiti').slice(0, 10) + "..."}
+            {(value !== null && value !== 0)
+              ? Number(value).toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })
+              : "--"}
           </Typography>
         </TableCell>
-      </Tooltip>
-    );
-  case "data-ora": {
-    const valueData = value ? transformDateTime019(value) : "";
-    return (
-      <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
-        <Typography variant={rowObject.variant||"body1"}>
-          {valueData || "--"}
-        </Typography>
-      </TableCell>
-    );
-  }
-  case "euro-centesimi":
-    return (
-      <TableCell key={`${i}-${value}`}  width={headerNames[i]?.width} align="center">
-        <Typography variant={rowObject.variant||"body1"}>
-          {(value !== null && value !== 0)
-            ? (Number(value) / 100).toLocaleString("de-DE", {
-              style: "currency",
-              currency: "EUR",
-            })
-            : "--"}
-        </Typography>
-      </TableCell>
-    );
-  case "euro":
-    return (
-      <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
-        <Typography variant={rowObject.variant||"body1"}>
-          {(value !== null && value !== 0)
-            ? Number(value).toLocaleString("de-DE", {
-              style: "currency",
-              currency: "EUR",
-            })
-            : "--"}
-        </Typography>
-      </TableCell>
-    );
-  case "euro-number":
-    return (
-      <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
-        <Typography variant={rowObject.variant||"body1"}>
-          {value != null
-            ? value.toLocaleString("de-DE", {
-              style: "currency",
-              currency: "EUR",
-              maximumFractionDigits: 14
-            })
-            : "--"}
-        </Typography>
-      </TableCell>
-    );
-  case "switch":
-    return (
-      <TableCell key={`${i}-${value}`} align="center">
-        <Box sx={flexCenterStyle}>
-          <Typography>
-            {rowObject.switchValue && rowObject.switchValue[0].valueSwitch}
+      );
+    case "euro-number":
+      return (
+        <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
+          <Typography variant={rowObject.variant||"body1"}>
+            {value != null
+              ? value.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+                maximumFractionDigits: 14
+              })
+              : "--"}
           </Typography>
-          <Switch
-            onChange={() => {
-              if (apiGet) apiGet(element);
-            }}
-            checked={element.tipoContratto === 1}
-          />
-          <Typography>
-            {rowObject.switchValue && rowObject.switchValue[1].valueSwitch}
-          </Typography>
-        </Box>
-      </TableCell>
-    );
-  case "checkbox":
+        </TableCell>
+      );
+    case "switch":
+      return (
+        <TableCell key={`${i}-${value}`} align="center">
+          <Box sx={flexCenterStyle}>
+            <Typography>
+              {rowObject.switchValue && rowObject.switchValue[0].valueSwitch}
+            </Typography>
+            <Switch
+              onChange={() => {
+                if (apiGet) apiGet(element);
+              }}
+              checked={element.tipoContratto === 1}
+            />
+            <Typography>
+              {rowObject.switchValue && rowObject.switchValue[1].valueSwitch}
+            </Typography>
+          </Box>
+        </TableCell>
+      );
+    case "checkbox":
     // TODO: implementare rendering reale, per ora placeholder
-    return (
-      <TableCell key={`${i}-checkbox`} align="center">
+      return (
+        <TableCell key={`${i}-checkbox`} align="center">
           checkbox
-      </TableCell>
-    );
-  case "chip": {
-    const formattedLabel = value
-      ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
-      : "--";
-    const bgColor =
+        </TableCell>
+      );
+    case "chip": {
+      const formattedLabel = value
+        ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+        : "--";
+      const bgColor =
         rowObject.funToManipulateValue && rowObject.keyToManipulateData
           ? rowObject.funToManipulateValue(element)
           : undefined;
-    return (
-      <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
-        <Chip
-          variant="outlined"
-          label={formattedLabel}
-          sx={{ backgroundColor: bgColor }}
-        />
-      </TableCell>
-    );
-  }
-  case "chip-tooltip": {
-    const objTooltip = rowObject.funToManipulateValue ? rowObject.funToManipulateValue(element) : undefined;
-    return (
-      <Tooltip key={`${i}-${value}`} title={objTooltip?.title}>
+      return (
         <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
           <Chip
             variant="outlined"
-            label={objTooltip?.label }
-            sx={{ backgroundColor: objTooltip?.color }}
+            label={formattedLabel}
+            sx={{ backgroundColor: bgColor }}
           />
         </TableCell>
-      </Tooltip>
-    );
-  }
-  case "action": {
-    return (
-      <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
-        {rowObject.funToManipulateValue && rowObject.funToManipulateValue(element,setAction)}
-      </TableCell>
-    );
-  }
-  case "custom-value": {
-    return (
-      <TableCell
-        key={`${i}-${value}`}
-        onClick={() => {
-          if (apiGet && headerNames[i]?.makeAction) apiGet(element);
-        }}
-        sx={headerNames[i]?.applyCss ? getCssFirstColumCustom(headerNames[i]?.makeAction||false,headerNames[i]?.width) : null}
-      
-        align="center">
-        {rowObject.funToManipulateValue && rowObject.funToManipulateValue(element,apiGet)}
-      </TableCell>
-    );
-  }
-  case "snackbar":
-    return (
-      <CopyToClipboardCell
-        key={`${i}-snackbar`}
-        value={value}
-        align={headerNames[i]?.align}
-      />
-    );
-  case "collaps":
-    return (
-      <TableCell width={headerNames[i]?.width} key={`expand-${element.id}-${i}`} align="center">
-        <IconButton
-          sx={{ color: "#227AFC" }}
-          aria-label="expand row"
-          size="small"
-          onClick={onToggleRow}
-        >
-          {isRowOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-        </IconButton>
-      </TableCell>
-    );
-  case "arrow":
-    return (
-      <TableCell width={headerNames[i]?.width} key={`${i}-arrow`} align="center">
-        <IconButton
-          size="medium"
+      );
+    }
+    case "chip-tooltip": {
+      const objTooltip = rowObject.funToManipulateValue ? rowObject.funToManipulateValue(element) : undefined;
+      return (
+        <Tooltip key={`${i}-${value}`} title={objTooltip?.title}>
+          <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
+            <Chip
+              variant="outlined"
+              label={objTooltip?.label }
+              sx={{ backgroundColor: objTooltip?.color }}
+            />
+          </TableCell>
+        </Tooltip>
+      );
+    }
+    case "action": {
+      return (
+        <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
+          {rowObject.funToManipulateValue && rowObject.funToManipulateValue(element,setAction)}
+        </TableCell>
+      );
+    }
+    case "custom-value": {
+      return (
+        <TableCell
+          key={`${i}-${value}`}
           onClick={() => {
-            if (apiGet) apiGet(element);
+            if (apiGet && headerNames[i]?.makeAction) apiGet(element);
           }}
-        >
-          <ArrowForwardIcon sx={{ color: "#1976D2", cursor: "pointer" }} />
-        </IconButton>
-      </TableCell>
-    );
-  default:
-    return null;
+          sx={headerNames[i]?.applyCss ? getCssFirstColumCustom(headerNames[i]?.makeAction||false,headerNames[i]?.width) : null}
+      
+          align="center">
+          {rowObject.funToManipulateValue && rowObject.funToManipulateValue(element,apiGet)}
+        </TableCell>
+      );
+    }
+    case "snackbar":
+      return (
+        <CopyToClipboardCell
+          key={`${i}-snackbar`}
+          value={value}
+          align={headerNames[i]?.align}
+        />
+      );
+    case "collaps":
+      return (
+        <TableCell width={headerNames[i]?.width} key={`expand-${element.id}-${i}`} align="center">
+          <IconButton
+            sx={{ color: "#227AFC" }}
+            aria-label="expand row"
+            size="small"
+            onClick={onToggleRow}
+          >
+            {isRowOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+      );
+    case "arrow":{
+
+      let makeActionCustom = true;
+      if(headerNames[i]?.makeActionFun && !headerNames[i]?.makeActionFun(element)){
+        makeActionCustom = false;
+      }
+      return (
+        <TableCell width={headerNames[i]?.width} key={`${i}-arrow`} align="center">
+          <IconButton
+            disabled={!makeActionCustom}
+            size="medium"
+            onClick={() => {
+              if (apiGet && makeActionCustom ) apiGet(element);
+            }}
+          >
+            <ArrowForwardIcon sx={(headerNames[i]?.makeActionFun && !headerNames[i]?.makeActionFun(element)) ? null :{ color: "#1976D2", cursor: "pointer" }} />
+          </IconButton>
+        </TableCell>
+      );
+    }
+    default:
+      return null;
   }
 };
 

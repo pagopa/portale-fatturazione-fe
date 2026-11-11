@@ -11,10 +11,11 @@ import { manageError, managePresaInCarico } from '../../../api/api';
 import Loader from '../loader';
 import { useGlobalStore } from '../../../store/context/useGlobalStore';
 import MainFilter from '../mainFilter';
-import { gestioneFattureInserisci, gestioneFattureVerificaNotaPii, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../../api/apiPagoPa/gestioneFatturePA/api';
+import { gestioneFattureInserisci, getAnniGestioneFattureAzione, getMesiGestioneFattureAzione } from '../../../api/apiPagoPa/gestioneFatturePA/api';
 import { formatDate, isValidText2NotaPii, isValidTextNotaPii } from '../../../reusableFunction/function';
 import { month as NOMI_MESI} from '../../../reusableFunction/reusableArrayObj';
 import { ManageErrorResponse } from '../../../types/typesGeneral';
+
 
 const style = {
   position: 'absolute' as const,
@@ -80,8 +81,8 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
   const [arrayYears,setArrayYears] = useState<number[]>([]);
   const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [showLoader, setShowLoader] = useState(false);
-  const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
-  const textNoteVerified = useRef(false);
+  //const [textAreaValuePii, setTextAreaValuePii] = useState<string>('');
+  //const textNoteVerified = useRef(false);
 
   const azioni = ["Posticipa","Elimina"];
   
@@ -178,16 +179,16 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
       setOpen(false);
       getLista(body.anno);
       clearPopUp();
-      textNoteVerified.current = false;
+      //textNoteVerified.current = false;
     }).catch((err)=>{
       setShowLoader(false);
       setOpen(false);
       manageError(err,dispatchMainState);
       clearPopUp();
-      textNoteVerified.current = false;
+      //textNoteVerified.current = false;
     });
   };
-
+  /*
   const verificaTestoNota = async (): Promise<void> => {
     setOpen((prev)=> ({...prev,loaderIsVisible:true,sentenceLoader:"Verifica della NOTA in corso ..."}));
     try {
@@ -222,7 +223,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
       setOpen((prev)=> ({...prev,loaderIsVisible:false,sentenceLoader:null}));
     }
   };
-
+*/
   const clearPopUp = () => {
     setBodyAction({
       mese: [],
@@ -237,10 +238,10 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     setArrayMonths([]);
     setDataSelect([]);
     setTextValue('');
-    setTextAreaValuePii("");
-    textNoteVerified.current = false;
+    //setTextAreaValuePii("");
+    //textNoteVerified.current = false;
   };
-
+  /*
   const setTextAreaValueClearPii = (e) => {
     if(textNoteVerified.current){
       textNoteVerified.current = false;
@@ -253,7 +254,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
         "testo": e
       }}}));  
     }
-  };
+  };*/
   
   const disableBotton = (bodyAction.anno === null 
   || bodyAction.mese.length === 0 
@@ -435,11 +436,13 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               keyBody={"nota"}
               error={(!isValidText2NotaPii(bodyAction.nota?.testo||"") || !isValidTextNotaPii(bodyAction.nota?.testo||""))&& bodyAction.mese.length !== 0}
               extraCodeOnChange={(e)=>{
-                setTextAreaValueClearPii(e);
+                //setTextAreaValueClearPii(e);
+                setBodyAction((prev)=> ({...prev, ...{nota:{
+                  "data": formatDate(new Date()),
+                  "testo": e
+                }}}));
               }}
-              helperText={(bodyAction.nota?.testo?.length||0) > 500 ?
-                `Inserisci una nota (max ${500} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`
-                : `Inserisci una nota (min ${10} max ${500} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`}
+              helperText={ `Inserisci una nota (minimo 10 massimo 500 carratteri). Non inserire informazioni non necessarie, evitando di includere dati personali eccessivi o dettagli non pertinenti.`}
               placeHolder={"Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici."}
             />
           </Box>
@@ -459,14 +462,15 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 }}
                 onClick={() => {
                   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-                  textNoteVerified.current ? actionInserisci(bodyAction): verificaTestoNota();
+                  actionInserisci(bodyAction);
+                  //textNoteVerified.current ? actionInserisci(bodyAction): verificaTestoNota();
                 }}
               >
                 {open.sentenceLoader ? open.sentenceLoader : "Inserisci"}
               </Button> 
             </div>:
             <div id='loader_on_modal' className='container_buttons_modal d-flex justify-content-center mt-5'>
-              <Loader sentence={textNoteVerified.current ?'Attendere':'Verifica della nota in corso'}></Loader> 
+              <Loader sentence={'Attendere'}/> {/*sentence={textNoteVerified.current ?'Attendere':'Verifica della nota in corso'} */}
             </div>}
         </Box>
       </Modal>

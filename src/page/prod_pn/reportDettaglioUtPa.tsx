@@ -690,7 +690,7 @@ const ReportDettaglio : React.FC = () => {
         const a = document.createElement('a');
         a.setAttribute('hidden', '');
         a.setAttribute('href', url);
-        a.setAttribute('download',`Notifiche /${mesiWithZero[(bodyDownload?.mese||0)-1]} /${bodyDownload.anno}.csv`);
+        a.setAttribute('download',`Notifiche/${mesiWithZero[(bodyDownload?.mese||0)-1]}/${bodyDownload.anno}.csv`);
         document.body.appendChild(a);
         a.click();
         setShowLoading(false);
@@ -714,7 +714,7 @@ const ReportDettaglio : React.FC = () => {
         const a = document.createElement('a');
         a.setAttribute('hidden', '');
         a.setAttribute('href', url);
-        a.setAttribute('download', `Notifiche /${mesiWithZero[(bodyDownload?.mese||0)-1]} /${bodyDownload.anno}.csv`);
+        a.setAttribute('download', `Notifiche/${mesiWithZero[(bodyDownload?.mese||0)-1]}/${bodyDownload.anno}.csv`);
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -728,7 +728,7 @@ const ReportDettaglio : React.FC = () => {
       await downloadNotifchePagoPa(token, profilo.nonce,bodyAdmin as BodyListaNotifiche).then((res)=>{
         let fileName = `Notifiche /${mesiWithZero[(bodyDownload?.mese||0)-1]} /${bodyDownload.anno}.csv`;
         if(bodyDownload.idEnti.length === 1){
-          fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[(bodyDownload?.mese||0)-1]} /${bodyDownload.anno}.csv`;
+          fileName = `Notifiche/${notificheList[0].ragioneSociale}/${mesiWithZero[(bodyDownload?.mese||0)-1]}/${bodyDownload.anno}.csv`;
         }
         const blob = new Blob([res.data], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);

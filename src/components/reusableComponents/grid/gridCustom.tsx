@@ -59,6 +59,7 @@ export interface HeaderGridCustom {
     applyCss?:boolean,
     keyToManipulateData?:string,
     variant?: "caption-semibold" | "caption" | "body1" | "body2" | "subtitle1" | "subtitle2" | "h6" | "h5" | "h4" | "h3" | "h2" | "h1"; 
+    makeActionFun?:(obj:any)=> boolean
 }
 
 
