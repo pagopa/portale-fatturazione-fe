@@ -15,11 +15,13 @@ import { headerNamesInvioFatture, headerNamesInvioFattureCollapse, keyValueObjMo
 import MainModalComponent from "../../components/reusableComponents/modals/mainModalComponent";
 import { ElementToProcessComponent } from "../../components/reusableComponents/tableViewData";
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
-import { Box, DialogContent, Divider, List, ListItem, ListItemText, Stack, TextField, Typography } from "@mui/material";
+import { Box, DialogContent, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
 import { NotaTextField } from "./gestioneFatture";
 import FiltersCollapseInvioFatture, { FiltriCollapseInvioFatture } from "../../components/invioFatture/filtersCollapseInvioFatture";
 import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
 import DescriptionIcon from '@mui/icons-material/Description';
+import { downloadInvioFatture, getDettaglioInvioFatture, getStatiInvioJson } from "../../api/apiPagoPa/invioFattureSapPA/api";
+import { ManageErrorResponse } from "../../types/typesGeneral";
 
 interface ListaFatture {
   tipologiaFattura: string,
@@ -36,6 +38,34 @@ export interface SelectedJsonSap {
   meseRiferimento: number,
   tipologiaFattura: string,
   idFattura:number|null
+}
+
+export interface BodyInvioFatture {
+  anno: number|"";
+  mesi: number[];
+  tipologieFattura: string[];
+  statoInvio: string;
+}
+
+export type BodyDettaglioFatture = {
+  annoRiferimento: number,
+  meseRiferimento: number,
+  tipologiaFattura: string,
+  statoInvio: string,
+  ragioneSociale?: string;
+  numeroFattura?: string;
+  dataFattura?: string;
+  page?: number;
+  pageSize?: number;
+};
+
+export interface BodyGeneraJson {
+  "anno": number,
+  "mese": number,
+  "tipologiaFattura": string,
+  "idFatture": number[],
+  "nota": string,
+  "numeroDocumentoStorno": string
 }
 
 
@@ -63,14 +93,14 @@ const InvioFatture : React.FC = () => {
   const [collapseDataLoading,setCollapseDataLoading] = useState(true);
 
 
-  const [bodyFatturazione, setBodyFatturazione] = useState<Record<string, unknown>>({
-    anno:"2026",
-    mese:"",
-    tipologiaFattura:[],
-    inviata:3,
-    tipoInvio:3
+  const [bodyFatturazione, setBodyFatturazione] = useState<BodyInvioFatture>({
+    anno:2026,
+    mesi:[],
+    tipologieFattura:[],
+    statoInvio:""
 
   });
+  
 
   const [arrayYears,setArrayYears] = useState<number[]>([2025,2026,2027]);
   const [arrayMonths,setArrayMonths] = useState<{mese:string,descrizione:string}[]>([]);
@@ -85,136 +115,24 @@ const InvioFatture : React.FC = () => {
     isInitialRender,
     resetFilters
   } = useSavedFiltersNested("/inviofatture",{});
-
+  console.log({filters});
   useEffect(()=>{
+    getLista();
+    getStati();
+    //TODO: sistemare quaneo ci sarà l'api
+    setTipologie(["Anticipo", "Acconto", "Primo Saldo", "Secondo Saldo", "Var. Semestrale", "Sem. Sospesi"]);
+    //TODO: cedere dove spostare questa logica
     if(isInitialRender.current && Object.keys(filters).length > 0){
-      getLista(filters.tipologiaInvio);
-    }else{
-      getLista(tipologia);
-      setSelected([]);
-      setRowSelectionModel([]);
-    }
-  },[tipologia]);
+      setTipologia(filters.tipologiaInvio);
+      setSelected(filters.selectedInvio);
+      setRowSelectionModel(filters.rowSelectionModelInvio);
+      setInfoPage(filters.infoPageInvio);
+    } 
+  },[]);
 
- 
-  const getLista = async (tipologia) =>{
-    await getListaJsonFatturePagoPa(token,profilo.nonce).then((res)=>{
-
-      const addMockInviate = [
-        {
-          "idFat":"mock",
-          "tipologiaFattura": "PRIMO SALDO",
-          "numeroFatture": 6,
-          "annoRiferimento": 2026,
-          "meseRiferimento": 12,
-          "importo": 11,
-          "statoInvio": 3,
-          "fatture":[
-            {
-              "idFattura": 1111,
-              "tipologiaFattura": "PRIMO SALDO",
-              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
-              "ragioneSociale": "Regione Lombardia",
-              "annoRiferimento": 2026,
-              "meseRiferimento": 12,
-              "importo": 11,
-              "dataFattura": "2025-02-10T00:00:00",
-              "dataGenerazione": "2026-09-09T11:00:00",
-              "statoInvio": 3,
-              "fileJson":"FatturePagoPa_01012026_1230.json"
-            },
-            {
-              "idFattura": 1112,
-              "tipologiaFattura": "PRIMO SALDO",
-              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
-              "ragioneSociale": "Regione Puglia",
-              "annoRiferimento": 2026,
-              "meseRiferimento": 12,
-              "importo": 12,
-              "dataFattura": "2025-02-10T00:00:00",
-              "dataGenerazione": "2026-09-09T11:00:00",
-              "statoInvio": 4,
-              "fileJson":"FatturePagoPa_01012026_1230.json"
-            },{
-              "idFattura": 1113,
-              "tipologiaFattura": "PRIMO SALDO",
-              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
-              "ragioneSociale": "Regione Puglia",
-              "annoRiferimento": 2026,
-              "meseRiferimento": 12,
-              "importo": 12,
-              "dataFattura": "2025-02-10T00:00:00",
-              "dataGenerazione": "2026-09-09T11:00:00",
-              "statoInvio": 3,
-              "fileJson":"FatturePagoPa_01012026_1230.json"
-            },{
-              "idFattura": 1114,
-              "tipologiaFattura": "PRIMO SALDO",
-              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
-              "ragioneSociale": "Regione Puglia",
-              "annoRiferimento": 2026,
-              "meseRiferimento": 12,
-              "importo": 12,
-              "dataFattura": "2025-02-10T00:00:00",
-              "dataGenerazione": "2026-09-09T11:00:00",
-              "statoInvio": 4,
-              "fileJson":"FatturePagoPa_01012026_1230.json"
-            },{
-              "idFattura": 1115,
-              "tipologiaFattura": "PRIMO SALDO",
-              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
-              "ragioneSociale": "Regione Puglia",
-              "annoRiferimento": 2026,
-              "meseRiferimento": 12,
-              "importo": 12,
-              "dataFattura": "2025-02-10T00:00:00",
-              "dataGenerazione": "2026-09-09T11:00:00",
-              "statoInvio": 4,
-              "fileJson":"FatturePagoPa_01012026_1230.json"
-            },{
-              "idFattura": 1116,
-              "tipologiaFattura": "PRIMO SALDO",
-              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
-              "ragioneSociale": "Regione Puglia",
-              "annoRiferimento": 2026,
-              "meseRiferimento": 12,
-              "importo": 12,
-              "dataFattura": "2025-02-10T00:00:00",
-              "dataGenerazione": "2026-09-09T11:00:00",
-              "statoInvio": 3,
-              "fileJson":"FatturePagoPa_01012026_1230.json"
-            }
-          ]
-        },
-        {
-          "idFat":"mock",
-          "tipologiaFattura": "SECONDO SALDO",
-          "numeroFatture": 1,
-          "annoRiferimento": 2026,
-          "meseRiferimento": 12,
-          "importo": 100,
-          "statoInvio": 3,
-          "fatture":[
-            {
-              "idFattura": 22222,
-              "tipologiaFattura": "SECONDO SALDO",
-              "idEnte": "d7d441ea-dbd5-4c49-bb5f-12821558c6fe",
-              "ragioneSociale": "Regione Lombardia",
-              "annoRiferimento": 2026,
-              "meseRiferimento": 12,
-              "importo": 100,
-              "dataFattura": "2025-02-10T00:00:00",
-              "dataGenerazione": "2026-09-09T10:00:00",
-              "statoInvio": 3,
-              "fileJson":"FatturePagoPa_01012026_1230.json"
-            }
-          ]
-        }
-      ];
-      setListaFatture([...addMockInviate,...res.data.filter(el => el.annoRiferimento === 2026)].slice(0,10));
-      
+  /* //TODO penso si possa cancellare, vecchia logica per ordinare le tipologie , ci arriveranno dalle api
       const array = res.data.map( el => el.tipologiaFattura);
-      const ORDER = ["Anticipo", "Acconto", "Primo Saldo", "Secondo Saldo", "Var. Semestrale", "Sem. Sospesi"];
+      const ORDER = ;
 
       const toTitleCase = (str: string) =>
         str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
@@ -234,40 +152,36 @@ const InvioFatture : React.FC = () => {
           const rankB = indexB === -1 ? ORDER.length : indexB;
           return rankA - rankB;
         });
-                
-      setTipologie([...["Tutte"],...uniqueArray]);
-      /*
-      let elOrdered = res.data.map((el,i) => {
-        return {
-          id:el.annoRiferimento+"-"+el.meseRiferimento+"-"+el.tipologiaFattura+"-"+i,
-          tipologiaFattura: el.tipologiaFattura,   
-          statoInvio: el.statoInvio,
-          numeroFatture: el.numeroFatture,
-          annoRiferimento: el.annoRiferimento,
-          meseRiferimento: el.meseRiferimento,
-          importo: el.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-        };
-      }); 
-      if(tipologia !== 'Tutte' ){
-        elOrdered = elOrdered.filter(el => el.tipologiaFattura === tipologia.toUpperCase());
-      }*/
-      
-    }).catch((err)=>{
+          
+   */
+
+  const getStati = async () => {
+    try{
+      const resp = await getStatiInvioJson(token,profilo.nonce);
+      console.log({resp});
+      setArrayTipologieInvio(resp.data);
+    }catch{
+      setArrayTipologieInvio([]);
+      console.log("error");
+    }
+  };
+
+ 
+  const getLista = async () =>{
+    try{
+      const res = await getListaJsonFatturePagoPa(token,profilo.nonce);
+      setListaFatture(res.data);
+    }catch(err:any){
+      setListaFatture([]);
       manageError(err, dispatchMainState);
-    });
-    if(isInitialRender.current && Object.keys(filters).length > 0){
-      setTipologia(filters.tipologiaInvio);
-      setSelected(filters.selectedInvio);
-      setRowSelectionModel(filters.rowSelectionModelInvio);
-      setInfoPage(filters.infoPageInvio);
-    } 
+    }
   };
 
   const onButtonInvia = async() =>{
     setShowLoader(true);
     await invioListaJsonFatturePagoPa(token,profilo.nonce,selected).then(()=>{
       setShowLoader(false);
-      getLista("Tutte");
+      getLista();
       setSelected([]);
       setRowSelectionModel([]);
       setTipologia('Tutte');
@@ -294,35 +208,17 @@ const InvioFatture : React.FC = () => {
   };
 
 
-  let columsSelectedGrid = '';
-  const handleOnCellClick = (params: GridCellParams) =>{
-    columsSelectedGrid  = params.field;
-  };
-    
-  const handleEvent: GridEventListener<'rowClick'> = (
-    params:GridRowParams,
-    event: MuiEvent<React.MouseEvent<HTMLElement>>,
-  ) => {
-    event.preventDefault();
-    if(columsSelectedGrid  === 'tipologiaFattura' || columsSelectedGrid === 'action' ){
-      navigate(PathPf.JSON_TO_SAP_DETAILS.replace(":id",params.row.id));
-    }
-  };
-
   const onChangePageOrRowGrid = (e) => {
     setInfoPage(e);
   };
 
-  const downloadReport = async () => {
+  const downloadRisultati = async () => {
     setShowDownloading(true);
     try {
-      const response = await downloadReportRelNonFatturate(token, profilo.nonce, {tipologiaFattura:tipologia === 'Tutte' ? null : [tipologia]});
+      const response = await downloadInvioFatture(token, profilo.nonce, bodyFatturazione);
       if (!response.ok) throw '404';
       const blob = await response.blob();
-      let title = `Lista Report Non Inviate.zip`;
-      if (tipologia !== 'Tutte') {
-        title = `Lista Report Non Inviate/${tipologia}.zip`;
-      }
+      const title = `Lista Non Inviate.xlsx`;
       saveAs(blob, title);
     } catch {
       manageErrorDownload('404', dispatchMainState);
@@ -343,6 +239,7 @@ const InvioFatture : React.FC = () => {
     console.log('Annulla button clicked');
   };
 
+  const [arrayTipologieInvio, setArrayTipologieInvio] = useState<{codice:string,descrizione:string}[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
@@ -432,40 +329,38 @@ const InvioFatture : React.FC = () => {
   };
   
   // va inserito dentro la fundione la logica del checkjed
-  console.log({elementsSelected});
+  /*
   const handleGetDetails = (el: ListaFatture) => {
     navigate(PathPf.JSON_TO_SAP_DETAILS.replace(":id",`${el.annoRiferimento}-${el.meseRiferimento}-${el.tipologiaFattura}`));
   };
+*/
 
-  const getDetailSingleRow = async (obj: {annoRiferimento: number,meseRiferimento: number,tipologiaFattura: string}): Promise<Record<string, any>[]> => {
-    setCollapseDataLoading(true);
-    try {
-      const res = await sendListaJsonFatturePagoPa(token, profilo.nonce, obj);
-  
-      setCollapseDataLoading(false);
-      return res.data;
-    } catch {
-      managePresaInCarico("ERROR_LIST_JSON_TO_SAP", dispatchMainState);
-      navigate(PathPf.JSON_TO_SAP);
-      setCollapseDataLoading(false); 
-      return [];
-    }
-  };
 
   //Bisogna aggiungere un parametro che controlla se è collapsed altrimenti non devo faren la chiamata
   const handleGetDetailsRowCollapsed = async (el: Record<string, any>, clickOnCheckbox:boolean = false) => {
-    if(!(el.idFat === "mock")){
-      const resCollapseDetails = await getDetailSingleRow({
-        annoRiferimento: el.annoRiferimento,
-        meseRiferimento: el.meseRiferimento,
-        tipologiaFattura: el.tipologiaFattura,
+  
+    try{
+      const res = await getDettaglioInvioFatture(token, profilo.nonce, {
+        "annoRiferimento": el.annoRiferimento,
+        "meseRiferimento": el.meseRiferimento,
+        "tipologiaFattura": el.tipologiaFattura,
+        "statoInvio": el.statoInvio,
+        //"ragioneSociale": "string",
+        //"numeroFattura": "string",
+        //"dataFattura": "2026-11-10T16:07:02.127Z",
+        "page": 0,
+        "pageSize": 10
       });
+      const resCollapseDetails = res.data;
+      setCollapseDataLoading(false);
+
       const addStatoInvioInsideCollapse = resCollapseDetails.map((collapseEl) => {
         collapseEl.statoInvio = el.statoInvio;
         collapseEl.fileJson = collapseEl.statoInvio !== 0 ? "FatturePagoPa_01012026_1230.json" : "--";
         return collapseEl;
       });
-   
+
+    
       setListaFatture((prevState) =>
         prevState.map((item) =>
           item.annoRiferimento === el.annoRiferimento &&
@@ -476,21 +371,25 @@ const InvioFatture : React.FC = () => {
             : item
         )
       );
-
+   
       if(clickOnCheckbox){
         setElementSelected(resCollapseDetails);
       }
-    
       originalFattureRef.current[getRowKey(el)] = addStatoInvioInsideCollapse;
       return resCollapseDetails;
-    }else{
-      // riga mock: alla riapertura ripristino le fatture originali (i filtri del collapse vengono resettati)
-      const original = originalFattureRef.current[getRowKey(el)];
-      if(original){
-        setListaFatture((prev) => prev.map((item) => getRowKey(item) === getRowKey(el) ? { ...item, fatture: original } : item));
-      }
-      setCollapseDataLoading(false);
+
+    }catch{
+      managePresaInCarico("ERROR_LIST_JSON_TO_SAP", dispatchMainState);
+      navigate(PathPf.JSON_TO_SAP);
+      setCollapseDataLoading(false); 
+      return [];
     }
+  
+   
+   
+    
+   
+    
   };
 
   // ______________ Filtri dentro il collapse (applicati solo alla riga corrente) ______________
@@ -640,25 +539,6 @@ const InvioFatture : React.FC = () => {
             getTipologieFatturazione(bodyFatturazione.anno,value,bodyFatturazione.cancellata);
             setValueMultiselectTipologie([]); */           
             }}/>
-          {/*TODO da eliminare
-        <MainFilter 
-          filterName={"select_key_value"}
-          inputLabel={"Stato"}
-          clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setBodyFatturazione}
-          body={bodyFatturazione}
-          keyValue={"id"}
-          keyDescription='descrizione'
-          keyBody={"cancellata"}
-          defaultValue={""}
-          arrayValues={[{id:1,descrizione:"Fatturate"},{id:2,descrizione:"Non fatturate"}]}
-          extraCodeOnChange={(e)=>{
-                                  
-            const value = Number(e) === 1 ? false : true;
-           setBodyFatturazione((prev)=>({...prev,...{cancellata:value,tipologiaFattura:[]}}));
-            getTipologieFatturazione(bodyFatturazione.anno,bodyFatturazione.mese,value);
-            setValueMultiselectTipologie([]);   
-          }}/> */}
           <MainFilter 
             filterName={"multi_checkbox"}
             inputLabel={"Tipologia Fattura"}
@@ -679,13 +559,10 @@ const InvioFatture : React.FC = () => {
           <MainFilter
             filterName={"select_key_value"}
             inputLabel="Tipologia Invio"
-            arrayValues={[
-              { id: 3, descrizione: "Tutte" },
-              { id: 1, descrizione: "Re-inviate" }
-            ]}
-            keyValue="id"
+            arrayValues={arrayTipologieInvio}
+            keyValue="codice"
             keyDescription="descrizione"
-            keyBody="tipoInvio"
+            keyBody="statoInvio"
             body={bodyFatturazione}
             setBody={setBodyFatturazione}
             clearOnChangeFilter={() => {}}
@@ -700,14 +577,14 @@ const InvioFatture : React.FC = () => {
           counter={elementsSelected.length}
           actionButtonRight={[
             {
-              onButtonClick:downloadReport,
+              onButtonClick:downloadRisultati,
               variant: "outlined",
               label: "Download Fatture Re-inviate",
               icon:{name:"download"},
-              disabled:(bodyFatturazione.tipoInvio === 3)
+              disabled:true
             },
             {
-              onButtonClick:downloadReport,
+              onButtonClick:downloadRisultati,
               variant: "outlined",
               label: "Download Risultati",
               icon:{name:"download"},
@@ -827,16 +704,16 @@ const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionatePr
 
   return (
     <Box>
-    <ElementToProcessComponent
-      closeIcon={true}
-      title={"Fatture Selezionate"}
-      obj={elementsSelected}
-      keyValueObj={keyValueObjFiltered}
-      showButton={false}
-      setOpen={setOpen}
-      showCounter={true}
-    />
-    <NotaTextField value={""}/>
+      <ElementToProcessComponent
+        closeIcon={true}
+        title={"Fatture Selezionate"}
+        obj={elementsSelected}
+        keyValueObj={keyValueObjFiltered}
+        showButton={false}
+        setOpen={setOpen}
+        showCounter={true}
+      />
+      <NotaTextField value={""}/>
     </Box>
   );
 };

@@ -29,7 +29,6 @@ import BatchPredictionIcon from '@mui/icons-material/BatchPrediction';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DescriptionIcon from '@mui/icons-material/Description';
-import SendIcon from '@mui/icons-material/Send';
 
 const SideNavSend : React.FC = () => {
 
@@ -44,7 +43,7 @@ const SideNavSend : React.FC = () => {
   const [openSezioneFatturazione, setOpenSezioneFatturazione] = useState(false);
   const [openContestazioni, setOpenContestazioni] = useState(false);
   const [openModPrevisonale, setOpenModPrevisonale] = useState(false);
-  const [openGestioneFatture, setOpenGestioneFatture] = useState(false);
+
 
 
   useEffect(()=>{
@@ -60,9 +59,7 @@ const SideNavSend : React.FC = () => {
        currentLocation.includes("send/fatturapdf/documentiemessi")||
        currentLocation.includes("send/fatturapdf/rel")){
       setOpenSezioneFatturazione(true);
-      if(currentLocation === PathPf.JSON_TO_SAP || currentLocation === PathPf.JSON_TO_SAP_DETAILS){
-        setOpenGestioneFatture(true);
-      }
+     
     }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST || currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI){
       setOpenContestazioni(true);
     }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA || currentLocation === PathPf.MODULOCOMMESSA || currentLocation === PathPf.PDF_COMMESSA){
@@ -251,6 +248,7 @@ const SideNavSend : React.FC = () => {
           </ListItemButton>
           <ListItemButton sx={{ pl: 4 }} 
             selected={
+              currentLocation === PathPf.JSON_TO_SAP ||
               currentLocation === PathPf.FATTURAZIONE || 
               currentLocation.includes("send/fatturapdf/documentiemessi") //||
               //currentLocation.includes(PathPf.JSON_TO_SAP)
