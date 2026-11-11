@@ -76,7 +76,6 @@ const AnagraficaAppio:React.FC = () =>{
           getListaAnagraficaAppioGrid(filters.body,filters.page+1,filters.rows);
           getQuarters(filters.year);
         }else{
-          console.log({bodyGetLista,page,rowsPerPage});
           getListaAnagraficaAppioGrid({...bodyGetLista,year:res.data[0]},page+1,rowsPerPage);
           getQuarters(res.data[0]);
         }
