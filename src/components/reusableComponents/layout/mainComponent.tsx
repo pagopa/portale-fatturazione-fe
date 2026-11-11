@@ -361,40 +361,37 @@ export const RenderIcon = (iconName,sx = true) => {
     case "download":
       return <DownloadIcon sx={{
         marginRight:sx ? '10px':null    
-      }}/>;
+      }}></DownloadIcon>;
     case "event_note":
       return <EventNoteIcon/>;
     case "circle_arrow_icon":
-      return  <ArrowCircleDownIcon/>;
+      return  <ArrowCircleDownIcon></ArrowCircleDownIcon>;
     case "iso_share":
-      return <IosShareIcon/>;
+      return <IosShareIcon></IosShareIcon>;
     case "preview":
-      return <PreviewIcon/>;
+      return <PreviewIcon></PreviewIcon>;
     case "restart":
-      return <RestartAltIcon/>;
+      return <RestartAltIcon></RestartAltIcon>;
     case "list":
-      return <ListIcon/>;
+      return <ListIcon></ListIcon>;
     case "invoice":
-      return <DescriptionIcon/>;
+      return <DescriptionIcon></DescriptionIcon>;
     case "contract":
-      return <GavelIcon/>;
+      return <GavelIcon></GavelIcon>;
     case "date":
-      return <DateRangeIcon fontSize={sx ? "small":"medium"}/>;
+      return <DateRangeIcon fontSize={sx ? "small":"medium"}></DateRangeIcon>;
     case "status":
-      return <AutorenewIcon fontSize={sx ? "small":"medium"}/>;
+      return <AutorenewIcon fontSize={sx ? "small":"medium"}></AutorenewIcon>;
     case "typology":
-      return <InboxIcon fontSize={sx ? "small":"medium"}/>;
+      return <InboxIcon fontSize={sx ? "small":"medium"} ></InboxIcon>;  
     case "fase":
-      return <HourglassBottomIcon fontSize={sx ? "small":"medium"}/>;
+      return <HourglassBottomIcon fontSize={sx ? "small":"medium"} ></HourglassBottomIcon>;
     case "person":
-      return <PersonIcon fontSize={sx ? "small":"medium"}/>;
+      return <PersonIcon fontSize={sx ? "small":"medium"}></PersonIcon>;
     case "type-not":
-      return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}/>;
+      return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}></MarkChatUnreadIcon>;
     case "add-action":
       return <NoteAddIcon fontSize={sx ? "small":"medium"}/>;
-    case "send":
-      return <SendIcon fontSize={sx ? "small":"medium"}/>;
-    case "upload-file":
-      return <UploadFileIcon fontSize={sx ? "small":"medium"}/>;
+
   }
 };

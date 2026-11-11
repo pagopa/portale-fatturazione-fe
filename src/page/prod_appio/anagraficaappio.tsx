@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter } from "../../types/typeAngraficaPsp";
+import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxPsp } from "../../types/typeAngraficaPsp";
 import { manageError } from "../../api/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
@@ -9,12 +9,16 @@ import GridCustom from '../../components/reusableComponents/grid/gridCustom';
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from '../../components/reusableComponents/layout/mainComponent';
 import MainFilter from '../../components/reusableComponents/mainFilter';
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-import { downloadAppio, getListaAnagraficaAppio, getListaAnniAppio, getListaNameAppio, getListaQuarters } from "../../api/apiPagoPa/anagraficaAppio/api";
+import { downloadAppio, getListaAnagraficaAppio, getListaNameAppio, getTipoEnteAppio } from "../../api/apiPagoPa/anagraficaAppio/api";
 import { headerAnagraficaAppio } from "../../assets/configurations/conf_GridAnagraficaAppio";
 export interface RequestBodyListaAnagraficaAppio{
-    contractIds: string[],
-    year:string,
-    quarters:string[]
+  institutionIds: string[],
+  tipiEnte:string[]
+}
+
+interface OptionMultiselectCheckboxTipoEnte{
+  id: string,
+  name:string
 }
 
 const AnagraficaAppio:React.FC = () =>{
@@ -28,9 +32,8 @@ const AnagraficaAppio:React.FC = () =>{
   const [gridData, setGridData] = useState<GridElementListaPsp[]>([]);
 
   const [bodyGetLista, setBodyGetLista] = useState<RequestBodyListaAnagraficaAppio>({
-    contractIds:[],
-    year: '',
-    quarters:[]
+    institutionIds:[],
+    tipiEnte:[]
   });
    
   const [getListaLoading, setGetListaLoading] = useState(false);
@@ -41,9 +44,10 @@ const AnagraficaAppio:React.FC = () =>{
   const [textValue, setTextValue] = useState<string>('');
   const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
   const [showLoading,setShowLoading] = useState(false);
-  const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
-  const [dataSelectQuarter, setDataSelectQuarter] = useState<OptionMultiselectCheckboxQarter[]>([]);
-  const [valueQuarters, setValueQuarters] = useState<OptionMultiselectCheckboxQarter[]>([]);
+
+
+  const [valueProfili, setValueProfili] = useState<OptionMultiselectCheckboxTipoEnte[]>([]);
+  const [dataSelectProfili, setDataSelectProfili] = useState<OptionMultiselectCheckboxTipoEnte[]>([]);
 
   const { 
     filters,
@@ -53,7 +57,10 @@ const AnagraficaAppio:React.FC = () =>{
   } = useSavedFilters(PathPf.ANAGRAFICAAPPIO,{});
  
   useEffect(()=>{
-    getYears();
+    if(isInitialRender.current && Object.keys(filters).length === 0){
+      getListaAnagraficaAppioGrid(bodyGetLista,page,rowsPerPage);
+    }
+    getTipoEnte();
   },[]);
 
   useEffect(()=>{
@@ -65,69 +72,38 @@ const AnagraficaAppio:React.FC = () =>{
     return () => clearTimeout(timer);
   },[textValue]);
 
-  const getYears = async () =>{
-    setGetListaLoading(true);
-
-    await getListaAnniAppio(token, profilo.nonce).then((res)=>{
-      setYearOnSelect(res.data);
-      setBodyGetLista((prev)=>({...prev,year:res.data[0]}));
-      if(res.data.length > 0){
-        if(isInitialRender.current && Object.keys(filters).length > 0){
-          getListaAnagraficaAppioGrid(filters.body,filters.page+1,filters.rows);
-          getQuarters(filters.year);
-        }else{
-          getListaAnagraficaAppioGrid({...bodyGetLista,year:res.data[0]},page+1,rowsPerPage);
-          getQuarters(res.data[0]);
-        }
-      }
-    }).catch(((err)=>{
-      setGetListaLoading(false);
-      manageError(err,dispatchMainState); 
-    }));
-  };
- 
-  const getQuarters = async (y) =>{
-    await getListaQuarters(token, profilo.nonce,{year:y}).then((res)=>{
-      setDataSelectQuarter(res.data);
-      if(isInitialRender.current && Object.keys(filters).length > 0){
-                   
-        setValueQuarters(filters.valueQuarters);
-        setBodyGetLista(filters.body);
-        setTextValue(filters.textValue);
-        setValueAutocomplete(filters.valueAutocomplete);
-        setPage(filters.page);
-        setRowsPerPage(filters.rows);
-      }
-      setGetListaLoading(false);
-      isInitialRender.current = false;
-    }).catch(((err)=>{
-      isInitialRender.current = false;
-      setDataSelectQuarter([]);
-      setValueQuarters([]);
-      manageError(err,dispatchMainState); 
-      setGetListaLoading(false);
-    }));
+  const getTipoEnte = async () => {
+    try{
+      const result = await getTipoEnteAppio(token, profilo.nonce);
+      const data = result.data.map(el => ({id:el,name:el}));
+      setDataSelectProfili(data);
+    }catch{
+      setDataSelectProfili([]);
+    }
   };
 
-  const getListaAnagraficaAppioGrid = async(body:RequestBodyListaAnagraficaAppio, page:number,rowsPerPage:number) =>{
+  const getListaAnagraficaAppioGrid = async (
+    body: RequestBodyListaAnagraficaAppio,
+    page: number,
+    rowsPerPage: number
+  ) => {
     setGetListaLoading(true);
-    
-    await getListaAnagraficaAppio(token, profilo.nonce, body,page,rowsPerPage).then(async(res)=>{
-      // ordino i dati in base all'header della grid
+    try {
+      const res = await getListaAnagraficaAppio(token, profilo.nonce, body, page+1, rowsPerPage);
       const orderDataCustom = res.data.contratti;
       setGridData(orderDataCustom);
       setTotal(res.data.count);
-      setGetListaLoading(false);
-    }).catch(((err)=>{
+    } catch (err) {
       setGridData([]);
       setTotal(0);
+      manageError(err, dispatchMainState);
+    } finally {
       setGetListaLoading(false);
-      manageError(err,dispatchMainState);       
-    })); 
+    }
   };
 
   const listaNameAppioOnSelect = async () =>{
-    await getListaNameAppio(token, profilo.nonce, {name:textValue,quarters:bodyGetLista.quarters,year:bodyGetLista.year} ).then((res)=>{
+    await getListaNameAppio(token, profilo.nonce, {name:textValue} ).then((res)=>{
       setDataSelect(res.data);
     }).catch(((err)=>{
       manageError(err,dispatchMainState); 
@@ -136,16 +112,8 @@ const AnagraficaAppio:React.FC = () =>{
 
   const onDownloadButton = async() =>{
     setShowLoading(true);
-   
     await downloadAppio(token,profilo.nonce, bodyGetLista).then(response => response.blob()).then((res) => {
-      let fileName = '';
-      const stringQuarterSelected = bodyGetLista.quarters.map(el => "Q" + el.slice(5)).join("_");
-      const yearSelected = gridData[0].yearQuarter?.slice(0,4);
-      if(bodyGetLista.contractIds.length === 1){
-        fileName = `Anagrafica AppIO/${gridData[0].name}/${yearSelected}/${stringQuarterSelected}.xlsx`;
-      }else{
-        fileName = `Anagrafica AppIO/${yearSelected}/${stringQuarterSelected}.xlsx`;
-      }
+      const fileName = `Anagrafica AppIO.xlsx`;
       saveAs( res,fileName );
       setShowLoading(false);
     }).catch(err => {
@@ -154,17 +122,15 @@ const AnagraficaAppio:React.FC = () =>{
     });
   };
 
-   
   const onButtonFiltra = () =>{
     setPage(0);
     setRowsPerPage(10);
-    getListaAnagraficaAppioGrid(bodyGetLista,1,10); 
+    getListaAnagraficaAppioGrid(bodyGetLista,0,10); 
     updateFilters({
       body:bodyGetLista,
       pathPage:PathPf.ANAGRAFICAAPPIO,
       textValue,
       valueAutocomplete,
-      valueQuarters,
       page:0,
       rows:10
     });
@@ -172,16 +138,13 @@ const AnagraficaAppio:React.FC = () =>{
 
   const onButtonAnnulla = () => {
     const newBody = {
-      contractIds:[],
-      year:yearOnSelect[0],
-      quarters:[]};
-    getListaAnagraficaAppioGrid(newBody,1,10);
+      institutionIds:[],
+      tipiEnte:[]};
+    getListaAnagraficaAppioGrid(newBody,0,10);
     setBodyGetLista(newBody);
     setRowsPerPage(10);
     setPage(0);
-    setDataSelect([]);
     setValueAutocomplete([]);
-    setValueQuarters([]);
     resetFilters();
   };
 
@@ -196,7 +159,7 @@ const AnagraficaAppio:React.FC = () =>{
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number,
   ) => {
-    const realPage = newPage + 1;
+    const realPage = newPage;
     getListaAnagraficaAppioGrid(bodyGetLista,realPage, rowsPerPage);
     setPage(newPage);
     updateFilters({
@@ -204,7 +167,6 @@ const AnagraficaAppio:React.FC = () =>{
       pathPage:PathPf.ANAGRAFICAAPPIO,
       textValue,
       valueAutocomplete,
-      valueQuarters,
       page:newPage,
       rows:rowsPerPage
     });
@@ -215,65 +177,48 @@ const AnagraficaAppio:React.FC = () =>{
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-    const realPage = page + 1;
+    const realPage = page;
     getListaAnagraficaAppioGrid(bodyGetLista,realPage,parseInt(event.target.value, 10));
     updateFilters({
       body:bodyGetLista,
       pathPage:PathPf.ANAGRAFICAAPPIO,
       textValue,
       valueAutocomplete,
-      valueQuarters,
       page:realPage,
       rows:parseInt(event.target.value, 10)
     });
   };
 
   const statusAnnulla =
-  bodyGetLista.contractIds.length !== 0 ||
-  bodyGetLista.quarters.length !== 0 ||
-  bodyGetLista.year !== yearOnSelect[0] 
-    ? 'show'
-    : 'hidden';
+    ( bodyGetLista.institutionIds.length !== 0 ||
+      bodyGetLista.tipiEnte.length !== 0 )
+      ? 'show'
+      : 'hidden';
 
   return(
   
     <MainBoxStyled title={"Anagrafica AppIO"}>
       <ResponsiveGridContainer>
         <MainFilter 
-          filterName={"select_value_string"}
-          inputLabel={"Anno"}
-          clearOnChangeFilter={clearOnChangeFilter}
-          setBody={setBodyGetLista}
-          body={bodyGetLista}
-          keyDescription={"year"}
-          keyValue={"year"}
-          keyBody={"year"}
-          arrayValues={yearOnSelect}
-          extraCodeOnChange={(e)=>{
-            setValueQuarters([]);
-            setBodyGetLista((prev)=>({...prev,...{year:e,quarters:[]}}));
-            getQuarters(bodyGetLista.year);
-          }}/>
-        <MainFilter 
           filterName={"multi_checkbox"}
-          inputLabel={"Trimestre"}
+          inputLabel={"Tipo Profilo"}
           clearOnChangeFilter={clearOnChangeFilter}
           setBody={setBodyGetLista}
           body={bodyGetLista}
-          dataSelect={dataSelectQuarter}
+          dataSelect={dataSelectProfili}
           setTextValue={setTextValue}
           textValue={textValue}
-          valueAutocomplete={valueQuarters}
-          setValueAutocomplete={setValueQuarters}
-          keyDescription={"quarter"}
-          keyValue={"value"}
-          keyBody={"quarters"}
+          valueAutocomplete={valueProfili}
+          setValueAutocomplete={setValueProfili}
+          keyValue={"id"}
+          keyDescription='name'
+          keyBody={"tipiEnte"}
           extraCodeOnChangeArray={(value)=>{
-            const arrayId = value.map(el => el.value);
-            setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
-            setValueQuarters(value);
+            const arrayId = value.map(el => el.id);
+            setBodyGetLista((prev) => ({...prev,...{tipiEnte:arrayId}}));
+            setValueProfili(value);
           }}
-          iconMaterial={RenderIcon("date",true)}/>
+          iconMaterial={RenderIcon("person",true)}/>
         <MainFilter 
           filterName={"multi_checkbox"}
           inputLabel={"Ente"}
@@ -286,8 +231,8 @@ const AnagraficaAppio:React.FC = () =>{
           valueAutocomplete={valueAutocomplete}
           setValueAutocomplete={setValueAutocomplete}
           keyDescription={"name"}
-          keyValue={"contractId"}
-          keyBody={"contractIds"}/>        
+          keyValue={"institutionId"}
+          keyBody={"institutionIds"}/>        
       </ResponsiveGridContainer>
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
@@ -311,7 +256,7 @@ const AnagraficaAppio:React.FC = () =>{
         rows={rowsPerPage}
         headerNames={headerAnagraficaAppio}
         disabled={getListaLoading}
-        widthCustomSize="1800px"
+        widthCustomSize="1200px"
         sentenseEmpty={"Nessun dato disponibile"}
       />        
       <ModalLoading 
