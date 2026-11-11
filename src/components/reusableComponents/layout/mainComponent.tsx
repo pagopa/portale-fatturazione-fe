@@ -392,6 +392,10 @@ export const RenderIcon = (iconName,sx = true) => {
       return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}></MarkChatUnreadIcon>;
     case "add-action":
       return <NoteAddIcon fontSize={sx ? "small":"medium"}/>;
+    case "send":
+      return <SendIcon fontSize={sx ? "small":"medium"}/>;
+    case "upload-file":
+      return <UploadFileIcon fontSize={sx ? "small":"medium"}/>;
 
   }
 };
