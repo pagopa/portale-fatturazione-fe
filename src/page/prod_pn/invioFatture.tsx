@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { GridCellParams, GridEventListener, GridRowParams, GridRowSelectionModel, MuiEvent } from "@mui/x-data-grid";
+import {  GridRowSelectionModel } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
-import { downloadReportRelNonFatturate, getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFatturePagoPa } from "../../api/apiPagoPa/fatturazionePA/api";
+import {  invioListaJsonFatturePagoPa } from "../../api/apiPagoPa/fatturazionePA/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested";
 import { PathPf } from "../../types/enum";
@@ -20,8 +20,8 @@ import { NotaTextField } from "./gestioneFatture";
 import FiltersCollapseInvioFatture, { FiltriCollapseInvioFatture } from "../../components/invioFatture/filtersCollapseInvioFatture";
 import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
 import DescriptionIcon from '@mui/icons-material/Description';
-import { downloadInvioFatture, getDettaglioInvioFatture, getStatiInvioJson } from "../../api/apiPagoPa/invioFattureSapPA/api";
-import { ManageErrorResponse } from "../../types/typesGeneral";
+import { downloadInvioFatture, getAnniInviofatture, getDettaglioInvioFatture, getListaInvioFatture, getMesiInviofatture, getStatiInvioJson, getTipologieInviofatture } from "../../api/apiPagoPa/invioFattureSapPA/api";
+import { toMesi } from "../../reusableFunction/reusableArrayObj";
 
 interface ListaFatture {
   tipologiaFattura: string,
@@ -81,132 +81,110 @@ const InvioFatture : React.FC = () => {
   const callLista = useRef(true);
     
   const [listaFatture, setListaFatture] = useState<ListaFatture[]>([]);
-  const [tipologieFatture, setTipologie] = useState<string[]>(['Tutte']);
+  
   const [selected,setSelected] = useState<SelectedJsonSap[]>([]);
-  const [tipologia, setTipologia] = useState('Tutte');
+  
   const [showLoader, setShowLoader] = useState(false);
   const [showDownloading, setShowDownloading] = useState(false);
   const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
   const [infoPage , setInfoPage] = useState({ page: 0, pageSize: 10 });
-
-
   const [collapseDataLoading,setCollapseDataLoading] = useState(true);
 
-
   const [bodyFatturazione, setBodyFatturazione] = useState<BodyInvioFatture>({
-    anno:2026,
+    anno:"",
     mesi:[],
     tipologieFattura:[],
-    statoInvio:""
-
+    statoInvio:"TUTTE"
   });
   
-
-  const [arrayYears,setArrayYears] = useState<number[]>([2025,2026,2027]);
-  const [arrayMonths,setArrayMonths] = useState<{mese:string,descrizione:string}[]>([]);
+  const [arrayYears,setArrayYears] = useState<number[]>([]);
+  const [arrayMonths,setArrayMonths] = useState<{mese:number,descrizione:string}[]>([]);
 
   const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
-
-   
-
+  const [tipologieFatture, setTipologieFattura] = useState<string[]>([]);
   const { 
     filters,
     updateFilters,
     isInitialRender,
     resetFilters
   } = useSavedFiltersNested("/inviofatture",{});
-  console.log({filters});
+
+
   useEffect(()=>{
-    getLista();
-    getStati();
-    //TODO: sistemare quaneo ci sarà l'api
-    setTipologie(["Anticipo", "Acconto", "Primo Saldo", "Secondo Saldo", "Var. Semestrale", "Sem. Sospesi"]);
-    //TODO: cedere dove spostare questa logica
+    getAnni();
+    //TODO: vedere dove spostare questa logica
     if(isInitialRender.current && Object.keys(filters).length > 0){
-      setTipologia(filters.tipologiaInvio);
+      //setTipologia(filters.tipologiaInvio);
       setSelected(filters.selectedInvio);
       setRowSelectionModel(filters.rowSelectionModelInvio);
       setInfoPage(filters.infoPageInvio);
     } 
   },[]);
 
-  /* //TODO penso si possa cancellare, vecchia logica per ordinare le tipologie , ci arriveranno dalle api
-      const array = res.data.map( el => el.tipologiaFattura);
-      const ORDER = ;
-
-      const toTitleCase = (str: string) =>
-        str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
-      //ATTENZIONE: SE verrà aggiunta un altra tipologia fattura bisogna aggiungerla nell'array ORDER ALTRIMENTI NON VERRà MAPPATA
-      const uniqueArray = array
-        .map(toTitleCase)
-        .reduce((accumulator, current) => {
-          if (!accumulator.includes(current)) {
-            accumulator.push(current);
-          }
-          return accumulator;
-        }, [])
-        .sort((a, b) => {
-          const indexA = ORDER.indexOf(a);
-          const indexB = ORDER.indexOf(b);
-          const rankA = indexA === -1 ? ORDER.length : indexA;
-          const rankB = indexB === -1 ? ORDER.length : indexB;
-          return rankA - rankB;
-        });
-          
-   */
-
   const getStati = async () => {
     try{
       const resp = await getStatiInvioJson(token,profilo.nonce);
-      console.log({resp});
       setArrayTipologieInvio(resp.data);
     }catch{
       setArrayTipologieInvio([]);
-      console.log("error");
     }
   };
 
- 
-  const getLista = async () =>{
+  const getTipologieFattura = async (body) => {
     try{
-      const res = await getListaJsonFatturePagoPa(token,profilo.nonce);
+      const resp = await getTipologieInviofatture(token,profilo.nonce,body);
+      setTipologieFattura(resp.data);
+    }catch{
+      setTipologieFattura([]);
+    }
+  };
+
+  const getAnni = async () => {
+    setShowLoader(true);
+    try{
+      const resp = await getAnniInviofatture(token,profilo.nonce);
+      console.log({resp});
+      setArrayYears(resp.data);
+      setBodyFatturazione((prev)=>({
+        ...prev, anno:resp.data[0]
+      }));
+      getMesi(resp.data[0]);
+      getStati();
+      getTipologieFattura({anno:resp.data[0],mesi:[]});
+      getLista({...bodyFatturazione,anno:resp.data[0]});
+    }catch{
+      setArrayYears([]);
+      setShowLoader(false);
+    }
+  };
+
+  const getMesi = async (anno) => {
+    try{
+      const resp = await getMesiInviofatture(token,profilo.nonce,{anno:anno});
+      const result = toMesi(resp.data);
+      console.log({result});
+      setArrayMonths(result);
+    }catch{
+      setArrayMonths([]);
+    }
+  };
+
+  const getLista = async (body) =>{
+    if(!isInitialRender.current){
+      setShowLoader(true);
+    }
+    try{
+      const res = await getListaInvioFatture(token,profilo.nonce,body);
       setListaFatture(res.data);
+      setShowLoader(false);
+      isInitialRender.current = false;
     }catch(err:any){
       setListaFatture([]);
+      setShowLoader(false);
+      isInitialRender.current = false;
       manageError(err, dispatchMainState);
     }
   };
-
-  const onButtonInvia = async() =>{
-    setShowLoader(true);
-    await invioListaJsonFatturePagoPa(token,profilo.nonce,selected).then(()=>{
-      setShowLoader(false);
-      getLista();
-      setSelected([]);
-      setRowSelectionModel([]);
-      setTipologia('Tutte');
-      resetFilters();
-      managePresaInCarico('SEND_JSON_SAP_OK',dispatchMainState);
-    }).catch((err)=>{
-      setShowLoader(false);
-      setSelected([]);
-      setRowSelectionModel([]);
-      setTipologia('Tutte');
-      resetFilters();
-      manageError(err, dispatchMainState);
-    });
-  };
-
-  const statoFattura = (row) =>{
-    let tooltipObj:any = {label:'',title:''};
-    if(row.statoInvio === 0){
-      tooltipObj = {label:'Da inviare',title:'Da inviare',color:'#86E1FD'};
-    }else if(row.statoInvio === 2){
-      tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:"#FFE5A3"};
-    }
-    return tooltipObj;
-  };
-
 
   const onChangePageOrRowGrid = (e) => {
     setInfoPage(e);
@@ -232,13 +210,22 @@ const InvioFatture : React.FC = () => {
   };
 
   const onButtonFiltra = () => {
-    console.log('Filtra button clicked');
+    getLista(bodyFatturazione);
   };
 
   const onButtonAnnulla = () => {
     console.log('Annulla button clicked');
+    setBodyFatturazione({
+      anno:arrayYears[0],
+      mesi:[],
+      tipologieFattura:[],
+      statoInvio:"TUTTE"
+    });
+    setValueSelectMonths([]);
+    setValueMultiselectTipologie([]);
   };
 
+  const [valueSelectMonths, setValueSelectMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [arrayTipologieInvio, setArrayTipologieInvio] = useState<{codice:string,descrizione:string}[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -384,13 +371,8 @@ const InvioFatture : React.FC = () => {
       setCollapseDataLoading(false); 
       return [];
     }
-  
-   
-   
-    
-   
-    
   };
+
 
   // ______________ Filtri dentro il collapse (applicati solo alla riga corrente) ______________
   // copia delle fatture originali (response iniziale) per ogni riga, usata per ripristinare i dati al reset dei filtri
@@ -433,7 +415,7 @@ const InvioFatture : React.FC = () => {
     listaResponseParameter: any[],
   ) => {};
 
-  const statusAnnulla = "hidden";
+ 
 
 
   const manageStateCheckbox = (row, isMainCheck="",elementsSel) =>{
@@ -496,175 +478,181 @@ const InvioFatture : React.FC = () => {
       testo:"Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since 1966,"}));
     setInforeInvio(notes);
     setShowPopUpdateInvio(true);
-  
   };
+
+  const statusAnnulla = (bodyFatturazione.anno !== arrayYears[0] ||
+   bodyFatturazione.mesi.length > 0 ||
+   bodyFatturazione.tipologieFattura.length > 0 || 
+   bodyFatturazione.statoInvio !== "TUTTE") ? "show" :"hidden";
+ 
   return(
-    <>
-      <div>
-        <NavigatorHeader pageFrom={"Documenti Contabili Emessi/"} pageIn={"Invio a SAP"} backPath={PathPf.FATTURAZIONE} icon={<DescriptionIcon sx={{padding:"3px"}}  fontSize='small'/>}/>
-      </div>
-      <MainBoxStyled >
-        <ResponsiveGridContainer >
-          <MainFilter 
-            filterName={"select_value_string"}
-            inputLabel={"Anno"}
-            clearOnChangeFilter={clearOnChangeFilter}
-            setBody={setBodyFatturazione}
-            body={bodyFatturazione}
-            keyDescription={"anno"}
-            keyValue={"anno"}
-            keyBody={"anno"}
-            arrayValues={arrayYears}
-            extraCodeOnChange={(e)=>{
-              callLista.current = false; 
-            /* getMesi(e.toString());
-            setDataSelect([]);
+    <MainBoxStyled >
+      <NavigatorHeader pageFrom={"Documenti Contabili Emessi/"} pageIn={"Invio a SAP"} backPath={PathPf.FATTURAZIONE} icon={<DescriptionIcon sx={{padding:"3px"}}  fontSize='small'/>} margin={false}/>
+      <ResponsiveGridContainer >
+        <MainFilter 
+          filterName={"select_value_string"}
+          inputLabel={"Anno"}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyFatturazione}
+          body={bodyFatturazione}
+          keyDescription={"anno"}
+          keyValue={"anno"}
+          keyBody={"anno"}
+          arrayValues={arrayYears}
+          extraCodeOnChange={(e)=>{
+            setBodyFatturazione((prev)=> ({...prev, anno:Number(e)}));
+            getMesi(e.toString());
+            getTipologieFattura({anno:bodyFatturazione.anno,mesi:[]});
             setValueMultiselectTipologie([]);
-            setValueAutocomplete([]);*/
-            }}/>
-          <MainFilter 
-            filterName={"select_key_value"}
-            inputLabel={"Mese"}
-            clearOnChangeFilter={clearOnChangeFilter}
-            setBody={setBodyFatturazione}
-            body={bodyFatturazione}
-            keyValue={"mese"}
-            keyDescription='descrizione'
-            keyBody={"mese"}
-            defaultValue={""}
-            arrayValues={arrayMonths}
-            extraCodeOnChange={(e)=>{
-              const value = Number(e);
-            /* setBodyFatturazione((prev)=> ({...prev, ...{mese:value,tipologiaFattura:[]}}));
-            getTipologieFatturazione(bodyFatturazione.anno,value,bodyFatturazione.cancellata);
-            setValueMultiselectTipologie([]); */           
-            }}/>
-          <MainFilter 
-            filterName={"multi_checkbox"}
-            inputLabel={"Tipologia Fattura"}
-            clearOnChangeFilter={clearOnChangeFilter}
-            setBody={setBodyFatturazione}
-            body={bodyFatturazione}
-            dataSelect={tipologieFatture}
-            valueAutocomplete={valueMulitselectTipologie}
-            setValueAutocomplete={setValueMultiselectTipologie}
-            keyDescription={"tipologiaFattura"}
-            keyValue={"tipologiaFattura"}
-            keyBody={"tipologiaFattura"}
-            extraCodeOnChangeArray={(e)=>{
-              setValueMultiselectTipologie(e);
-              setBodyFatturazione((prev) => ({...prev,...{tipologiaFattura:e}}));
-            }}
-            iconMaterial={RenderIcon("invoice",true)}/>
-          <MainFilter
-            filterName={"select_key_value"}
-            inputLabel="Tipologia Invio"
-            arrayValues={arrayTipologieInvio}
-            keyValue="codice"
-            keyDescription="descrizione"
-            keyBody="statoInvio"
-            body={bodyFatturazione}
-            setBody={setBodyFatturazione}
-            clearOnChangeFilter={() => {}}
-          />
-        </ResponsiveGridContainer>
-        <FilterActionButtons 
-          onButtonFiltra={onButtonFiltra} 
-          onButtonAnnulla={onButtonAnnulla} 
-          statusAnnulla={statusAnnulla} 
+            setValueSelectMonths([]);
+          }}/>
+        <MainFilter 
+          filterName={"multi_checkbox"}
+          inputLabel={"Mese"}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyFatturazione}
+          body={bodyFatturazione}
+          dataSelect={arrayMonths}
+          valueAutocomplete={valueSelectMonths}
+          setValueAutocomplete={setValueSelectMonths}
+          keyDescription={"descrizione"}
+          keyBody={"mesi"}
+          keyValue={"mese"}
+          disabled={bodyFatturazione.anno === ""}
+          extraCodeOnChangeArray={(value)=>{
+            const valueArray = value.map((el) => Number(el.mese));
+            setValueSelectMonths(value);
+            getTipologieFattura({anno:bodyFatturazione.anno,mesi:valueArray});
+            setBodyFatturazione((prev) => ({...prev,...{mesi:valueArray,tipologieFattura:[]}}));
+            setValueMultiselectTipologie([]);
+          }}
+          iconMaterial={RenderIcon("date",true)}
         />
-        <ActionTopGrid
-          counter={elementsSelected.length}
-          actionButtonRight={[
-            {
-              onButtonClick:downloadRisultati,
-              variant: "outlined",
-              label: "Download Fatture Re-inviate",
-              icon:{name:"download"},
-              disabled:true
-            },
-            {
-              onButtonClick:downloadRisultati,
-              variant: "outlined",
-              label: "Download Risultati",
-              icon:{name:"download"},
-              disabled:(listaFatture?.length === 0)
-            }]}/>
-        <div className="mt-1 mb-5" style={{ width: '100%'}}> 
-          <GridCustom
-            nameParameterApi='invioFatture'
-            elements={listaFatture}
-            changePage={onChangePageOrRowGrid}
-            changeRow={onChangePageOrRowGrid} 
-            total={count}
-            page={page}
-            rows={rowsPerPage}
-            headerNames={headerNamesInvioFatture}
-            headerNamesCollapse={headerNamesInvioFattureCollapse}
-            apiGet={()=>setOpenModalFatture(true)}
-            disabled={false}
-            widthCustomSize="1600px"
-            //setAction={showPopUpAction}
-            manageCheckbox={manageCheckbox}
-            manageCheckboxCollapse={manageCheckboxCollapse}
-            filterOnCollapse={(row) => (
-              <FiltersCollapseInvioFatture
-                element={row}
-                selectedRows={elementsSelected}
-                manageStateCheckbox={manageStateCheckbox}
-                onGenerate={()=>setOpenModalFatture(true)}
-                onFilter={(filtri) => applyFiltersCollapse(row, filtri)}
-                onLoading={setCollapseDataLoading}
-              />
-            )}
-            getAsyncDetails={handleGetDetailsRowCollapsed}
-            collapseDataLoading={collapseDataLoading}
-            selectedRows={elementsSelected}
-            headerActionSort={headerAction}
-            setGridData={setGridData}
-            gridType={true}
-            setObjectSort={setObjectSort}
-            objectSort={objectSort}
-            manageStateCheckbox={manageStateCheckbox}
-            listaResponse={listaResponse}
-            sentenseEmpty={"Nessuna fattura disponibile"}
-            keyCollapse={"fatture"}
-            titleRowCollapse={"Dettaglio Fatture"}
-            colSpanCollaps={8}
-            setAction={showPopUpAction}
-          />
-        </div>
-        <ModalLoading 
-          open={showLoader} 
-          setOpen={setShowLoader}
-          sentence={'Loading...'} />
-        <ModalLoading 
-          open={showDownloading} 
-          setOpen={setShowDownloading}
-          sentence={'Downloading...'} />
-        <MainModalComponent 
-          width={"1200px"}
-          open={openModalFatture}
+        <MainFilter 
+          filterName={"multi_checkbox"}
+          inputLabel={"Tipologia Fattura"}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyFatturazione}
+          body={bodyFatturazione}
+          dataSelect={tipologieFatture}
+          valueAutocomplete={valueMulitselectTipologie}
+          setValueAutocomplete={setValueMultiselectTipologie}
+          keyDescription={"tipologiaFattura"}
+          keyValue={"tipologiaFattura"}
+          keyBody={"tipologiaFattura"}
+          extraCodeOnChangeArray={(e)=>{
+            setValueMultiselectTipologie(e);
+            setBodyFatturazione((prev) => ({...prev,...{tipologieFattura:e}}));
+          }}
+          iconMaterial={RenderIcon("invoice",true)}/>
+        <MainFilter
+          filterName={"select_key_value"}
+          inputLabel="Tipologia Invio"
+          arrayValues={arrayTipologieInvio}
+          keyValue="codice"
+          keyDescription="descrizione"
+          keyBody="statoInvio"
+          body={bodyFatturazione}
+          setBody={setBodyFatturazione}
+          clearOnChangeFilter={() => {}}
+        />
+      </ResponsiveGridContainer>
+      <FilterActionButtons 
+        onButtonFiltra={onButtonFiltra} 
+        onButtonAnnulla={onButtonAnnulla} 
+        statusAnnulla={statusAnnulla} 
+      />
+      <ActionTopGrid
+        counter={elementsSelected.length}
+        actionButtonRight={[
+          {
+            onButtonClick:downloadRisultati,
+            variant: "outlined",
+            label: "Download Fatture Re-inviate",
+            icon:{name:"download"},
+            disabled:true
+          },
+          {
+            onButtonClick:downloadRisultati,
+            variant: "outlined",
+            label: "Download Risultati",
+            icon:{name:"download"},
+            disabled:(listaFatture?.length === 0)
+          }]}/>
+      <div className="mt-1 mb-5" style={{ width: '100%'}}> 
+        <GridCustom
+          nameParameterApi='invioFatture'
+          elements={listaFatture}
+          changePage={onChangePageOrRowGrid}
+          changeRow={onChangePageOrRowGrid} 
+          total={count}
+          page={page}
+          rows={rowsPerPage}
+          headerNames={headerNamesInvioFatture}
+          headerNamesCollapse={headerNamesInvioFattureCollapse}
+          apiGet={()=>setOpenModalFatture(true)}
+          disabled={false}
+          widthCustomSize="1600px"
+          //setAction={showPopUpAction}
+          manageCheckbox={manageCheckbox}
+          manageCheckboxCollapse={manageCheckboxCollapse}
+          filterOnCollapse={(row) => (
+            <FiltersCollapseInvioFatture
+              element={row}
+              selectedRows={elementsSelected}
+              manageStateCheckbox={manageStateCheckbox}
+              onGenerate={()=>setOpenModalFatture(true)}
+              onFilter={(filtri) => applyFiltersCollapse(row, filtri)}
+              onLoading={setCollapseDataLoading}
+            />
+          )}
+          getAsyncDetails={handleGetDetailsRowCollapsed}
+          collapseDataLoading={collapseDataLoading}
+          selectedRows={elementsSelected}
+          headerActionSort={headerAction}
+          setGridData={setGridData}
+          gridType={true}
+          setObjectSort={setObjectSort}
+          objectSort={objectSort}
+          manageStateCheckbox={manageStateCheckbox}
+          listaResponse={listaResponse}
+          sentenseEmpty={"Nessuna fattura disponibile"}
+          keyCollapse={"fatture"}
+          titleRowCollapse={"Dettaglio Fatture"}
+          colSpanCollaps={8}
+          setAction={showPopUpAction}
+        />
+      </div>
+      <ModalLoading 
+        open={showLoader} 
+        setOpen={setShowLoader}
+        sentence={'Loading...'} />
+      <ModalLoading 
+        open={showDownloading} 
+        setOpen={setShowDownloading}
+        sentence={'Downloading...'} />
+      <MainModalComponent 
+        width={"1200px"}
+        open={openModalFatture}
+        setOpen={setOpenModalFatture}
+      >
+        <ModalContentFattureSelezionate
+          elementsSelected={elementsSelected}
           setOpen={setOpenModalFatture}
-        >
-          <ModalContentFattureSelezionate
-            elementsSelected={elementsSelected}
-            setOpen={setOpenModalFatture}
-            numeroDocStorno={numeroDocStorno}
-            setNumeroDocStorno={setNumeroDocStorno}
-            nota={nota}
-            setNota={setNota}
-          />
-        </MainModalComponent>
-        <DialogInfo 
-          open={showPopUpDateInvio}
-          onClose={setShowPopUpdateInvio}
-          clearAction={() => { setInforeInvio([]);}}
-          array={infoReinvio}
-          title="Storico Invio"
-          ContentComponent={DilogContentList}/>
-      </MainBoxStyled>
-    </>
+          numeroDocStorno={numeroDocStorno}
+          setNumeroDocStorno={setNumeroDocStorno}
+          nota={nota}
+          setNota={setNota}
+        />
+      </MainModalComponent>
+      <DialogInfo 
+        open={showPopUpDateInvio}
+        onClose={setShowPopUpdateInvio}
+        clearAction={() => { setInforeInvio([]);}}
+        array={infoReinvio}
+        title="Storico Invio"
+        ContentComponent={DilogContentList}/>
+    </MainBoxStyled>
   );
 };
 export default InvioFatture;
@@ -765,3 +753,60 @@ const DilogContentList : React.FC<{array:ListItemData[]}> = ({ array = [] }) => 
     </DialogContent>
   );
 };
+
+
+/* //TODO penso si possa cancellare, vecchia logica per ordinare le tipologie , ci arriveranno dalle api
+      const array = res.data.map( el => el.tipologiaFattura);
+      const ORDER = ;
+
+      const toTitleCase = (str: string) =>
+        str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+      //ATTENZIONE: SE verrà aggiunta un altra tipologia fattura bisogna aggiungerla nell'array ORDER ALTRIMENTI NON VERRà MAPPATA
+      const uniqueArray = array
+        .map(toTitleCase)
+        .reduce((accumulator, current) => {
+          if (!accumulator.includes(current)) {
+            accumulator.push(current);
+          }
+          return accumulator;
+        }, [])
+        .sort((a, b) => {
+          const indexA = ORDER.indexOf(a);
+          const indexB = ORDER.indexOf(b);
+          const rankA = indexA === -1 ? ORDER.length : indexA;
+          const rankB = indexB === -1 ? ORDER.length : indexB;
+          return rankA - rankB;
+        });
+
+
+          const onButtonInvia = async() =>{
+    setShowLoader(true);
+    await invioListaJsonFatturePagoPa(token,profilo.nonce,selected).then(()=>{
+      setShowLoader(false);
+      getLista();
+      setSelected([]);
+      setRowSelectionModel([]);
+      setTipologia('Tutte');
+      resetFilters();
+      managePresaInCarico('SEND_JSON_SAP_OK',dispatchMainState);
+    }).catch((err)=>{
+      setShowLoader(false);
+      setSelected([]);
+      setRowSelectionModel([]);
+      setTipologia('Tutte');
+      resetFilters();
+      manageError(err, dispatchMainState);
+    });
+  };
+
+  const statoFattura = (row) =>{
+    let tooltipObj:any = {label:'',title:''};
+    if(row.statoInvio === 0){
+      tooltipObj = {label:'Da inviare',title:'Da inviare',color:'#86E1FD'};
+    }else if(row.statoInvio === 2){
+      tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:"#FFE5A3"};
+    }
+    return tooltipObj;
+  };
+          
+   */

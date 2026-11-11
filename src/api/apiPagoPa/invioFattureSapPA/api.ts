@@ -77,3 +77,32 @@ export const getStatiInvioJson = async (token:string, nonce:string) => {
   );
   return response;
 };
+
+export const getAnniInviofatture = async (token:string, nonce:string) => {
+  const response =  await axios.get(`${url}/api/fatture/invio-sap/anni?nonce=${nonce}`,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    },}
+  );
+  return response;
+};
+
+export const getMesiInviofatture = async (token:string, nonce:string, body:{anno:number}) => {
+  const response =  await axios.post(`${url}/api/fatture/invio-sap/mesi?nonce=${nonce}`,
+    body,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    },}
+  );
+  return response;
+};
+
+export const getTipologieInviofatture = async (token:string, nonce:string,body:{anno:number,mesi:number[]}) => {
+  const response =  await axios.post(`${url}/api/fatture/invio-sap/tipologie?nonce=${nonce}`,
+    body,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    },}
+  );
+  return response;
+};
