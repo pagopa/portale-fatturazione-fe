@@ -34,16 +34,16 @@ export  const MainBoxStyled = ({
   title,
   actionButton
 }:{
-    children?: React.ReactNode,
-    title:string,
-    actionButton?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string,
-        icon?:{name:string, sx:any},
-        withText?:boolean,
-        tooltipMessage?:string
-    }[]
+  children?: React.ReactNode,
+  title:string,
+  actionButton?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string,
+    icon?:{name:string, sx:any},
+    withText?:boolean,
+    tooltipMessage?:string
+  }[]
 }) =>  {
   return <MainBox>
     <Grid
@@ -129,29 +129,29 @@ export const FilterActionButtons = ({
   actionButton,
   annullaButtonOptional
 }:{
-    onButtonFiltra:()=> void,
-    onButtonAnnulla:() => void,
-    statusAnnulla:string,
-    disabled?:boolean
-    annullaButtonOptional?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string},
-        disabled?:boolean,
-        tooltipMessage?:string,
-        withText?:boolean
-    },
-    actionButton?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string},
-        disabled?:boolean,
-        tooltipMessage?:string,
-        withText?:boolean,
-        colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
-    }[]
+  onButtonFiltra:()=> void,
+  onButtonAnnulla:() => void,
+  statusAnnulla:string,
+  disabled?:boolean
+  annullaButtonOptional?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string},
+    disabled?:boolean,
+    tooltipMessage?:string,
+    withText?:boolean
+  },
+  actionButton?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string},
+    disabled?:boolean,
+    tooltipMessage?:string,
+    withText?:boolean,
+    colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
+  }[]
 }) =>  {
 
   
@@ -178,11 +178,11 @@ export const FilterActionButtons = ({
             }}
           >
             <CustomButton onClick={onButtonFiltra} variant="contained" disabled={disabled}>
-          Filtra
+              Filtra
             </CustomButton>
             {statusAnnulla !== "hidden" && !annullaButtonOptional && (
               <CustomButton onClick={onButtonAnnulla} variant="text" disabled={disabled}>
-            Annulla filtri
+                Annulla filtri
               </CustomButton>
             )}
             {statusAnnulla !== "hidden" && annullaButtonOptional && (
@@ -234,20 +234,20 @@ export const FilterActionButtons = ({
 
 
 export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
-    actionButtonRight?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string},
-        disabled?:boolean
-    }[],
-    actionButtonLeft?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string}
-        disabled?:boolean
-    }[]
+  actionButtonRight?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string},
+    disabled?:boolean
+  }[],
+  actionButtonLeft?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string}
+    disabled?:boolean
+  }[]
 }) => {
 
   return (
@@ -317,8 +317,8 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
 };
 
 interface CustomButtonProps extends ButtonProps {
-    withText?: boolean;
-    colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
+  withText?: boolean;
+  colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
 }
 
 export const CustomButton = styled(Button, {
@@ -336,40 +336,40 @@ export const CustomButton = styled(Button, {
 
 export const RenderIcon = (iconName,sx = true) => {
   switch (iconName) {
-  case "download":
-    return <DownloadIcon sx={{
-      marginRight:sx ? '10px':null    
-    }}></DownloadIcon>;
-  case "event_note":
-    return <EventNoteIcon/>;
-  case "circle_arrow_icon":
-    return  <ArrowCircleDownIcon></ArrowCircleDownIcon>;
-  case "iso_share":
-    return <IosShareIcon></IosShareIcon>;
-  case "preview":
-    return <PreviewIcon></PreviewIcon>;
-  case "restart":
-    return <RestartAltIcon></RestartAltIcon>;
-  case "list":
-    return <ListIcon></ListIcon>;
-  case "invoice":
-    return <DescriptionIcon></DescriptionIcon>;
-  case "contract":
-    return <GavelIcon></GavelIcon>;
-  case "date":
-    return <DateRangeIcon fontSize={sx ? "small":"medium"}></DateRangeIcon>;
-  case "status":
-    return <AutorenewIcon fontSize={sx ? "small":"medium"}></AutorenewIcon>;
-  case "typology":
-    return <InboxIcon fontSize={sx ? "small":"medium"} ></InboxIcon>;  
-  case "fase":
-    return <HourglassBottomIcon fontSize={sx ? "small":"medium"} ></HourglassBottomIcon>;
-  case "person":
-    return <PersonIcon fontSize={sx ? "small":"medium"}></PersonIcon>;
-  case "type-not":
-    return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}></MarkChatUnreadIcon>;
-  case "add-action":
-    return <NoteAddIcon fontSize={sx ? "small":"medium"}/>;
+    case "download":
+      return <DownloadIcon sx={{
+        marginRight:sx ? '10px':null    
+      }}></DownloadIcon>;
+    case "event_note":
+      return <EventNoteIcon/>;
+    case "circle_arrow_icon":
+      return  <ArrowCircleDownIcon></ArrowCircleDownIcon>;
+    case "iso_share":
+      return <IosShareIcon></IosShareIcon>;
+    case "preview":
+      return <PreviewIcon></PreviewIcon>;
+    case "restart":
+      return <RestartAltIcon></RestartAltIcon>;
+    case "list":
+      return <ListIcon></ListIcon>;
+    case "invoice":
+      return <DescriptionIcon></DescriptionIcon>;
+    case "contract":
+      return <GavelIcon></GavelIcon>;
+    case "date":
+      return <DateRangeIcon fontSize={sx ? "small":"medium"}></DateRangeIcon>;
+    case "status":
+      return <AutorenewIcon fontSize={sx ? "small":"medium"}></AutorenewIcon>;
+    case "typology":
+      return <InboxIcon fontSize={sx ? "small":"medium"} ></InboxIcon>;  
+    case "fase":
+      return <HourglassBottomIcon fontSize={sx ? "small":"medium"} ></HourglassBottomIcon>;
+    case "person":
+      return <PersonIcon fontSize={sx ? "small":"medium"}></PersonIcon>;
+    case "type-not":
+      return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}></MarkChatUnreadIcon>;
+    case "add-action":
+      return <NoteAddIcon fontSize={sx ? "small":"medium"}/>;
 
   }
 };

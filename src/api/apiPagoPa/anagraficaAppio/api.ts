@@ -14,7 +14,7 @@ export const getListaAnagraficaAppio = async (token:string, nonce:string , body:
   return response;
 };
 
-export const getListaNameAppio = async (token:string, nonce:string , body:{name:string, quarters:string[], year:string}) => {
+export const getListaNameAppio = async (token:string, nonce:string , body:{name:string}) => {
   const response =  await axios.post(`${url}/api/appio/contracts/name?nonce=${nonce}`,
     body,
     { headers: {
@@ -55,3 +55,13 @@ export const getListaQuarters = async (token:string, nonce:string , body:{year:s
   );
   return response;
 };
+
+
+export const getTipoEnteAppio = async (token:string, nonce:string) => {
+  const response =  await axios.get(`${url}/api/appio/contracts/tipoente?nonce=${nonce}`,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    },}
+  );
+  return response;
+}; 
