@@ -1,4 +1,4 @@
-import { Autocomplete, Checkbox, Chip, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
+import { Autocomplete, Checkbox, Chip, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField, Tooltip, Typography } from "@mui/material";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 import { DateView, DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -12,49 +12,50 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 
 export type MainFilterProps<T> = {
-    filterName: string;
-    clearOnChangeFilter: () => void;
-    setBody:any
-    body: any;
-    arrayValues?: any[];
-    inputLabel: string;
-    keyDescription: string;     // field used as value
-    keyValue:number|string;
-    defaultValue?:string|number|null // valore da settare se si ha un valore null da inserire nel body
-    fontSize?:string|null,
-    disabled?:boolean,
+  filterName: string;
+  clearOnChangeFilter: () => void;
+  setBody:any
+  body: any;
+  arrayValues?: any[];
+  inputLabel: string;
+  keyDescription: string;     // field used as value
+  keyValue:number|string;
+  defaultValue?:string|number|null // valore da settare se si ha un valore null da inserire nel body
+  fontSize?:string|null,
+  disabled?:boolean,
 
-    keyOption?:string;   // field used as label
-    keyCompare?: string;  // optional compare field
-    error?: boolean;
-    setError?: Dispatch<SetStateAction<boolean>>;
-    format?:string;
-    viewDate?:DateView[]
+  keyOption?:string;   // field used as label
+  keyCompare?: string;  // optional compare field
+  error?: boolean;
+  setError?: Dispatch<SetStateAction<boolean>>;
+  format?:string;
+  viewDate?:DateView[]
 
-    dataSelect?:T[];
-    //valuesSelected?: T[];
-    //setValuSelected?:Dispatch<SetStateAction<T[]>>
+  dataSelect?:T[];
+  //valuesSelected?: T[];
+  //setValuSelected?:Dispatch<SetStateAction<T[]>>
 
-    valueAutocomplete?: T[];
-    setValueAutocomplete?: Dispatch<SetStateAction<T[]>>;
+  valueAutocomplete?: T[];
+  setValueAutocomplete?: Dispatch<SetStateAction<T[]>>;
     
-    setSecondState?: Dispatch<SetStateAction<T[]>>;
-    setTextValue?: Dispatch<SetStateAction<string>>;
-    textValue?:string;
-    hidden?: boolean;
-    keyBody:string;
+  setSecondState?: Dispatch<SetStateAction<T[]>>;
+  setTextValue?: Dispatch<SetStateAction<string>>;
+  textValue?:string;
+  hidden?: boolean;
+  keyBody:string;
 
-    extraCodeOnChange?:(e:string) => void,
-    extraCodeOnChangeArray?:(e:T[]) => void,
-    extraCodeOnChangeObject?:(e:T|null) => void
+  extraCodeOnChange?:(e:string) => void,
+  extraCodeOnChangeArray?:(e:T[]) => void,
+  extraCodeOnChangeObject?:(e:T|null) => void
 
-    groupByKey?:string,
-    iconMaterial?:React.ReactNode,
-    itemProps?:GridBreakpoints|null,
-    valueAutocompleteSingle?:T|null,
-    setValueAutocompleteSingle?: Dispatch<SetStateAction<T|null>>;
-    helperText?:string,
-    placeHolder?:string
+  groupByKey?:string,
+  iconMaterial?:React.ReactNode,
+  itemProps?:GridBreakpoints|null,
+  valueAutocompleteSingle?:T|null,
+  setValueAutocompleteSingle?: Dispatch<SetStateAction<T|null>>;
+  helperText?:string,
+  placeHolder?:string,
+  sizeHeight?: "small" | "medium" | undefined;
 };
 
 const MainFilter = <T,>({
@@ -93,7 +94,8 @@ const MainFilter = <T,>({
   valueAutocompleteSingle,
   setValueAutocompleteSingle,
   helperText,
-  placeHolder
+  placeHolder,
+  sizeHeight
 }: MainFilterProps<T>) => {
 
 
@@ -136,67 +138,67 @@ const MainFilter = <T,>({
 
 
   switch (filterName) {
-  case "select_key_value": 
-    return ( !hidden && keyBody && <MainBoxContainer itemProps={itemProps}>
-      <FormControl disabled={disabled} fullWidth>
-        <InputLabel>
-          {inputLabel}
-        </InputLabel>
-        <Select
-          label={inputLabel}
-          onChange={(e) =>{
-            clearOnChangeFilter();
-            if(extraCodeOnChange){
-              extraCodeOnChange(e.target.value);
-            }else{
-              setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
-            }
-          }}
-          value={(valueOnBodydifferentFromRealValue)??defaultValue}
-        >
-          {arrayValues?.map((el) => (
-            <MenuItem
-              key={el[keyValue]}
-              value={el[keyValue]}
-            >{el[keyDescription]??""}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </MainBoxContainer>);
-  case "select_key_value_description":
-    return ( !hidden && keyBody && keyOption && <MainBoxContainer itemProps={itemProps}>
-      <FormControl fullWidth >
-        <InputLabel>
-          {inputLabel}
-        </InputLabel>
-        <Select
-          label={inputLabel}
-          onChange={(e) =>{
-            clearOnChangeFilter();
-            if(extraCodeOnChange){
-              extraCodeOnChange(e.target.value);
-            }else{
-              setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
-            }
-          }}
-          value={body[keyBody] ?? defaultValue}
-        >
-          {arrayValues?.map((el) => (
-            <MenuItem
-              key={Math.random()}
-              value={el[keyDescription]}
-            >
-              {el[keyOption]}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </MainBoxContainer>);
-  case "select_value":
-    return ( !hidden &&  keyBody && arrayValues &&
+    case "select_key_value": 
+      return ( !hidden && keyBody && <MainBoxContainer itemProps={itemProps}>
+        <FormControl size={sizeHeight ? sizeHeight : undefined} disabled={disabled} fullWidth>
+          <InputLabel>
+            {inputLabel}
+          </InputLabel>
+          <Select
+            label={inputLabel}
+            onChange={(e) =>{
+              clearOnChangeFilter();
+              if(extraCodeOnChange){
+                extraCodeOnChange(e.target.value);
+              }else{
+                setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
+              }
+            }}
+            value={(valueOnBodydifferentFromRealValue)??defaultValue}
+          >
+            {arrayValues?.map((el) => (
+              <MenuItem
+                key={el[keyValue]}
+                value={el[keyValue]}
+              >{el[keyDescription]??""}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </MainBoxContainer>);
+    case "select_key_value_description":
+      return ( !hidden && keyBody && keyOption && <MainBoxContainer itemProps={itemProps}>
+        <FormControl size={sizeHeight ? sizeHeight : undefined} fullWidth >
+          <InputLabel>
+            {inputLabel}
+          </InputLabel>
+          <Select
+            label={inputLabel}
+            onChange={(e) =>{
+              clearOnChangeFilter();
+              if(extraCodeOnChange){
+                extraCodeOnChange(e.target.value);
+              }else{
+                setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
+              }
+            }}
+            value={body[keyBody] ?? defaultValue}
+          >
+            {arrayValues?.map((el) => (
+              <MenuItem
+                key={Math.random()}
+                value={el[keyDescription]}
+              >
+                {el[keyOption]}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </MainBoxContainer>);
+    case "select_value":
+      return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer itemProps={itemProps}>
-              <FormControl fullWidth disabled={disabled}>
+              <FormControl size={sizeHeight ? sizeHeight : undefined} fullWidth disabled={disabled}>
                 <InputLabel>
                   {inputLabel}
                 </InputLabel>
@@ -225,10 +227,10 @@ const MainFilter = <T,>({
                 </Select>
               </FormControl>
             </MainBoxContainer>);
-  case "select_value_with_tutti":
-    return ( !hidden &&  keyBody && arrayValues &&
+    case "select_value_with_tutti":
+      return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer itemProps={itemProps} >
-              <FormControl fullWidth disabled={disabled}>
+              <FormControl size={sizeHeight ? sizeHeight : undefined} fullWidth disabled={disabled}>
                 <InputLabel>{inputLabel}</InputLabel>
                 <Select
                   label={inputLabel}
@@ -250,11 +252,11 @@ const MainFilter = <T,>({
                 </Select>
               </FormControl>
             </MainBoxContainer>);
-  case "select_mese_with_tutti":
-    return (
-      !hidden &&  keyBody && arrayValues &&
+    case "select_mese_with_tutti":
+      return (
+        !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer itemProps={itemProps}>
-              <FormControl fullWidth disabled={disabled}>
+              <FormControl size={sizeHeight ? sizeHeight : undefined} fullWidth disabled={disabled}>
                 <InputLabel>{inputLabel}</InputLabel>
 
                 <Select
@@ -292,11 +294,11 @@ const MainFilter = <T,>({
                 </Select>
               </FormControl>
             </MainBoxContainer>
-    );
-  case "select_value_nobody":
-    return ( !hidden &&  keyBody && arrayValues &&
+      );
+    case "select_value_nobody":
+      return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer itemProps={itemProps}>
-              <FormControl fullWidth >
+              <FormControl size={sizeHeight ? sizeHeight : undefined} fullWidth >
                 <InputLabel>
                   {inputLabel}
                 </InputLabel>
@@ -325,10 +327,10 @@ const MainFilter = <T,>({
                 </Select>
               </FormControl>
             </MainBoxContainer>);
-  case "select_value_string":
-    return ( !hidden &&  keyBody &&
+    case "select_value_string":
+      return ( !hidden &&  keyBody &&
             <MainBoxContainer itemProps={itemProps}>
-              <FormControl disabled={disabled}  fullWidth >
+              <FormControl size={sizeHeight ? sizeHeight : undefined} disabled={disabled}  fullWidth >
                 <InputLabel>
                   {inputLabel}
                 </InputLabel>
@@ -355,10 +357,11 @@ const MainFilter = <T,>({
                 </Select>
               </FormControl>
             </MainBoxContainer>);
-  case "input_text": 
-    return (!hidden && 
+    case "input_text": 
+      return (!hidden && 
             <MainBoxContainer itemProps={itemProps}> 
               <TextField
+                size={sizeHeight ? sizeHeight : undefined}
                 fullWidth
                 label={inputLabel}
                 placeholder={inputLabel}
@@ -378,222 +381,260 @@ const MainFilter = <T,>({
                 }
                 }            
               /> </MainBoxContainer>);
-  case "date_from_to": 
-    return ( !hidden && keyCompare && <MainBoxContainer itemProps={itemProps}> 
-      <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
-        <DesktopDatePicker
-          label={inputLabel}
-          value={(body[keyValue] === ""||body[keyValue] === null) ? null : new Date(body[keyValue])}
-          onChange={(e:any | null)  =>{
-            if(e !== null && !isDateInvalid(e)){
-              setBody(prev => ({...prev,...{[keyValue]:e}}));
-              if(keyDescription === "start" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(body[keyCompare])||0))){
-                setError && setError(true);
-              }else if(keyDescription === "end" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
-                setError && setError(true);
-              }else if(keyDescription === "end" &&  body[keyCompare] === null && e !== null){
-                setError && setError(true);
-              }else if(keyCompare){
-                setError && setError(false);
-              }
-            }else{
-              setBody(prev => ({...prev,...{[keyValue]:null}}));
-              if((keyDescription === "start" && body[keyCompare] !== null  && (e === null || e instanceof Date && isNaN(e.getTime())))){
-                setError && setError(true);
-              }else{
-                setError && setError(false);
-              }  
-            }
-            clearOnChangeFilter();
-          }}
-          views={viewDate}
-          format={format}
-          slotProps={{
-            textField: {
-              error:error,
-              fullWidth: true,
-              sx: {
-                // Force calendar icon to default color
-                "& .MuiInputAdornment-root .MuiSvgIcon-root": {
-                  color: "rgba(0,0,0,0.54)", // default MUI icon color
-                },
-                "& .MuiInputAdornment-root .MuiSvgIcon-root.Mui-focused": {
-                  color: "rgba(0,0,0,0.54)", // keep same when focused
-                },
-              },
-            },
-          }}
-        />
-      </LocalizationProvider></MainBoxContainer>);
-  case "multi_checkbox":
-    if(!hidden && dataSelect && valueAutocomplete && keyBody && keyDescription && keyValue ){
-      return (
-        <MainBoxContainer itemProps={itemProps}>
-          <Autocomplete
-            disabled={disabled}
-            fullWidth
-            sx={{           
-              height:"59px",
-              "& .MuiAutocomplete-inputRoot.Mui-focused": {
-                zIndex: 2,
-                backgroundColor: "#F3F4F6",  
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                zIndex: 3,     
-                position: "absolute",
-                height:"59px",
-              },
-            }}
-            multiple
-            limitTags={1}
-            disableCloseOnSelect
-            options={dataSelect}
-            value={valueAutocomplete}
-            groupBy={(opt) => getGroup(opt) ?? ""}
-            getOptionLabel={(opt) => getLabel(opt)}
-            isOptionEqualToValue={(o, v) => getId(o) === getId(v)}
-            onChange={(e, val) =>{
-              clearOnChangeFilter();
-              if(extraCodeOnChangeArray){
-                extraCodeOnChangeArray(val);
-              }else{
-                if(setValueAutocomplete) setValueAutocomplete(val);
-                const allId = val.map(el => el[keyValue]);
-                setBody((prev) => ({...prev,...{[keyBody]:allId}}));
-              }
-            }}
-            onInputChange={(e, val) => setTextValue && setTextValue(val)}
-            renderTags={(value, getTagProps) =>
-              value.map((option, index) => {
-                const { key, ...tagProps } = getTagProps({ index });
-
-                return (
-                  <Tooltip
-                    title={getLabel(option)}
-                    key={key}
-                    placement="top"
-                  > 
-                    <Chip
-                      {...tagProps}
-                      label={
-                        iconMaterial ? iconMaterial :<AccountBalanceIcon
-                          fontSize="small"
-                        />
-                      }
-                    />
-                  </Tooltip>
-                );
-              })
-            }
-            renderOption={(props, option, { selected }) => (
-              <li {...props} key={getId(option)}>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  sx={{ mr: 1 }}
-                  checked={selected}
-                />
-                <Typography sx={{ fontSize: fontSize ? "0.875rem":undefined}}>{getLabel(option)}</Typography>
-              </li> 
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                sx={{
-                  "& .MuiAutocomplete-popupIndicator": {
-                    color: "rgba(0,0,0,0.54)",
-                  },
-                }}
-                label={inputLabel.toString()}
-                placeholder={inputLabel}
-                value={textValue||""}
-              />
-            )}
-          />
-        </MainBoxContainer>
-      );
-    }else{
-      return null;
-    }
-  case "multi_checkbox-single-selection":
-    if(!hidden && dataSelect  && keyBody && keyDescription && keyValue && setTextValue){
-      return (
-        <MainBoxContainer itemProps={itemProps}>
-          <Autocomplete
-            fullWidth
-            disabled={disabled}
-            limitTags={1}
-            onChange={(event, value) => {
-           
-              if(extraCodeOnChangeObject){
-                extraCodeOnChangeObject(value);
-              }else{
-                setBody((prev) => ({...prev,...{[keyBody]:value ? value[keyValue]:null}}));
-                if(value){
-                  if(setValueAutocompleteSingle) setValueAutocompleteSingle(value);
-                }else{
-                  if(setValueAutocompleteSingle) setValueAutocompleteSingle(null);
+    case "date_from_to": 
+      return ( !hidden && keyCompare && <MainBoxContainer itemProps={itemProps}> 
+        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
+          <DesktopDatePicker
+            label={inputLabel}
+         
+            value={(body[keyValue] === ""||body[keyValue] === null) ? null : new Date(body[keyValue])}
+            onChange={(e:any | null)  =>{
+              if(e !== null && !isDateInvalid(e)){
+                setBody(prev => ({...prev,...{[keyValue]:e}}));
+                if(keyDescription === "start" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(body[keyCompare])||0))){
+                  setError && setError(true);
+                }else if(keyDescription === "end" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
+                  setError && setError(true);
+                }else if(keyDescription === "end" &&  body[keyCompare] === null && e !== null){
+                  setError && setError(true);
+                }else if(keyCompare){
+                  setError && setError(false);
                 }
+              }else{
+                setBody(prev => ({...prev,...{[keyValue]:null}}));
+                if((keyDescription === "start" && body[keyCompare] !== null  && (e === null || e instanceof Date && isNaN(e.getTime())))){
+                  setError && setError(true);
+                }else{
+                  setError && setError(false);
+                }  
               }
+              clearOnChangeFilter();
             }}
-            options={dataSelect}
-            disableCloseOnSelect
-            getOptionLabel={(option) => option[keyDescription]||''}
-            value={valueAutocompleteSingle ?? null}
-            isOptionEqualToValue={(o, v) => getId(o) === getId(v)}
-            onInputChange={(e, val) => setTextValue && setTextValue(val)}
-            renderOption={(props, option) =>{
-              const { key, ...restProps } = props;
-              return (
-                <li key={option[keyValue]} {...restProps}>
-                  {option[keyDescription]}
-                </li>
-              );
-            } }
-            style={{height:'59px'}}
-            renderInput={(params) =>{
-              return <TextField 
-                sx={{backgroundColor:"#F2F2F2"}}
-                value={textValue}
-                {...params}
-                label="Rag Soc. Ente" 
-                placeholder="Min 3 caratteri" />;
+            views={viewDate}
+            format={format}
+            slotProps={{
+              textField: {
+                error:error,
+                size:sizeHeight ? sizeHeight : undefined,
+                fullWidth: true,
+                sx: {
+                // Force calendar icon to default color
+                  "& .MuiInputAdornment-root .MuiSvgIcon-root": {
+                    color: "rgba(0,0,0,0.54)", // default MUI icon color
+                  },
+                  "& .MuiInputAdornment-root .MuiSvgIcon-root.Mui-focused": {
+                    color: "rgba(0,0,0,0.54)", // keep same when focused
+                  },
+                },
+              },
             }}
           />
+        </LocalizationProvider></MainBoxContainer>);
+    case "multi_checkbox":
+      if(!hidden && dataSelect && valueAutocomplete && keyBody && keyDescription && keyValue ){
+        return (
+          <MainBoxContainer itemProps={itemProps}>
+            <Autocomplete
+              disabled={disabled}
+              fullWidth
+              size={sizeHeight ? sizeHeight : undefined}
+              sx={{           
+                height:sizeHeight ? undefined :"59px",
+                "& .MuiAutocomplete-inputRoot.Mui-focused": {
+                  zIndex: 2,
+                  backgroundColor: "#F3F4F6",  
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  zIndex: 3,     
+                  position: "absolute",
+                  height:"59px",
+                },
+              }}
+              multiple
+              limitTags={1}
+              disableCloseOnSelect
+              options={dataSelect}
+              value={valueAutocomplete}
+              groupBy={(opt) => getGroup(opt) ?? ""}
+              getOptionLabel={(opt) => getLabel(opt)}
+              isOptionEqualToValue={(o, v) => getId(o) === getId(v)}
+              onChange={(e, val) =>{
+                clearOnChangeFilter();
+                if(extraCodeOnChangeArray){
+                  extraCodeOnChangeArray(val);
+                }else{
+                  if(setValueAutocomplete) setValueAutocomplete(val);
+                  const allId = val.map(el => el[keyValue]);
+                  setBody((prev) => ({...prev,...{[keyBody]:allId}}));
+                }
+              }}
+              onInputChange={(e, val) => setTextValue && setTextValue(val)}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => {
+                  const { key, ...tagProps } = getTagProps({ index });
 
-        </MainBoxContainer>
-      );
-    }else{
-      return null;
-    }
-  case "text-area":
-    return (
-      <MainBoxContainer itemProps={itemProps}>
-        <TextField
-          value={body[keyDescription]?.testo ?? ""}
-          disabled={disabled}
-          label={inputLabel}
-          onChange={(e)=>{
-            if(extraCodeOnChange){
-              extraCodeOnChange(e.target.value);
-            }else{
-              setBody(prev => ({...prev,...{[keyValue]:e}}));
-            }
+                  return (
+                    <Tooltip
+                      title={getLabel(option)}
+                      key={key}
+                      placement="top"
+                    > 
+                      <Chip
+                        {...tagProps}
+                        label={
+                          iconMaterial ? iconMaterial :<AccountBalanceIcon
+                            fontSize="small"
+                          />
+                        }
+                      />
+                    </Tooltip>
+                  );
+                })
+              }
+              renderOption={(props, option, { selected }) => (
+                <li {...props} key={getId(option)}>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    sx={{ mr: 1 }}
+                    checked={selected}
+                  />
+                  <Typography sx={{ fontSize: fontSize ? "0.875rem":undefined}}>{getLabel(option)}</Typography>
+                </li> 
+              )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  size={sizeHeight ? sizeHeight : undefined}
+                  sx={{
+                    "& .MuiAutocomplete-popupIndicator": {
+                      color: "rgba(0,0,0,0.54)",
+                    },
+                  }}
+                  label={inputLabel.toString()}
+                  placeholder={inputLabel}
+                  value={textValue||""}
+                />
+              )}
+            />
+          </MainBoxContainer>
+        );
+      }else{
+        return null;
+      }
+    case "multi_checkbox-single-selection":
+      if(!hidden && dataSelect  && keyBody && keyDescription && keyValue && setTextValue){
+        return (
+          <MainBoxContainer itemProps={itemProps}>
+            <Autocomplete
+              size={sizeHeight ? sizeHeight : undefined}
+              fullWidth
+              disabled={disabled}
+              limitTags={1}
+              onChange={(event, value) => {
+           
+                if(extraCodeOnChangeObject){
+                  extraCodeOnChangeObject(value);
+                }else{
+                  setBody((prev) => ({...prev,...{[keyBody]:value ? value[keyValue]:null}}));
+                  if(value){
+                    if(setValueAutocompleteSingle) setValueAutocompleteSingle(value);
+                  }else{
+                    if(setValueAutocompleteSingle) setValueAutocompleteSingle(null);
+                  }
+                }
+              }}
+              options={dataSelect}
+              disableCloseOnSelect
+              getOptionLabel={(option) => option[keyDescription]||''}
+              value={valueAutocompleteSingle ?? null}
+              isOptionEqualToValue={(o, v) => getId(o) === getId(v)}
+              onInputChange={(e, val) => setTextValue && setTextValue(val)}
+              renderOption={(props, option) =>{
+                const { key, ...restProps } = props;
+                return (
+                  <li key={option[keyValue]} {...restProps}>
+                    {option[keyDescription]}
+                  </li>
+                );
+              } }
+              style={{height:'59px'}}
+              renderInput={(params) =>{
+                return <TextField 
+                  sx={{backgroundColor:"#F2F2F2"}}
+                  value={textValue}
+                  {...params}
+                  label="Rag Soc. Ente" 
+                  placeholder="Min 3 caratteri" />;
+              }}
+            />
+
+          </MainBoxContainer>
+        );
+      }else{
+        return null;
+      }
+    case "text-area":
+      return (
+        <MainBoxContainer itemProps={itemProps}>
+          <TextField
+            size={sizeHeight ? sizeHeight : undefined}
+            value={body[keyDescription]?.testo ?? ""}
+            disabled={disabled}
+            label={inputLabel}
+            onChange={(e)=>{
+              if(extraCodeOnChange){
+                extraCodeOnChange(e.target.value);
+              }else{
+                setBody(prev => ({...prev,...{[keyValue]:e}}));
+              }
             
-          }}
-          fullWidth
-          multiline
-          rows={2}
-          error={error}
-          variant="outlined"
-          helperText={helperText}
-          placeholder={placeHolder}
-        />
-      </MainBoxContainer>);
-  default:
-    return (
-      <h1>ciao</h1>
-    );
+            }}
+            fullWidth
+            multiline
+            rows={2}
+            error={error}
+            variant="outlined"
+            helperText={helperText}
+            placeholder={placeHolder}
+          />
+        </MainBoxContainer>);
+    case "radio_group":
+    //TODO: verificare il funzionamento , mai implementata
+      return (
+        !hidden && keyBody && arrayValues &&
+      <MainBoxContainer itemProps={itemProps}>
+        <FormControl fullWidth disabled={disabled}>
+          <FormLabel>{inputLabel}</FormLabel>
+          <RadioGroup
+            row
+            name={keyBody}
+            value={body[keyBody] ?? defaultValue ?? ""}
+            onChange={(e) => {
+              clearOnChangeFilter();
+              if (extraCodeOnChange) {
+                extraCodeOnChange(e.target.value);
+              } else {
+                setBody((prev) => ({ ...prev, [keyBody]: e.target.value }));
+              }
+            }}
+          >
+            {arrayValues.map((option) => (
+              <FormControlLabel
+                key={getId(option)}
+                value={getId(option)}
+                control={<Radio />}
+                label={getLabel(option)}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+      </MainBoxContainer>
+      );
+    default:
+      return (
+        <h1>ciao</h1>
+      );
   }
 };
 
@@ -628,7 +669,7 @@ export const MainBoxContainer = ({ children, itemProps }: MainBoxContainerProps)
       sx={{
         display: "flex",
         justifyContent: { xs: "center", sm: "center", md: "flex-start" },
-        marginTop: "1rem",
+        // marginTop: "1rem",
       }}
     >
       {children}

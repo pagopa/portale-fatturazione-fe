@@ -382,10 +382,10 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
           </div>
         )}
       </div>
-      <ModalInfo setOpen={setOpenModalInfo} open={openModalInfo}></ModalInfo>
-      <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
-      <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
-      <ModalLoading open={openModalVerifica} setOpen={setOpenModalVerifica} sentence={'Loading...'} sentence2={'Verifica del codice SDI in corso'}></ModalLoading>
+      <ModalInfo setOpen={setOpenModalInfo} open={openModalInfo}/>
+      <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}/>
+      <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}/>
+      <ModalLoading open={openModalVerifica} setOpen={setOpenModalVerifica} sentence={'Loading...'} sentence2={'Verifica del codice SDI in corso'}/>
       {/*   <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>*/}
     </div>
   );

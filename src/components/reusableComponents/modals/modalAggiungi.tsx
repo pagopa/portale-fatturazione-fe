@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { Button, CircularProgress } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { SetStateAction, useEffect, useRef, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { ElementMultiSelect } from '../../../types/typeReportDettaglio';
 import { listaEntiNotifichePage } from '../../../api/apiSelfcare/notificheSE/api';
@@ -31,14 +31,14 @@ const style = {
 
 export interface ModalAggiungiProps {
   open:{
-      open:boolean,
-      sentence:React.ReactNode|string,
-      buttonIsVisible?:boolean|null,
-      loaderIsVisible?:boolean,
-      sentenceLoader?:string,
-      labelButton?:string,
-      actionButton?:()=>void,icon?:React.ElementType
-      },
+    open:boolean,
+    sentence:React.ReactNode|string,
+    buttonIsVisible?:boolean|null,
+    loaderIsVisible?:boolean,
+    sentenceLoader?:string,
+    labelButton?:string,
+    actionButton?:()=>void,icon?:React.ElementType
+  },
   setOpen:React.Dispatch<SetStateAction<any>>,
   getLista:any
 }
@@ -271,7 +271,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
           <div className='d-flex justify-content-between'>
             <div className='d-flex align-items-center justify-content-start'>
               <Typography  id="modal-modal-title" variant="h6" component="h2">
-    Inserisci gli enti nella lista
+                Inserisci gli enti nella lista
               </Typography>
             </div>
             <div className="d-flex align-items-center justify-content-end">

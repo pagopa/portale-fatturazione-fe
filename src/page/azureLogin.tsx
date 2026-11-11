@@ -45,18 +45,13 @@ const AzureLogin : React.FC<any> = () =>{
 
   },[]);
 
-
-   
-  
-
   return (
     <>
       <HeaderLogAzure/>
-      <div className='container d-flex align-items-center justify-content-center ' style={{minHeight: '600px'}}>
-        <Typography variant="h1">Accedi all'Area Riservata di PagoPA <ArrowCircleUpIcon fontSize="large"></ArrowCircleUpIcon></Typography>
+      <div className='container d-flex align-items-center justify-content-center ' style={{height: '100%'}}>
+        <Typography variant="h1">Accedi all'Area Riservata di PagoPA <ArrowCircleUpIcon fontSize="large"/></Typography>
       </div>
     </>
-     
   );
 };
 

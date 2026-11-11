@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
+import { Button } from '@mui/material';
 
 interface MainModalComponentProps {
   open: boolean;
@@ -27,7 +28,7 @@ const MainModalComponent: React.FC<MainModalComponentProps> = ({
   children,
   width = "400px",
   closeOnBackdropClick = false,
-  disableClose = false,
+  disableClose = false
 }) => {
   const handleClose = (event: object, reason: string) => {
     if (disableClose) return;
@@ -42,6 +43,9 @@ const MainModalComponent: React.FC<MainModalComponentProps> = ({
     >
       <Box sx={{ ...style, width }}>
         {children}
+        <div className='container_buttons_modal d-flex justify-content-center mt-5'>
+          <Button disabled={true} variant='contained' onClick={()=> "ciao"} >Prosegui</Button>
+        </div>
       </Box>
     </Modal>
   );

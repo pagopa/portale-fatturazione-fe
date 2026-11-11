@@ -406,8 +406,8 @@ const Fatturazione : React.FC = () =>{
     }));
   };
 
-  const onButtonSap = (who) => {
-    setOpenSapModal((prev)=>({...prev,...{show:true,who}}));
+  const onButtonSap = () => {
+    navigate(PathPf.JSON_TO_SAP);
   };
 
   const clearOnChangeFilter = () => {
@@ -717,7 +717,6 @@ const Fatturazione : React.FC = () =>{
             setBodyFatturazione((prev) => ({...prev,...{tipologiaFattura:e}}));
           }}
           iconMaterial={RenderIcon("invoice",true)}
-                    
         ></MainFilter>
         <MainFilter 
           filterName={"multi_checkbox"}
@@ -791,35 +790,28 @@ const Fatturazione : React.FC = () =>{
         statusAnnulla={statusAnnulla} 
         actionButton={[
           {
-            onButtonClick: () => onButtonSap(0),
+            onButtonClick: () => onButtonSap(),
             variant: "outlined",
-            icon:{name:"preview" },
-            disabled:disableButtonSap,
-            tooltipMessage:"Invia a SAP",
+            icon:{name:"upload-file"},
+            disabled:false,
+            tooltipMessage:"Invio a SAP",
             withText:false
-          },{
-            onButtonClick: () => navigate(PathPf.JSON_TO_SAP),
-            variant: "outlined",
-            icon:{name:"iso_share" },
-            tooltipMessage:"Invio fatture",
-            withText:false
-          },
-              
+          }    
         ]}
       />
       <ActionTopGrid
         actionButtonRight={[{
-          onButtonClick:downloadListaReportFatturazione,
+          onButtonClick: downloadListaReportFatturazione,
           variant: "outlined",
           label: "Download Report",
-          icon:{name:"download"},
-          disabled:(gridData.length === 0)
-        },{
-          onButtonClick:downloadListaFatturazione,
+          icon: { name: "download" },
+          disabled: (gridData.length === 0)
+        }, {
+          onButtonClick: downloadListaFatturazione,
           variant: "outlined",
           label: "Download Risultati",
-          icon:{name:"download"},
-          disabled:(gridData.length === 0)
+          icon: { name: "download" },
+          disabled: (gridData.length === 0)
         }]}/>
       <GridCustom
         nameParameterApi='docEmessiSend'

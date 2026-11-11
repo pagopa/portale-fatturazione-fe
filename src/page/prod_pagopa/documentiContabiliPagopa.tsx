@@ -289,13 +289,13 @@ const DocumentiContabili:React.FC = () =>{
 
 
   const statusAnnulla =
-  bodyGetLista.contractIds.length !== 0 ||
+    bodyGetLista.contractIds.length !== 0 ||
   bodyGetLista.membershipId !== '' ||
   bodyGetLista.recipientId !== '' ||
   bodyGetLista.abi !== '' ||
   bodyGetLista.quarters.length > 0
-    ? 'show'
-    : 'hidden';
+      ? 'show'
+      : 'hidden';
       
   return(
     <MainBoxStyled title={"Documenti contabili"}>

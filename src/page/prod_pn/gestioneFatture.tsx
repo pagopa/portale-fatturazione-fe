@@ -1,4 +1,4 @@
-import {  useEffect, useRef, useState } from "react";
+import {  useEffect, useState } from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
 import { manageError, managePresaInCarico } from "../../api/api";
@@ -14,13 +14,12 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeR
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
+import DialogInfo, { DialogInfoProps } from "../../components/reusableComponents/modals/dialogInfo";
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
-import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Chip, DialogContent, Divider, List, ListItem, ListItemText, Stack, SxProps, Table, TableBody, TableCell, TableHead, TableRow, TextField, Theme, Toolbar, Tooltip, Typography } from "@mui/material";
 import { downloadGestioneFatturePagopa, gestioneFattureInserisci, GestioneFattureInterface, getAnniGestioneFatture, getListaGestioneFatturePagoPa, getMesiGestioneFatture, getTipologiaFatturaGestioneFatture } from "../../api/apiPagoPa/gestioneFatturePA/api";
 import { headerNamesGestioneFatture } from "../../assets/configurations/conf_GridGestioneFatture";
 import { formatDate } from "../../reusableFunction/function";
-//import { ManageErrorResponse } from "../../types/typesGeneral";
 
 export interface BodyLista {
   idEnti: string[]
@@ -46,14 +45,19 @@ export interface GestioneFatture {
 }
 
 type OpenModalAggiungi = {
-    open:boolean,
-    sentence:React.ReactNode|string,
-    buttonIsVisible?:boolean|null,
-    loaderIsVisible?:boolean,
-    sentenceLoader?:string,
-    labelButton?:string,
-    actionButton?:()=>void,icon?:React.ElementType
-}
+  open:boolean,
+  sentence:React.ReactNode|string,
+  buttonIsVisible?:boolean|null,
+  loaderIsVisible?:boolean,
+  sentenceLoader?:string,
+  labelButton?:string,
+  actionButton?:()=>void,icon?:React.ElementType
+};
+
+type DialogContentProps<T = any> = Pick<
+  DialogInfoProps<T>,
+  "array"
+>;
 
 const GestioneFatture : React.FC = () => {
   const mainState = useGlobalStore(state => state.mainState);
@@ -142,6 +146,8 @@ const GestioneFatture : React.FC = () => {
           mesi: []
         });
       }  
+        
+      
       setGetListaLoading(false);
     }).catch((err)=>{
       setArrayYears([]);
@@ -299,7 +305,9 @@ const GestioneFatture : React.FC = () => {
             parts.push(month[meseIndex]);
           }
         }
+
         const fileName = `${parts.join("/")}.xlsx`;
+        
         setShowLoading(true);
         saveAs(response,fileName);
         setShowLoading(false);
@@ -707,7 +715,7 @@ const GestioneFatture : React.FC = () => {
         clearAction={()=>{setNotes([]);}}
         array={notes}
         title="Storico Note"
-        sentenseEmptyArray="Nessuna nota disponibile."/>
+        ContentComponent={DilogContentList}/>
       <ModalInfo 
         setOpen={setOpenModalInfo}
         open={openModalInfo}
@@ -765,6 +773,8 @@ interface NotaTextFieldProps {
   multiline?: boolean;
   helperText?: string;
   disabled?: boolean;
+  size?:"small"|"medium",
+  sx?:SxProps<Theme>
 }
 
 export const NotaTextField: React.FC<NotaTextFieldProps> = ({
@@ -780,9 +790,16 @@ export const NotaTextField: React.FC<NotaTextFieldProps> = ({
   multiline = true,
   helperText,
   disabled = false,
+  size = 'medium',
+  sx
 }) => {
+  const currentLength = value?.length || 0;
 
-  const computedHelperText = helperText ?? `Inserisci una nota (minimo 10 massimo 500 carratteri). Non inserire informazioni non necessarie, evitando di includere dati personali eccessivi o dettagli non pertinenti.`;
+  const computedHelperText =
+    helperText ??
+    (currentLength > maxLength
+      ? `Inserisci una nota (max ${maxLength} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`
+      : `Inserisci una nota (min ${minLength} max ${maxLength} caratteri). Non inserire dati sensibili né informazioni riconducibili a persone o fatti specifici.`);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onChange?.(e.target.value);
@@ -790,6 +807,7 @@ export const NotaTextField: React.FC<NotaTextFieldProps> = ({
 
   return (
     <TextField
+      size={size}
       label={label}
       multiline={multiline}
       minRows={minRows}
@@ -800,6 +818,80 @@ export const NotaTextField: React.FC<NotaTextFieldProps> = ({
       disabled={disabled}
       placeholder={placeholder}
       helperText={computedHelperText}
+      sx={sx ? sx : undefined }
     />
+  );
+};
+
+const DilogContentList : React.FC<DialogContentProps> = ({ array = [] }) => { 
+  return (
+    <DialogContent dividers>
+      {array.length === 0 ? (
+        <Typography color="text.secondary">
+          Nessuna nota disponibile.
+        </Typography>
+      ) : (
+        <List  
+          disablePadding 
+          sx={{ 
+            maxHeight: 400, 
+            overflowY: 'auto' 
+          }}>
+          {array.map((nota, index) => {
+            let colorChip:string|undefined = undefined;
+          
+            if(nota?.Azione === "RIPRISTINA"){
+              colorChip = '#B5E2B4';
+            }else if(nota?.Azione === "POSTICIPA"){
+              colorChip = '#FFE5A3';
+            }else if(nota?.Azione === "ELIMINA"){
+              colorChip = '#ef9a9a';
+            }else if(nota?.Azione === "CANCELLA"){
+              colorChip = '#FFF0F5';
+            }
+          
+            return (
+              <Box key={nota.IdNota} sx={{ backgroundColor: "grey.100",marginBottom: 1, borderRadius: 1, padding: 1 }}>
+                <ListItem alignItems="flex-start">
+                  <ListItemText
+                    primary={nota.Testo}
+                    secondary={
+                      <Stack direction="row" spacing={1} alignItems="center" component="span">
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.secondary"
+                        >
+                          {new Date(nota.Data).toLocaleString("it-IT")}
+                        </Typography>
+                        {nota.Azione &&
+                      <>
+                        <Typography 
+                          component="span"
+                          variant="body2"
+                          color="text.secondary">
+                          - Azione :
+                        </Typography>
+                        <Chip variant="outlined" size="small" label={nota?.Azione} 
+                          sx={{
+                            backgroundColor: colorChip,
+                            height: 18,
+                            fontSize: '0.65rem',
+                            '& .MuiChip-label': {
+                              padding: '0 6px',
+                            }
+                          }}   />
+                      </>
+                        }
+                      </Stack>
+                    }
+                  />
+                </ListItem>
+                {index < array.length - 1 && <Divider />}
+              </Box>
+            );})}
+        </List>
+      )}
+    </DialogContent>
   );
 };

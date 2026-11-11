@@ -3,19 +3,14 @@ import { ButtonNaked } from "@pagopa/mui-italia";
 import { PathPf } from "../../types/enum";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from "react-router";
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-
-
 interface NavigationHeaderProps {
     pageFrom:string,
     pageIn:string,
     backPath:PathPf,
     icon:any
-
 }
 
 const NavigatorHeader:React.FC<NavigationHeaderProps> = ({pageFrom,pageIn, backPath,icon}) => {
-
   const navigate = useNavigate();
 
   return (
@@ -29,7 +24,7 @@ const NavigatorHeader:React.FC<NavigationHeaderProps> = ({pageFrom,pageIn, backP
         >
             Indietro
         </ButtonNaked>
-        <Typography sx={{marginLeft:'20px'}} variant="caption">
+        <Typography sx={{marginLeft:'20px', display:'inline-flex', alignItems:'center', verticalAlign:'middle', gap:'4px'}} variant="caption">
           {icon}
           {pageFrom}
         </Typography>

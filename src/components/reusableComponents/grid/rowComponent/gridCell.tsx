@@ -11,6 +11,7 @@ import {
   Alert,
   SxProps,
   Theme,
+  Checkbox,
 } from "@mui/material";
 import ArticleIcon from "@mui/icons-material/Article";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -19,13 +20,17 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { HeaderGridCustom } from "../gridCustom";
 import { mesiGrid } from "../../../../reusableFunction/reusableArrayObj";
 import { transformDateTime019, transformDateTimeWithNameMonth } from "../../../../reusableFunction/function";
+import DescriptionIcon from '@mui/icons-material/Description';
 
-type CopyCellProps = {
+type CopyCellProps<T,> = {
   value: string;
   align?: "left" | "center" | "right" | "inherit" | "justify";
+  icon?:string,
+  sentence?:string,
+  element:T
 };
 
-type GridCellProps = {
+type GridCellProps<T,K> = {
   rowObject: HeaderGridCustom;
   index: number;
   element: Record<string, any>;
@@ -34,9 +39,15 @@ type GridCellProps = {
   cssFirstColum?: any;
   cssFirstColumRagioneSociale?: any;
   flexCenterStyle?: any;
-  isRowOpen?: boolean; // stato di espansione, per il case "collaps"
-  onToggleRow?: () => void; // handler per il case "collaps"
+  isRowOpen?: boolean;
+  onToggleRow?: () => void;
   setAction?: (obj:T, action:string) => void;
+  manageCheckbox?: (currentRow:Record<string, any>) => Record<string, any>;
+  manageCheckboxCollapse?: (currentRow:Record<string, any>) => Record<string, any>;
+  getAsyncDetails?:(currentRow:Record<string, any>,val?:boolean) => void,
+  selectedRows?:Record<string, any>[],
+  manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
+  usedInside?:string
 };
 
 const flexCenterStyle: SxProps<Theme> = {
@@ -67,7 +78,7 @@ const cssFirstColum : SxProps<Theme> = {
   cursor: 'pointer',
 };
 
-const GridCell = ({
+const GridCell = <T, K> ({
   rowObject,
   index: i,
   element,
@@ -75,9 +86,18 @@ const GridCell = ({
   apiGet,
   isRowOpen,
   onToggleRow,
-  setAction
-}: GridCellProps) => {
+  setAction,
+  manageCheckbox,
+  manageCheckboxCollapse,
+  getAsyncDetails,
+  selectedRows=[],
+  manageStateCheckbox,
+  usedInside=""
+}: GridCellProps<T, K>) => {
   const value = element[rowObject.keyValue];
+
+
+ 
 
   switch (rowObject.typeColumn) {
     case "string": {
@@ -187,15 +207,19 @@ const GridCell = ({
         </Tooltip>
       );
     case "number-tipocontratto":
+    {
+      const numVal = Number(value);
       return (
-        <Tooltip key={`${i}-${value}`} title={ Number(value) === null ? null : Number(value) === 1 ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}>
+        <Tooltip key={`${i}-${value}`} title={ numVal === null ? null : Number(value) === 1 ? 'PAC - PAL senza requisiti' : 'PAC - PAL con requisiti'}>
           <TableCell key={`${i}-${value}`} width={headerNames[i]?.width} align="center">
             <Typography variant={rowObject.variant||"body1"}>
-              { Number(value)  === null ? "--" : Number(value)  === 1 ? ('PAC - PAL senza requisiti').slice(0, 10) + "..." : ('PAC - PAL con requisiti').slice(0, 10) + "..."}
+              { numVal  === null ? "--" : Number(value)  === 1 ? ('PAC - PAL senza requisiti').slice(0, 10) + "..." : ('PAC - PAL con requisiti').slice(0, 10) + "..."}
             </Typography>
           </TableCell>
         </Tooltip>
       );
+    }
+     
     case "data-ora": {
       const valueData = value ? transformDateTime019(value) : "";
       return (
@@ -266,10 +290,28 @@ const GridCell = ({
         </TableCell>
       );
     case "checkbox":
-    // TODO: implementare rendering reale, per ora placeholder
       return (
         <TableCell key={`${i}-checkbox`} align="center">
-          checkbox
+          <Checkbox 
+            disabled={manageStateCheckbox && manageStateCheckbox(element,usedInside,selectedRows)?.disabled}
+            checked={manageStateCheckbox && manageStateCheckbox(element,usedInside,selectedRows)?.verifyIfSelected}
+            onChange={(event) =>{
+              console.log({event:event.target.checked});
+              if(manageCheckbox){
+              //setChecked(event.target.checked);
+                if (getAsyncDetails && !isRowOpen){
+                  if (onToggleRow) onToggleRow();
+                  getAsyncDetails(element,true);
+                }
+                manageCheckbox(element);
+              
+              }
+
+              if(manageCheckboxCollapse){
+              //setChecked(event.target.checked);
+                manageCheckboxCollapse(element);
+              }
+            } }/>
         </TableCell>
       );
     case "chip": {
@@ -331,6 +373,9 @@ const GridCell = ({
           key={`${i}-snackbar`}
           value={value}
           align={headerNames[i]?.align}
+          icon={headerNames[i]?.icon}
+          sentence={headerNames[i]?.sentenceSnackbar}
+          element={element}
         />
       );
     case "collaps":
@@ -340,7 +385,10 @@ const GridCell = ({
             sx={{ color: "#227AFC" }}
             aria-label="expand row"
             size="small"
-            onClick={onToggleRow}
+            onClick={() =>{
+              if (onToggleRow) onToggleRow();
+              if (getAsyncDetails && !isRowOpen) getAsyncDetails(element);
+            } }
           >
             {isRowOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
@@ -377,7 +425,7 @@ export default GridCell;
 
 
 
-const CopyToClipboardCell = ({ value, align = "center" }: CopyCellProps) => {
+const CopyToClipboardCell = ({ value, align = "center", icon, sentence="Event ID Copiato!",element }: CopyCellProps) => {
   const [open, setOpen] = useState(false);
 
   const handleCopy = () => {
@@ -385,11 +433,25 @@ const CopyToClipboardCell = ({ value, align = "center" }: CopyCellProps) => {
     setOpen(true);
   };
 
+  const getIcon = () => {
+    switch(icon){
+      case "file_invio_sap":
+        return <DescriptionIcon sx={{ color: "default" }} fontSize="small" />;
+      default : 
+        return <ArticleIcon sx={{ color: "default" }} fontSize="small" />;
+    }
+  };
+
+  let disabled = false;
+  if(element.statoInvio === 0 ||element.statoInvio === 2 && icon === "file_invio_sap"){
+    disabled = true;
+  }
+ 
   return (
     <TableCell align={align}>
       <Tooltip title={value}>
-        <IconButton onClick={handleCopy}>
-          <ArticleIcon sx={{ color: "default" }} fontSize="small" />
+        <IconButton disabled={disabled} onClick={handleCopy}>
+          {getIcon()}
         </IconButton>
       </Tooltip>
       <Snackbar
@@ -399,7 +461,7 @@ const CopyToClipboardCell = ({ value, align = "center" }: CopyCellProps) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert onClose={() => setOpen(false)} severity="success">
-          Event ID Copiato!
+          {sentence}
         </Alert>
       </Snackbar>
     </TableCell>

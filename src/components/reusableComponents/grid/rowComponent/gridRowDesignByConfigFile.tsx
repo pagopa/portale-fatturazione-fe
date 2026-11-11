@@ -1,9 +1,12 @@
-import { Box, Collapse, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Collapse, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { HeaderGridCustom } from "../gridCustom";
-import { useState } from "react";
 import GridCell from "./gridCell";
+import { useState, useMemo, useEffect } from 'react';
+import Loader from "../../loader";
+import CustomTablePagination from "../pagination";
 
-interface GridRowsRendererProps<T = any>{
+
+interface GridRowsRendererProps<T ,K>{
   element: any;
   apiGet?: (el: any) => void;
   headerNames:HeaderGridCustom[];
@@ -12,9 +15,17 @@ interface GridRowsRendererProps<T = any>{
   titleRowCollapse?:string,
   keyCollapse?:string,
   bgColorRowFunction?: (element:any) => string;
+  manageCheckbox?: ( currentRow:Record<string, any>) => Record<string, any>;
+  manageCheckboxCollapse?:(currentRow:Record<string, any>) => Record<string, any>,
+  filterOnCollapse?:(element:any) => React.ReactNode,
+  getAsyncDetails?:(currentRow:Record<string, any>,val:boolean) => void,
+  collapseDataLoading?:boolean,
+  selectedRows:K[],
+  manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
+  colSpanCollaps?:number
 }
 
-const GridRowDesignByConfigFile =  ({
+const GridRowDesignByConfigFile=<T,K>({
   element,
   apiGet,
   headerNames,
@@ -22,10 +33,20 @@ const GridRowDesignByConfigFile =  ({
   titleRowCollapse,
   keyCollapse="",
   setAction,
-  bgColorRowFunction
-}: GridRowsRendererProps) => {
+  bgColorRowFunction,
+  manageCheckbox,
+  manageCheckboxCollapse,
+  filterOnCollapse,
+  getAsyncDetails,
+  collapseDataLoading,
+  selectedRows=[],
+  manageStateCheckbox,
+  colSpanCollaps=7
+}: GridRowsRendererProps<T,K>) => {
 
   const [open, setOpen] = useState(false);
+ 
+
 
   let dataInsideCollapse = element[keyCollapse]||[];
   if (typeof dataInsideCollapse === 'string') {
@@ -35,6 +56,56 @@ const GridRowDesignByConfigFile =  ({
   if (dataInsideCollapse[0] && "numeroLinea" in dataInsideCollapse[0]) {
     dataInsideCollapse = [...dataInsideCollapse].sort((a, b) => a.numeroLinea - b.numeroLinea);
   }
+
+  //_________________________________________________________________
+
+  // Paginazione lato client del dettaglio (collapse)
+  const [pageCollapse, setPageCollapse] = useState(0);
+  const [rowsCollapse, setRowsCollapse] = useState(10);
+  const totalCollapse = dataInsideCollapse.length;
+
+  // se i dati cambiano (es. filtri) e la pagina corrente non esiste più, torno alla prima
+  useEffect(() => {
+    if (pageCollapse * rowsCollapse >= totalCollapse) setPageCollapse(0);
+  }, [totalCollapse]);
+
+  const dataInsideCollapsePaginated = dataInsideCollapse.slice(
+    pageCollapse * rowsCollapse,
+    pageCollapse * rowsCollapse + rowsCollapse
+  );
+
+
+  // Dentro il componente, prima del return
+  const [filtroAnno, setFiltroAnno] = useState<string>('tutti');
+  const [filtroMese, setFiltroMese] = useState<string>('tutti');
+  const [filtroTipologia, setFiltroTipologia] = useState<string>('tutti');
+
+  // Calcola le opzioni disponibili dinamicamente dai dati (evita valori duplicati)
+  const anniDisponibili : number[]= useMemo(
+    () => [...new Set(dataInsideCollapse?.map((el: any) => el.annoRiferimento))].sort(),
+    [dataInsideCollapse]
+  );
+
+  const mesiDisponibili : number[] = useMemo(
+    () => [...new Set(dataInsideCollapse?.map((el: any) => el.meseRiferimento))].sort((a, b) => a - b),
+    [dataInsideCollapse]
+  );
+
+  const tipologieDisponibili : string[] = useMemo(
+    () => [...new Set(dataInsideCollapse?.map((el: any) => el.tipologiaFattura))],
+    [dataInsideCollapse]
+  );
+
+  // Applica i filtri ai dati
+  const datiFiltrati = useMemo(() => {
+    return dataInsideCollapse?.filter((el: any) => {
+      const matchAnno = filtroAnno === 'tutti' || el.annoRiferimento === Number(filtroAnno);
+      const matchMese = filtroMese === 'tutti' || el.meseRiferimento === Number(filtroMese);
+      const matchTipologia = filtroTipologia === 'tutti' || el.tipologiaFattura === filtroTipologia;
+      return matchAnno && matchMese && matchTipologia;
+    });
+  }, [dataInsideCollapse, filtroAnno, filtroMese, filtroTipologia]);
+
 
   return (
     <>
@@ -55,52 +126,95 @@ const GridRowDesignByConfigFile =  ({
             element={element}
             headerNames={headerNames}
             apiGet={apiGet}
-            isRowOpen={open}          // stato di espansione gestito dal componente padre (riga)
+            isRowOpen={open}  
             onToggleRow={() => setOpen(!open)}
             setAction={setAction}
+            manageCheckbox={manageCheckbox}
+            getAsyncDetails={getAsyncDetails}
+            selectedRows={selectedRows}
+            manageStateCheckbox={manageStateCheckbox}
+            usedInside={"main-row"}
           />
         ))}
       </TableRow>
       {(headerNamesCollapse && titleRowCollapse) &&
         <TableRow key={`tableRow-position-${element.id}`} >
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={7}>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={colSpanCollaps}>
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
-                <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
-                  {titleRowCollapse}
-                </Typography>
-                <Table size="small" aria-label="purchases">
-                  <TableHead>
-                    <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                      {
-                        Object.values(headerNamesCollapse)?.map((value:any, i:number)=>{
-                          return (
-                            <TableCell key={`position-${value.label}-${i}`} align='center'>{value.label}</TableCell>
-                          );
-                        })
-                      }                      
-                    </TableRow>
-                  </TableHead>
-                  <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
-                    {dataInsideCollapse?.map((el: any, rowIndex: number) => (
-                      <TableRow key={`row-${rowIndex}`}>
-                        {Object.values(headerNamesCollapse).map(
-                          (rowObjectCollapsed: HeaderGridCustom, colIndex: number) => (
-                            <GridCell
-                              key={`${rowObjectCollapsed.keyValue}-${colIndex}`}
-                              rowObject={rowObjectCollapsed}
-                              index={colIndex}
-                              element={el}
-                              headerNames={headerNamesCollapse}
-                              isRowOpen={open}
-                              onToggleRow={() => setOpen(!open)}
-                            />
-                          )
-                        )}
+              <Box sx={{ margin: 2, backgroundColor: '#F8F8F8', padding: '10px', width: 0, minWidth: 'calc(100% - 16px)', overflowX: 'auto' }}>
+                <Stack
+                  direction="row"
+                  gap={4}
+                  alignItems="center"
+                  sx={{marginBottom:"10px"}}
+                >
+                  <Typography sx={{ marginLeft: "6px" }} variant="h6" gutterBottom component="div">
+                    {titleRowCollapse}
+                  </Typography>
+                  {filterOnCollapse && filterOnCollapse(element)}
+                </Stack>
+                <>
+                  <Table  size="small" aria-label="purchases">
+                    <TableHead>
+                      <TableRow sx={{ borderColor: "white", borderWidth: "thick" }}>
+                        {Object.values(headerNamesCollapse)?.map((value: any, i: number) => (
+                          <TableCell key={`position-${value.label}-${i}`} align='center'>
+                            {value.label}
+                          </TableCell>
+                        ))}
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHead>
+                    {collapseDataLoading ? (
+                      <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
+                        <TableRow>
+                          <TableCell 
+                            colSpan={Object.keys(headerNamesCollapse).length} 
+                            sx={{ textAlign: "center", border: "none" }}
+                          >
+                            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", py: 4 }}>
+                              <Loader sentence={"Caricamento..."} />
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    ) : (
+                      <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
+                        {dataInsideCollapsePaginated?.map((el: any, rowIndex: number) => (
+                          <TableRow key={`row-${rowIndex}`}>
+                            {Object.values(headerNamesCollapse).map(
+                              (rowObjectCollapsed: HeaderGridCustom, colIndex: number) => (
+                                <GridCell
+                                  key={`${rowObjectCollapsed.keyValue}-${colIndex}`}
+                                  rowObject={rowObjectCollapsed}
+                                  index={colIndex}
+                                  element={el}
+                                  headerNames={headerNamesCollapse}
+                                  manageCheckboxCollapse={manageCheckboxCollapse}
+                                  selectedRows={selectedRows}
+                                  manageStateCheckbox={manageStateCheckbox}
+                                  usedInside={"collapse-row"}
+                                  setAction={setAction}
+                                />
+                              )
+                            )}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    )}
+                  </Table>
+                  {!collapseDataLoading && (
+                    <CustomTablePagination
+                      total={totalCollapse}
+                      page={pageCollapse}
+                      rows={rowsCollapse}
+                      changePage={(_e, newPage) => setPageCollapse(newPage)}
+                      changeRow={(e) => {
+                        setRowsCollapse(parseInt(e.target.value, 10));
+                        setPageCollapse(0);
+                      }}
+                    />
+                  )}
+                </>
               </Box>
             </Collapse>
           </TableCell>

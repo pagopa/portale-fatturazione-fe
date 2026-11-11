@@ -45,6 +45,7 @@ const SideNavSend : React.FC = () => {
   const [openModPrevisonale, setOpenModPrevisonale] = useState(false);
 
 
+
   useEffect(()=>{
     if(currentLocation === PathPf.TIPOLOGIA_CONTRATTO || currentLocation === PathPf.DATI_FATTURAZIONE){
       setOpenSezioneDatiFatturazione(true);
@@ -58,6 +59,7 @@ const SideNavSend : React.FC = () => {
        currentLocation.includes("send/fatturapdf/documentiemessi")||
        currentLocation.includes("send/fatturapdf/rel")){
       setOpenSezioneFatturazione(true);
+     
     }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST || currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI){
       setOpenContestazioni(true);
     }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA || currentLocation === PathPf.MODULOCOMMESSA || currentLocation === PathPf.PDF_COMMESSA){
@@ -237,30 +239,27 @@ const SideNavSend : React.FC = () => {
         </ListItemButton> 
         <Collapse in={openSezioneFatturazione} timeout="auto" unmountOnExit>
           <ListItemButton sx={{ pl: 4 }} 
-            selected={
-              currentLocation === PathPf.DOCUMENTI_SOSPESI_SEND || currentLocation.includes("send/fatturapdf/documentisospesi")
-            } 
+            selected={currentLocation === PathPf.DOCUMENTI_SOSPESI_SEND || currentLocation.includes("send/fatturapdf/documentisospesi")} 
             onClick={()=> handleListItemClick(PathPf.DOCUMENTI_SOSPESI_SEND)}>
             <ListItemIcon>
               <FileCopyIcon fontSize="inherit" />
             </ListItemIcon>
-            <Box className="ms-3" display="flex" flexDirection="column">
-              <ListItemText primary="Documenti contabili sospesi" />
-            </Box>
+            <ListItemText primary="Documenti contabili sospesi" />
           </ListItemButton>
           <ListItemButton sx={{ pl: 4 }} 
             selected={
+              currentLocation === PathPf.JSON_TO_SAP ||
               currentLocation === PathPf.FATTURAZIONE || 
-              currentLocation.includes("send/fatturapdf/documentiemessi") ||
-              currentLocation.includes(PathPf.JSON_TO_SAP)
+              currentLocation.includes("send/fatturapdf/documentiemessi") //||
+              //currentLocation.includes(PathPf.JSON_TO_SAP)
             } 
             onClick={()=> handleListItemClick(PathPf.FATTURAZIONE)}>
             <ListItemIcon>
               <DescriptionIcon fontSize="inherit" />
             </ListItemIcon>
-            <Box className="ms-3" display="flex" flexDirection="column">
-              <ListItemText primary="Documenti contabili emessi" />
-            </Box>
+           
+            <ListItemText primary="Documenti contabili emessi" />
+            
           </ListItemButton>
           <List component="div" disablePadding>
             <ListItemButton selected={currentLocation === PathPf.GESTIONE_FATTURE} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.GESTIONE_FATTURE)}>
@@ -270,7 +269,8 @@ const SideNavSend : React.FC = () => {
               <ListItemText primary="Gestione Fatture" />
             </ListItemButton>
           </List>
-        </Collapse> 
+          
+        </Collapse>
         <ListItemButton selected={currentLocation === "/send/accertamenti"} onClick={() => handleListItemClick("/send/accertamenti")}>
           <ListItemIcon>
             <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
@@ -289,3 +289,30 @@ const SideNavSend : React.FC = () => {
   );
 };
 export default SideNavSend;
+
+/*
+<Collapse in={openGestioneFatture} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton selected={currentLocation === PathPf.JSON_TO_SAP || currentLocation === PathPf.JSON_TO_SAP_DETAILS} sx={{ pl: 8 }} onClick={() => handleListItemClick(PathPf.JSON_TO_SAP)}>
+                <ListItemIcon>
+                  <SendIcon fontSize="inherit" />
+                </ListItemIcon>
+                <ListItemText primary="Invio a SAP" />
+              </ListItemButton>
+            </List>
+          </Collapse>
+
+           {openGestioneFatture ?
+                <IconButton onClick={(e)=>{
+                  e.stopPropagation();
+                  setOpenGestioneFatture(false);
+                } }  size="small">
+                  <ExpandLess fontSize="inherit" />
+                </IconButton>  :
+                <IconButton  onClick={(e)=>{
+                  e.stopPropagation();
+                  setOpenGestioneFatture(true);
+                } }  size="small">
+                  <ExpandMore fontSize="inherit"/>
+                </IconButton>}
+ */

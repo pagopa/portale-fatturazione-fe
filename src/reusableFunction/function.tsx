@@ -138,32 +138,32 @@ export const getIdByTipo = (string:string, array:ArrayTipologieCommesse[]) =>{
 
 export const findStatoContestazioni = (code:number) => {
   switch (code) {
-  case 0:
-    return "Caricamento file";
-  case 1:
-    return "Inelaborazione";
-  case 2:
-    return "Notifiche inesistenti";
-  case 3:
-    return "Notifiche non associate all'Ente xxx";
-  case 4:
-    return "Notifiche dell'Ente con contratto diverso da: {idContratto}";
-  case 5:   
-    return "Notifiche non nello stesso periodo di riferimento: {anno} {mese}";
-  case 6:
-    return "Notifiche già fatturate o asseverate";
-  case 7:
-    return "Notifiche che non si possono annullare";
-  case 8:
-    return "Notifiche che non si possono contestare";
-  case 9:
-    return "Notifiche che non si possono accettare";
-  case 10:
-    return "Notifiche che non si possono rifiutare";
-  case 11:
-    return "Processo completato";
-  default:
-    return "Caricamento file";
+    case 0:
+      return "Caricamento file";
+    case 1:
+      return "Inelaborazione";
+    case 2:
+      return "Notifiche inesistenti";
+    case 3:
+      return "Notifiche non associate all'Ente xxx";
+    case 4:
+      return "Notifiche dell'Ente con contratto diverso da: {idContratto}";
+    case 5:   
+      return "Notifiche non nello stesso periodo di riferimento: {anno} {mese}";
+    case 6:
+      return "Notifiche già fatturate o asseverate";
+    case 7:
+      return "Notifiche che non si possono annullare";
+    case 8:
+      return "Notifiche che non si possono contestare";
+    case 9:
+      return "Notifiche che non si possono accettare";
+    case 10:
+      return "Notifiche che non si possono rifiutare";
+    case 11:
+      return "Processo completato";
+    default:
+      return "Caricamento file";
             
   }
 };
@@ -512,3 +512,4 @@ function isValidText(str: string): boolean {
 
   return true;
 } */
+

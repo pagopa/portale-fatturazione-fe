@@ -108,7 +108,31 @@ const Messaggi : React.FC = () => {
     setGetListaLoading(true);
     await getListaMessaggi(token,profilo.nonce,body,pa,ro).then((res)=>{
       setGetListaLoading(false);
-      setGridData(res.data.messaggi);
+      const mock = {
+        "idMessaggio": 309,
+        "idEnte": null,
+        "idUtente": "8ff88a50-6050-415a-8280-0d7362311a38",
+        "json": null,
+        "anno": 2026,
+        "mese": 9,
+        "prodotto": "prod-pn",
+        "gruppoRuolo": "fat-d-adgroup-assistenza",
+        "auth": "PAGOPA",
+        "stato": "2",
+        "dataInserimento": "2026-07-03T15:30:48.337",
+        "dataStepCorrente": null,
+        //"linkDocumento": "reportaccertamenti/preseincarico/2025-09/Report_preseincarico_2025-09.csv",
+        "tipologiaDocumento": "FatturePagoPa_01012026_1230.json",
+        "categoriaDocumento": "Invio JSON a SAP",
+        //"lettura": false,
+        "hash": "1a19eb3f0dc462bf4310f381d36239039e61575948f062077d70e30e6a5d112a",
+        "rhash": "1a19eb3f0dc462bf4310f381d36239039e61575948f062077d70e30e6a5d112a",
+        "contentType": "text/csv",
+        "contentLanguage": "it-IT",
+        "idReport": 256,
+        "ragioneSociale": null
+      };
+      setGridData([mock,...res.data.messaggi]);
       setCountMessaggi(res.data.count);
       if(!isInitialRender.current){
         updateFilters({

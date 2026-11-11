@@ -1,9 +1,8 @@
-import { useSearchParams, useNavigate, useNavigation, useLoaderData, Await } from 'react-router-dom';
-import { selfcareLogin, getAuthProfilo, manageError, redirect, getPageApiKeyVisible } from '../api/api';
-import { Suspense, useEffect} from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { selfcareLogin, getAuthProfilo, redirect, getPageApiKeyVisible } from '../api/api';
+import { useEffect} from 'react';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { PathPf } from '../types/enum';
-
 import Loader from '../components/reusableComponents/loader';
 import { useGlobalStore } from '../store/context/useGlobalStore';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
@@ -24,6 +23,7 @@ type  Jwt = {
 interface ParameterGetProfilo {
     data:Jwt[]
 }
+
 const Auth : React.FC = () =>{
 
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);

@@ -1,4 +1,4 @@
-import { Button, FilledInput, FormControl, FormHelperText, IconButton, InputAdornment, Skeleton, Typography } from "@mui/material";
+import { Button, FilledInput, FormControl, FormHelperText, IconButton, InputAdornment, Typography } from "@mui/material";
 import {  useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import Visibility from "@mui/icons-material/Visibility";
@@ -117,72 +117,69 @@ const ApiKeyEnte : React.FC = () => {
           </div>
           {
             mainData.apiKeyPage.keys?.length < 2 &&  
-                        <div className="col-3 p-0">
-                          <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%' }}>
-                            <Button sx={{width:"70%"}} disabled={disableInsertApiKey} onClick={()=>generateModifyKey(bodyApiKey)} variant="outlined"><AddIcon fontSize="small" className="me-2"></AddIcon>{mainData.apiKeyPage.keys?.length < 1 ?"Genera API KEY":"Genera API KEY secondaria"}</Button>
-                          </div>
-                        </div>
+             <div className="col-3 p-0">
+               <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%' }}>
+                 <Button sx={{width:"70%"}} disabled={disableInsertApiKey} onClick={()=>generateModifyKey(bodyApiKey)} variant="outlined"><AddIcon fontSize="small" className="me-2"></AddIcon>{mainData.apiKeyPage.keys?.length < 1 ?"Genera API KEY":"Genera API KEY secondaria"}</Button>
+               </div>
+             </div>
           }
         </div>
         <div className="marginTop24">
-          <div className="row">
-                        
+          <div className="row">   
             {mainData.apiKeyPage.keys?.length === 0 && 
-                               <> <div className=" bg-white col-8 p-3 d-flex justify-content-center">
-                                 <Typography variant="body1">Non è stata ancora generata nessuna API KEY</Typography>
-                               </div>
-                               
-                               <div className=" bg-white col-3 p-3">
-                                 {!disableInsertApiKey && <Typography  onClick={() => generateModifyKey(bodyApiKey)} sx={{cursor:"pointer",color:"#0073E6"}} variant="caption-semibold">Genera API KEY</Typography>}
-                               </div>
-                               </> }
+              <> <div className=" bg-white col-8 p-3 d-flex justify-content-center">
+                <Typography variant="body1">Non è stata ancora generata nessuna API KEY</Typography>
+              </div>          
+              <div className=" bg-white col-3 p-3">
+                {!disableInsertApiKey && <Typography  onClick={() => generateModifyKey(bodyApiKey)} sx={{cursor:"pointer",color:"#0073E6"}} variant="caption-semibold">Genera API KEY</Typography>}
+              </div>
+              </> }
             {mainData.apiKeyPage.keys?.length > 0 && 
-                        <div className=" bg-white col-11 p-3 d-flex justify-content-start">
-                          <FormControl sx={{ m: 1, width: '40%' }}>
-                            <FormHelperText>API KEY primaria</FormHelperText>
+              <div className=" bg-white col-11 p-3 d-flex justify-content-start">
+                <FormControl sx={{ m: 1, width: '40%' }}>
+                  <FormHelperText>API KEY primaria</FormHelperText>
 
-                            <FilledInput
-                              value={mainData.apiKeyPage.keys[0]||""}
-                              fullWidth={true}
-                              type={showPassword ? 'text' : 'password'}
-                              endAdornment={
-                                <InputAdornment position="end">
-                                  <IconButton onClick={handleClickShowPassword}>
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                  </IconButton>
-                                </InputAdornment>
-                              }
-                            />
-                                
-                          </FormControl>
-                          {mainData.apiKeyPage.keys?.length > 0 &&
-                                        <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'end',width: '20%',gap:"15px",padding:"14px" }}>
-                                          <Button disabled={disableInsertApiKey} onClick={()=> copyKey(mainData.apiKeyPage.keys[0]||"")} variant="outlined"><ContentCopyIcon fontSize="small"></ContentCopyIcon></Button>
-                                          <Button disabled={disableInsertApiKey} onClick={()=> generateModifyKey({apiKey:mainData.apiKeyPage.keys[0], attiva: true,refresh: true})} variant="outlined">Rigenera</Button>
-                                        </div>}
-                        </div>}
+                  <FilledInput
+                    value={mainData.apiKeyPage.keys[0]||""}
+                    fullWidth={true}
+                    type={showPassword ? 'text' : 'password'}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton onClick={handleClickShowPassword}>
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />      
+                </FormControl>
+                {mainData.apiKeyPage.keys?.length > 0 &&
+                 <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'end',width: '20%',gap:"15px",padding:"14px" }}>
+                   <Button disabled={disableInsertApiKey} onClick={()=> copyKey(mainData.apiKeyPage.keys[0]||"")} variant="outlined"><ContentCopyIcon fontSize="small"></ContentCopyIcon></Button>
+                   <Button disabled={disableInsertApiKey} onClick={()=> generateModifyKey({apiKey:mainData.apiKeyPage.keys[0], attiva: true,refresh: true})} variant="outlined">Rigenera</Button>
+                 </div>}
+              </div>}
             {mainData.apiKeyPage.keys?.length > 1 &&
-                                <div className=" bg-white col-11 p-3 d-flex justify-content-start">
-                                  <FormControl sx={{ m: 1, width: '40%' }}>
-                                    <FormHelperText>API KEY secondaria</FormHelperText>
-                                    <FilledInput
-                                      value={mainData.apiKeyPage.keys[1]||""}
-                                      fullWidth={true}
-                                      type={showPassword2 ? 'text' : 'password'}
-                                      endAdornment={
-                                        <InputAdornment position="end">
-                                          <IconButton onClick={handleClickShowPassword2}>
-                                            {showPassword2 ? <VisibilityOff /> : <Visibility />}
-                                          </IconButton>
-                                        </InputAdornment>
-                                      }
-                                    />
-                                  </FormControl>
-                                  <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'end',width: '20%',gap:"15px",padding:"14px" }}>
-                                    <Button disabled={disableInsertApiKey} onClick={()=> copyKey(mainData.apiKeyPage.keys[1]||"")}  variant="outlined"><ContentCopyIcon fontSize="small"></ContentCopyIcon></Button>
-                                    <Button disabled={disableInsertApiKey} onClick={()=> generateModifyKey({apiKey:mainData.apiKeyPage.keys[1], attiva: false,refresh: true})} variant="outlined">Rigenera</Button>
-                                  </div>
-                                </div>}
+              <div className=" bg-white col-11 p-3 d-flex justify-content-start">
+                <FormControl sx={{ m: 1, width: '40%' }}>
+                  <FormHelperText>API KEY secondaria</FormHelperText>
+                  <FilledInput
+                    value={mainData.apiKeyPage.keys[1]||""}
+                    fullWidth={true}
+                    type={showPassword2 ? 'text' : 'password'}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton onClick={handleClickShowPassword2}>
+                          {showPassword2 ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+                <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'end',width: '20%',gap:"15px",padding:"14px" }}>
+                  <Button disabled={disableInsertApiKey} onClick={()=> copyKey(mainData.apiKeyPage.keys[1]||"")}  variant="outlined"><ContentCopyIcon fontSize="small"></ContentCopyIcon></Button>
+                  <Button disabled={disableInsertApiKey} onClick={()=> generateModifyKey({apiKey:mainData.apiKeyPage.keys[1], attiva: false,refresh: true})} variant="outlined">Rigenera</Button>
+                </div>
+              </div>}
           </div>
         </div>
       </div>
@@ -194,11 +191,10 @@ const ApiKeyEnte : React.FC = () => {
             </div>
           </div>
           <div className="col-3 p-0">
-            {
-              (!showInsertIp && ipsToCompare?.length === 0 ) &&
-                            <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%'}}>
-                              <Button sx={{width:"70%"}} onClick={()=> setShowInsertIp((prev)=> !prev)} variant="outlined"><AddIcon fontSize="small" className="me-2"></AddIcon>Aggiungi IP</Button>
-                            </div>
+            {(!showInsertIp && ipsToCompare?.length === 0 ) &&
+               <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%'}}>
+                 <Button sx={{width:"70%"}} onClick={()=> setShowInsertIp((prev)=> !prev)} variant="outlined"><AddIcon fontSize="small" className="me-2"></AddIcon>Aggiungi IP</Button>
+               </div>
             }
           </div>
         </div>

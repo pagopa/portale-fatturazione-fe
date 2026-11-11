@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import HeaderProductAzure from "./headerProduct/headerProductAzure";
 import HeaderLogAzure from "./mainHeader/headerLogInOutAzure";
@@ -9,7 +9,7 @@ import Loader from "../components/reusableComponents/loader";
 const LayoutAzure = ({sideNav}) => {
   const loadingProfilo = useGlobalStore(state => state.loadingProfilo);
   return (
-    <>
+    <Box sx={{ display: 'flex', flexDirection: 'column', flex: '1 0 auto' }}>
       <HeaderLogAzure/>
       <HeaderProductAzure/>
       <ScrollToTop></ScrollToTop>
@@ -28,7 +28,7 @@ const LayoutAzure = ({sideNav}) => {
           </Grid>
         </Grid>
       }
-    </>
+    </Box>
   );
 };
 

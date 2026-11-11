@@ -1,7 +1,7 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { Grid, Typography, Button, ButtonProps, Tooltip } from "@mui/material";
+import { Grid, Typography, Button, ButtonProps, Tooltip, Toolbar } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
@@ -18,13 +18,15 @@ import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import PersonIcon from '@mui/icons-material/Person';
 import MarkChatUnreadIcon from '@mui/icons-material/MarkChatUnread';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import SendIcon from '@mui/icons-material/Send';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 
 const MainBox = styled(Box)({
   marginLeft: "1.25rem",  
   marginRight: "1.25rem",
   padding: "1rem",
-  backgroundColor: "#f3f4f6",
+  backgroundColor: "#f2f2f2",
   borderRadius: "8px",
   minHeight: "80vh"
 });
@@ -34,16 +36,16 @@ export  const MainBoxStyled = ({
   title,
   actionButton
 }:{
-    children?: React.ReactNode,
-    title:string,
-    actionButton?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string,
-        icon?:{name:string, sx:any},
-        withText?:boolean,
-        tooltipMessage?:string
-    }[]
+  children?: React.ReactNode,
+  title?:string,
+  actionButton?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string,
+    icon?:{name:string, sx:any},
+    withText?:boolean,
+    tooltipMessage?:string
+  }[]
 }) =>  {
   return <MainBox>
     <Grid
@@ -52,15 +54,14 @@ export  const MainBoxStyled = ({
       sx={{ alignItems: "center",mt:1 }}
     >
       {/* Typography — 9 columns */}
-      <Grid item xs={12} md={9}>
+      {title && <Grid item xs={12} md={9}>
         <Typography
           variant="h4"
           sx={{ textAlign: { xs: "center", md: "left" } }}
         >
           {title}
         </Typography>
-      </Grid>
-
+      </Grid>}
       {/* Buttons — 3 columns */}
       <Grid 
         item 
@@ -129,29 +130,29 @@ export const FilterActionButtons = ({
   actionButton,
   annullaButtonOptional
 }:{
-    onButtonFiltra:()=> void,
-    onButtonAnnulla:() => void,
-    statusAnnulla:string,
-    disabled?:boolean
-    annullaButtonOptional?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string},
-        disabled?:boolean,
-        tooltipMessage?:string,
-        withText?:boolean
-    },
-    actionButton?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string},
-        disabled?:boolean,
-        tooltipMessage?:string,
-        withText?:boolean,
-        colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
-    }[]
+  onButtonFiltra:()=> void,
+  onButtonAnnulla:() => void,
+  statusAnnulla:string,
+  disabled?:boolean
+  annullaButtonOptional?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string},
+    disabled?:boolean,
+    tooltipMessage?:string,
+    withText?:boolean
+  },
+  actionButton?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string},
+    disabled?:boolean,
+    tooltipMessage?:string,
+    withText?:boolean,
+    colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
+  }[]
 }) =>  {
 
   
@@ -178,11 +179,11 @@ export const FilterActionButtons = ({
             }}
           >
             <CustomButton onClick={onButtonFiltra} variant="contained" disabled={disabled}>
-          Filtra
+              Filtra
             </CustomButton>
             {statusAnnulla !== "hidden" && !annullaButtonOptional && (
               <CustomButton onClick={onButtonAnnulla} variant="text" disabled={disabled}>
-            Annulla filtri
+                Annulla filtri
               </CustomButton>
             )}
             {statusAnnulla !== "hidden" && annullaButtonOptional && (
@@ -233,21 +234,22 @@ export const FilterActionButtons = ({
 };
 
 
-export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
-    actionButtonRight?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string},
-        disabled?:boolean
-    }[],
-    actionButtonLeft?:{
-        onButtonClick:()=> void,
-        variant:"text" | "outlined" | "contained",
-        label?:string|null,
-        icon?:{name:string}
-        disabled?:boolean
-    }[]
+export const ActionTopGrid = ({actionButtonRight,actionButtonLeft,counter=0}:{
+  counter?:number,
+  actionButtonRight?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string},
+    disabled?:boolean
+  }[],
+  actionButtonLeft?:{
+    onButtonClick:()=> void,
+    variant:"text" | "outlined" | "contained",
+    label?:string|null,
+    icon?:{name:string}
+    disabled?:boolean
+  }[]
 }) => {
 
   return (
@@ -264,6 +266,17 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                     
           }}
         >
+          {actionButtonLeft?.map((action, index) => (
+            <CustomButton
+              key={index}
+              onClick={action.onButtonClick}
+              startIcon={action.icon && RenderIcon(action.icon.name)}
+              disabled={action.disabled}
+              variant={action.variant}
+            >
+              {action.label}
+            </CustomButton>
+          ))}
           {/* Left Buttons */}
           <Box
             sx={{
@@ -272,18 +285,20 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
               gap: 1,
               flexWrap: "wrap",
             }}
-          >
-            {actionButtonLeft?.map((action, index) => (
-              <CustomButton
-                key={index}
-                onClick={action.onButtonClick}
-                startIcon={action.icon && RenderIcon(action.icon.name)}
-                disabled={action.disabled}
-                variant={"text"}
-              >
-                {action.label}
-              </CustomButton>
-            ))}
+          >  {<Box>
+              { counter > 0 ? 
+                <Toolbar sx={{bgcolor:"rgba(23, 50, 77, 0.08)"}}>
+                  <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1"component="div">
+                    {`${counter}  Selezionate`} 
+                  </Typography>
+                </Toolbar>
+                :
+                <Typography sx={{ flex: '1 1 100%', visibility: 'hidden', height:'64px' }} variant="subtitle1" component="div">
+                  Placeholder
+                </Typography>
+              }
+            </Box>}
+           
           </Box>
 
           {/* Right Buttons */}
@@ -309,6 +324,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                 {action.label}
               </CustomButton>
             ))}
+           
           </Box>
         </Box>
       </Grid>
@@ -317,59 +333,68 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
 };
 
 interface CustomButtonProps extends ButtonProps {
-    withText?: boolean;
-    colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
+  withText?: boolean;
+  colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
 }
 
 export const CustomButton = styled(Button, {
   shouldForwardProp: (prop) => prop !== "withText" && prop !== "colorAction",
 })<CustomButtonProps>(({ theme, withText = true, colorAction }) => ({
-  minWidth: withText ? "130px" : undefined,
-  padding: withText ? theme.spacing(1, 3) : undefined,
+  minWidth: withText ? "130px" : "auto",
+  padding: withText ? theme.spacing(1, 3) : theme.spacing(1),
   fontWeight: 500,
   textTransform: "none",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  ...(!withText && {
+    "& .MuiButton-startIcon": {
+      marginLeft: 0,
+      marginRight: 0,
+    },
+  }),
 }));
 
 
 export const RenderIcon = (iconName,sx = true) => {
   switch (iconName) {
-  case "download":
-    return <DownloadIcon sx={{
-      marginRight:sx ? '10px':null    
-    }}></DownloadIcon>;
-  case "event_note":
-    return <EventNoteIcon/>;
-  case "circle_arrow_icon":
-    return  <ArrowCircleDownIcon></ArrowCircleDownIcon>;
-  case "iso_share":
-    return <IosShareIcon></IosShareIcon>;
-  case "preview":
-    return <PreviewIcon></PreviewIcon>;
-  case "restart":
-    return <RestartAltIcon></RestartAltIcon>;
-  case "list":
-    return <ListIcon></ListIcon>;
-  case "invoice":
-    return <DescriptionIcon></DescriptionIcon>;
-  case "contract":
-    return <GavelIcon></GavelIcon>;
-  case "date":
-    return <DateRangeIcon fontSize={sx ? "small":"medium"}></DateRangeIcon>;
-  case "status":
-    return <AutorenewIcon fontSize={sx ? "small":"medium"}></AutorenewIcon>;
-  case "typology":
-    return <InboxIcon fontSize={sx ? "small":"medium"} ></InboxIcon>;  
-  case "fase":
-    return <HourglassBottomIcon fontSize={sx ? "small":"medium"} ></HourglassBottomIcon>;
-  case "person":
-    return <PersonIcon fontSize={sx ? "small":"medium"}></PersonIcon>;
-  case "type-not":
-    return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}></MarkChatUnreadIcon>;
-  case "add-action":
-    return <NoteAddIcon fontSize={sx ? "small":"medium"}/>;
-
+    case "download":
+      return <DownloadIcon sx={{
+        marginRight:sx ? '10px':null    
+      }}/>;
+    case "event_note":
+      return <EventNoteIcon/>;
+    case "circle_arrow_icon":
+      return  <ArrowCircleDownIcon/>;
+    case "iso_share":
+      return <IosShareIcon/>;
+    case "preview":
+      return <PreviewIcon/>;
+    case "restart":
+      return <RestartAltIcon/>;
+    case "list":
+      return <ListIcon/>;
+    case "invoice":
+      return <DescriptionIcon/>;
+    case "contract":
+      return <GavelIcon/>;
+    case "date":
+      return <DateRangeIcon fontSize={sx ? "small":"medium"}/>;
+    case "status":
+      return <AutorenewIcon fontSize={sx ? "small":"medium"}/>;
+    case "typology":
+      return <InboxIcon fontSize={sx ? "small":"medium"}/>;
+    case "fase":
+      return <HourglassBottomIcon fontSize={sx ? "small":"medium"}/>;
+    case "person":
+      return <PersonIcon fontSize={sx ? "small":"medium"}/>;
+    case "type-not":
+      return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}/>;
+    case "add-action":
+      return <NoteAddIcon fontSize={sx ? "small":"medium"}/>;
+    case "send":
+      return <SendIcon fontSize={sx ? "small":"medium"}/>;
+    case "upload-file":
+      return <UploadFileIcon fontSize={sx ? "small":"medium"}/>;
   }
 };

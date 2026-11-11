@@ -671,26 +671,26 @@ const RelPage : React.FC = () =>{
       <ActionTopGrid
         actionButtonRight={profilo.auth === 'PAGOPA'?[{
           onButtonClick:downloadListaPdfPagopa,
-          variant: "outlined",
+          variant: "text",
           label: "Download documenti firmati",
           icon:{name:"download"},
           disabled:(data.length === 0 || getListaRelRunning  || !disableDownloadListaPdf)
         },{
           onButtonClick:downloadListaRelExel,
-          variant: "outlined",
+          variant: "text",
           label: "Download risultati",
           icon:{name:"download"},
           disabled:(data.length === 0||getListaRelRunning)
         }]: [{
           onButtonClick:downloadListaRelExel,
-          variant: "outlined",
+          variant: "text",
           label: "Download risultati",
           icon:{name:"download"},
           disabled:(data.length === 0||getListaRelRunning)
         }]}
         actionButtonLeft={profilo.auth === 'PAGOPA'?[{
           onButtonClick:downloadQuadratura,
-          variant: "outlined",
+          variant: "text",
           label: "Quadratura notifiche Rel",
           icon:{name:"download"},
           disabled:(data.length === 0||getListaRelRunning)
