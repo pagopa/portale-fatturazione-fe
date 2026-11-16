@@ -160,6 +160,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
             setTextValue(filters.textValue);
             getListaDocGrid(filters.body);
             setValueQuarters(filters.valueQuarters);
+            setValueCodFiscale(filters.valueCodFiscale);
             setPage(filters.page);
             setRowsPerPage(filters.rows);
             getQuarters(filters.body.year);
@@ -334,7 +335,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
           iconMaterial={RenderIcon("date",true)}/>
         <MainFilter 
           filterName={"multi_checkbox"}
-          inputLabel={"Codice Fisacle"}
+          inputLabel={"Codice Fiscale"}
           clearOnChangeFilter={clearOnChangeFilter}
           setBody={setBodyGetLista}
           body={bodyGetLista}
