@@ -290,12 +290,18 @@ const GridCell = <T, K> ({
           </Box>
         </TableCell>
       );
-    case "checkbox":
+    case "checkbox":{
+      let disabled = false;
+      let checked = false; 
+      if(manageStateCheckbox){
+        disabled = manageStateCheckbox(element,usedInside,selectedRows)?.disabled;
+        checked = manageStateCheckbox && manageStateCheckbox(element,usedInside,selectedRows)?.verifyIfSelected;
+      }
       return (
         <TableCell key={`${i}-checkbox`} align="center">
           <Checkbox 
-            disabled={manageStateCheckbox && manageStateCheckbox(element,usedInside,selectedRows)?.disabled}
-            checked={manageStateCheckbox && manageStateCheckbox(element,usedInside,selectedRows)?.verifyIfSelected}
+            disabled={disabled}
+            checked={checked}
             onChange={(event) =>{
               console.log({event:event.target.checked});
               if(manageCheckbox){
@@ -315,6 +321,7 @@ const GridCell = <T, K> ({
             } }/>
         </TableCell>
       );
+    }
     case "chip": {
       const formattedLabel = value
         ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()

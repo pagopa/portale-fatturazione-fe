@@ -20,7 +20,7 @@ const HeaderLogAzure = () => {
 
   const user: JwtUser = {
     id: '1',
-    name: mainState.profilo.nomeEnte||'',
+    name: mainState.profilo?.nomeEnte||'',
     surname: "",
     email: "",
   };

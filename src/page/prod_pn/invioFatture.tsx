@@ -30,7 +30,8 @@ interface ListaFatture {
   annoRiferimento: number,
   meseRiferimento: number,
   importo: number,
-  fatture:any[]
+  fatture:any[],
+  id:string
 }
 
 export interface SelectedJsonSap {
@@ -268,46 +269,51 @@ const InvioFatture : React.FC = () => {
   
 
   // fatture complete della riga (ignorando i filtri del collapse): se la riga è stata filtrata uso la copia originale
-  const getFattureCompleteRiga = (row: Record<string, any>): any[] => {
-    const original = originalFattureRef.current[getRowKey(row)];
-    if (original) return original;
-    return listaFatture.find((el) =>
-      el.annoRiferimento === row.annoRiferimento &&
-      el.meseRiferimento === row.meseRiferimento &&
-      el.tipologiaFattura === row.tipologiaFattura
-    )?.fatture || [];
-  };
 
   const manageCheckbox = (currentRow: Record<string, any>):Record<string, any>=> {
 
     const checkLengthOfCollapse = getFattureCompleteRiga(currentRow).length;
 
+    
+
     const verifyIfSelected = (!!elementsSelected.find((el) =>{
+     
       return el.annoRiferimento === currentRow.annoRiferimento &&
        el.meseRiferimento === currentRow.meseRiferimento && 
        el.tipologiaFattura === currentRow.tipologiaFattura &&
        el.statoInvio === currentRow.statoInvio;
     } )) && checkLengthOfCollapse !== 0 && checkLengthOfCollapse === elementsSelected.length;
 
+    console.log({verifyIfSelected,checkLengthOfCollapse,len:elementsSelected.length});
     if(verifyIfSelected){
       setElementSelected([]);
-      return {
-        checkboxStatus:false,
-        key:"idFattura"
-      };
     }else{
       //prendo tutti i sotto elementi
-   
       setElementSelected(getFattureCompleteRiga(currentRow));
-      return {
-        checkboxStatus:true,
-        key:"idFattura"
-      };
     }
   };
 
+  const getFattureCompleteRiga = (row: Record<string, any>): any[] => {
+    const original = originalFattureRef.current[getRowKey(row)];
+    console.log({original});
+     
+    if (original) return original;
+    console.log({listaFatture,row});
+    const [tipologiaFatturaRow, annoRiferimentoRow, meseRiferimentoRow, statoInvioRow] = row.id.split('|');
+    return listaFatture.find((el) => {
+      const [tipologiaFattura, annoRiferimento, meseRiferimento, statoInvio] = el.id.split('|');
+      return annoRiferimento === annoRiferimentoRow &&
+      meseRiferimento === meseRiferimentoRow &&
+      tipologiaFattura === tipologiaFatturaRow;
+    })?.fatture || [];
+  };
+
+
   const manageCheckboxCollapse = (currentRow: Record<string, any>): Record<string, any> => {
+  
+   
     const verifyIfSelected = (!!elementsSelected.find((el) =>{
+     
       return el.annoRiferimento === currentRow.annoRiferimento &&
        el.meseRiferimento === currentRow.meseRiferimento && 
        el.tipologiaFattura === currentRow.tipologiaFattura &&
@@ -337,6 +343,64 @@ const InvioFatture : React.FC = () => {
       };
     }
   };
+
+
+  const manageStateCheckbox = (row, isMainCheck="",elementsSel) =>{
+    
+    let verifyIfSelected = false;
+    const disabled = false;
+    console.log({SSS:row,isMainCheck,elementsSel});
+    
+   
+    if(isMainCheck === "main-row" && elementsSel){
+      
+      // confronto con tutte le fatture della riga, non con quelle filtrate nel collapse
+      const elementsInsideCollapse = getFattureCompleteRiga(row);
+      
+      verifyIfSelected = (!!elementsSel.find((el) =>{
+        console.log({
+          col:elementsInsideCollapse?.length,
+          col2:elementsSel.length,
+          1:el.annoRiferimento , 11:row.annoRiferimento ,
+          2:el.meseRiferimento , 22:row.meseRiferimento , 
+          3:el.tipologiaFattura , 33:row.tipologiaFattura ,
+          4:el.statoInvio , 44:row.statoInvio
+        });
+      
+        return el.annoRiferimento === row.annoRiferimento &&
+       el.meseRiferimento === row.meseRiferimento && 
+       el.tipologiaFattura === row.tipologiaFattura &&
+       el.statoInvio === row.statoInvio;
+      } )) && (elementsInsideCollapse?.length||0) === elementsSel.length;
+
+      
+
+    }else if(isMainCheck === "collapse-row" && elementsSel.length > 0){
+      
+   
+      verifyIfSelected = (!!elementsSel.find((el) =>{
+        return el.annoRiferimento === row.annoRiferimento &&
+       el.meseRiferimento === row.meseRiferimento && 
+       el.tipologiaFattura === row.tipologiaFattura &&
+        el.idFattura === row.idFattura;
+      } ));
+    
+    }
+
+    /*
+    disabled = elementsSelected.length !== 0 && (!!elementsSel.find((el) =>{
+      const [annoRiferimentoDettaglio, meseRiferimentoDettaglio, giorno] = el.dataFattura.split('-');
+      return annoRiferimentoDettaglio !== annoRiferimento ||
+       meseRiferimentoDettaglio !== row.meseRiferimento || 
+       el.tipologiaFattura !== row.tipologiaFattura; 
+    } ));*/
+
+    return {
+      verifyIfSelected,
+      disabled:row.statoInvio === "IN_ELABORAZIONE" || disabled
+    };
+  };
+
   
   // va inserito dentro la fundione la logica del checkjed
   /*
@@ -367,6 +431,8 @@ const InvioFatture : React.FC = () => {
       const addStatoInvioInsideCollapse = resCollapseDetails.map((collapseEl) => {
         collapseEl.statoInvio = el.statoInvio;
         collapseEl.fileJson = collapseEl.statoInvio !== "DA_INVIARE" ? el.nomeFile : "--";
+        collapseEl.annoRiferimento = el.annoRiferimento;
+        collapseEl.meseRiferimento =  el.meseRiferimento;
         return collapseEl;
       });
 
@@ -441,54 +507,6 @@ const InvioFatture : React.FC = () => {
  
 
 
-  const manageStateCheckbox = (row, isMainCheck="",elementsSel) =>{
-    
-    let verifyIfSelected = false;
-    let disabled = false;
-   
-    if(isMainCheck === "main-row"){
-      // confronto con tutte le fatture della riga, non con quelle filtrate nel collapse
-      const elementsInsideCollapse = getFattureCompleteRiga(row);
-
-      verifyIfSelected = (!!elementsSel.find((el) =>{
-        return el.annoRiferimento === row.annoRiferimento &&
-       el.meseRiferimento === row.meseRiferimento && 
-       el.tipologiaFattura === row.tipologiaFattura &&
-       el.statoInvio === row.statoInvio;
-      } )) && (elementsInsideCollapse?.length||0) === elementsSel.length;
-
-      /*
-      console.log({1:(elementsSel.find((el) =>{
-        return el.annoRiferimento === row.annoRiferimento &&
-       el.meseRiferimento === row.meseRiferimento && 
-       el.tipologiaFattura === row.tipologiaFattura &&
-       el.statoInvio === row.statoInvio;
-      } )),2:(elementsInsideCollapse?.length||0) , 3:elementsSel,4:row});*/
-      //MAnage disable 
-
-    }else{
-      
-      verifyIfSelected = (!!elementsSel.find((el) =>{
-        return el.annoRiferimento === row.annoRiferimento &&
-       el.meseRiferimento === row.meseRiferimento && 
-       el.tipologiaFattura === row.tipologiaFattura &&
-        el.idFattura === row.idFattura;
-      } ));
-    
-    }
-
-
-    disabled = elementsSelected.length !== 0 && (!!elementsSel.find((el) =>{
-      return el.annoRiferimento !== row.annoRiferimento ||
-       el.meseRiferimento !== row.meseRiferimento || 
-       el.tipologiaFattura !== row.tipologiaFattura; 
-    } ));
-
-    return {
-      verifyIfSelected,
-      disabled:row.statoInvio === "IN_ELABORAZIONE" || disabled
-    };
-  };
 
   const showPopUpAction = (obj, action) => { 
     setInforeInvio(obj.storicoInvii);
