@@ -59,6 +59,12 @@ const AnagraficaAppio:React.FC = () =>{
   useEffect(()=>{
     if(isInitialRender.current && Object.keys(filters).length === 0){
       getListaAnagraficaAppioGrid(bodyGetLista,page,rowsPerPage);
+    }else{
+      getListaAnagraficaAppioGrid(filters.body,filters.page,filters.rows);
+      setBodyGetLista(filters.body);
+      setValueAutocomplete(filters.valueAutocomplete);
+      setTextValue(filters.textValue);
+      setValueProfili(filters.valueProfili);
     }
     getTipoEnte();
   },[]);
@@ -131,6 +137,7 @@ const AnagraficaAppio:React.FC = () =>{
       pathPage:PathPf.ANAGRAFICAAPPIO,
       textValue,
       valueAutocomplete,
+      valueProfili,
       page:0,
       rows:10
     });
@@ -168,6 +175,7 @@ const AnagraficaAppio:React.FC = () =>{
       pathPage:PathPf.ANAGRAFICAAPPIO,
       textValue,
       valueAutocomplete,
+      valueProfili,
       page:newPage,
       rows:rowsPerPage
     });
@@ -185,6 +193,7 @@ const AnagraficaAppio:React.FC = () =>{
       pathPage:PathPf.ANAGRAFICAAPPIO,
       textValue,
       valueAutocomplete,
+      valueProfili,
       page:realPage,
       rows:parseInt(event.target.value, 10)
     });
@@ -193,12 +202,9 @@ const AnagraficaAppio:React.FC = () =>{
   const statusAnnulla =
     ( bodyGetLista.institutionIds.length !== 0 ||
       bodyGetLista.tipiEnte.length !== 0
-    )
-      ? 'show'
-      : 'hidden';
+    ) ? 'show' : 'hidden';
 
   return(
-  
     <MainBoxStyled title={"Anagrafica AppIO"}>
       <ResponsiveGridContainer>
         <MainFilter 
@@ -270,7 +276,6 @@ const AnagraficaAppio:React.FC = () =>{
         setOpen={setGetListaLoading}
         sentence={'Loading...'} />
     </MainBoxStyled>
-       
   );
 }; 
 export default AnagraficaAppio;
