@@ -15,7 +15,7 @@ const LayoutLoggedOut = () => {
       <BasicAlerts/>
       {/* footer dentro lo scroll: visibile solo a fine contenuto */}
       <Grid id="outlet-scroll" sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-        <Box sx={{ flex: '1 0 auto', display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ flex: '1 0 auto', minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
           <Outlet />
         </Box>
         {!contentOnly && <FooterComponent/>}
