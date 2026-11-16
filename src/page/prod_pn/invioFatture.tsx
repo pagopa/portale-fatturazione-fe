@@ -15,7 +15,7 @@ import { headerNamesInvioFatture, headerNamesInvioFattureCollapse, keyValueObjMo
 import MainModalComponent from "../../components/reusableComponents/modals/mainModalComponent";
 import { ElementToProcessComponent } from "../../components/reusableComponents/tableViewData";
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
-import { Box, DialogContent, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
+import { Box, Chip, DialogContent, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
 import { NotaTextField } from "./gestioneFatture";
 import FiltersCollapseInvioFatture, { FiltriCollapseInvioFatture } from "../../components/invioFatture/filtersCollapseInvioFatture";
 import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
@@ -161,7 +161,7 @@ const InvioFatture : React.FC = () => {
   const getMesi = async (anno) => {
     try{
       const resp = await getMesiInviofatture(token,profilo.nonce,{anno:anno});
-      const result = toMesi(resp.data);
+      const result = toMesi(resp.data).reverse();
       console.log({result});
       setArrayMonths(result);
     }catch{
@@ -176,18 +176,32 @@ const InvioFatture : React.FC = () => {
     try{
       const res = await getListaInvioFatture(token,profilo.nonce,body);
       setListaFatture(res.data);
+      setCount(res.data?.length || 0);
+      setPage(0);
       setShowLoader(false);
       isInitialRender.current = false;
     }catch(err:any){
       setListaFatture([]);
+      setCount(0);
+      setPage(0);
       setShowLoader(false);
       isInitialRender.current = false;
       manageError(err, dispatchMainState);
     }
   };
 
-  const onChangePageOrRowGrid = (e) => {
-    setInfoPage(e);
+  const handleChangePage = (
+    _event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   const downloadRisultati = async () => {
@@ -206,7 +220,10 @@ const InvioFatture : React.FC = () => {
   };
 
   const clearOnChangeFilter = () => {
-    setListaFatture([]);   
+    setListaFatture([]);
+    setCount(0);
+    setPage(0);
+    setElementSelected([]);
   };
 
   const onButtonFiltra = () => {
@@ -215,14 +232,20 @@ const InvioFatture : React.FC = () => {
 
   const onButtonAnnulla = () => {
     console.log('Annulla button clicked');
-    setBodyFatturazione({
+    const newBody = {
       anno:arrayYears[0],
       mesi:[],
       tipologieFattura:[],
       statoInvio:"TUTTE"
-    });
+    };
+    setBodyFatturazione(newBody);
     setValueSelectMonths([]);
     setValueMultiselectTipologie([]);
+    setListaFatture([]);
+    setCount(0);
+    setPage(0);
+    setElementSelected([]);
+    getLista(newBody);
   };
 
   const [valueSelectMonths, setValueSelectMonths] = useState<{descrizione:string,mese:number}[]>([]);
@@ -242,7 +265,7 @@ const InvioFatture : React.FC = () => {
 
 
   const [elementsSelected,setElementSelected] = useState<Record<string, any>[]>([]);
-  const [arrayCollapseSelected,setArrayCollapseSelected] = useState<SelectedJsonSap[]>([]);
+  
 
   // fatture complete della riga (ignorando i filtri del collapse): se la riga è stata filtrata uso la copia originale
   const getFattureCompleteRiga = (row: Record<string, any>): any[] => {
@@ -335,15 +358,15 @@ const InvioFatture : React.FC = () => {
         //"ragioneSociale": "string",
         //"numeroFattura": "string",
         //"dataFattura": "2026-11-10T16:07:02.127Z",
-        "page": 0,
+        "page": 1,
         "pageSize": 10
       });
-      const resCollapseDetails = res.data;
+      const resCollapseDetails = res.data.fatture;
       setCollapseDataLoading(false);
 
       const addStatoInvioInsideCollapse = resCollapseDetails.map((collapseEl) => {
         collapseEl.statoInvio = el.statoInvio;
-        collapseEl.fileJson = collapseEl.statoInvio !== 0 ? "FatturePagoPa_01012026_1230.json" : "--";
+        collapseEl.fileJson = collapseEl.statoInvio !== "DA_INVIARE" ? el.nomeFile : "--";
         return collapseEl;
       });
 
@@ -463,20 +486,12 @@ const InvioFatture : React.FC = () => {
 
     return {
       verifyIfSelected,
-      disabled:row.statoInvio === 2 || disabled
+      disabled:row.statoInvio === "IN_ELABORAZIONE" || disabled
     };
   };
 
   const showPopUpAction = (obj, action) => { 
-    console.log({obj});
-    let array = [1,2,3];
-    if(obj.statoInvio !== 4){
-      array = [ 1 ];
-    }
-    const notes = array.map((el,i) => ({
-      dataInvio:`0${i+1}/12/2026 - 0${i+1}:20:00`,
-      testo:"Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since 1966,"}));
-    setInforeInvio(notes);
+    setInforeInvio(obj.storicoInvii);
     setShowPopUpdateInvio(true);
   };
 
@@ -486,8 +501,7 @@ const InvioFatture : React.FC = () => {
    bodyFatturazione.statoInvio !== "TUTTE") ? "show" :"hidden";
  
   return(
-    <MainBoxStyled >
-      <NavigatorHeader pageFrom={"Documenti Contabili Emessi/"} pageIn={"Invio a SAP"} backPath={PathPf.FATTURAZIONE} icon={<DescriptionIcon sx={{padding:"3px"}}  fontSize='small'/>} margin={false}/>
+    <MainBoxStyled title={"Invio a SAP"}>
       <ResponsiveGridContainer >
         <MainFilter 
           filterName={"select_value_string"}
@@ -582,9 +596,9 @@ const InvioFatture : React.FC = () => {
       <div className="mt-1 mb-5" style={{ width: '100%'}}> 
         <GridCustom
           nameParameterApi='invioFatture'
-          elements={listaFatture}
-          changePage={onChangePageOrRowGrid}
-          changeRow={onChangePageOrRowGrid} 
+          elements={listaFatture.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+          changePage={handleChangePage}
+          changeRow={handleChangeRowsPerPage}
           total={count}
           page={page}
           rows={rowsPerPage}
@@ -707,8 +721,10 @@ const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionatePr
 };
 
 interface ListItemData {
-  testo: string;
-  dataInvio: string;
+  "nInvio": number,
+  "data": string,
+  "testo": string,
+  "azione": string
 }
 
 
@@ -717,21 +733,31 @@ const DilogContentList : React.FC<{array:ListItemData[]}> = ({ array = [] }) => 
     <DialogContent dividers>
       {array.length === 0 ? (
         <Typography color="text.secondary">
-          Nessuna DATA disponibile.
+          Nessuna nota disponibile.
         </Typography>
       ) : (
-        <List
-          disablePadding
-          sx={{
+        <List  
+          disablePadding 
+          sx={{ 
             maxHeight: 400, 
             overflowY: 'auto' 
           }}>
-          {array.map((el, index) => {
+          {array.map((nota, index) => {
+            let colorChip:string|undefined = undefined;
+            //let azione = "";
+            if(nota?.azione === "RE_INVIATA"){
+              colorChip = '##B5E2B4';
+              //azione = 'Re-inviata';
+            }else if(nota?.azione === "INVIATA"){
+              colorChip = '#B5E2B4';
+              //azione = 'inviata';
+            }
+          
             return (
-              <Box key={`${el}-{index}`} sx={{ backgroundColor: "grey.100",marginBottom: 1, borderRadius: 1, padding: 1 }}>
+              <Box key={nota.data + nota.nInvio} sx={{ backgroundColor: "grey.100",marginBottom: 1, borderRadius: 1, padding: 1 }}>
                 <ListItem alignItems="flex-start">
                   <ListItemText
-                    primary={el.testo}
+                    primary={nota.testo}
                     secondary={
                       <Stack direction="row" spacing={1} alignItems="center" component="span">
                         <Typography
@@ -739,8 +765,27 @@ const DilogContentList : React.FC<{array:ListItemData[]}> = ({ array = [] }) => 
                           variant="body2"
                           color="text.secondary"
                         >
-                          {el.dataInvio}
+                          {new Date(nota.data).toLocaleString("it-IT")}
                         </Typography>
+                        {nota.azione &&
+                      <>
+                        <Typography 
+                          component="span"
+                          variant="body2"
+                          color="text.secondary">
+                          - Azione :
+                        </Typography>
+                        <Chip variant="outlined" size="small" label={nota.azione} 
+                          sx={{
+                            backgroundColor: colorChip,
+                            height: 18,
+                            fontSize: '0.65rem',
+                            '& .MuiChip-label': {
+                              padding: '0 6px',
+                            }
+                          }}   />
+                      </>
+                        }
                       </Stack>
                     }
                   />

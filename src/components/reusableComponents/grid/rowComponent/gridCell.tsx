@@ -27,7 +27,8 @@ type CopyCellProps<T,> = {
   align?: "left" | "center" | "right" | "inherit" | "justify";
   icon?:string,
   sentence?:string,
-  element:T
+  element:T,
+  disabeled:(t:T) => boolean
 };
 
 type GridCellProps<T,K> = {
@@ -376,6 +377,7 @@ const GridCell = <T, K> ({
           icon={headerNames[i]?.icon}
           sentence={headerNames[i]?.sentenceSnackbar}
           element={element}
+          disabled={headerNames[i]?.disabled}
         />
       );
     case "collaps":
@@ -425,7 +427,7 @@ export default GridCell;
 
 
 
-const CopyToClipboardCell = ({ value, align = "center", icon, sentence="Event ID Copiato!",element }: CopyCellProps) => {
+const CopyToClipboardCell = ({ value, align = "center", icon, sentence="Event ID Copiato!",element,disabled }: CopyCellProps) => {
   const [open, setOpen] = useState(false);
 
   const handleCopy = () => {
@@ -442,15 +444,11 @@ const CopyToClipboardCell = ({ value, align = "center", icon, sentence="Event ID
     }
   };
 
-  let disabled = false;
-  if(element.statoInvio === 0 ||element.statoInvio === 2 && icon === "file_invio_sap"){
-    disabled = true;
-  }
  
   return (
     <TableCell align={align}>
       <Tooltip title={value}>
-        <IconButton disabled={disabled} onClick={handleCopy}>
+        <IconButton disabled={disabled(element)} onClick={handleCopy}>
           {getIcon()}
         </IconButton>
       </Tooltip>

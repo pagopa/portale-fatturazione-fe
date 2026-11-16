@@ -68,7 +68,8 @@ export interface HeaderGridCustom {
   variant?: "caption-semibold" | "caption" | "body1" | "body2" | "subtitle1" | "subtitle2" | "h6" | "h5" | "h4" | "h3" | "h2" | "h1"; 
   icon?:string,
   sentenceSnackbar?:string,
-  makeActionFun?:(obj:any)=> boolean
+  makeActionFun?:(obj:any)=> boolean;
+  disabled?:boolean
 }
 
 

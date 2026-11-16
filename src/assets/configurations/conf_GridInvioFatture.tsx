@@ -21,16 +21,20 @@ const getChipElaborazione = (row) =>{
 
 const getChipElaborazioneCollapse = (row) =>{
   let tooltipObj:any = {label:'',title:''};
-  if(row.statoInvio === 0){
+  if(row.statoInvio === "DA_INVIARE"){
     tooltipObj = {label:'Da inviare',title:'Da inviare',color:'#86E1FD'};
-  }else if(row.statoInvio === 2){
+  }else if(row.statoInvio === "IN_ELABORAZIONE"){
     tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:"#FFE5A3"};
-  }else if(row.statoInvio === 3){
+  }else if(row.statoInvio === "INVIATE"){
     tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'#B5E2B4'};
-  }else if(row.statoInvio === 4){
+  }else if(row.statoInvio === "RE_INVIATE"){
     tooltipObj = {label:'Re-Inviata',title:'La fattura è stata re-inviata',color:'#B5E2B4'};
   }
   return tooltipObj;
+};
+
+const isNomeFileDisabled = (row) => {
+  return (row.nomeFile === null || row.nomeFile === "") ? true : false;
 };
 
 //TODO valutare di  cambiare a fine sviluppo
@@ -41,7 +45,7 @@ const showNoteGestioneFatture = (obj,fun) => {
         <span>
           <IconButton
             size="medium"
-            disabled={obj.statoInvio === 0}
+            disabled={obj.storicoInvii.length === 0 || obj.statoInvio === "DA_INVIARE"}
             onClick={() => fun && fun(obj,'note')}
           >
             <FormatListBulletedIcon/>
@@ -74,8 +78,8 @@ export const headerNamesInvioFattureCollapse: HeaderGridCustom[] = [
   { label: "FK ID Doc.", align: "center", width: "150px", keyValue: "", typeColumn: 'string' },
   { label: "D. Fat.", align: "center", width: "180px", keyValue: "dataFattura", typeColumn: 'data' },
   { label: "D. Ultima Gen.", align: "center", width: "250px", keyValue: "dataGenerazione", typeColumn: 'data-ora' },
-  { label: "File JSON", align: "center", width: "30px", keyValue: "fileJson", typeColumn:"snackbar",icon:"file_invio_sap",sentenceSnackbar:"Nome del file copiato!" },
-  { label: 'Date Invio', align: 'center', width: '150px', keyValue: 'note', typeColumn: "action",funToManipulateValue:showNoteGestioneFatture },
+  { label: "File JSON", align: "center", width: "30px", keyValue: "nomeFile", typeColumn:"snackbar",icon:"file_invio_sap",sentenceSnackbar:"Nome del file copiato!", disabled:isNomeFileDisabled },
+  { label: 'Date Invio', align: 'center', width: '150px', keyValue: 'storicoInvii', typeColumn: "action",funToManipulateValue:showNoteGestioneFatture },
 ];
 
 export const keyValueObjModalInfo = [
