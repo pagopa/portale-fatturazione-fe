@@ -1,7 +1,7 @@
 import { MainState } from "../types/typesGeneral";
 export interface ActionReducerType{
-    type:string,
-    value:Partial<MainState>
+  type:string,
+  value:Partial<MainState>
 }
 
 export const initialState:MainState =  {
@@ -40,14 +40,14 @@ export function reducerMainState(
   action: { type: string; value?: Partial<MainState> }
 ): MainState {
   switch (action.type) {
-  case 'MODIFY_MAIN_STATE':
-    return {
-      ...mainState,
-      ...action.value,
-    };
+    case 'MODIFY_MAIN_STATE':
+      return {
+        ...mainState,
+        ...action.value,
+      };
 
-  default:
-    return mainState;
+    default:
+      return mainState;
   }
 }
 

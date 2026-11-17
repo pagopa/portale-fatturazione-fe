@@ -1,8 +1,6 @@
 import { Box, IconButton, TextField, Tooltip } from "@mui/material";
 import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { NotaTextField } from "../../page/prod_pn/gestioneFatture";
 import { useState } from "react";
 
 const getChipElaborazione = (row) =>{
@@ -13,8 +11,6 @@ const getChipElaborazione = (row) =>{
     tooltipObj = {label:'Elaborazione',title:'La fatture sono in elaborazione',color:"#FFE5A3"};
   }else if(row.statoInvio === "INVIATE"){
     tooltipObj = {label:'Inviate',title:'La fattura sono state inviate',color:'#B5E2B4'};
-  }else if(row.statoInvio === "RE_INVIATE"){
-    tooltipObj = {label:'Re-Inviata',title:'La fattura sono state re-inviate',color:'#B5E2B4'};
   }
   return tooltipObj;
 };
@@ -25,9 +21,9 @@ const getChipElaborazioneCollapse = (row) =>{
     tooltipObj = {label:'Da inviare',title:'Da inviare',color:'#86E1FD'};
   }else if(row.statoInvio === "IN_ELABORAZIONE"){
     tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:"#FFE5A3"};
-  }else if(row.statoInvio === "INVIATE"){
+  }else if(row.statoInvio === "INVIATE" && row.numeroInvii === 1){
     tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'#B5E2B4'};
-  }else if(row.statoInvio === "RE_INVIATE"){
+  }else if(row.statoInvio === "INVIATE" && row.numeroInvii > 1){
     tooltipObj = {label:'Re-Inviata',title:'La fattura è stata re-inviata',color:'#B5E2B4'};
   }
   return tooltipObj;
@@ -62,8 +58,8 @@ export const headerNamesInvioFatture: HeaderGridCustom[] = [
   { label: "Tipologia Fattura", align: "center", width: "200px", keyValue: "tipologiaFattura", typeColumn: 'string', makeAction: true, applyCss: true },
   { label: "Stato Invio",align: "center", width: "100px",keyValue: "statoInvio", typeColumn: "chip-tooltip" ,funToManipulateValue:getChipElaborazione},
   { label: "Numero Fatture", align: "center", width: "150px", keyValue: "numeroFatture", typeColumn: 'number' },
-  { label: "Anno Riferimento", align: "center", width: "150px", keyValue: "annoRiferimento", typeColumn: 'string',headerActionSort:true, },
-  { label: "Mese Riferimento", align: "center", width: "150px", keyValue: "meseRiferimento", typeColumn: 'mese-number',headerActionSort:true },
+  { label: "Anno Riferimento", align: "center", width: "150px", keyValue: "annoRiferimento", typeColumn: 'string',headerActionSort:false, },
+  { label: "Mese Riferimento", align: "center", width: "150px", keyValue: "meseRiferimento", typeColumn: 'mese-number',headerActionSort:false },
   { label: "Importo", align: "center", width: "150px", keyValue: "importoTotale", typeColumn: 'euro' },
   // {label:"", align:"center", width:"80px", keyValue:"arrow", typeColumn:"arrow"}
 ];
@@ -106,8 +102,9 @@ export const keyValueObjModalInfo = [
   {
     key:"idStorno-component",
     label:"N. Doc. Di Storno",
-    component:(setNumeroDocStorno, value)=> {
+    component:(setNumeroDocStorno, value,row)=> {
       const [focused, setFocused] = useState(false);
+      console.log({value,row});
       return (
         <Box  sx={{
           position: 'relative',
@@ -121,7 +118,7 @@ export const keyValueObjModalInfo = [
             maxRows={focused ? undefined : 1}   // focused: grows with content; otherwise: one line
             size="small"
             label="N. documento di storno"
-            value={value}
+            value={row?.numeroDocumentoStorno||""}
             onChange={(e) => setNumeroDocStorno(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
@@ -149,7 +146,7 @@ export const keyValueObjModalInfo = [
   {
     key:"nota-component",
     label:"Nota",
-    component:(setNota, value) =>  {
+    component:(setNota, value,row) =>  {
 
       const [focused, setFocused] = useState(false);
       return (
@@ -160,7 +157,7 @@ export const keyValueObjModalInfo = [
             maxRows={focused ? undefined : 1}   // focused: grows with content; otherwise: one line
             size="small"
             label="Nota"
-            value={value}
+            value={row?.nota||""}
             onChange={(e) => setNota(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}

@@ -15,10 +15,10 @@ interface GridRowsRendererProps<T ,K>{
   titleRowCollapse?:string,
   keyCollapse?:string,
   bgColorRowFunction?: (element:any) => string;
-  manageCheckbox?: ( currentRow:Record<string, any>) => Record<string, any>;
+  manageCheckbox?: ( currentRow:Record<string, any>, dettagli?:Record<string, any>[]) => void;
   manageCheckboxCollapse?:(currentRow:Record<string, any>) => Record<string, any>,
   filterOnCollapse?:(element:any) => React.ReactNode,
-  getAsyncDetails?:(currentRow:Record<string, any>,val:boolean) => void,
+  getAsyncDetails?:(currentRow:Record<string, any>,val?:boolean) => Promise<Record<string, any>[]> | void,
   collapseDataLoading?:boolean,
   selectedRows:K[],
   manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},

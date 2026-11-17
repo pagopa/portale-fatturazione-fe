@@ -43,9 +43,9 @@ type GridCellProps<T,K> = {
   isRowOpen?: boolean;
   onToggleRow?: () => void;
   setAction?: (obj:T, action:string) => void;
-  manageCheckbox?: (currentRow:Record<string, any>) => Record<string, any>;
+  manageCheckbox?: (currentRow:Record<string, any>, dettagli?:Record<string, any>[]) => void;
   manageCheckboxCollapse?: (currentRow:Record<string, any>) => Record<string, any>;
-  getAsyncDetails?:(currentRow:Record<string, any>,val?:boolean) => void,
+  getAsyncDetails?:(currentRow:Record<string, any>,val?:boolean) => Promise<Record<string, any>[]> | void,
   selectedRows?:Record<string, any>[],
   manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
   usedInside?:string
@@ -302,20 +302,19 @@ const GridCell = <T, K> ({
           <Checkbox 
             disabled={disabled}
             checked={checked}
-            onChange={(event) =>{
-              console.log({event:event.target.checked});
+            onChange={async () =>{
               if(manageCheckbox){
-              //setChecked(event.target.checked);
                 if (getAsyncDetails && !isRowOpen){
+                  // apro il collapse e aspetto che TUTTI i dettagli siano caricati prima di gestire la selezione
                   if (onToggleRow) onToggleRow();
-                  getAsyncDetails(element,true);
+                  const dettagli = await getAsyncDetails(element,true);
+                  manageCheckbox(element, dettagli || undefined);
+                }else{
+                  manageCheckbox(element);
                 }
-                manageCheckbox(element);
-              
               }
 
               if(manageCheckboxCollapse){
-              //setChecked(event.target.checked);
                 manageCheckboxCollapse(element);
               }
             } }/>

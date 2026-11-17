@@ -10,6 +10,8 @@ interface MainModalComponentProps {
   width?: string | number;
   closeOnBackdropClick?: boolean;
   disableClose?: boolean; // se true, impedisce completamente la chiusura (es. durante un loading)
+  action?: () => void;
+  buttonDisabled?:boolean
 }
 
 const style = {
@@ -28,7 +30,9 @@ const MainModalComponent: React.FC<MainModalComponentProps> = ({
   children,
   width = "400px",
   closeOnBackdropClick = false,
-  disableClose = false
+  disableClose = false,
+  action,
+  buttonDisabled=false
 }) => {
   const handleClose = (event: object, reason: string) => {
     if (disableClose) return;
@@ -44,7 +48,7 @@ const MainModalComponent: React.FC<MainModalComponentProps> = ({
       <Box sx={{ ...style, width }}>
         {children}
         <div className='container_buttons_modal d-flex justify-content-center mt-5'>
-          <Button disabled={true} variant='contained' onClick={()=> "ciao"} >Prosegui</Button>
+          <Button disabled={buttonDisabled} variant='contained' onClick={action} >Prosegui</Button>
         </div>
       </Box>
     </Modal>

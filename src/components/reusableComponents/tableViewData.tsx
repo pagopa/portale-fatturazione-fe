@@ -31,16 +31,10 @@ export const ElementToProcessComponent = <T,> ({
   showCounter=false,
   onComponentChange
 }:ElementToProcessComponentProps<T>) => {
-  // normalizza sempre a array, così gestiamo singolo obj o array con la stessa logica
+ 
   const rows = obj === null ? [] : Array.isArray(obj) ? obj : [obj];
-  // valori dei component (TextField, Nota...) per riga: { [rowIndex]: { [key]: value } }
-  const [componentValues, setComponentValues] = useState<Record<number, Record<string, any>>>({});
-  // scroll oltre MAX_VISIBLE_ROWS righe: altezza calcolata per mostrarne esattamente 10
-  const MAX_VISIBLE_ROWS = 10;
-  const hasScroll = rows.length > MAX_VISIBLE_ROWS;
-  const rowHeight = keyValueObj.some(el => el.component) ? 75 : 33;
-  const headerHeight = 40;
 
+  const [componentValues, setComponentValues] = useState<Record<number, Record<string, any>>>({});
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mt: 2, mb: 2 }}>
       {closeIcon ? <Box sx={{ 

@@ -1,4 +1,4 @@
-import { BodyDettaglioFatture, BodyGeneraJson, BodyInvioFatture } from "../../../page/prod_pn/invioFatture";
+import { BodyDettaglioFatture, BodyGeneraJson, BodyGeneraJsonInviate, BodyInvioFatture } from "../../../page/prod_pn/invioFatture";
 import { url } from "../../api";
 import axios from "axios";
 
@@ -24,6 +24,16 @@ export const getDettaglioInvioFatture = async (token:string, nonce:string, body:
 
 export const generazioneJson = async (token:string, nonce:string,body:BodyGeneraJson) => {
   const response =  await axios.put(`${url}/api/fatture/invio-sap/genera?nonce=${nonce}`,
+    body,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    }}
+  );
+  return response;
+};
+
+export const generazioneJsonInviate = async (token:string, nonce:string,body:BodyGeneraJsonInviate) => {
+  const response =  await axios.put(`${url}/api/fatture/invio-sap/reinvia?nonce=${nonce}`,
     body,
     { headers: {
       Authorization: 'Bearer ' + token

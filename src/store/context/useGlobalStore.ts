@@ -5,44 +5,44 @@ import { MainState } from "../../types/typesGeneral";
 
 
 type ApiKeyPage = {
-    visible: boolean | null;
-    keys: string[];
+  visible: boolean | null;
+  keys: string[];
 };
 
 type GlobalStore = {
-    /* ---------- MAIN STATE ---------- */
-    mainState: MainState;
-    dispatchMainState: (action: { type: string; value?: Partial<MainState> }) => void;
+  /* ---------- MAIN STATE ---------- */
+  mainState: MainState;
+  dispatchMainState: (action: { type: string; value?: Partial<MainState> }) => void;
 
-    appVersion:string;
+  appVersion:string;
 
-    /* ---------- UI ---------- */
-    openBasicModal_DatFat_ModCom: { visible: boolean; clickOn: string };
-    setOpenBasicModal_DatFat_ModCom: (v: { visible: boolean; clickOn: string }) => void;
+  /* ---------- UI ---------- */
+  openBasicModal_DatFat_ModCom: { visible: boolean; clickOn: string };
+  setOpenBasicModal_DatFat_ModCom: (v: { visible: boolean; clickOn: string }) => void;
 
-    showAlert: boolean;
-    setShowAlert: (v: boolean) => void;
+  showAlert: boolean;
+  setShowAlert: (v: boolean) => void;
 
-    openModalInfo: { open: boolean; sentence: string };
-    setOpenModalInfo: (v: { open: boolean; sentence: string }) => void;
+  openModalInfo: { open: boolean; sentence: string };
+  setOpenModalInfo: (v: { open: boolean; sentence: string }) => void;
 
-    errorAlert: { error: number; message: string };
-    setErrorAlert: (v: { error: number; message: string }) => void;
+  errorAlert: { error: number; message: string };
+  setErrorAlert: (v: { error: number; message: string }) => void;
 
-    countMessages: number;
-    setCountMessages: (v: number) => void;
+  countMessages: number;
+  setCountMessages: (v: number) => void;
 
-    statusQueryGetUri: string[];
-    setStatusQueryGetUri: (v: string[]) => void;
+  statusQueryGetUri: string[];
+  setStatusQueryGetUri: (v: string[]) => void;
 
-    loadingProfilo: boolean,
-    setLoadingProfilo: (v:boolean) => void,
+  loadingProfilo: boolean,
+  setLoadingProfilo: (v:boolean) => void,
 
-    /* ---------- EXTRA DATA ---------- */
-    mainData: {
-        apiKeyPage: ApiKeyPage;
-    };
-    setMainData: (updater: (prev: GlobalStore["mainData"]) => GlobalStore["mainData"]) => void;
+  /* ---------- EXTRA DATA ---------- */
+  mainData: {
+    apiKeyPage: ApiKeyPage;
+  };
+  setMainData: (updater: (prev: GlobalStore["mainData"]) => GlobalStore["mainData"]) => void;
 };
 
 export const useGlobalStore = create(

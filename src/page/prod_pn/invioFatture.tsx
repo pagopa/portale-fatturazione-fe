@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import axios from "axios";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested";
@@ -16,12 +17,12 @@ import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import { Box, Chip, DialogContent, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
 import { NotaTextField } from "./gestioneFatture";
 import FiltersCollapseInvioFatture, { FiltriCollapseInvioFatture } from "../../components/invioFatture/filtersCollapseInvioFatture";
-import { downloadInvioFatture, getAnniInviofatture, getDettaglioInvioFatture, getListaInvioFatture, getMesiInviofatture, getStatiInvioJson, getTipologieInviofatture } from "../../api/apiPagoPa/invioFattureSapPA/api";
+import { downloadInvioFatture, downloadInvioFattureDaReInviare, generazioneJson, generazioneJsonInviate, getAnniInviofatture, getDettaglioInvioFatture, getListaInvioFatture, getMesiInviofatture, getStatiInvioJson, getTipologieInviofatture } from "../../api/apiPagoPa/invioFattureSapPA/api";
 import { toMesi } from "../../reusableFunction/reusableArrayObj";
 
 interface ListaFatture {
   tipologiaFattura: string,
-  statoInvio:number,
+  statoInvio:string,
   numeroFatture: number,
   annoRiferimento: number,
   meseRiferimento: number,
@@ -55,7 +56,9 @@ type DettaglioFattura = {
     }
   ],
   "annoRiferimento": number,
-  "meseRiferimento": number
+  "meseRiferimento": number,
+  "nota":string,
+  "numeroDocumentoStorno":string
 };
 
 export interface SelectedJsonSap {
@@ -92,8 +95,19 @@ export interface BodyGeneraJson {
   "allSelected":boolean,
   "idFatture": number[],
   "idFattureEscluse":number[],
-  "nota": string,
-  "numeroDocumentoStorno": string
+  "nota"?: string,
+  "numeroDocumentoStorno"?: string
+}
+
+export interface BodyGeneraJsonInviate {
+  "anno": number,
+  "mese": number,
+  "tipologiaFattura": string,
+  "fatture": {
+    "idFattura": number,
+    "nota": string,
+    "numeroDocumentoStorno": string
+  }[]
 }
 
 const InvioFatture : React.FC = () => {
@@ -132,12 +146,8 @@ const InvioFatture : React.FC = () => {
   const [infoReinvio, setInforeInvio] = useState<{dataInvio:string}[]>([]);
 
   const [showPopUpDateInvio, setShowPopUpdateInvio] = useState(false);
-  const [numeroDocStorno, setNumeroDocStorno] = useState("");
   const [nota, setNota] = useState("");
-
- 
   const [elementsSelected,setElementSelected] = useState<DettaglioFattura[]>([]);
-  console.log({elementsSelected});
 
   const [bodyFatturazione, setBodyFatturazione] = useState<BodyInvioFatture>({
     anno:"",
@@ -145,6 +155,12 @@ const InvioFatture : React.FC = () => {
     tipologieFattura:[],
     statoInvio:"TUTTE"
   });
+
+  const [allElementsSelected, setAllElementsSelected] = useState(false);
+  // righe (getRowKey) con dettagli in caricamento
+  const [loadingRows, setLoadingRows] = useState<string[]>([]);
+  // ultima riga su cui l'utente ha cliccato il checkbox principale: serve a scartare risposte non più attuali
+  const lastCheckboxKeyRef = useRef<string | null>(null);
 
   const { 
     filters,
@@ -156,13 +172,6 @@ const InvioFatture : React.FC = () => {
 
   useEffect(()=>{
     getAnni();
-    //TODO: vedere dove spostare questa logica
-    /*if(isInitialRender.current && Object.keys(filters).length > 0){
-      //setTipologia(filters.tipologiaInvio);
-      setSelected(filters.selectedInvio);
-      //setRowSelectionModel(filters.rowSelectionModelInvio);
-      setInfoPage(filters.infoPageInvio);
-    } */
   },[]);
 
   const getStati = async () => {
@@ -253,7 +262,22 @@ const InvioFatture : React.FC = () => {
       const response = await downloadInvioFatture(token, profilo.nonce, bodyFatturazione);
       if (!response.ok) throw '404';
       const blob = await response.blob();
-      const title = `Lista Non Inviate.xlsx`;
+      const title = `Lista Invio a SAP.xlsx`;
+      saveAs(blob, title);
+    } catch {
+      manageErrorDownload('404', dispatchMainState);
+    } finally {
+      setShowDownloading(false);
+    }
+  };
+
+  const downloadReInviate = async () => {
+    setShowDownloading(true);
+    try {
+      const response = await downloadInvioFattureDaReInviare(token, profilo.nonce, bodyFatturazione);
+      if (!response.ok) throw '404';
+      const blob = await response.blob();
+      const title = `Lista Fatture Re-Inviate SAP.xlsx`;
       saveAs(blob, title);
     } catch {
       manageErrorDownload('404', dispatchMainState);
@@ -292,26 +316,31 @@ const InvioFatture : React.FC = () => {
 
   // fatture complete della riga (ignorando i filtri del collapse): se la riga è stata filtrata uso la copia originale
 
-  const manageCheckbox = (currentRow: Record<string, any>):Record<string, any>=> {
+  // dettagli: passati dalla grid quando il click sul checkbox ha appena caricato (in await) tutte le fatture della riga
+  const manageCheckbox = (currentRow: Record<string, any>, dettagli?: Record<string, any>[]): void => {
+    const key = getRowKey(currentRow);
 
-    const checkLengthOfCollapse = getFattureCompleteRiga(currentRow).length;
+    // risposta non più attuale: l'utente ha cliccato il checkbox di un'altra riga nel frattempo
+    if(dettagli && lastCheckboxKeyRef.current !== key) return;
 
-    
+    // elementsSelected è quello del momento del click (closure), quindi il toggle resta corretto anche dopo l'await
+    const fattureRiga = (dettagli as DettaglioFattura[]) ?? getFattureCompleteRiga(currentRow);
 
     const verifyIfSelected = (!!elementsSelected.find((el) =>{
-     
       return el.annoRiferimento === currentRow.annoRiferimento &&
-       el.meseRiferimento === currentRow.meseRiferimento && 
+       el.meseRiferimento === currentRow.meseRiferimento &&
        el.tipologiaFattura === currentRow.tipologiaFattura &&
        el.statoInvio === currentRow.statoInvio;
-    } )) && checkLengthOfCollapse !== 0 && checkLengthOfCollapse === elementsSelected.length;
+    } )) && fattureRiga.length !== 0 && fattureRiga.length === elementsSelected.length;
 
-  
+    lastCheckboxKeyRef.current = key;
     if(verifyIfSelected){
       setElementSelected([]);
+      setAllElementsSelected(false);
     }else{
       //prendo tutti i sotto elementi
-      setElementSelected(getFattureCompleteRiga(currentRow));
+      setElementSelected(fattureRiga);
+      setAllElementsSelected(fattureRiga.length > 0);
     }
   };
 
@@ -333,7 +362,7 @@ const InvioFatture : React.FC = () => {
 
   const manageCheckboxCollapse = (currentRow: Record<string, any>): Record<string, any> => {
   
-   
+    
     const verifyIfSelected = (!!elementsSelected.find((el) =>{
      
       return el.annoRiferimento === currentRow.annoRiferimento &&
@@ -401,9 +430,12 @@ const InvioFatture : React.FC = () => {
        el.tipologiaFattura !== row.tipologiaFattura; 
     } ));
 
+    // checkbox principale disabilitato finché i dettagli della riga sono in caricamento
+    const rowLoading = isMainCheck === "main-row" && loadingRows.includes(getRowKey(row));
+
     return {
       verifyIfSelected,
-      disabled:row.statoInvio === "IN_ELABORAZIONE" || disabled
+      disabled:row.statoInvio === "IN_ELABORAZIONE" || disabled || rowLoading
     };
   };
 
@@ -411,7 +443,13 @@ const InvioFatture : React.FC = () => {
   //Bisognaaggiungere un parametro che controlla se è collapsed altrimenti non devo faren la chiamata
   const PAGE_SIZE_DETTAGLIO = 10;
 
-  const handleGetDetailsRowCollapsed = async (el: Record<string, any>, clickOnCheckbox:boolean = false) => {
+  // restituisce le fatture complete della riga; la selezione è gestita da manageCheckbox (chiamato dalla grid dopo l'await)
+  const handleGetDetailsRowCollapsed = async (el: Record<string, any>, clickOnCheckbox:boolean = false): Promise<DettaglioFattura[]> => {
+    const rowKey = getRowKey(el);
+    if(clickOnCheckbox){
+      lastCheckboxKeyRef.current = rowKey;
+    }
+    setLoadingRows((prev) => prev.includes(rowKey) ? prev : [...prev, rowKey]);
 
     const fetchPage = (page: number) => getDettaglioInvioFatture(token, profilo.nonce, {
       "annoRiferimento": el.annoRiferimento,
@@ -461,17 +499,15 @@ const InvioFatture : React.FC = () => {
       }
       updateRiga(allFatture);
       setCollapseDataLoading(false);
-
-      if(clickOnCheckbox){
-        setElementSelected(allFatture);
-      }
       return allFatture;
 
     }catch{
       managePresaInCarico("ERROR_LIST_JSON_TO_SAP", dispatchMainState);
       navigate(PathPf.JSON_TO_SAP);
-      setCollapseDataLoading(false); 
+      setCollapseDataLoading(false);
       return [];
+    }finally{
+      setLoadingRows((prev) => prev.filter((k) => k !== rowKey));
     }
   };
 
@@ -517,15 +553,82 @@ const InvioFatture : React.FC = () => {
     listaResponseParameter: any[],
   ) => {};
 
- 
-
-
-
   const showPopUpAction = (obj, action) => { 
     setInforeInvio(obj.storicoInvii);
     setShowPopUpdateInvio(true);
   };
 
+
+
+  const generaJsonToSAP = async() => {
+    setOpenModalFatture(false);
+    
+    setShowLoader(true);
+    const idsFatture = elementsSelected.map(el => el.idFattura );
+    const fatturaTypo = elementsSelected[0];
+    const allFattureInsideMainRow = (listaFatture.find((el) => {
+      return el.annoRiferimento === fatturaTypo.annoRiferimento &&  
+      el.meseRiferimento === fatturaTypo.meseRiferimento &&
+      el.tipologiaFattura === fatturaTypo.tipologiaFattura &&
+      el.statoInvio === fatturaTypo.statoInvio;
+    })?.fatture)||[];
+   
+    const idsB = new Set(elementsSelected.map(f => f.idFattura));
+    const mancantiInB:number[] = allFattureInsideMainRow.filter(f => !idsB.has(f.idFattura)).map(el => el.idFattura);
+
+    try{
+      if(fatturaTypo.statoInvio === "DA_INVIARE"){
+
+        const bodyGenerazione: BodyGeneraJson = {
+          anno: fatturaTypo.annoRiferimento,
+          mese: fatturaTypo.meseRiferimento,
+          tipologiaFattura: fatturaTypo.tipologiaFattura,
+          statoInvio: fatturaTypo.statoInvio,
+          allSelected: allElementsSelected,
+          idFatture: allElementsSelected ? [] : idsFatture,
+          idFattureEscluse: allElementsSelected ? mancantiInB : [],
+          nota: nota,
+          numeroDocumentoStorno: ""
+        };
+        await generazioneJson(token,profilo.nonce,bodyGenerazione);
+      }else{
+        const bodyGenerazioneInviate: BodyGeneraJsonInviate = {
+          anno: fatturaTypo.annoRiferimento,
+          mese: fatturaTypo.meseRiferimento,
+          tipologiaFattura: fatturaTypo.tipologiaFattura,
+          fatture: elementsSelected.map(el => ({
+            idFattura: el.idFattura,
+            nota: el.nota ?? "",
+            numeroDocumentoStorno: el.numeroDocumentoStorno ?? ""
+          }))
+        };
+        await generazioneJsonInviate(token,profilo.nonce,bodyGenerazioneInviate);
+      }
+      
+      await getLista(bodyFatturazione);
+      managePresaInCarico("INSER_DELETE_WHITE_LIST", dispatchMainState
+      );
+    }catch(err: unknown){
+    
+      const motivo = axios.isAxiosError<{ motivo?: string }>(err) ? err.response?.data?.motivo : undefined;
+      if(motivo === "LOCK_ATTIVO"){
+        managePresaInCarico('LOCK_ATTIVO',dispatchMainState);
+      }else{
+        managePresaInCarico('GENERICO_KO',dispatchMainState);
+      }
+    }finally{
+      setNota("");
+      setShowLoader(false);
+    }
+  };
+
+  // DA_INVIARE: serve la nota generale (min 10 caratteri)
+  // altri stati (re-invio): ogni fattura selezionata deve avere nota e numeroDocumentoStorno valorizzati
+  const buttonGeneraDisabled = elementsSelected.length === 0 || (
+    elementsSelected[0].statoInvio === "DA_INVIARE"
+      ? nota.length < 10
+      : !elementsSelected.every(el => el.nota?.trim() && el.numeroDocumentoStorno?.trim())
+  );
   const statusAnnulla = (bodyFatturazione.anno !== arrayYears[0] ||
    bodyFatturazione.mesi.length > 0 ||
    bodyFatturazione.tipologieFattura.length > 0 || 
@@ -611,11 +714,11 @@ const InvioFatture : React.FC = () => {
         counter={elementsSelected.length}
         actionButtonRight={[
           {
-            onButtonClick:downloadRisultati,
+            onButtonClick:downloadReInviate,
             variant: "outlined",
             label: "Download Fatture Re-inviate",
             icon:{name:"download"},
-            disabled:true
+            disabled:(listaFatture?.length === 0)
           },
           {
             onButtonClick:downloadRisultati,
@@ -680,12 +783,13 @@ const InvioFatture : React.FC = () => {
         width={"1200px"}
         open={openModalFatture}
         setOpen={setOpenModalFatture}
+        action={generaJsonToSAP}
+        buttonDisabled={buttonGeneraDisabled}
       >
         <ModalContentFattureSelezionate
           elementsSelected={elementsSelected}
+          setElementSelected={setElementSelected}
           setOpen={setOpenModalFatture}
-          numeroDocStorno={numeroDocStorno}
-          setNumeroDocStorno={setNumeroDocStorno}
           nota={nota}
           setNota={setNota}
         />
@@ -714,9 +818,8 @@ export const checkIfElementSelected = (arraySel, row) =>{
 
 interface ModalContentFattureSelezionateProps {
   elementsSelected: Record<string, any>[];
+  setElementSelected:React.Dispatch<React.SetStateAction<DettaglioFattura[]>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  numeroDocStorno: string;
-  setNumeroDocStorno: (value: string) => void;
   nota: string;
   setNota: (value: string) => void;
 }
@@ -724,8 +827,7 @@ interface ModalContentFattureSelezionateProps {
 const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionateProps> = ({
   elementsSelected,
   setOpen,
-  numeroDocStorno,
-  setNumeroDocStorno,
+  setElementSelected,
   nota,
   setNota
 }) => {
@@ -735,18 +837,35 @@ const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionatePr
     ?  keyValueObjModalInfo.filter(el => el.key !== "idStorno-component" && el.key !== "nota-component")
     : keyValueObjModalInfo;
 
+  // salva nella fattura selezionata il valore inserito nei campi della modale (numero documento storno / nota)
+  const setUserInputInsideFattura = (fattura: Record<string, any>, idComponent: string, valueText: string) => {
+    let keyToUpdate: "numeroDocumentoStorno" | "nota" | null = null;
+    if(idComponent === "idStorno-component"){
+      keyToUpdate = "numeroDocumentoStorno";
+    }else if(idComponent === "nota-component"){
+      keyToUpdate = "nota";
+    }
+    if(!keyToUpdate) return;
+
+    const key = keyToUpdate;
+    setElementSelected((prev: DettaglioFattura[]) =>
+      prev.map((el) => el.idFattura === fattura.idFattura ? { ...el, [key]: valueText } : el)
+    );
+  };
+
   return (
     <Box>
       <ElementToProcessComponent
         closeIcon={true}
         title={"Fatture Selezionate"}
         obj={elementsSelected}
+        onComponentChange={setUserInputInsideFattura}
         keyValueObj={keyValueObjFiltered}
         showButton={false}
         setOpen={setOpen}
         showCounter={true}
       />
-      {elementsSelected.find(el => el.statoInvio === "DA_INVIARE") && <NotaTextField value={""}/>}
+      {elementsSelected.find(el => el.statoInvio === "DA_INVIARE") && <NotaTextField error={nota.length < 10} onChange={setNota} value={nota}/>}
       
     </Box>
   );
@@ -830,76 +949,3 @@ const DilogContentList : React.FC<{array:ListItemData[]}> = ({ array = [] }) => 
     </DialogContent>
   );
 };
-
-
-/* //TODO penso si possa cancellare, vecchia logica per ordinare le tipologie , ci arriveranno dalle api
-      const array = res.data.map( el => el.tipologiaFattura);
-      const ORDER = ;
-
-      const toTitleCase = (str: string) =>
-        str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
-      //ATTENZIONE: SE verrà aggiunta un altra tipologia fattura bisogna aggiungerla nell'array ORDER ALTRIMENTI NON VERRà MAPPATA
-      const uniqueArray = array
-        .map(toTitleCase)
-        .reduce((accumulator, current) => {
-          if (!accumulator.includes(current)) {
-            accumulator.push(current);
-          }
-          return accumulator;
-        }, [])
-        .sort((a, b) => {
-          const indexA = ORDER.indexOf(a);
-          const indexB = ORDER.indexOf(b);
-          const rankA = indexA === -1 ? ORDER.length : indexA;
-          const rankB = indexB === -1 ? ORDER.length : indexB;
-          return rankA - rankB;
-        });
-
-
-          const onButtonInvia = async() =>{
-    setShowLoader(true);
-    await invioListaJsonFatturePagoPa(token,profilo.nonce,selected).then(()=>{
-      setShowLoader(false);
-      getLista();
-      setSelected([]);
-      setRowSelectionModel([]);
-      setTipologia('Tutte');
-      resetFilters();
-      managePresaInCarico('SEND_JSON_SAP_OK',dispatchMainState);
-    }).catch((err)=>{
-      setShowLoader(false);
-      setSelected([]);
-      setRowSelectionModel([]);
-      setTipologia('Tutte');
-      resetFilters();
-      manageError(err, dispatchMainState);
-    });
-  };
-
-  const statoFattura = (row) =>{
-    let tooltipObj:any = {label:'',title:''};
-    if(row.statoInvio === 0){
-      tooltipObj = {label:'Da inviare',title:'Da inviare',color:'#86E1FD'};
-    }else if(row.statoInvio === 2){
-      tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:"#FFE5A3"};
-    }
-    return tooltipObj;
-  };
-          
-   */
-
-
-const x  = [{
-  "anno": 0,
-  "mese": 0,
-  "tipologiaFattura": "string",
-  "statoInvio": "string",
-  "fattureSelezionate": [
-    {
-      "idFattura" :"number", 
-      "tipologiaFattura":"string",
-      "nota": "string",
-      "numeroDocumentoStorno": "string"}
-  ],
-  
-}];
