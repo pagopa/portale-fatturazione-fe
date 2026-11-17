@@ -100,7 +100,7 @@ export const keyValueObjModalInfo = [
     label:"Tipologia Fattura"
   },
   {
-    key:"statoInvio",
+    key:"numeroInvii",
     label:"N. Invio"
   },
   {

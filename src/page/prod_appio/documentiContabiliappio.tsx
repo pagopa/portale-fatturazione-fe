@@ -194,7 +194,7 @@ const DocumentiContabiliAppio:React.FC = () =>{
       
       const stringQuarterSelected = bodyGetLista.quarters;
    
-      console.log({res,stringQuarterSelected});
+
       const fileName = gridData.length === 1
         ? `Documenti contabili AppIO/${gridData[0].name}/${gridData[0].yearQuarter}.xlsx`
         : `Documenti contabili AppIO/${bodyGetLista.year}.xlsx`;

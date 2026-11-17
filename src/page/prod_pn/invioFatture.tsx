@@ -144,7 +144,7 @@ const InvioFatture : React.FC = () => {
     setShowLoader(true);
     try{
       const resp = await getAnniInviofatture(token,profilo.nonce);
-      console.log({resp});
+    
       setArrayYears(resp.data);
       setBodyFatturazione((prev)=>({
         ...prev, anno:resp.data[0]
@@ -163,7 +163,7 @@ const InvioFatture : React.FC = () => {
     try{
       const resp = await getMesiInviofatture(token,profilo.nonce,{anno:anno});
       const result = toMesi(resp.data).reverse();
-      console.log({result});
+    
       setArrayMonths(result);
     }catch{
       setArrayMonths([]);
@@ -232,7 +232,7 @@ const InvioFatture : React.FC = () => {
   };
 
   const onButtonAnnulla = () => {
-    console.log('Annulla button clicked');
+   
     const newBody = {
       anno:arrayYears[0],
       mesi:[],
@@ -284,7 +284,7 @@ const InvioFatture : React.FC = () => {
        el.statoInvio === currentRow.statoInvio;
     } )) && checkLengthOfCollapse !== 0 && checkLengthOfCollapse === elementsSelected.length;
 
-    console.log({verifyIfSelected,checkLengthOfCollapse,len:elementsSelected.length});
+  
     if(verifyIfSelected){
       setElementSelected([]);
     }else{
@@ -295,10 +295,10 @@ const InvioFatture : React.FC = () => {
 
   const getFattureCompleteRiga = (row: Record<string, any>): any[] => {
     const original = originalFattureRef.current[getRowKey(row)];
-    console.log({original});
+   
      
     if (original) return original;
-    console.log({listaFatture,row});
+   
     const [tipologiaFatturaRow, annoRiferimentoRow, meseRiferimentoRow, statoInvioRow] = row.id.split('|');
     return listaFatture.find((el) => {
       const [tipologiaFattura, annoRiferimento, meseRiferimento, statoInvio] = el.id.split('|');
@@ -349,7 +349,7 @@ const InvioFatture : React.FC = () => {
     
     let verifyIfSelected = false;
     const disabled = false;
-    console.log({SSS:row,isMainCheck,elementsSel});
+   
     
    
     if(isMainCheck === "main-row" && elementsSel){
@@ -358,14 +358,7 @@ const InvioFatture : React.FC = () => {
       const elementsInsideCollapse = getFattureCompleteRiga(row);
       
       verifyIfSelected = (!!elementsSel.find((el) =>{
-        console.log({
-          col:elementsInsideCollapse?.length,
-          col2:elementsSel.length,
-          1:el.annoRiferimento , 11:row.annoRiferimento ,
-          2:el.meseRiferimento , 22:row.meseRiferimento , 
-          3:el.tipologiaFattura , 33:row.tipologiaFattura ,
-          4:el.statoInvio , 44:row.statoInvio
-        });
+      
       
         return el.annoRiferimento === row.annoRiferimento &&
        el.meseRiferimento === row.meseRiferimento && 
@@ -717,10 +710,10 @@ const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionatePr
   setNota
 }) => {
   // "idStorno-component" e "nota-component" visibili solo se le fatture selezionate non sono "Da inviare" (statoInvio !== 0)
-  const showStornoNota = elementsSelected.some(el => el.statoInvio !== 0);
+  const showStornoNota = elementsSelected.some(el => el.statoInvio === "DA_INVIARE");
   const keyValueObjFiltered = showStornoNota
-    ? keyValueObjModalInfo
-    : keyValueObjModalInfo.filter(el => el.key !== "idStorno-component" && el.key !== "nota-component");
+    ?  keyValueObjModalInfo.filter(el => el.key !== "idStorno-component" && el.key !== "nota-component")
+    : keyValueObjModalInfo;
 
   return (
     <Box>
@@ -733,7 +726,8 @@ const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionatePr
         setOpen={setOpen}
         showCounter={true}
       />
-      <NotaTextField value={""}/>
+      {elementsSelected.find(el => el.statoInvio === "DA_INVIARE") && <NotaTextField value={""}/>}
+      
     </Box>
   );
 };

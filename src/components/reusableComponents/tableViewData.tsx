@@ -1,7 +1,8 @@
-import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from "react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
+import { month } from "../../reusableFunction/reusableArrayObj";
 
 interface TableColumn {
   key: string;
@@ -127,9 +128,12 @@ export const ElementToProcessComponent = <T,> ({
                       </TableCell>
                     );
                   }
-                  const mockNumeroInvii = el.key === "statoInvio" && rowObj[el.key] === 4 ? 3 : 1;
-                  // TODO da rispristinare const value = rowObj[el.key];
-                  const value = el.key === "statoInvio" ? mockNumeroInvii : rowObj[el.key];
+                  console.log({rowObj});
+                  let value =  rowObj[el.key];
+                  if(el.key === "meseRiferimento"){
+                    value = month[rowObj[el.key]-1];
+                  }
+                  
                   const textValue = value === null || value === undefined ? '' : String(value);
                   const isTruncated = typeof value === 'string' && value.length > 20;
                   return (
