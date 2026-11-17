@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import {  GridRowSelectionModel } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
-import {  invioListaJsonFatturePagoPa } from "../../api/apiPagoPa/fatturazionePA/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested";
 import { PathPf } from "../../types/enum";
@@ -18,8 +16,6 @@ import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import { Box, Chip, DialogContent, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
 import { NotaTextField } from "./gestioneFatture";
 import FiltersCollapseInvioFatture, { FiltriCollapseInvioFatture } from "../../components/invioFatture/filtersCollapseInvioFatture";
-import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
-import DescriptionIcon from '@mui/icons-material/Description';
 import { downloadInvioFatture, getAnniInviofatture, getDettaglioInvioFatture, getListaInvioFatture, getMesiInviofatture, getStatiInvioJson, getTipologieInviofatture } from "../../api/apiPagoPa/invioFattureSapPA/api";
 import { toMesi } from "../../reusableFunction/reusableArrayObj";
 
@@ -30,9 +26,37 @@ interface ListaFatture {
   annoRiferimento: number,
   meseRiferimento: number,
   importo: number,
-  fatture:any[],
+  fatture:DettaglioFattura[],
   id:string
 }
+
+type DettaglioFattura = {
+  "idFattura": number,
+  "numeroFattura": string,
+  "progressivo": number,
+  "tipoDocumento": string,
+  "tipologiaFattura": string,
+  "idEnte": string,
+  "ragioneSociale": string,
+  "importo": number,
+  "idDocumento": null|string,
+  "dataFattura": string,
+  "statoInvio": string,
+  "semestre": null|string,
+  "dataUltimaGenerazione": string,
+  "nomeFile": string,
+  "numeroInvii": number,
+  "storicoInvii": [
+    {
+      "nInvio": number,
+      "data": string,
+      "testo": string,
+      "azione": string
+    }
+  ],
+  "annoRiferimento": number,
+  "meseRiferimento": number
+};
 
 export interface SelectedJsonSap {
   annoRiferimento: number,
@@ -64,11 +88,13 @@ export interface BodyGeneraJson {
   "anno": number,
   "mese": number,
   "tipologiaFattura": string,
+  "statoInvio":string,
+  "allSelected":boolean,
   "idFatture": number[],
+  "idFattureEscluse":number[],
   "nota": string,
   "numeroDocumentoStorno": string
 }
-
 
 const InvioFatture : React.FC = () => {
 
@@ -79,17 +105,39 @@ const InvioFatture : React.FC = () => {
   const profilo =  mainState.profilo;
   const navigate = useNavigate();
 
-  const callLista = useRef(true);
-    
   const [listaFatture, setListaFatture] = useState<ListaFatture[]>([]);
-  
-  const [selected,setSelected] = useState<SelectedJsonSap[]>([]);
+  //const [selected,setSelected] = useState<SelectedJsonSap[]>([]);
   
   const [showLoader, setShowLoader] = useState(false);
   const [showDownloading, setShowDownloading] = useState(false);
-  const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
-  const [infoPage , setInfoPage] = useState({ page: 0, pageSize: 10 });
+  //const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
+  //const [infoPage , setInfoPage] = useState({ page: 0, pageSize: 10 });
   const [collapseDataLoading,setCollapseDataLoading] = useState(true);
+
+  const [arrayYears,setArrayYears] = useState<number[]>([]);
+  const [arrayMonths,setArrayMonths] = useState<{mese:number,descrizione:string}[]>([]);
+
+  const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
+  const [tipologieFatture, setTipologieFattura] = useState<string[]>([]);
+
+  const [valueSelectMonths, setValueSelectMonths] = useState<{descrizione:string,mese:number}[]>([]);
+  const [arrayTipologieInvio, setArrayTipologieInvio] = useState<{codice:string,descrizione:string}[]>([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [count, setCount] = useState(0);
+  //const [gridData, setGridData] = useState<Fattura[]>([]);
+  const [objectSort, setObjectSort] = useState<{[key:string]:number}>({"Anno Riferimento":1,"Mese Riferimento":1});
+  //const [listaResponse, setListaResponse] = useState<Fattura[]>([]);
+  const [openModalFatture, setOpenModalFatture]= useState(false);
+  const [infoReinvio, setInforeInvio] = useState<{dataInvio:string}[]>([]);
+
+  const [showPopUpDateInvio, setShowPopUpdateInvio] = useState(false);
+  const [numeroDocStorno, setNumeroDocStorno] = useState("");
+  const [nota, setNota] = useState("");
+
+ 
+  const [elementsSelected,setElementSelected] = useState<DettaglioFattura[]>([]);
+  console.log({elementsSelected});
 
   const [bodyFatturazione, setBodyFatturazione] = useState<BodyInvioFatture>({
     anno:"",
@@ -97,12 +145,7 @@ const InvioFatture : React.FC = () => {
     tipologieFattura:[],
     statoInvio:"TUTTE"
   });
-  
-  const [arrayYears,setArrayYears] = useState<number[]>([]);
-  const [arrayMonths,setArrayMonths] = useState<{mese:number,descrizione:string}[]>([]);
 
-  const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
-  const [tipologieFatture, setTipologieFattura] = useState<string[]>([]);
   const { 
     filters,
     updateFilters,
@@ -114,12 +157,12 @@ const InvioFatture : React.FC = () => {
   useEffect(()=>{
     getAnni();
     //TODO: vedere dove spostare questa logica
-    if(isInitialRender.current && Object.keys(filters).length > 0){
+    /*if(isInitialRender.current && Object.keys(filters).length > 0){
       //setTipologia(filters.tipologiaInvio);
       setSelected(filters.selectedInvio);
-      setRowSelectionModel(filters.rowSelectionModelInvio);
+      //setRowSelectionModel(filters.rowSelectionModelInvio);
       setInfoPage(filters.infoPageInvio);
-    } 
+    } */
   },[]);
 
   const getStati = async () => {
@@ -163,7 +206,6 @@ const InvioFatture : React.FC = () => {
     try{
       const resp = await getMesiInviofatture(token,profilo.nonce,{anno:anno});
       const result = toMesi(resp.data).reverse();
-    
       setArrayMonths(result);
     }catch{
       setArrayMonths([]);
@@ -232,7 +274,6 @@ const InvioFatture : React.FC = () => {
   };
 
   const onButtonAnnulla = () => {
-   
     const newBody = {
       anno:arrayYears[0],
       mesi:[],
@@ -248,25 +289,6 @@ const InvioFatture : React.FC = () => {
     setElementSelected([]);
     getLista(newBody);
   };
-
-  const [valueSelectMonths, setValueSelectMonths] = useState<{descrizione:string,mese:number}[]>([]);
-  const [arrayTipologieInvio, setArrayTipologieInvio] = useState<{codice:string,descrizione:string}[]>([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [count, setCount] = useState(0);
-  const [gridData, setGridData] = useState<Fattura[]>([]);
-  const [objectSort, setObjectSort] = useState<{[key:string]:number}>({"Anno Riferimento":1,"Mese Riferimento":1});
-  const [listaResponse, setListaResponse] = useState<any[]>([]);
-  const [openModalFatture, setOpenModalFatture]= useState(false);
-  const [infoReinvio, setInforeInvio] = useState<{dataInvio:string}[]>([]);
-
-  const [showPopUpDateInvio, setShowPopUpdateInvio] = useState(false);
-  const [numeroDocStorno, setNumeroDocStorno] = useState("");
-  const [nota, setNota] = useState("");
-
-
-  const [elementsSelected,setElementSelected] = useState<Record<string, any>[]>([]);
-  
 
   // fatture complete della riga (ignorando i filtri del collapse): se la riga è stata filtrata uso la copia originale
 
@@ -348,45 +370,36 @@ const InvioFatture : React.FC = () => {
   const manageStateCheckbox = (row, isMainCheck="",elementsSel) =>{
     
     let verifyIfSelected = false;
-    const disabled = false;
-   
-    
+    let disabled = false;
    
     if(isMainCheck === "main-row" && elementsSel){
-      
       // confronto con tutte le fatture della riga, non con quelle filtrate nel collapse
       const elementsInsideCollapse = getFattureCompleteRiga(row);
       
       verifyIfSelected = (!!elementsSel.find((el) =>{
-      
-      
         return el.annoRiferimento === row.annoRiferimento &&
        el.meseRiferimento === row.meseRiferimento && 
        el.tipologiaFattura === row.tipologiaFattura &&
        el.statoInvio === row.statoInvio;
       } )) && (elementsInsideCollapse?.length||0) === elementsSel.length;
 
-      
-
     }else if(isMainCheck === "collapse-row" && elementsSel.length > 0){
       
-   
       verifyIfSelected = (!!elementsSel.find((el) =>{
         return el.annoRiferimento === row.annoRiferimento &&
        el.meseRiferimento === row.meseRiferimento && 
        el.tipologiaFattura === row.tipologiaFattura &&
         el.idFattura === row.idFattura;
       } ));
-    
     }
 
-    /*
+  
     disabled = elementsSelected.length !== 0 && (!!elementsSel.find((el) =>{
-      const [annoRiferimentoDettaglio, meseRiferimentoDettaglio, giorno] = el.dataFattura.split('-');
-      return annoRiferimentoDettaglio !== annoRiferimento ||
-       meseRiferimentoDettaglio !== row.meseRiferimento || 
+     
+      return el.annoRiferimento !== row.annoRiferimento ||
+       el.meseRiferimento !== row.meseRiferimento || 
        el.tipologiaFattura !== row.tipologiaFattura; 
-    } ));*/
+    } ));
 
     return {
       verifyIfSelected,
@@ -394,58 +407,65 @@ const InvioFatture : React.FC = () => {
     };
   };
 
-  
-  // va inserito dentro la fundione la logica del checkjed
-  /*
-  const handleGetDetails = (el: ListaFatture) => {
-    navigate(PathPf.JSON_TO_SAP_DETAILS.replace(":id",`${el.annoRiferimento}-${el.meseRiferimento}-${el.tipologiaFattura}`));
-  };
-*/
 
+  //Bisognaaggiungere un parametro che controlla se è collapsed altrimenti non devo faren la chiamata
+  const PAGE_SIZE_DETTAGLIO = 10;
 
-  //Bisogna aggiungere un parametro che controlla se è collapsed altrimenti non devo faren la chiamata
   const handleGetDetailsRowCollapsed = async (el: Record<string, any>, clickOnCheckbox:boolean = false) => {
-  
-    try{
-      const res = await getDettaglioInvioFatture(token, profilo.nonce, {
-        "annoRiferimento": el.annoRiferimento,
-        "meseRiferimento": el.meseRiferimento,
-        "tipologiaFattura": el.tipologiaFattura,
-        "statoInvio": el.statoInvio,
-        //"ragioneSociale": "string",
-        //"numeroFattura": "string",
-        //"dataFattura": "2026-11-10T16:07:02.127Z",
-        "page": 1,
-        "pageSize": 10
-      });
-      const resCollapseDetails = res.data.fatture;
-      setCollapseDataLoading(false);
 
-      const addStatoInvioInsideCollapse = resCollapseDetails.map((collapseEl) => {
-        collapseEl.statoInvio = el.statoInvio;
-        collapseEl.fileJson = collapseEl.statoInvio !== "DA_INVIARE" ? el.nomeFile : "--";
-        collapseEl.annoRiferimento = el.annoRiferimento;
-        collapseEl.meseRiferimento =  el.meseRiferimento;
-        return collapseEl;
-      });
+    const fetchPage = (page: number) => getDettaglioInvioFatture(token, profilo.nonce, {
+      "annoRiferimento": el.annoRiferimento,
+      "meseRiferimento": el.meseRiferimento,
+      "tipologiaFattura": el.tipologiaFattura,
+      "statoInvio": el.statoInvio,
+      "page": page,
+      "pageSize": PAGE_SIZE_DETTAGLIO
+    });
 
-    
+    const mapCollapse = (fatture: any[] = []) => fatture.map((collapseEl) => ({
+      ...collapseEl,
+      statoInvio: el.statoInvio,
+      fileJson: el.statoInvio !== "DA_INVIARE" ? el.nomeFile : "--",
+      annoRiferimento: el.annoRiferimento,
+      meseRiferimento: el.meseRiferimento
+    }));
+
+    const updateRiga = (fatture: any[]) => {
+      originalFattureRef.current[getRowKey(el)] = fatture;
       setListaFatture((prevState) =>
         prevState.map((item) =>
           item.annoRiferimento === el.annoRiferimento &&
           item.tipologiaFattura === el.tipologiaFattura &&
           item.meseRiferimento === el.meseRiferimento &&
           item.statoInvio === el.statoInvio
-            ? { ...item, fatture: addStatoInvioInsideCollapse }
+            ? { ...item, fatture }
             : item
         )
       );
-   
-      if(clickOnCheckbox){
-        setElementSelected(resCollapseDetails);
+    };
+
+    try{
+      setCollapseDataLoading(true);
+      // prima pagina: ricavo il totale dal count
+      const firstRes = await fetchPage(1);
+      const firstPage = mapCollapse(firstRes.data.fatture);
+      const total = Number(firstRes.data.count) || firstPage.length;
+      const totalPages = Math.ceil(total / PAGE_SIZE_DETTAGLIO);
+
+      // pagine successive in parallelo; loader e paginazione restano nascosti fino alla fine
+      let allFatture = firstPage;
+      if(totalPages > 1){
+        const pages = Array.from({ length: totalPages - 1 }, (_, i) => i + 2);
+        const results = await Promise.all(pages.map(fetchPage));
+        allFatture = [...firstPage, ...results.flatMap((r) => mapCollapse(r.data.fatture))];
       }
-      originalFattureRef.current[getRowKey(el)] = addStatoInvioInsideCollapse;
-      return resCollapseDetails;
+      updateRiga(allFatture);
+      setCollapseDataLoading(false);
+
+      if(clickOnCheckbox){
+        setElementSelected(allFatture);
+      }
+      return allFatture;
 
     }catch{
       managePresaInCarico("ERROR_LIST_JSON_TO_SAP", dispatchMainState);
@@ -635,12 +655,12 @@ const InvioFatture : React.FC = () => {
           collapseDataLoading={collapseDataLoading}
           selectedRows={elementsSelected}
           headerActionSort={headerAction}
-          setGridData={setGridData}
+          //setGridData={setGridData}
           gridType={true}
           setObjectSort={setObjectSort}
           objectSort={objectSort}
           manageStateCheckbox={manageStateCheckbox}
-          listaResponse={listaResponse}
+          //listaResponse={listaResponse}
           sentenseEmpty={"Nessuna fattura disponibile"}
           keyCollapse={"fatture"}
           titleRowCollapse={"Dettaglio Fatture"}
@@ -867,3 +887,19 @@ const DilogContentList : React.FC<{array:ListItemData[]}> = ({ array = [] }) => 
   };
           
    */
+
+
+const x  = [{
+  "anno": 0,
+  "mese": 0,
+  "tipologiaFattura": "string",
+  "statoInvio": "string",
+  "fattureSelezionate": [
+    {
+      "idFattura" :"number", 
+      "tipologiaFattura":"string",
+      "nota": "string",
+      "numeroDocumentoStorno": "string"}
+  ],
+  
+}];

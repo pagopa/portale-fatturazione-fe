@@ -1,7 +1,7 @@
 import { Box, Collapse, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { HeaderGridCustom } from "../gridCustom";
 import GridCell from "./gridCell";
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Loader from "../../loader";
 import CustomTablePagination from "../pagination";
 
@@ -79,32 +79,6 @@ const GridRowDesignByConfigFile=<T,K>({
   const [filtroAnno, setFiltroAnno] = useState<string>('tutti');
   const [filtroMese, setFiltroMese] = useState<string>('tutti');
   const [filtroTipologia, setFiltroTipologia] = useState<string>('tutti');
-
-  // Calcola le opzioni disponibili dinamicamente dai dati (evita valori duplicati)
-  const anniDisponibili : number[]= useMemo(
-    () => [...new Set(dataInsideCollapse?.map((el: any) => el.annoRiferimento))].sort(),
-    [dataInsideCollapse]
-  );
-
-  const mesiDisponibili : number[] = useMemo(
-    () => [...new Set(dataInsideCollapse?.map((el: any) => el.meseRiferimento))].sort((a, b) => a - b),
-    [dataInsideCollapse]
-  );
-
-  const tipologieDisponibili : string[] = useMemo(
-    () => [...new Set(dataInsideCollapse?.map((el: any) => el.tipologiaFattura))],
-    [dataInsideCollapse]
-  );
-
-  // Applica i filtri ai dati
-  const datiFiltrati = useMemo(() => {
-    return dataInsideCollapse?.filter((el: any) => {
-      const matchAnno = filtroAnno === 'tutti' || el.annoRiferimento === Number(filtroAnno);
-      const matchMese = filtroMese === 'tutti' || el.meseRiferimento === Number(filtroMese);
-      const matchTipologia = filtroTipologia === 'tutti' || el.tipologiaFattura === filtroTipologia;
-      return matchAnno && matchMese && matchTipologia;
-    });
-  }, [dataInsideCollapse, filtroAnno, filtroMese, filtroTipologia]);
 
 
   return (
