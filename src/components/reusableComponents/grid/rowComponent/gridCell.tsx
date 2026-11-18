@@ -49,8 +49,14 @@ type GridCellProps<T,K> = {
   getAsyncDetails?:(currentRow:Record<string, any>,val?:boolean) => Promise<Record<string, any>[]> | void,
   selectedRows?:Record<string, any>[],
   manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
-  usedInside?:string
+  usedInside?:string,
+  // stato di caricamento dei dettagli della riga (gestito in gridRowDesignByConfigFile):
+  // "main" = loader solo sulla main checkbox, "all" = loader anche sulle checkbox del collapse
+  rowLoading?: RowLoading,
+  setRowLoading?: (val: RowLoading) => void
 };
+
+export type RowLoading = "none" | "main" | "all";
 
 const flexCenterStyle: SxProps<Theme> = {
   display: "flex",
@@ -88,11 +94,13 @@ const GridCell = <T, K> ({
   getAsyncDetails,
   selectedRows=[],
   manageStateCheckbox,
-  usedInside=""
+  usedInside="",
+  rowLoading="none",
+  setRowLoading
 }: GridCellProps<T, K>) => {
   const value = element[rowObject.keyValue];
-  // true mentre la main checkbox attende getAsyncDetails: al posto della checkbox mostro un loader
-  const [loadingCheckbox, setLoadingCheckbox] = useState(false);
+  // main checkbox: loader con qualsiasi caricamento; checkbox del collapse: loader solo se il caricamento è partito dalla main checkbox
+  const loadingCheckbox = usedInside === "collapse-row" ? rowLoading === "all" : rowLoading !== "none";
 
 
  
@@ -309,12 +317,12 @@ const GridCell = <T, K> ({
                   if (getAsyncDetails && !isRowOpen){
                   // apro il collapse e aspetto che TUTTI i dettagli siano caricati prima di gestire la selezione
                     if (onToggleRow) onToggleRow();
-                    setLoadingCheckbox(true);
+                    setRowLoading?.("all");
                     try{
                       const dettagli = await getAsyncDetails(element,true);
                       manageCheckbox(element, dettagli || undefined);
                     }finally{
-                      setLoadingCheckbox(false);
+                      setRowLoading?.("none");
                     }
                   }else{
                     manageCheckbox(element);
@@ -401,9 +409,17 @@ const GridCell = <T, K> ({
             sx={{ color: "#227AFC" }}
             aria-label="expand row"
             size="small"
-            onClick={() =>{
+            onClick={async () =>{
               if (onToggleRow) onToggleRow();
-              if (getAsyncDetails && !isRowOpen) getAsyncDetails(element);
+              if (getAsyncDetails && !isRowOpen){
+                // apertura dal bottone collapse: loader solo sulla main checkbox
+                setRowLoading?.("main");
+                try{
+                  await getAsyncDetails(element);
+                }finally{
+                  setRowLoading?.("none");
+                }
+              }
             } }
           >
             {isRowOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}

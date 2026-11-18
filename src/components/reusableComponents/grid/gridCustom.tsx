@@ -38,7 +38,7 @@ interface GridCustomProps<T,K> {
   bgColorRowFunction?:(element:T) => string,
   manageCheckbox?:(currentRow:Record<string, any>, dettagli?:Record<string, any>[]) => void,
   manageCheckboxCollapse?:(currentRow:Record<string, any>) => Record<string, any>,
-  filterOnCollapse?:(element:any) => React.ReactNode,
+  filterOnCollapse?:(element:any, detailsLoading?:boolean) => React.ReactNode,
   getAsyncDetails?:(currentRow:Record<string, any>,val?:boolean) => Promise<Record<string, any>[]> | void,
   collapseDataLoading?:boolean,
   selectedRows?:K[],

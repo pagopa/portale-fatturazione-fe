@@ -15,6 +15,8 @@ interface FiltersCollapseInvioFattureProps {
   onGenerate: () => void;
   onFilter?: (filtri: FiltriCollapseInvioFatture) => void;
   onLoading?: (loading: boolean) => void;
+  // filtri disabilitati finché sono in corso le chiamate del dettaglio
+  disabled?: boolean;
 }
 
 const DEBOUNCE_MS = 2000;
@@ -26,7 +28,8 @@ const FiltersCollapseInvioFatture = ({
   manageStateCheckbox,
   onGenerate,
   onFilter,
-  onLoading
+  onLoading,
+  disabled = false
 }: FiltersCollapseInvioFattureProps) => {
 
   const [filtri, setFiltri] = useState<FiltriCollapseInvioFatture>({
@@ -75,7 +78,8 @@ const FiltersCollapseInvioFatture = ({
         body={filtri}
         keyDescription='ragioneSociale'
         keyBody={"ragioneSociale"}
-        keyValue={"ragioneSociale"}/>
+        keyValue={"ragioneSociale"}
+        disabled={disabled}/>
       <MainFilter
         sizeHeight={"small"}
         filterName={"input_text"}
@@ -85,7 +89,8 @@ const FiltersCollapseInvioFatture = ({
         body={filtri}
         keyDescription='idFattura'
         keyBody={"idFattura"}
-        keyValue={"idFattura"}/>
+        keyValue={"idFattura"}
+        disabled={disabled}/>
       <MainFilter
         sizeHeight={"small"}
         filterName={"date_from_to"}
@@ -98,8 +103,9 @@ const FiltersCollapseInvioFatture = ({
         keyBody="dataFattura"
         keyCompare="dataFatturaEnd"
         error={false}
+        disabled={disabled}
       />
-      <Button disabled={manageStateCheckbox && manageStateCheckbox(element,"",selectedRows)?.disabled || selectedRows.length === 0} onClick={onGenerate} size={"small"} variant="outlined">Generazione Json</Button>
+      <Button disabled={disabled || manageStateCheckbox && manageStateCheckbox(element,"",selectedRows)?.disabled || selectedRows.length === 0} onClick={onGenerate} size={"small"} variant="outlined">Generazione Json</Button>
     </>
   );
 };

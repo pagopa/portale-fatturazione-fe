@@ -244,6 +244,9 @@ const InvioFatture : React.FC = () => {
     }
     try{
       const res = await getListaInvioFatture(token,profilo.nonce,body);
+      // nuova lista: i dettagli caricati prima non sono più validi
+      rowsCompleteRef.current.clear();
+      originalFattureRef.current = {};
       setListaFatture(res.data);
       setCount(res.data?.length || 0);
       setPage(0);
@@ -467,6 +470,16 @@ const InvioFatture : React.FC = () => {
     if(clickOnCheckbox){
       lastCheckboxKeyRef.current = rowKey;
     }
+
+    // dettaglio già caricato completamente: nessuna chiamata, restituisco le fatture già presenti
+    const fattureCaricate = originalFattureRef.current[rowKey];
+    if(rowsCompleteRef.current.has(rowKey) && fattureCaricate){
+      // ripristino la lista completa: alla riapertura i filtri del collapse ripartono vuoti
+      setListaFatture((prev) => prev.map((item) => getRowKey(item) === rowKey ? { ...item, fatture: fattureCaricate } : item));
+      setCollapseDataLoading(false);
+      return fattureCaricate;
+    }
+
     setLoadingRows((prev) => prev.includes(rowKey) ? prev : [...prev, rowKey]);
 
     const fetchPage = (page: number) => getDettaglioInvioFatture(token, profilo.nonce, {
@@ -520,6 +533,8 @@ const InvioFatture : React.FC = () => {
         allFatture = [...allFatture, ...mapCollapse(res.data.fatture)];
         updateRiga(allFatture);
       }
+      // tutte le pagine caricate: alle prossime aperture non rifaccio le chiamate
+      rowsCompleteRef.current.add(rowKey);
       return allFatture;
 
     }catch{
@@ -536,6 +551,8 @@ const InvioFatture : React.FC = () => {
   // ______________ Filtri dentro il collapse (applicati solo alla riga corrente) ______________
   // copia delle fatture originali (response iniziale) per ogni riga, usata per ripristinare i dati al reset dei filtri
   const originalFattureRef = useRef<Record<string, any[]>>({});
+  // righe (getRowKey) il cui dettaglio è stato caricato per intero
+  const rowsCompleteRef = useRef<Set<string>>(new Set());
 
   const getRowKey = (row: Record<string, any>) => `${row.annoRiferimento}-${row.meseRiferimento}-${row.tipologiaFattura}-${row.statoInvio}`;
 
@@ -765,9 +782,10 @@ const InvioFatture : React.FC = () => {
           //setAction={showPopUpAction}
           manageCheckbox={manageCheckbox}
           manageCheckboxCollapse={manageCheckboxCollapse}
-          filterOnCollapse={(row) => (
+          filterOnCollapse={(row, detailsLoading) => (
             <FiltersCollapseInvioFatture
               element={row}
+              disabled={detailsLoading}
               selectedRows={elementsSelected}
               manageStateCheckbox={manageStateCheckbox}
               onGenerate={()=>setOpenModalFatture(true)}

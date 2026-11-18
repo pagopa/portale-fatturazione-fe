@@ -1,6 +1,6 @@
 import { Box, Collapse, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { HeaderGridCustom } from "../gridCustom";
-import GridCell from "./gridCell";
+import GridCell, { RowLoading } from "./gridCell";
 import { useState, useEffect } from 'react';
 import Loader from "../../loader";
 import CustomTablePagination from "../pagination";
@@ -17,7 +17,8 @@ interface GridRowsRendererProps<T ,K>{
   bgColorRowFunction?: (element:any) => string;
   manageCheckbox?: ( currentRow:Record<string, any>, dettagli?:Record<string, any>[]) => void;
   manageCheckboxCollapse?:(currentRow:Record<string, any>) => Record<string, any>,
-  filterOnCollapse?:(element:any) => React.ReactNode,
+  // detailsLoading: true finché sono in corso le chiamate del dettaglio della riga
+  filterOnCollapse?:(element:any, detailsLoading?:boolean) => React.ReactNode,
   getAsyncDetails?:(currentRow:Record<string, any>,val?:boolean) => Promise<Record<string, any>[]> | void,
   collapseDataLoading?:boolean,
   selectedRows:K[],
@@ -45,6 +46,8 @@ const GridRowDesignByConfigFile=<T,K>({
 }: GridRowsRendererProps<T,K>) => {
 
   const [open, setOpen] = useState(false);
+  // caricamento dettagli della riga, condiviso tra main checkbox e checkbox del collapse
+  const [rowLoading, setRowLoading] = useState<RowLoading>("none");
  
 
 
@@ -108,6 +111,8 @@ const GridRowDesignByConfigFile=<T,K>({
             selectedRows={selectedRows}
             manageStateCheckbox={manageStateCheckbox}
             usedInside={"main-row"}
+            rowLoading={rowLoading}
+            setRowLoading={setRowLoading}
           />
         ))}
       </TableRow>
@@ -125,7 +130,7 @@ const GridRowDesignByConfigFile=<T,K>({
                   <Typography sx={{ marginLeft: "6px" }} variant="h6" gutterBottom component="div">
                     {titleRowCollapse}
                   </Typography>
-                  {filterOnCollapse && filterOnCollapse(element)}
+                  {filterOnCollapse && filterOnCollapse(element, rowLoading !== "none")}
                 </Stack>
                 <>
                   <Table  size="small" aria-label="purchases">
@@ -167,6 +172,7 @@ const GridRowDesignByConfigFile=<T,K>({
                                   selectedRows={selectedRows}
                                   manageStateCheckbox={manageStateCheckbox}
                                   usedInside={"collapse-row"}
+                                  rowLoading={rowLoading}
                                   setAction={setAction}
                                 />
                               )

@@ -363,6 +363,7 @@ const MainFilter = <T,>({
               <TextField
                 size={sizeHeight ? sizeHeight : undefined}
                 fullWidth
+                disabled={disabled}
                 label={inputLabel}
                 placeholder={inputLabel}
                 value={body[keyDescription] ?? ""}
@@ -386,7 +387,7 @@ const MainFilter = <T,>({
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
           <DesktopDatePicker
             label={inputLabel}
-         
+            disabled={disabled}
             value={(body[keyValue] === ""||body[keyValue] === null) ? null : new Date(body[keyValue])}
             onChange={(e:any | null)  =>{
               if(e !== null && !isDateInvalid(e)){
