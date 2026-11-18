@@ -12,6 +12,7 @@ import {
   SxProps,
   Theme,
   Checkbox,
+  CircularProgress,
 } from "@mui/material";
 import ArticleIcon from "@mui/icons-material/Article";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -90,6 +91,8 @@ const GridCell = <T, K> ({
   usedInside=""
 }: GridCellProps<T, K>) => {
   const value = element[rowObject.keyValue];
+  // true mentre la main checkbox attende getAsyncDetails: al posto della checkbox mostro un loader
+  const [loadingCheckbox, setLoadingCheckbox] = useState(false);
 
 
  
@@ -293,25 +296,36 @@ const GridCell = <T, K> ({
       }
       return (
         <TableCell key={`${i}-checkbox`} align="center">
-          <Checkbox 
-            disabled={disabled}
-            checked={checked}
-            onChange={async () =>{
-              if(manageCheckbox){
-                if (getAsyncDetails && !isRowOpen){
+          {loadingCheckbox ? (
+            <Box sx={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 42, height: 42 }}>
+              <CircularProgress size={20} />
+            </Box>
+          ) : (
+            <Checkbox
+              disabled={disabled}
+              checked={checked}
+              onChange={async () =>{
+                if(manageCheckbox){
+                  if (getAsyncDetails && !isRowOpen){
                   // apro il collapse e aspetto che TUTTI i dettagli siano caricati prima di gestire la selezione
-                  if (onToggleRow) onToggleRow();
-                  const dettagli = await getAsyncDetails(element,true);
-                  manageCheckbox(element, dettagli || undefined);
-                }else{
-                  manageCheckbox(element);
+                    if (onToggleRow) onToggleRow();
+                    setLoadingCheckbox(true);
+                    try{
+                      const dettagli = await getAsyncDetails(element,true);
+                      manageCheckbox(element, dettagli || undefined);
+                    }finally{
+                      setLoadingCheckbox(false);
+                    }
+                  }else{
+                    manageCheckbox(element);
+                  }
                 }
-              }
 
-              if(manageCheckboxCollapse){
-                manageCheckboxCollapse(element);
-              }
-            } }/>
+                if(manageCheckboxCollapse){
+                  manageCheckboxCollapse(element);
+                }
+              } }/>
+          )}
         </TableCell>
       );
     }
