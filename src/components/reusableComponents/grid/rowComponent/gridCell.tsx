@@ -28,7 +28,7 @@ type CopyCellProps<T,> = {
   icon?:string,
   sentence?:string,
   element:T,
-  disabeled:(t:T) => boolean
+  disabled?:(t:T) => boolean
 };
 
 type GridCellProps<T,K> = {
@@ -73,12 +73,6 @@ const getCssFirstColumCustom = (isClickable: boolean,width?:string|undefined): S
 
 });
 
-const cssFirstColum : SxProps<Theme> = {
-  color:'#0D6EFD',
-  fontWeight: 'bold',
-  cursor: 'pointer',
-};
-
 const GridCell = <T, K> ({
   rowObject,
   index: i,
@@ -110,7 +104,7 @@ const GridCell = <T, K> ({
             align="center"
             width={headerNames[i]?.width}
           >
-            <Typography sx={headerNames[i]?.makeAction ? cssFirstColum : null} variant={rowObject.variant||"body1"}>
+            <Typography sx={(headerNames[i]?.makeAction || headerNames[i]?.applyCss) ? getCssFirstColumCustom(headerNames[i]?.makeAction||false) : null} variant={rowObject.variant||"body1"}>
               {value
                 ? isLong
                   ? value.toString().slice(0, 10) + "..."
@@ -383,7 +377,7 @@ const GridCell = <T, K> ({
           icon={headerNames[i]?.icon}
           sentence={headerNames[i]?.sentenceSnackbar}
           element={element}
-          disabled={headerNames[i]?.disabled}
+          disabled={headerNames[i]?.disabledFunction}
         />
       );
     case "collaps":
@@ -433,7 +427,7 @@ export default GridCell;
 
 
 
-const CopyToClipboardCell = ({ value, align = "center", icon, sentence="Event ID Copiato!",element,disabled }: CopyCellProps) => {
+const CopyToClipboardCell = ({ value, align = "center", icon, sentence="Event ID Copiato!",element,disabled }: CopyCellProps<any>) => {
   const [open, setOpen] = useState(false);
 
   const handleCopy = () => {
@@ -454,7 +448,7 @@ const CopyToClipboardCell = ({ value, align = "center", icon, sentence="Event ID
   return (
     <TableCell align={align}>
       <Tooltip title={value}>
-        <IconButton disabled={disabled(element)} onClick={handleCopy}>
+        <IconButton disabled={disabled ? disabled(element):false} onClick={handleCopy}>
           {getIcon()}
         </IconButton>
       </Tooltip>

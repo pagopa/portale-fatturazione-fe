@@ -108,31 +108,8 @@ const Messaggi : React.FC = () => {
     setGetListaLoading(true);
     await getListaMessaggi(token,profilo.nonce,body,pa,ro).then((res)=>{
       setGetListaLoading(false);
-      const mock = {
-        "idMessaggio": 309,
-        "idEnte": null,
-        "idUtente": "8ff88a50-6050-415a-8280-0d7362311a38",
-        "json": null,
-        "anno": 2026,
-        "mese": 9,
-        "prodotto": "prod-pn",
-        "gruppoRuolo": "fat-d-adgroup-assistenza",
-        "auth": "PAGOPA",
-        "stato": "2",
-        "dataInserimento": "2026-07-03T15:30:48.337",
-        "dataStepCorrente": null,
-        //"linkDocumento": "reportaccertamenti/preseincarico/2025-09/Report_preseincarico_2025-09.csv",
-        "tipologiaDocumento": "FatturePagoPa_01012026_1230.json",
-        "categoriaDocumento": "Invio JSON a SAP",
-        //"lettura": false,
-        "hash": "1a19eb3f0dc462bf4310f381d36239039e61575948f062077d70e30e6a5d112a",
-        "rhash": "1a19eb3f0dc462bf4310f381d36239039e61575948f062077d70e30e6a5d112a",
-        "contentType": "text/csv",
-        "contentLanguage": "it-IT",
-        "idReport": 256,
-        "ragioneSociale": null
-      };
-      setGridData([mock,...res.data.messaggi]);
+     
+      setGridData(res.data.messaggi);
       setCountMessaggi(res.data.count);
       if(!isInitialRender.current){
         updateFilters({
@@ -306,7 +283,6 @@ const Messaggi : React.FC = () => {
   ) ? "show" : "hidden";
 
   return (
-
     <MainBoxStyled title={"Messaggi"}>
       <ResponsiveGridContainer >
         <MainFilter 
@@ -331,7 +307,7 @@ const Messaggi : React.FC = () => {
             }
             setBodyCentroMessaggi((prev)=>({...prev,...{letto:val}}));          
           }}
-        ></MainFilter>
+        />
         <MainFilter 
           filterName={"select_value_string"}
           inputLabel={"Anno"}
@@ -343,7 +319,7 @@ const Messaggi : React.FC = () => {
           keyBody={"anno"}
           defaultValue={""}
           arrayValues={get2FinancialYear()}
-        ></MainFilter>
+        />
         <MainFilter 
           filterName={"select_key_value"}
           inputLabel={"Mese"}
@@ -354,7 +330,7 @@ const Messaggi : React.FC = () => {
           keyDescription='descrizione'
           keyBody={"mese"}
           arrayValues={mesiDescNome}
-        ></MainFilter>
+        />
       </ResponsiveGridContainer>
       <FilterActionButtons 
         onButtonFiltra={onFiltra} 
@@ -394,6 +370,13 @@ const Messaggi : React.FC = () => {
                 colorMessaggio = "error";
                 disableDownload = true;
               }
+              // valore mostrato dopo la categoria: per le contestazioni la ragione sociale, altrimenti la tipologia documento
+              let descrizioneTipologia = item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale
+                : item.tipologiaDocumento;
+
+              if(item.categoriaDocumento === "GENERAZIONE JSON" && item.linkDocumento){
+                descrizioneTipologia = item.linkDocumento.split("/").pop();
+              }
               return (
                 <div key={item.idMessaggio} id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
                   <TimelineNotificationItem 
@@ -417,18 +400,22 @@ const Messaggi : React.FC = () => {
                       </Typography>
                       {item.stato && <Chip variant="outlined" size="small" label={statoMessaggio} color={colorMessaggio} />}
                       {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
-                        {`${item.categoriaDocumento} : ${item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale :item.tipologiaDocumento}`}
+                        {`${item.categoriaDocumento} : ${descrizioneTipologia}`}
                       </Typography>}
                       {item.anno && <Typography color="text.primary" variant="caption-semibold" component="div">
                         {`${month[item.mese-1]}/${item.anno}  `}
                       </Typography>}
-                      <Typography color="text.primary" variant="overline" component="div">
-                        {`Letto  `}
-                        {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon> }              
-                      </Typography>                
-                      {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={item.categoriaDocumento.toLowerCase().includes("contestazione") ? <PreviewIcon/>:<AttachFileIcon />}>
-                        {item.categoriaDocumento.toLowerCase().includes("contestazione") ? 'Visualizza documento' : 'Download documento'}
-                      </ButtonNaked>}
+                      {item.categoriaDocumento === "GENERAZIONE JSON" ? null :
+                        <>
+                          <Typography color="text.primary" variant="overline" component="div">
+                            {`Letto  `}
+                            {item.lettura ? <CheckCircleIcon color="success"/>: <CheckCircleOutlineIcon color="disabled"/> }              
+                          </Typography>                
+                          {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={item.categoriaDocumento.toLowerCase().includes("contestazione") ? <PreviewIcon/>:<AttachFileIcon />}>
+                            {item.categoriaDocumento.toLowerCase().includes("contestazione") ? 'Visualizza documento' : 'Download documento'}
+                          </ButtonNaked>}
+                        </>
+                      }
                     </TimelineNotificationContent>
                   </TimelineNotificationItem>
                 </div> 

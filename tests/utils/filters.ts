@@ -67,7 +67,7 @@ export async function testSortFilter({
   });
 
   const getFirstRow = grid.locator("> tr:visible").filter({ hasText: hasText ? hasText :"Emessa" }).first();
-  console.log(await button.innerText());
+
   // 🔹 click ASC
   await button.click();
  

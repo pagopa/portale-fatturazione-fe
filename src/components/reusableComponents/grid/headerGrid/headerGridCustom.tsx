@@ -25,21 +25,21 @@ const HeaderGridCustom = ({
   listaResponse,
   headerActionSortServerSide
 }:{
-    elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any
-    page:number,
-    total:number,
-    rows:number,
-    headerNames:HeaderGridCustomProps[],
-    nameParameterApi:string 
-    headerAction?:(val:number) =>void,
-    body?:any,
-    objectSort?:{[key:string]:number},
-    headerActionSort?:(val:string, setGridData:React.Dispatch<SetStateAction<any[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number,listaResponse:any[]) =>void,
-    setGridData?:any,
-    gridType:boolean,
-    setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
-    listaResponse?:any[],
-    headerActionSortServerSide?:(label:string) => void
+  elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any
+  page:number,
+  total:number,
+  rows:number,
+  headerNames:HeaderGridCustomProps[],
+  nameParameterApi:string 
+  headerAction?:(val:number) =>void,
+  body?:any,
+  objectSort?:{[key:string]:number},
+  headerActionSort?:(val:string, setGridData:React.Dispatch<SetStateAction<any[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number,listaResponse:any[]) =>void,
+  setGridData?:any,
+  gridType:boolean,
+  setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
+  listaResponse?:any[],
+  headerActionSortServerSide?:(label:string) => void
 }) => {
   return (
     <TableHead sx={{backgroundColor:'#f2f2f2'}}>
@@ -47,12 +47,12 @@ const HeaderGridCustom = ({
         {headerNames.map((el, i) => {
           const sortValue = objectSort?.[el.label] ?? 0;
           switch(nameParameterApi) {
-          case 'idOrchestratore':
-          case 'asyncDocEnte':
-          case 'idPrevisonale':
-            return (
-              <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
-                {el.headerAction &&
+            case 'idOrchestratore':
+            case 'asyncDocEnte':
+            case 'idPrevisonale':
+              return (
+                <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
+                  {el.headerAction &&
                 <Tooltip title="Sort">
                   <span>
                     <IconButton
@@ -65,20 +65,20 @@ const HeaderGridCustom = ({
                     </IconButton>
                   </span>
                 </Tooltip>}
-              </TableCell>
-            );
-          case 'contestazionePage':
-          case 'modComTrimestrale':
-            return (
-              <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}</TableCell>
-            );
-          case 'docEmessiEnte':
-          case 'docEmessiEnteContestate':
-          case 'docSospesiSend':
-          case 'invioFatture':
-            return (
-              <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
-                {(el.headerActionSort && objectSort && objectSort[el.label]) &&
+                </TableCell>
+              );
+            case 'contestazionePage':
+            case 'modComTrimestrale':
+              return (
+                <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}</TableCell>
+              );
+            case 'docEmessiEnte':
+            case 'docEmessiEnteContestate':
+            case 'docSospesiSend':
+            case 'invioFatture':
+              return (
+                <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
+                  {(el.headerActionSort && objectSort && objectSort[el.label]) &&
                 <Tooltip title="Sort">
                   <span>
                     <IconButton
@@ -96,12 +96,12 @@ const HeaderGridCustom = ({
                     </IconButton>
                   </span>
                 </Tooltip>}
-              </TableCell>
-            );
-          case 'idNotifica':
-            return (
-              <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
-                {(el.headerActionSort && headerActionSortServerSide && body?.sort) &&
+                </TableCell>
+              );
+            case 'idNotifica':
+              return (
+                <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
+                  {(el.headerActionSort && headerActionSortServerSide && body?.sort) &&
                 <Tooltip title="Sort">
                   <span>
                     <IconButton
@@ -116,12 +116,12 @@ const HeaderGridCustom = ({
                     </IconButton>
                   </span>
                 </Tooltip>}
-              </TableCell>
-            );
-          default:
-            return (
-              <TableCell key={`tableCell-${i}`} width={el.width} align="center">{el.label}</TableCell>
-            );
+                </TableCell>
+              );
+            default:
+              return (
+                <TableCell key={`tableCell-${i}`} width={el.width} align="center">{el.label}</TableCell>
+              );
           }
         })}
       </TableRow>

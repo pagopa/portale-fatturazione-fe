@@ -17,7 +17,7 @@ import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import { Box, Chip, DialogContent, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
 import { NotaTextField } from "./gestioneFatture";
 import FiltersCollapseInvioFatture, { FiltriCollapseInvioFatture } from "../../components/invioFatture/filtersCollapseInvioFatture";
-import { downloadInvioFatture, downloadInvioFattureDaReInviare, generazioneJson, generazioneJsonInviate, getAnniInviofatture, getDettaglioInvioFatture, getListaInvioFatture, getMesiInviofatture, getStatiInvioJson, getTipologieInviofatture } from "../../api/apiPagoPa/invioFattureSapPA/api";
+import { downloadInvioFatture, downloadInvioFattureDaReInviare, generazioneJson, generazioneJsonInviate, getAnniInviofatture, getCheckLock, getDettaglioInvioFatture, getListaInvioFatture, getMesiInviofatture, getStatiInvioJson, getTipologieInviofatture } from "../../api/apiPagoPa/invioFattureSapPA/api";
 import { toMesi } from "../../reusableFunction/reusableArrayObj";
 
 interface ListaFatture {
@@ -172,6 +172,7 @@ const InvioFatture : React.FC = () => {
 
   useEffect(()=>{
     getAnni();
+    getLock();
   },[]);
 
   const getStati = async () => {
@@ -211,11 +212,27 @@ const InvioFatture : React.FC = () => {
     }
   };
 
+  const getLock = async () => {
+    try{
+      const resp = await getCheckLock(token,profilo.nonce);
+      if(resp.status === 204){
+        console.log(1);
+      }
+      console.log({resp});
+    }catch(err){
+      console.log(err);
+    }
+  };
+  console.log({elementsSelected});
   const getMesi = async (anno) => {
     try{
       const resp = await getMesiInviofatture(token,profilo.nonce,{anno:anno});
-      const result = toMesi(resp.data).reverse();
-      setArrayMonths(result);
+      const result:{mese:number,descrizione:string}[] = toMesi(resp.data).reverse();
+      const resultUpperCase :{mese:number,descrizione:string}[] = result.map(el => {
+        el.descrizione = el.descrizione.toUpperCase();
+        return el;
+      });
+      setArrayMonths(resultUpperCase);
     }catch{
       setArrayMonths([]);
     }
@@ -339,6 +356,7 @@ const InvioFatture : React.FC = () => {
       setAllElementsSelected(false);
     }else{
       //prendo tutti i sotto elementi
+      console.log({fattureRiga});
       setElementSelected(fattureRiga);
       setAllElementsSelected(fattureRiga.length > 0);
     }
@@ -386,7 +404,8 @@ const InvioFatture : React.FC = () => {
           tipologiaFattura:currentRow.tipologiaFattura,
           idFattura:currentRow.idFattura,
           statoInvio:currentRow.statoInvio,
-          ragioneSociale:currentRow.ragioneSociale
+          ragioneSociale:currentRow.ragioneSociale,
+          numeroInvii:currentRow.numeroInvii
         }];});
       return {
         checkboxStatus:true,
@@ -424,7 +443,6 @@ const InvioFatture : React.FC = () => {
 
   
     disabled = elementsSelected.length !== 0 && (!!elementsSel.find((el) =>{
-     
       return el.annoRiferimento !== row.annoRiferimento ||
        el.meseRiferimento !== row.meseRiferimento || 
        el.tipologiaFattura !== row.tipologiaFattura; 
@@ -441,7 +459,7 @@ const InvioFatture : React.FC = () => {
 
 
   //Bisognaaggiungere un parametro che controlla se è collapsed altrimenti non devo faren la chiamata
-  const PAGE_SIZE_DETTAGLIO = 10;
+  const PAGE_SIZE_DETTAGLIO = 500;
 
   // restituisce le fatture complete della riga; la selezione è gestita da manageCheckbox (chiamato dalla grid dopo l'await)
   const handleGetDetailsRowCollapsed = async (el: Record<string, any>, clickOnCheckbox:boolean = false): Promise<DettaglioFattura[]> => {
@@ -490,15 +508,18 @@ const InvioFatture : React.FC = () => {
       const total = Number(firstRes.data.count) || firstPage.length;
       const totalPages = Math.ceil(total / PAGE_SIZE_DETTAGLIO);
 
-      // pagine successive in parallelo; loader e paginazione restano nascosti fino alla fine
+      // mostro subito la prima pagina
       let allFatture = firstPage;
-      if(totalPages > 1){
-        const pages = Array.from({ length: totalPages - 1 }, (_, i) => i + 2);
-        const results = await Promise.all(pages.map(fetchPage));
-        allFatture = [...firstPage, ...results.flatMap((r) => mapCollapse(r.data.fatture))];
-      }
       updateRiga(allFatture);
       setCollapseDataLoading(false);
+
+      // pagine successive in sequenza: la chiamata n+1 parte solo quando la n è risolta,
+      // e ogni pagina viene aggiunta subito alla riga
+      for(let p = 2; p <= totalPages; p++){
+        const res = await fetchPage(p);
+        allFatture = [...allFatture, ...mapCollapse(res.data.fatture)];
+        updateRiga(allFatture);
+      }
       return allFatture;
 
     }catch{
@@ -516,8 +537,7 @@ const InvioFatture : React.FC = () => {
   // copia delle fatture originali (response iniziale) per ogni riga, usata per ripristinare i dati al reset dei filtri
   const originalFattureRef = useRef<Record<string, any[]>>({});
 
-  const getRowKey = (row: Record<string, any>) =>
-    `${row.annoRiferimento}-${row.meseRiferimento}-${row.tipologiaFattura}-${row.statoInvio}`;
+  const getRowKey = (row: Record<string, any>) => `${row.annoRiferimento}-${row.meseRiferimento}-${row.tipologiaFattura}-${row.statoInvio}`;
 
   const applyFiltersCollapse = (row: Record<string, any>, filtri: FiltriCollapseInvioFatture) => {
     const key = getRowKey(row);
@@ -618,6 +638,7 @@ const InvioFatture : React.FC = () => {
       }
     }finally{
       setNota("");
+      setElementSelected([]);
       setShowLoader(false);
     }
   };
@@ -696,13 +717,13 @@ const InvioFatture : React.FC = () => {
         <MainFilter
           filterName={"select_key_value"}
           inputLabel="Tipologia Invio"
+          clearOnChangeFilter={clearOnChangeFilter}
           arrayValues={arrayTipologieInvio}
           keyValue="codice"
           keyDescription="descrizione"
           keyBody="statoInvio"
           body={bodyFatturazione}
           setBody={setBodyFatturazione}
-          clearOnChangeFilter={() => {}}
         />
       </ResponsiveGridContainer>
       <FilterActionButtons 

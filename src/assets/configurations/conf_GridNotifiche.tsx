@@ -3,7 +3,7 @@ import { getOnereLabel } from "../../reusableFunction/function";
 
 export const headerNamesEnte: HeaderGridCustom[] = [
   {label:"Contestazione", align:"center", width:"180px", keyValue:"contestazione", typeColumn:"string",makeAction:true},
-  {label:"Event ID", align:"center", width:"100px", keyValue:"idNotifica", typeColumn:"snackbar"},
+  {label:"Event ID", align:"center", width:"100px", keyValue:"idNotifica", typeColumn:"snackbar",disabledFunction:()=>false},
   {label:"Onere", align:"center", width:"100px", keyValue:"onere", typeColumn:"string", funToManipulateValue:getOnereLabel},
   {label:"Recipient ID", align:"center", width:"150px", keyValue:"recipientId", typeColumn:"string"},
   {label:"Anno", align:"center", width:"100px", keyValue:"anno", typeColumn:"string"},
@@ -21,7 +21,7 @@ export const headerNamesEnte: HeaderGridCustom[] = [
 
 export const headerNamesAdmin: HeaderGridCustom[] = [
   {label:"Contestazione", align:"center", width:"180px", keyValue:"contestazione", typeColumn:"string",makeAction:true},
-  {label:"Event ID", align:"center", width:"100px", keyValue:"idNotifica", typeColumn:"snackbar"},
+  {label:"Event ID", align:"center", width:"100px", keyValue:"idNotifica", typeColumn:"snackbar",disabledFunction:()=>false},
   {label:"Onere", align:"center", width:"100px", keyValue:"onere", typeColumn:"string", funToManipulateValue:getOnereLabel},
   {label:"Recipient ID", align:"center", width:"150px", keyValue:"recipientId", typeColumn:"string"},
   {label:"Anno", align:"center", width:"100px", keyValue:"anno", typeColumn:"string"},

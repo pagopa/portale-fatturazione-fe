@@ -55,7 +55,7 @@ const showNoteGestioneFatture = (obj,fun) => {
 export const headerNamesInvioFatture: HeaderGridCustom[] = [
   { label: "", align: "center", width: "30px", keyValue: "", typeColumn: 'checkbox' },
   { label: "", align: "center", width: "30px", keyValue: "collaps", typeColumn: "collaps" },
-  { label: "Tipologia Fattura", align: "center", width: "200px", keyValue: "tipologiaFattura", typeColumn: 'string', makeAction: true, applyCss: true },
+  { label: "Tipologia Fattura", align: "center", width: "200px", keyValue: "tipologiaFattura", typeColumn: 'string', applyCss: true },
   { label: "Stato Invio",align: "center", width: "100px",keyValue: "statoInvio", typeColumn: "chip-tooltip" ,funToManipulateValue:getChipElaborazione},
   { label: "Numero Fatture", align: "center", width: "150px", keyValue: "numeroFatture", typeColumn: 'number' },
   { label: "Anno Riferimento", align: "center", width: "150px", keyValue: "annoRiferimento", typeColumn: 'string',headerActionSort:false, },
@@ -74,7 +74,7 @@ export const headerNamesInvioFattureCollapse: HeaderGridCustom[] = [
   { label: "FK ID Doc.", align: "center", width: "150px", keyValue: "", typeColumn: 'string' },
   { label: "D. Fat.", align: "center", width: "180px", keyValue: "dataFattura", typeColumn: 'data' },
   { label: "D. Ultima Gen.", align: "center", width: "250px", keyValue: "dataGenerazione", typeColumn: 'data-ora' },
-  { label: "File JSON", align: "center", width: "30px", keyValue: "nomeFile", typeColumn:"snackbar",icon:"file_invio_sap",sentenceSnackbar:"Nome del file copiato!", disabled:isNomeFileDisabled },
+  { label: "File JSON", align: "center", width: "30px", keyValue: "nomeFile", typeColumn:"snackbar",icon:"file_invio_sap",sentenceSnackbar:"Nome del file copiato!", disabledFunction:isNomeFileDisabled },
   { label: 'Date Invio', align: 'center', width: '150px', keyValue: 'storicoInvii', typeColumn: "action",funToManipulateValue:showNoteGestioneFatture },
 ];
 
@@ -104,7 +104,6 @@ export const keyValueObjModalInfo = [
     label:"N. Doc. Di Storno",
     component:(setNumeroDocStorno, value,row)=> {
       const [focused, setFocused] = useState(false);
-      console.log({value,row});
       return (
         <Box  sx={{
           position: 'relative',

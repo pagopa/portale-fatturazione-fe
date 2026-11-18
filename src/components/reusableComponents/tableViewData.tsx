@@ -122,7 +122,6 @@ export const ElementToProcessComponent = <T,> ({
                       </TableCell>
                     );
                   }
-                  console.log({rowObj});
                   let value =  rowObj[el.key];
                   if(el.key === "meseRiferimento"){
                     value = month[rowObj[el.key]-1];

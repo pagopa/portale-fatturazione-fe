@@ -69,7 +69,8 @@ export interface HeaderGridCustom {
   icon?:string,
   sentenceSnackbar?:string,
   makeActionFun?:(obj:any)=> boolean;
-  disabled?:boolean
+  disabled?:boolean,
+  disabledFunction?:(obj:T) => boolean
 }
 
 
