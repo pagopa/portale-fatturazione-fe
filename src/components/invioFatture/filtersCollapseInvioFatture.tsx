@@ -127,6 +127,7 @@ const FiltersCollapseInvioFatture = ({
         keyBody="numeroInvii"
         body={filtri}
         setBody={setFiltri}
+        disabled={disabled}
         hidden={element.statoInvio ===  "DA_INVIARE"}
       />
       <Grid item {...FILTER_ITEM_PROPS}>
