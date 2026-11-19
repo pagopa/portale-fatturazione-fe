@@ -499,6 +499,13 @@ export function isValidText2NotaPii(str: string): boolean {
   return words.length >= 3;
 }
 
+// numero documento di storno: solo caratteri alfanumerici, da 1 a 200 caratteri
+const regexAlfanumerico200 = /^[A-Za-z0-9]{1,200}$/;
+
+export function isValidNumeroDocumentoStorno(str: string): boolean {
+  return regexAlfanumerico200.test((str ?? "").trim());
+}
+
 /* se vogliamo implementare l'errore anche solo con gli asterischi
 function isValidText(str: string): boolean {
   const trimmed = str.trim();

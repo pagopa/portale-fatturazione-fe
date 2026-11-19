@@ -2,6 +2,7 @@ import { Box, IconButton, TextField, Tooltip } from "@mui/material";
 import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { useState } from "react";
+import { isValidNumeroDocumentoStorno, isValidText2NotaPii } from "../../reusableFunction/function";
 
 const getChipElaborazione = (row) =>{
   let tooltipObj:any = {label:'',title:''};
@@ -118,6 +119,9 @@ export const keyValueObjModalInfo = [
             size="small"
             label="N. documento di storno"
             value={row?.numeroDocumentoStorno||""}
+            placeholder={"Max. 200 caratteri alfanumerici"}
+            // rosso se il valore non è valido (solo alfanumerici, max 200 caratteri)
+            error={!isValidNumeroDocumentoStorno(row?.numeroDocumentoStorno ?? "")}
             onChange={(e) => setNumeroDocStorno(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
@@ -157,6 +161,9 @@ export const keyValueObjModalInfo = [
             size="small"
             label="Nota"
             value={row?.nota||""}
+            placeholder="La nota deve contenere almeno 3 parole"
+            // rosso se la nota non è valida (almeno 3 parole)
+            error={!isValidText2NotaPii(row?.nota ?? "")}
             onChange={(e) => setNota(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}

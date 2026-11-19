@@ -17,6 +17,7 @@ import { NotaTextField } from "./gestioneFatture";
 import FiltersCollapseInvioFatture, { FiltriCollapseInvioFatture } from "../../components/invioFatture/filtersCollapseInvioFatture";
 import { downloadInvioFatture, downloadInvioFattureDaReInviare, generazioneJson, generazioneJsonInviate, getAnniInviofatture, getCheckLock, getDettaglioInvioFatture, getListaInvioFatture, getMesiInviofatture, getStatiInvioJson, getTipologieInviofatture } from "../../api/apiPagoPa/invioFattureSapPA/api";
 import { toMesi } from "../../reusableFunction/reusableArrayObj";
+import { isValidNumeroDocumentoStorno, isValidText2NotaPii } from "../../reusableFunction/function";
 
 interface ListaFatture {
   tipologiaFattura: string,
@@ -664,8 +665,8 @@ const InvioFatture : React.FC = () => {
   // altri stati (re-invio): ogni fattura selezionata deve avere nota e numeroDocumentoStorno valorizzati
   const buttonGeneraDisabled = elementsSelected.length === 0 || (
     elementsSelected[0].statoInvio === "DA_INVIARE"
-      ? nota.length < 10
-      : !elementsSelected.every(el => el.nota?.trim() && el.numeroDocumentoStorno?.trim())
+      ? isValidText2NotaPii(nota ?? "")
+      : !elementsSelected.every(el => isValidText2NotaPii(el.nota ?? "") && isValidNumeroDocumentoStorno(el.numeroDocumentoStorno ?? ""))
   );
   const statusAnnulla = (bodyFatturazione.anno !== arrayYears[0] ||
    bodyFatturazione.mesi.length > 0 ||
