@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import { saveAs } from "file-saver";
@@ -18,6 +17,8 @@ import FiltersCollapseInvioFatture, { FiltriCollapseInvioFatture } from "../../c
 import { downloadInvioFatture, downloadInvioFattureDaReInviare, generazioneJson, generazioneJsonInviate, getAnniInviofatture, getCheckLock, getDettaglioInvioFatture, getListaInvioFatture, getMesiInviofatture, getStatiInvioJson, getTipologieInviofatture } from "../../api/apiPagoPa/invioFattureSapPA/api";
 import { toMesi } from "../../reusableFunction/reusableArrayObj";
 import { isValidNumeroDocumentoStorno, isValidText2NotaPii } from "../../reusableFunction/function";
+import { PathPf } from "../../types/enum";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 
 interface ListaFatture {
   tipologiaFattura: string,
@@ -155,7 +156,7 @@ const InvioFatture : React.FC = () => {
     updateFilters,
     isInitialRender,
     resetFilters
-  } = useSavedFiltersNested("/inviofatture",{});
+  } = useSavedFilters(PathPf.JSON_TO_SAP,{});
 
 
   useEffect(()=>{
@@ -167,7 +168,8 @@ const InvioFatture : React.FC = () => {
     try{
       const resp = await getStatiInvioJson(token,profilo.nonce);
       setArrayTipologieInvio(resp.data);
-      setBodyFatturazione((prev)=>({...prev,statoInvio:"TUTTE"}));
+      // non sovrascrivo lo stato invio ripristinato dai filtri salvati
+      setBodyFatturazione((prev)=>({...prev,statoInvio:prev.statoInvio || "TUTTE"}));
 
     }catch{
       setArrayTipologieInvio([]);
@@ -189,6 +191,21 @@ const InvioFatture : React.FC = () => {
       const resp = await getAnniInviofatture(token,profilo.nonce);
     
       setArrayYears(resp.data);
+
+      // filtri salvati (reload della pagina): ripristino filtri, paginazione e lista
+      if(isInitialRender.current && filters?.body){
+        const savedBody: BodyInvioFatture = filters.body;
+        setBodyFatturazione(savedBody);
+        setValueSelectMonths(filters.valueSelectMonths || []);
+        setValueMultiselectTipologie(filters.valueMulitselectTipologie || []);
+        setRowsPerPage(filters.rows || 10);
+        getMesi(savedBody.anno);
+        getStati();
+        getTipologieFattura({anno:savedBody.anno,mesi:savedBody.mesi || []});
+        getLista(savedBody, filters.page || 0);
+        return;
+      }
+
       setBodyFatturazione((prev)=>({
         ...prev, anno:resp.data[0]
       }));
@@ -230,7 +247,8 @@ const InvioFatture : React.FC = () => {
     }
   };
 
-  const getLista = async (body) =>{
+  // pageToSet: pagina da mostrare dopo il caricamento (ripristino dai filtri salvati), di default la prima
+  const getLista = async (body, pageToSet = 0) =>{
     if(!isInitialRender.current){
       setShowLoader(true);
     }
@@ -241,7 +259,7 @@ const InvioFatture : React.FC = () => {
       originalFattureRef.current = {};
       setListaFatture(res.data);
       setCount(res.data?.length || 0);
-      setPage(0);
+      setPage(pageToSet);
       setShowLoader(false);
       isInitialRender.current = false;
     }catch(err:any){
@@ -259,13 +277,16 @@ const InvioFatture : React.FC = () => {
     newPage: number,
   ) => {
     setPage(newPage);
+    if(filters?.body) updateFilters({page:newPage});
   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    const newRows = parseInt(event.target.value, 10);
+    setRowsPerPage(newRows);
     setPage(0);
+    if(filters?.body) updateFilters({page:0,rows:newRows});
   };
 
   const downloadRisultati = async () => {
@@ -306,6 +327,15 @@ const InvioFatture : React.FC = () => {
   };
 
   const onButtonFiltra = () => {
+    // salvo i filtri: al reload vengono ripristinati e la lista viene ricaricata
+    updateFilters({
+      pathPage:PathPf.JSON_TO_SAP,
+      body:bodyFatturazione,
+      valueSelectMonths,
+      valueMulitselectTipologie,
+      page:0,
+      rows:rowsPerPage
+    });
     getLista(bodyFatturazione);
   };
 
@@ -316,6 +346,7 @@ const InvioFatture : React.FC = () => {
       tipologieFattura:[],
       statoInvio:"TUTTE"
     };
+    resetFilters();
     setBodyFatturazione(newBody);
     setValueSelectMonths([]);
     setValueMultiselectTipologie([]);
@@ -644,8 +675,9 @@ const InvioFatture : React.FC = () => {
       }
       
       await getLista(bodyFatturazione);
-      managePresaInCarico("INSER_DELETE_WHITE_LIST", dispatchMainState
-      );
+      managePresaInCarico("INSER_DELETE_WHITE_LIST", dispatchMainState);
+      setNota("");
+      setElementSelected([]);
     }catch(err: unknown){
     
       const motivo = axios.isAxiosError<{ motivo?: string }>(err) ? err.response?.data?.motivo : undefined;
@@ -653,10 +685,11 @@ const InvioFatture : React.FC = () => {
         managePresaInCarico('LOCK_ATTIVO',dispatchMainState);
       }else{
         managePresaInCarico('GENERICO_KO',dispatchMainState);
+        setNota("");
+        setElementSelected([]);
       }
     }finally{
-      setNota("");
-      setElementSelected([]);
+     
       setShowLoader(false);
     }
   };
