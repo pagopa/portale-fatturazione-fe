@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import MainFilter from "../reusableComponents/mainFilter";
 
@@ -6,6 +6,7 @@ export interface FiltriCollapseInvioFatture {
   ragioneSociale: string | null;
   idFattura: string | null;
   dataFattura: Date | string | null;
+  numeroInvii:null|number;
 }
 
 interface FiltersCollapseInvioFattureProps {
@@ -18,6 +19,9 @@ interface FiltersCollapseInvioFattureProps {
   // filtri disabilitati finché sono in corso le chiamate del dettaglio
   disabled?: boolean;
 }
+
+// ogni filtro occupa col-2 da md in su, altrimenti tutta la larghezza disponibile
+const FILTER_ITEM_PROPS = { xs: 12, md: 2 };
 
 const DEBOUNCE_MS = 2000;
 const MIN_CHARS = 3;
@@ -36,8 +40,9 @@ const FiltersCollapseInvioFatture = ({
     ragioneSociale: null,
     idFattura: null,
     dataFattura: null,
+    numeroInvii:null
   });
-
+ 
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -62,14 +67,15 @@ const FiltersCollapseInvioFatture = ({
     }, DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-  }, [filtri.ragioneSociale, filtri.idFattura, filtri.dataFattura]);
+  }, [filtri.ragioneSociale, filtri.idFattura, filtri.dataFattura, filtri.numeroInvii]);
 
   // se il collapse viene chiuso durante il debounce, spengo il loading
   useEffect(() => () => { onLoading && onLoading(false); }, []);
 
   return (
-    <>
+    <Grid container spacing={2} alignItems="center" sx={{ flex: 1 }}>
       <MainFilter
+        itemProps={FILTER_ITEM_PROPS}
         sizeHeight={"small"}
         filterName={"input_text"}
         inputLabel={"Ragione Sociale"}
@@ -81,6 +87,7 @@ const FiltersCollapseInvioFatture = ({
         keyValue={"ragioneSociale"}
         disabled={disabled}/>
       <MainFilter
+        itemProps={FILTER_ITEM_PROPS}
         sizeHeight={"small"}
         filterName={"input_text"}
         inputLabel={"Numero Fattura"}
@@ -92,6 +99,7 @@ const FiltersCollapseInvioFatture = ({
         keyValue={"idFattura"}
         disabled={disabled}/>
       <MainFilter
+        itemProps={FILTER_ITEM_PROPS}
         sizeHeight={"small"}
         filterName={"date_from_to"}
         inputLabel={"Data Fattura"}
@@ -105,8 +113,26 @@ const FiltersCollapseInvioFatture = ({
         error={false}
         disabled={disabled}
       />
-      <Button disabled={disabled || manageStateCheckbox && manageStateCheckbox(element,"",selectedRows)?.disabled || selectedRows.length === 0} onClick={onGenerate} size={"small"} variant="outlined">Generazione Json</Button>
-    </>
+      <MainFilter
+        itemProps={FILTER_ITEM_PROPS}
+        sizeHeight={"small"}
+        filterName={"select_key_value"}
+        inputLabel="Tipologia Invio"
+        clearOnChangeFilter={() => null}
+        // 0 = Tutte (nessun filtro), selezionato di default quando numeroInvii è null
+        arrayValues={[{descrizione:"Tutte",numeroInvii:0}, {descrizione:"Inviate",numeroInvii:1}, {descrizione:"Re-inviate",numeroInvii:2}]}
+        defaultValue={0}
+        keyValue="numeroInvii"
+        keyDescription="descrizione"
+        keyBody="numeroInvii"
+        body={filtri}
+        setBody={setFiltri}
+        hidden={element.statoInvio ===  "DA_INVIARE"}
+      />
+      <Grid item {...FILTER_ITEM_PROPS}>
+        <Button disabled={disabled || manageStateCheckbox && manageStateCheckbox(element,"",selectedRows)?.disabled || selectedRows.length === 0} onClick={onGenerate} size={"small"} variant="outlined">Generazione Json</Button>
+      </Grid>
+    </Grid>
   );
 };
 

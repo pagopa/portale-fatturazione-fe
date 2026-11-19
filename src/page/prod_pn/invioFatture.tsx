@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
 import axios from "axios";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested";
-import { PathPf } from "../../types/enum";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import { saveAs } from "file-saver";
@@ -117,34 +115,23 @@ const InvioFatture : React.FC = () => {
 
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
-  const navigate = useNavigate();
 
   const [listaFatture, setListaFatture] = useState<ListaFatture[]>([]);
-  //const [selected,setSelected] = useState<SelectedJsonSap[]>([]);
-  
   const [showLoader, setShowLoader] = useState(false);
   const [showDownloading, setShowDownloading] = useState(false);
-  //const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
-  //const [infoPage , setInfoPage] = useState({ page: 0, pageSize: 10 });
   const [collapseDataLoading,setCollapseDataLoading] = useState(true);
-
   const [arrayYears,setArrayYears] = useState<number[]>([]);
   const [arrayMonths,setArrayMonths] = useState<{mese:number,descrizione:string}[]>([]);
-
   const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
   const [tipologieFatture, setTipologieFattura] = useState<string[]>([]);
-
   const [valueSelectMonths, setValueSelectMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [arrayTipologieInvio, setArrayTipologieInvio] = useState<{codice:string,descrizione:string}[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
-  //const [gridData, setGridData] = useState<Fattura[]>([]);
   const [objectSort, setObjectSort] = useState<{[key:string]:number}>({"Anno Riferimento":1,"Mese Riferimento":1});
-  //const [listaResponse, setListaResponse] = useState<Fattura[]>([]);
   const [openModalFatture, setOpenModalFatture]= useState(false);
   const [infoReinvio, setInforeInvio] = useState<{dataInvio:string}[]>([]);
-
   const [showPopUpDateInvio, setShowPopUpdateInvio] = useState(false);
   const [nota, setNota] = useState("");
   const [elementsSelected,setElementSelected] = useState<DettaglioFattura[]>([]);
@@ -153,7 +140,7 @@ const InvioFatture : React.FC = () => {
     anno:"",
     mesi:[],
     tipologieFattura:[],
-    statoInvio:"TUTTE"
+    statoInvio:""
   });
 
   const [allElementsSelected, setAllElementsSelected] = useState(false);
@@ -179,6 +166,8 @@ const InvioFatture : React.FC = () => {
     try{
       const resp = await getStatiInvioJson(token,profilo.nonce);
       setArrayTipologieInvio(resp.data);
+      setBodyFatturazione((prev)=>({...prev,statoInvio:"TUTTE"}));
+
     }catch{
       setArrayTipologieInvio([]);
     }
@@ -206,9 +195,10 @@ const InvioFatture : React.FC = () => {
       getStati();
       getTipologieFattura({anno:resp.data[0],mesi:[]});
       getLista({...bodyFatturazione,anno:resp.data[0]});
-    }catch{
+    }catch(err:any){
       setArrayYears([]);
       setShowLoader(false);
+      manageError(err,dispatchMainState);
     }
   };
 
@@ -218,12 +208,12 @@ const InvioFatture : React.FC = () => {
       if(resp.status === 204){
         console.log(1);
       }
-      console.log({resp});
+    
     }catch(err){
       console.log(err);
     }
   };
-  console.log({elementsSelected});
+  
   const getMesi = async (anno) => {
     try{
       const resp = await getMesiInviofatture(token,profilo.nonce,{anno:anno});
@@ -233,8 +223,9 @@ const InvioFatture : React.FC = () => {
         return el;
       });
       setArrayMonths(resultUpperCase);
-    }catch{
+    }catch(err:any){
       setArrayMonths([]);
+      manageError(err,dispatchMainState);
     }
   };
 
@@ -359,7 +350,7 @@ const InvioFatture : React.FC = () => {
       setAllElementsSelected(false);
     }else{
       //prendo tutti i sotto elementi
-      console.log({fattureRiga});
+     
       setElementSelected(fattureRiga);
       setAllElementsSelected(fattureRiga.length > 0);
     }
@@ -537,9 +528,12 @@ const InvioFatture : React.FC = () => {
       rowsCompleteRef.current.add(rowKey);
       return allFatture;
 
-    }catch{
-      managePresaInCarico("ERROR_LIST_JSON_TO_SAP", dispatchMainState);
-      navigate(PathPf.JSON_TO_SAP);
+    }catch(error:any){
+      if(error.response?.status === 401 || error.message === "Network Error"){
+        manageError(error,dispatchMainState);
+      }else{
+        managePresaInCarico("ERROR_LIST_JSON_TO_SAP", dispatchMainState);
+      }
       setCollapseDataLoading(false);
       return [];
     }finally{
@@ -568,12 +562,18 @@ const InvioFatture : React.FC = () => {
         const ragioneSociale = filtri.ragioneSociale?.trim().toLowerCase() || "";
         const idFattura = filtri.idFattura?.trim() || "";
         const dataFattura = filtri.dataFattura ? new Date(filtri.dataFattura).toDateString() : "";
+        // 1 = inviate (numeroInvii < 2), 2 = re-inviate (numeroInvii > 1), null = nessun filtro
+        const numeroInvii = filtri.numeroInvii != null ? Number(filtri.numeroInvii) : null;
 
         const filtered = original.filter((f) => {
           const matchRagione = !ragioneSociale || (f.ragioneSociale || "").toLowerCase().includes(ragioneSociale);
           const matchId = !idFattura || String(f.idFattura ?? "").includes(idFattura);
           const matchData = !dataFattura || (f.dataFattura && new Date(f.dataFattura).toDateString() === dataFattura);
-          return matchRagione && matchId && matchData;
+          const invii = Number(f.numeroInvii ?? 0);
+          const matchInvii = numeroInvii === 1 ? invii < 2
+            : numeroInvii === 2 ? invii > 1
+              : true;
+          return matchRagione && matchId && matchData && matchInvii;
         });
         return { ...item, fatture: filtered };
       })
@@ -741,6 +741,7 @@ const InvioFatture : React.FC = () => {
           keyBody="statoInvio"
           body={bodyFatturazione}
           setBody={setBodyFatturazione}
+          defaultValue={"TUTTE"}
         />
       </ResponsiveGridContainer>
       <FilterActionButtons 
@@ -806,6 +807,7 @@ const InvioFatture : React.FC = () => {
           sentenseEmpty={"Nessuna fattura disponibile"}
           keyCollapse={"fatture"}
           titleRowCollapse={"Dettaglio Fatture"}
+          sentenseEmptyCollapse={"Nessuna fattura disponibile"}
           colSpanCollaps={8}
           setAction={showPopUpAction}
         />

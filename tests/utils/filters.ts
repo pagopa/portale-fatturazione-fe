@@ -15,17 +15,6 @@ export async function checkFilter(page: Page, filter: Filter) {
 
   const label = formControl.locator("label");
   await expect(label).toHaveText(filter.label);
-  /*if(filter.name === "anno"){
-      await formControl.click();
-
-      // Select a value different from 9999 (e.g. 2024)
-      const option = page.locator('li', { hasText: '2023' });
-      console.log({option})
-      await option.click();
-      const annullaButton = page.locator('button', { hasText: 'Annulla Filtri' });
-
-      await expect(annullaButton).toBeVisible();
-  }*/
 }
 
 export async function checkAutocomplete(page: Page, filter: Filter) {

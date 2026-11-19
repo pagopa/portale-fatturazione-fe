@@ -43,7 +43,8 @@ interface GridCustomProps<T,K> {
   collapseDataLoading?:boolean,
   selectedRows?:K[],
   manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
-  colSpanCollaps?:number
+  colSpanCollaps?:number,
+  sentenseEmptyCollapse?:string
 }
 
 export interface HeaderGridCustom {
@@ -108,7 +109,8 @@ const GridCustom = <T,K>({
   collapseDataLoading,
   selectedRows=[],
   manageStateCheckbox,
-  colSpanCollaps
+  colSpanCollaps,
+  sentenseEmptyCollapse
 }: GridCustomProps<T,K>) => {
  
   return (
@@ -157,6 +159,7 @@ const GridCustom = <T,K>({
                     selectedRows={selectedRows}
                     manageStateCheckbox={manageStateCheckbox}
                     colSpanCollaps={colSpanCollaps}
+                    sentenseEmptyCollapse={sentenseEmptyCollapse}
                   />
                 );
               })}

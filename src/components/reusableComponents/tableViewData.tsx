@@ -106,7 +106,6 @@ export const ElementToProcessComponent = <T,> ({
             {rows.map((rowObj, rowIndex) => (
               <TableRow key={rowIndex}>
                 {keyValueObj.map((el, i) => {
-                  // TODO: da eliminare
                   if (el.component) {
                     const componentValue = componentValues[rowIndex]?.[el.key] ?? '';
                     const setComponentValue = (newValue: any) => {

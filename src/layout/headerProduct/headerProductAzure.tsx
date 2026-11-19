@@ -100,7 +100,6 @@ const HeaderProductAzure = () => {
         manageStringMessage("SWITCH_PROFILO_ERROR",dispatchMainState);
       }
     }finally {
-      console.log("finally");
       setLoadingProfilo(false);
     }
   };

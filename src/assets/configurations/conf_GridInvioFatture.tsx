@@ -71,9 +71,9 @@ export const headerNamesInvioFattureCollapse: HeaderGridCustom[] = [
   { label: "Stato Invio",align: "center", width: "150px",keyValue: "statoInvio", typeColumn: "chip-tooltip" ,funToManipulateValue:getChipElaborazioneCollapse},
   { label: "Ragione Sociale", align: "center", width: "200px", keyValue: "ragioneSociale", typeColumn: 'ragionesociale' },
   { label: "Importo", align: "center", width: "150px", keyValue: "importo", typeColumn: 'euro' },
-  { label: "FK ID Doc.", align: "center", width: "150px", keyValue: "", typeColumn: 'string' },
+  { label: "FK ID Doc.", align: "center", width: "150px", keyValue: "idDocumento", typeColumn: 'string' },
   { label: "D. Fat.", align: "center", width: "180px", keyValue: "dataFattura", typeColumn: 'data' },
-  { label: "D. Ultima Gen.", align: "center", width: "250px", keyValue: "dataGenerazione", typeColumn: 'data-ora' },
+  { label: "D. Ultima Gen.", align: "center", width: "250px", keyValue: "dataUltimaGenerazione", typeColumn: 'data-ora' },
   { label: "File JSON", align: "center", width: "30px", keyValue: "nomeFile", typeColumn:"snackbar",icon:"file_invio_sap",sentenceSnackbar:"Nome del file copiato!", disabledFunction:isNomeFileDisabled },
   { label: 'Date Invio', align: 'center', width: '150px', keyValue: 'storicoInvii', typeColumn: "action",funToManipulateValue:showNoteGestioneFatture },
 ];

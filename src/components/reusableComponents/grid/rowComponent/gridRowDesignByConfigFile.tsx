@@ -23,7 +23,9 @@ interface GridRowsRendererProps<T ,K>{
   collapseDataLoading?:boolean,
   selectedRows:K[],
   manageStateCheckbox?:(currentRow:Record<string, any>,val:string,array:Record<string, any>[]) => {verifyIfSelected:boolean,disabled:boolean},
-  colSpanCollaps?:number
+  colSpanCollaps?:number,
+  // messaggio mostrato nel collapse quando non ci sono elementi (se assente non viene mostrato nulla)
+  sentenseEmptyCollapse?:string
 }
 
 const GridRowDesignByConfigFile=<T,K>({
@@ -42,7 +44,8 @@ const GridRowDesignByConfigFile=<T,K>({
   collapseDataLoading,
   selectedRows=[],
   manageStateCheckbox,
-  colSpanCollaps=7
+  colSpanCollaps=7,
+  sentenseEmptyCollapse
 }: GridRowsRendererProps<T,K>) => {
 
   const [open, setOpen] = useState(false);
@@ -158,6 +161,18 @@ const GridRowDesignByConfigFile=<T,K>({
                       </TableBody>
                     ) : (
                       <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
+                        {(dataInsideCollapse.length === 0 && sentenseEmptyCollapse) && (
+                          <TableRow>
+                            <TableCell
+                              colSpan={Object.keys(headerNamesCollapse).length}
+                              sx={{ textAlign: "center", border: "none", py: 4 }}
+                            >
+                              <Typography variant="body2" color="text.secondary">
+                                {sentenseEmptyCollapse}
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        )}
                         {dataInsideCollapsePaginated?.map((el: any, rowIndex: number) => (
                           <TableRow key={`row-${rowIndex}`}>
                             {Object.values(headerNamesCollapse).map(
