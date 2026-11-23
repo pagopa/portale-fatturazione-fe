@@ -1,6 +1,8 @@
-import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import { useState } from "react";
+import { forwardRef, memo, useCallback, useRef, useState } from "react";
+import { TableVirtuoso } from "react-virtuoso";
+import type { TableComponents } from "react-virtuoso";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { month } from "../../reusableFunction/reusableArrayObj";
 
@@ -10,7 +12,7 @@ interface TableColumn {
   component?: (setValue: (value: any) => void, value: any, row: any) => ReactNode;
 }
 
-interface ElementToProcessComponentProps<T,> {
+interface ViewDataComponentProps<T,> {
   obj: T;
   title?: ReactNode;
   keyValueObj: TableColumn[];
@@ -21,7 +23,7 @@ interface ElementToProcessComponentProps<T,> {
   onComponentChange?: (row: any, key: string, value: any) => void;
 }
 
-export const ElementToProcessComponent = <T,> ({
+export const ViewDataComponent = <T,> ({
   obj,
   title,
   keyValueObj,
@@ -30,11 +32,34 @@ export const ElementToProcessComponent = <T,> ({
   showButton=false,
   showCounter=false,
   onComponentChange
-}:ElementToProcessComponentProps<T>) => {
+}:ViewDataComponentProps<T>) => {
  
   const rows = obj === null ? [] : Array.isArray(obj) ? obj : [obj];
 
-  const [componentValues, setComponentValues] = useState<Record<number, Record<string, any>>>({});
+  // callback stabile: le righe memoizzate non si ri-renderizzano se il parent ricrea onComponentChange
+  const onComponentChangeRef = useRef(onComponentChange);
+  onComponentChangeRef.current = onComponentChange;
+
+  // valori digitati per riga: con la virtualizzazione le righe fuori vista vengono smontate,
+  // quindi il loro stato locale va salvato qui e ripristinato al rimontaggio
+  const valuesRef = useRef<Record<string, Record<string, any>>>({});
+
+  const stableOnComponentChange = useCallback((row: any, key: string, value: any) => {
+    const rowKey = getRowKeyProcess(row);
+    valuesRef.current[rowKey] = { ...valuesRef.current[rowKey], [key]: value };
+    onComponentChangeRef.current?.(row, key, value);
+  }, []);
+
+  const getSavedValues = useCallback((row: any) => valuesRef.current[getRowKeyProcess(row)] ?? {}, []);
+
+  const virtualized = rows.length > 10;
+
+  const headerCells = keyValueObj.map((el, i) => (
+    <TableCell key={i} align="center" sx={{ marginLeft: "16px", backgroundColor: '#F8F8F8', borderBottom: '5px solid white' }}>
+      {el.label}
+    </TableCell>
+  ));
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mt: 2, mb: 2 }}>
       {closeIcon ? <Box sx={{ 
@@ -80,10 +105,9 @@ export const ElementToProcessComponent = <T,> ({
         padding: '10px',
         marginTop: '20px',
         width: '100%',
-        ...(rows.length > 10 && {
-          maxHeight: 400,
-          overflowY: 'auto',
-          // niente padding in alto: con lo scroll lo stickyHeader deve aderire al bordo superiore
+        ...(virtualized && {
+          // lo scroll è gestito da TableVirtuoso (altezza fissa 400)
+          // niente padding in alto: con lo scroll l'header fisso deve aderire al bordo superiore
           padding: '0 10px 10px 10px',
           // bordo bianco attorno alla tabella: sta fuori dall'area di scroll, quindi non lascia vedere le righe
           border: '5px solid white',
@@ -92,54 +116,49 @@ export const ElementToProcessComponent = <T,> ({
           width: 'calc(100% - 10px)',
         }),
       }}>
-        <Table size="small" stickyHeader={rows.length > 10}>
-          <TableHead>
-            <TableRow sx={{ borderColor: "white", borderWidth: "thick" }}>
-              {keyValueObj.map((el, i) => (
-                <TableCell key={i} align="center" sx={{ marginLeft: "16px", backgroundColor: '#F8F8F8', borderBottom: '5px solid white' }}>
-                  {el.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
-            {rows.map((rowObj, rowIndex) => (
-              <TableRow key={rowIndex}>
-                {keyValueObj.map((el, i) => {
-                  if (el.component) {
-                    const componentValue = componentValues[rowIndex]?.[el.key] ?? '';
-                    const setComponentValue = (newValue: any) => {
-                      setComponentValues(prev => ({
-                        ...prev,
-                        [rowIndex]: { ...prev[rowIndex], [el.key]: newValue }
-                      }));
-                      onComponentChange && onComponentChange(rowObj, el.key, newValue);
-                    };
-                    return (
-                      <TableCell key={i} align="center" sx={{ minWidth: 200 }}>
-                        {el.component(setComponentValue, componentValue, rowObj)}
-                      </TableCell>
-                    );
-                  }
-                  let value =  rowObj[el.key];
-                  if(el.key === "meseRiferimento"){
-                    value = month[rowObj[el.key]-1];
-                  }
-                  
-                  const textValue = value === null || value === undefined ? '' : String(value);
-                  const isTruncated = typeof value === 'string' && value.length > 20;
-                  return (
-                    <Tooltip key={i} title={isTruncated ? value : null}>
-                      <TableCell align="center">
-                        {isTruncated ? `${textValue.slice(0, 20)}...` : textValue}
-                      </TableCell>
-                    </Tooltip>
-                  );
-                })}
+        {virtualized ? (
+          // virtualizzazione: vengono montate solo le righe visibili (+ un piccolo buffer),
+          // quindi apertura/chiusura della modale non dipendono più dal numero di fatture
+          <TableVirtuoso
+            style={{ height: 400 }}
+            data={rows}
+            components={virtuosoComponents}
+            computeItemKey={(index, rowObj) => rowObj?.idFattura ?? index}
+            fixedHeaderContent={() => (
+              <TableRow sx={{ borderColor: "white", borderWidth: "thick" }}>
+                {headerCells}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            )}
+            itemContent={(_index, rowObj) => (
+              <ProcessRowCells
+                rowObj={rowObj}
+                keyValueObj={keyValueObj}
+                onComponentChange={stableOnComponentChange}
+                getSavedValues={getSavedValues}
+              />
+            )}
+          />
+        ) : (
+          <Table size="small">
+            <TableHead>
+              <TableRow sx={{ borderColor: "white", borderWidth: "thick" }}>
+                {headerCells}
+              </TableRow>
+            </TableHead>
+            <TableBody sx={{ borderColor: "white", borderWidth: "thick" }}>
+              {rows.map((rowObj, rowIndex) => (
+                <TableRow key={rowObj?.idFattura ?? rowIndex}>
+                  <ProcessRowCells
+                    rowObj={rowObj}
+                    keyValueObj={keyValueObj}
+                    onComponentChange={stableOnComponentChange}
+                    getSavedValues={getSavedValues}
+                  />
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </Box>
       {showButton &&  
         <div className='container_buttons_modal d-flex justify-content-center mt-5'>
@@ -149,3 +168,65 @@ export const ElementToProcessComponent = <T,> ({
     </Box>
   );
 };
+
+// chiave della riga per salvare i valori digitati (idFattura se presente)
+const getRowKeyProcess = (row: any): string => String(row?.idFattura ?? JSON.stringify(row));
+
+// componenti MUI usati da TableVirtuoso (definiti fuori dal render: riferimenti stabili)
+const virtuosoComponents: TableComponents<any> = {
+  Scroller: forwardRef<HTMLDivElement>((props, ref) => <div {...props} ref={ref} />),
+  Table: (props) => <Table {...props} size="small" sx={{ borderCollapse: 'separate', tableLayout: 'auto' }} />,
+  TableHead: forwardRef<HTMLTableSectionElement>((props, ref) => <TableHead {...props} ref={ref} />),
+  TableRow: ({ item: _item, ...props }) => <TableRow {...props} />,
+  TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableBody {...props} ref={ref} sx={{ borderColor: "white", borderWidth: "thick" }} />
+  )),
+};
+
+interface ProcessRowCellsProps {
+  rowObj: any;
+  keyValueObj: TableColumn[];
+  onComponentChange: (row: any, key: string, value: any) => void;
+  // valori digitati in precedenza (riga smontata dalla virtualizzazione e poi rimontata)
+  getSavedValues: (row: any) => Record<string, any>;
+}
+
+// celle di una riga, memoizzate, con stato locale degli input: digitare ri-renderizza solo questa riga
+const ProcessRowCells = memo(({ rowObj, keyValueObj, onComponentChange, getSavedValues }: ProcessRowCellsProps) => {
+  const [componentValues, setComponentValues] = useState<Record<string, any>>(() => getSavedValues(rowObj));
+
+  return (
+    <>
+      {keyValueObj.map((el, i) => {
+        if (el.component) {
+          // undefined finché l'utente non digita: il component può ricadere sul valore della riga
+          const componentValue = componentValues[el.key];
+          const setComponentValue = (newValue: any) => {
+            setComponentValues(prev => ({ ...prev, [el.key]: newValue }));
+            onComponentChange(rowObj, el.key, newValue);
+          };
+          return (
+            <TableCell key={i} align="center" sx={{ maxWidth: 150 }}>
+              {el.component(setComponentValue, componentValue, rowObj)}
+            </TableCell>
+          );
+        }
+        let value = rowObj[el.key];
+        if (el.key === "meseRiferimento") {
+          value = month[rowObj[el.key] - 1];
+        }
+
+        const textValue = value === null || value === undefined ? '' : String(value);
+        const isTruncated = typeof value === 'string' && value.length > 20;
+        // title nativo al posto del Tooltip MUI: con centinaia di righe il Tooltip (Popper, listener, ref)
+        // rende lento il mount/unmount della tabella, cioè apertura e chiusura della modale
+        return (
+          <TableCell key={i} align="center" title={isTruncated ? textValue : undefined}>
+            {isTruncated ? `${textValue.slice(0, 20)}...` : textValue}
+          </TableCell>
+        );
+      })}
+    </>
+  );
+});
+ProcessRowCells.displayName = "ProcessRowCells";

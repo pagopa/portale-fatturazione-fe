@@ -118,10 +118,11 @@ export const keyValueObjModalInfo = [
             maxRows={focused ? undefined : 1}   // focused: grows with content; otherwise: one line
             size="small"
             label="N. documento di storno"
-            value={row?.numeroDocumentoStorno||""}
+            // value: stato locale della riga (aggiornato a ogni digitazione), fallback sul valore iniziale della fattura
+            value={value ?? row?.numeroDocumentoStorno ?? ""}
             placeholder={"Max. 200 caratteri alfanumerici"}
             // rosso se il valore non è valido (solo alfanumerici, max 200 caratteri)
-            error={!isValidNumeroDocumentoStorno(row?.numeroDocumentoStorno ?? "")}
+            error={!isValidNumeroDocumentoStorno(value ?? row?.numeroDocumentoStorno ?? "")}
             onChange={(e) => setNumeroDocStorno(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
@@ -160,10 +161,10 @@ export const keyValueObjModalInfo = [
             maxRows={focused ? undefined : 1}   // focused: grows with content; otherwise: one line
             size="small"
             label="Nota"
-            value={row?.nota||""}
+            value={value ?? row?.nota ?? ""}
             placeholder="La nota deve contenere almeno 3 parole"
             // rosso se la nota non è valida (almeno 3 parole)
-            error={!isValidText2NotaPii(row?.nota ?? "")}
+            error={!isValidText2NotaPii(value ?? row?.nota ?? "")}
             onChange={(e) => setNota(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}

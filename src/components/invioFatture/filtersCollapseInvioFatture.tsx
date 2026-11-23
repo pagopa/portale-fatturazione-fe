@@ -1,4 +1,4 @@
-import { Button, Grid } from "@mui/material";
+import { Button, CircularProgress, Grid } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import MainFilter from "../reusableComponents/mainFilter";
 
@@ -18,6 +18,8 @@ interface FiltersCollapseInvioFattureProps {
   onLoading?: (loading: boolean) => void;
   // filtri disabilitati finché sono in corso le chiamate del dettaglio
   disabled?: boolean;
+  // loading al posto della scritta "Generazione Json" finché la modale non è visualizzata
+  generateLoading?: boolean;
 }
 
 // ogni filtro occupa col-2 da md in su, altrimenti tutta la larghezza disponibile
@@ -33,7 +35,8 @@ const FiltersCollapseInvioFatture = ({
   onGenerate,
   onFilter,
   onLoading,
-  disabled = false
+  disabled = false,
+  generateLoading = false
 }: FiltersCollapseInvioFattureProps) => {
 
   const [filtri, setFiltri] = useState<FiltriCollapseInvioFatture>({
@@ -131,7 +134,16 @@ const FiltersCollapseInvioFatture = ({
         hidden={element.statoInvio ===  "DA_INVIARE"}
       />
       <Grid item {...FILTER_ITEM_PROPS}>
-        <Button disabled={disabled || manageStateCheckbox && manageStateCheckbox(element,"",selectedRows)?.disabled || selectedRows.length === 0} onClick={onGenerate} size={"small"} variant="outlined">Generazione Json</Button>
+        <Button
+          disabled={generateLoading || disabled || manageStateCheckbox && manageStateCheckbox(element,"",selectedRows)?.disabled || selectedRows.length === 0}
+          onClick={onGenerate}
+          size={"small"}
+          variant="outlined"
+          // larghezza fissa: il bottone non cambia dimensione quando la scritta viene sostituita dal loading
+          sx={{ minWidth: 150 }}
+        >
+          {generateLoading ? <CircularProgress size={18} /> : "Generazione Json"}
+        </Button>
       </Grid>
     </Grid>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
@@ -9,7 +9,7 @@ import MainFilter from "../../components/reusableComponents/mainFilter";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headerNamesInvioFatture, headerNamesInvioFattureCollapse, keyValueObjModalInfo } from "../../assets/configurations/conf_GridInvioFatture";
 import MainModalComponent from "../../components/reusableComponents/modals/mainModalComponent";
-import { ElementToProcessComponent } from "../../components/reusableComponents/tableViewData";
+import { ViewDataComponent } from "../../components/reusableComponents/tableViewData";
 import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
 import { Box, Chip, DialogContent, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
 import { NotaTextField } from "./gestioneFatture";
@@ -60,6 +60,8 @@ type DettaglioFattura = {
   "nota":string,
   "numeroDocumentoStorno":string
 };
+
+type InputFattura = { nota: string, numeroDocumentoStorno: string };
 
 export interface SelectedJsonSap {
   annoRiferimento: number,
@@ -151,12 +153,65 @@ const InvioFatture : React.FC = () => {
   // ultima riga su cui l'utente ha cliccato il checkbox principale: serve a scartare risposte non più attuali
   const lastCheckboxKeyRef = useRef<string | null>(null);
 
-  const { 
+  // ______________ Input della modale (nota / n. doc. storno) per singola fattura ______________
+  // valori digitati tenuti in un ref: una digitazione non aggiorna elementsSelected né ri-renderizza le altre righe
+  const inputFattureRef = useRef<Map<number, InputFattura>>(new Map());
+  // id delle fatture con input non validi: lo state cambia solo quando cambia il numero di invalidi
+  const invalidIdsRef = useRef<Set<number>>(new Set());
+  const [invalidInputCount, setInvalidInputCount] = useState(0);
+
+  const isInputFatturaValid = (v: InputFattura) =>
+    isValidText2NotaPii(v.nota) && isValidNumeroDocumentoStorno(v.numeroDocumentoStorno);
+
+  // al cambio della selezione: allineo ref e invalidi (O(n) solo qui, non a ogni digitazione)
+  useEffect(() => {
+    const nextInputs = new Map<number, InputFattura>();
+    const nextInvalid = new Set<number>();
+    elementsSelected.forEach((el) => {
+      const value = inputFattureRef.current.get(el.idFattura)
+        ?? { nota: el.nota ?? "", numeroDocumentoStorno: el.numeroDocumentoStorno ?? "" };
+      nextInputs.set(el.idFattura, value);
+      if(!isInputFatturaValid(value)) nextInvalid.add(el.idFattura);
+    });
+    inputFattureRef.current = nextInputs;
+    invalidIdsRef.current = nextInvalid;
+    setInvalidInputCount(nextInvalid.size);
+  }, [elementsSelected]);
+
+  // aggiornamento O(1) per digitazione; setState con lo stesso valore non provoca render
+  const onInputFatturaChange = useCallback((idFattura: number, key: keyof InputFattura, value: string) => {
+    const prev = inputFattureRef.current.get(idFattura) ?? { nota: "", numeroDocumentoStorno: "" };
+    const next = { ...prev, [key]: value };
+    inputFattureRef.current.set(idFattura, next);
+    if(isInputFatturaValid(next)) invalidIdsRef.current.delete(idFattura);
+    else invalidIdsRef.current.add(idFattura);
+    setInvalidInputCount(invalidIdsRef.current.size);
+  }, []);
+
+  const {
     filters,
     updateFilters,
     isInitialRender,
     resetFilters
   } = useSavedFilters(PathPf.JSON_TO_SAP,{});
+
+  // ______________ Loading sul bottone "Generazione Json" ______________
+  // con molti elementi selezionati il render della modale è lento: mostro il loading finché non è visualizzata
+  const [openingModal, setOpeningModal] = useState(false);
+
+  const openModalWithLoading = () => {
+    setOpeningModal(true);
+    // requestAnimationFrame + setTimeout: il browser disegna prima il loading,
+    // solo dopo parte il render (sincrono e pesante) della modale
+    requestAnimationFrame(() => {
+      setTimeout(() => setOpenModalFatture(true), 0);
+    });
+  };
+
+  // modale montata (commit del render completato): tolgo il loading
+  useEffect(() => {
+    if(openModalFatture) setOpeningModal(false);
+  }, [openModalFatture]);
 
 
   useEffect(()=>{
@@ -665,11 +720,14 @@ const InvioFatture : React.FC = () => {
           anno: fatturaTypo.annoRiferimento,
           mese: fatturaTypo.meseRiferimento,
           tipologiaFattura: fatturaTypo.tipologiaFattura,
-          fatture: elementsSelected.map(el => ({
-            idFattura: el.idFattura,
-            nota: el.nota ?? "",
-            numeroDocumentoStorno: el.numeroDocumentoStorno ?? ""
-          }))
+          fatture: elementsSelected.map(el => {
+            const input = inputFattureRef.current.get(el.idFattura);
+            return {
+              idFattura: el.idFattura,
+              nota: input?.nota ?? el.nota ?? "",
+              numeroDocumentoStorno: input?.numeroDocumentoStorno ?? el.numeroDocumentoStorno ?? ""
+            };
+          })
         };
         await generazioneJsonInviate(token,profilo.nonce,bodyGenerazioneInviate);
       }
@@ -698,8 +756,8 @@ const InvioFatture : React.FC = () => {
   // altri stati (re-invio): ogni fattura selezionata deve avere nota e numeroDocumentoStorno valorizzati
   const buttonGeneraDisabled = elementsSelected.length === 0 || (
     elementsSelected[0].statoInvio === "DA_INVIARE"
-      ? isValidText2NotaPii(nota ?? "")
-      : !elementsSelected.every(el => isValidText2NotaPii(el.nota ?? "") && isValidNumeroDocumentoStorno(el.numeroDocumentoStorno ?? ""))
+      ? !isValidText2NotaPii(nota ?? "")
+      : invalidInputCount > 0
   );
   const statusAnnulla = (bodyFatturazione.anno !== arrayYears[0] ||
    bodyFatturazione.mesi.length > 0 ||
@@ -823,7 +881,8 @@ const InvioFatture : React.FC = () => {
               disabled={detailsLoading}
               selectedRows={elementsSelected}
               manageStateCheckbox={manageStateCheckbox}
-              onGenerate={()=>setOpenModalFatture(true)}
+              onGenerate={openModalWithLoading}
+              generateLoading={openingModal}
               onFilter={(filtri) => applyFiltersCollapse(row, filtri)}
               onLoading={setCollapseDataLoading}
             />
@@ -863,7 +922,7 @@ const InvioFatture : React.FC = () => {
       >
         <ModalContentFattureSelezionate
           elementsSelected={elementsSelected}
-          setElementSelected={setElementSelected}
+          onInputFatturaChange={onInputFatturaChange}
           setOpen={setOpenModalFatture}
           nota={nota}
           setNota={setNota}
@@ -893,7 +952,7 @@ export const checkIfElementSelected = (arraySel, row) =>{
 
 interface ModalContentFattureSelezionateProps {
   elementsSelected: Record<string, any>[];
-  setElementSelected:React.Dispatch<React.SetStateAction<DettaglioFattura[]>>;
+  onInputFatturaChange: (idFattura: number, key: keyof InputFattura, value: string) => void;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   nota: string;
   setNota: (value: string) => void;
@@ -902,35 +961,30 @@ interface ModalContentFattureSelezionateProps {
 const ModalContentFattureSelezionate : React.FC<ModalContentFattureSelezionateProps> = ({
   elementsSelected,
   setOpen,
-  setElementSelected,
+  onInputFatturaChange,
   nota,
   setNota
 }) => {
   // "idStorno-component" e "nota-component" visibili solo se le fatture selezionate non sono "Da inviare" (statoInvio !== 0)
   const showStornoNota = elementsSelected.some(el => el.statoInvio === "DA_INVIARE");
-  const keyValueObjFiltered = showStornoNota
+  // riferimento stabile: altrimenti tutte le righe memoizzate della tabella si ri-renderizzano
+  const keyValueObjFiltered = useMemo(() => showStornoNota
     ?  keyValueObjModalInfo.filter(el => el.key !== "idStorno-component" && el.key !== "nota-component")
-    : keyValueObjModalInfo;
+    : keyValueObjModalInfo, [showStornoNota]);
 
   // salva nella fattura selezionata il valore inserito nei campi della modale (numero documento storno / nota)
-  const setUserInputInsideFattura = (fattura: Record<string, any>, idComponent: string, valueText: string) => {
-    let keyToUpdate: "numeroDocumentoStorno" | "nota" | null = null;
+  // non aggiorna elementsSelected: il valore resta nello stato locale della riga e nel ref del parent
+  const setUserInputInsideFattura = useCallback((fattura: Record<string, any>, idComponent: string, valueText: string) => {
     if(idComponent === "idStorno-component"){
-      keyToUpdate = "numeroDocumentoStorno";
+      onInputFatturaChange(fattura.idFattura, "numeroDocumentoStorno", valueText);
     }else if(idComponent === "nota-component"){
-      keyToUpdate = "nota";
+      onInputFatturaChange(fattura.idFattura, "nota", valueText);
     }
-    if(!keyToUpdate) return;
-
-    const key = keyToUpdate;
-    setElementSelected((prev: DettaglioFattura[]) =>
-      prev.map((el) => el.idFattura === fattura.idFattura ? { ...el, [key]: valueText } : el)
-    );
-  };
+  }, [onInputFatturaChange]);
 
   return (
     <Box>
-      <ElementToProcessComponent
+      <ViewDataComponent
         closeIcon={true}
         title={"Fatture Selezionate"}
         obj={elementsSelected}
