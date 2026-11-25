@@ -3,27 +3,18 @@ import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridC
 import DeleteIcon from '@mui/icons-material/Delete';
 import UpdateIcon from '@mui/icons-material/Update';
 import { formatDateString } from "../../reusableFunction/function";
+import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
+
 
 
 const getActionDocumentiEmessiSend = (obj,fun) => {
-  return (
-    <Box sx={{ display: "flex", justifyContent: "center" }}>
-      {(obj.tipologiaFattura !== "ACCONTO" && obj.tipologiaFattura !== "ANTICIPO") ? 
-        <Tooltip title={obj.inviata === 0 ? "Posticipa" : null}>
+
+  if(obj.azione === 'ELIMINA'){
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Tooltip title={obj.inviata === 0 ? "Elimina" : null}>
           <span>
             <IconButton
-              disabled={(obj.inviata === 0 )? false : true}
-              size="medium"
-              onClick={() => fun(obj,"posticipa")}
-            >
-              <UpdateIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-        : <Tooltip title={obj.inviata === 0 ? "Elimina" : null}>
-          <span>
-            <IconButton
-              disabled={(obj.inviata === 0 )? false : true}
               size="medium"
               onClick={() => fun(obj,"eliminazione")}
             >
@@ -31,9 +22,41 @@ const getActionDocumentiEmessiSend = (obj,fun) => {
             </IconButton>
           </span>
         </Tooltip>
-      }
-    </Box>
-  );};
+      </Box>
+    );
+  }else if(obj.azione === 'POSTICIPA'){
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Tooltip title={obj.inviata === 0 ? "Posticipa" : null}>
+          <span>
+            <IconButton
+              size="medium"
+              onClick={() => fun(obj,"posticipa")}
+            >
+              <UpdateIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
+      </Box>
+    );
+  }else{
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Tooltip title={obj.inviata === 0 ? "Posticipa" : null}>
+          <span>
+            <IconButton
+              disabled={true}
+              size="medium"
+            >
+              <DoDisturbOnIcon/>
+            </IconButton>
+          </span>
+        </Tooltip>
+      </Box>
+    );
+  }
+ 
+};
 
 const getChipElaborazione = (row) =>{
   let tooltipObj:any= {label:'Non Inviata',title:'La fattura non è stata inviata'};
@@ -48,10 +71,6 @@ const getChipElaborazione = (row) =>{
   }
 
   return tooltipObj;
-};
-
-const getStatoFattura = (obj) =>{
-  return "Emessa";
 };
 
 const makeActionFun = (obj) => {
