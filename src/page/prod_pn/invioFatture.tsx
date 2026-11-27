@@ -667,16 +667,6 @@ const InvioFatture : React.FC = () => {
     );
   };
 
-  const headerAction = (
-    label: string,
-    setGridDataParam: (data: any[]) => void,
-    emessiGrid = true,
-    setObjectSort: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>,
-    page: number,
-    rowsPerPage: number,
-    listaResponseParameter: any[],
-  ) => {};
-
   const showPopUpAction = (obj, action) => { 
     setInforeInvio(obj.storicoInvii);
     setShowPopUpdateInvio(true);
@@ -890,7 +880,7 @@ const InvioFatture : React.FC = () => {
           getAsyncDetails={handleGetDetailsRowCollapsed}
           collapseDataLoading={collapseDataLoading}
           selectedRows={elementsSelected}
-          headerActionSort={headerAction}
+          //headerActionSort={headerAction}
           //setGridData={setGridData}
           gridType={true}
           setObjectSort={setObjectSort}
@@ -914,7 +904,7 @@ const InvioFatture : React.FC = () => {
         setOpen={setShowDownloading}
         sentence={'Downloading...'} />
       <MainModalComponent 
-        width={"1200px"}
+        width={"1300px"}
         open={openModalFatture}
         setOpen={setOpenModalFatture}
         action={generaJsonToSAP}
@@ -925,8 +915,7 @@ const InvioFatture : React.FC = () => {
           onInputFatturaChange={onInputFatturaChange}
           setOpen={setOpenModalFatture}
           nota={nota}
-          setNota={setNota}
-        />
+          setNota={setNota}/>
       </MainModalComponent>
       <DialogInfo 
         open={showPopUpDateInvio}

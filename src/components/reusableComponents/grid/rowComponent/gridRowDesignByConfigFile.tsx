@@ -80,13 +80,6 @@ const GridRowDesignByConfigFile=<T,K>({
     pageCollapse * rowsCollapse + rowsCollapse
   );
 
-
-  // Dentro il componente, prima del return
-  const [filtroAnno, setFiltroAnno] = useState<string>('tutti');
-  const [filtroMese, setFiltroMese] = useState<string>('tutti');
-  const [filtroTipologia, setFiltroTipologia] = useState<string>('tutti');
-
-
   return (
     <>
       <TableRow sx={{

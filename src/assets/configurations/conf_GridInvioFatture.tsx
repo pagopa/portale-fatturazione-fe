@@ -2,7 +2,7 @@ import { Box, IconButton, TextField, Tooltip } from "@mui/material";
 import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { useState } from "react";
-import { isValidNumeroDocumentoStorno, isValidText2NotaPii } from "../../reusableFunction/function";
+import {  isValidNumeroDocumentoStorno, isValidText2NotaPii, transformDateTimeWithNameMonth } from "../../reusableFunction/function";
 
 const getChipElaborazione = (row) =>{
   let tooltipObj:any = {label:'',title:''};
@@ -99,6 +99,13 @@ export const keyValueObjModalInfo = [
   {
     key:"numeroInvii",
     label:"N. Invio"
+  },
+  {
+    key:"dataFattura",
+    label:"D. Fattura",
+    component:(setNumeroDocStorno, value,row)=> {
+      return transformDateTimeWithNameMonth(row.dataFattura);
+    }
   },
   {
     key:"idStorno-component",
