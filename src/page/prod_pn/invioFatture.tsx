@@ -486,7 +486,8 @@ const InvioFatture : React.FC = () => {
           idFattura:currentRow.idFattura,
           statoInvio:currentRow.statoInvio,
           ragioneSociale:currentRow.ragioneSociale,
-          numeroInvii:currentRow.numeroInvii
+          numeroInvii:currentRow.numeroInvii,
+          dataFattura:currentRow.dataFattura
         }];});
       return {
         checkboxStatus:true,
